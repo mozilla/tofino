@@ -5,6 +5,10 @@ The code uses examples from many different places, but the foundation was starte
 * http://pfraze.github.io/2015/09/08/building-electron-browser-pt1.html
 * https://github.com/pfraze/electron-browser
 
+This project is extremely immature. It's currently at the "OK, lets throw some
+stuff together to see what happens" stage. Please adjust your expectations
+accordingly.
+
 
 ## Build
 
@@ -44,21 +48,19 @@ Currently runs eslint and ui tests with mocha.
 npm test
 ```
 
-## Landing code
+## Contributing
 
 Please note that this project is released with a Contributor Code of Conduct.
 By participating in this project you agree to abide by its terms.
 
-Use squashed merge by preference.
+See [CONTRIBUTING.md](/CONTRIBUTING.md) for further notes.
 
-Make sure your commit message references the issue or bug number, if there is one, identifies the reviewers, and follows a readable style, with the long description including any additional information that's likely to help future spelunkers. For example:
-
-```
-    Issue #6 - Frobnicate the URL bazzer before flattening pilchard. r=mossop,rnewman
-
-    The frobnication method used is as described in Podder's Miscellany, page 15.
-    Note that this pull request doesn't include tests, because we're bad people.
-```
+This project is very new, so we'll probably revise these guidelines. Please
+comment on a bug before putting significant effort in if you'd like to
+contribute.
 
 
 ## License
+
+This software is licensed under the Apache License Version 2.
+See [LICENSE](/LICENSE) for details.
