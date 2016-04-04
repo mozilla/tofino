@@ -1,0 +1,33 @@
+{
+  "ecmaFeatures": {
+    "globalReturn": false,
+    "modules": true,
+    "blockBindings": true,
+    "jsx": true
+  },
+
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+
+  "plugins": [
+    "react"
+  ],
+
+  "extends": "airbnb",
+  "parser": "babel-eslint",
+
+  "rules": {
+    "new-cap": [2, {"capIsNewExceptions": ["Immutable.List", "Immutable.Map", "Immutable.Record", "Immutable.Set"]}],
+    "no-param-reassign": [0],
+    "no-return-assign": [0],
+    "no-use-before-define": [0],
+    "eqeqeq": [2, "allow-null"],
+    "prefer-template": [0],
+    "space-before-function-paren": [2, "never"],
+    "react/jsx-closing-bracket-location": [1, "after-props"],
+    "react/prefer-es6-class": [0],
+  }
+}

@@ -1,0 +1,7 @@
+/.idea/
+electron
+node_modules
+dist
+*.sw*
+static/built
+build-config.js

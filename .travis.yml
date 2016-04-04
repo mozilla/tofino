@@ -1,0 +1,21 @@
+language: cpp
+os:
+  - osx
+  - linux
+osx_image: xcode7.2
+sudo: required
+dist: trusty
+
+env:
+  - secure: "nNvjOscSTApr8E3HWlVzAqG6IHRMOxiMemKgo/SMQlMMdQcn45oxkUuitcWDO+/xD8VVV1UE4Zpm1BzBti4hxSY4Kf8PqurB1fvyIcYtP3lXUG8WJ98+vUyAzlIz/8WI/TNTr4oZda6eonSLQ/HwO/lJ4VNn9dC6qkI847KGx3IqaVRgTibbOA31nUXt/bfT8ins+PKzcyqCP8NZkvZqYtWLwMY4kR0kWdPiWrhrCjFtL/Y1ATL3w5qhcoqPcniDAkpxxDSvwPvqf341nQwetEclcNWyJlHre3XtFpPCRi/QrDncSoIV+i1uWzzTll9Se7k9QEOc7RC9FOCjOF4z6bkBhHW64CA38SqdmgMFPS/736tgiRGKLsDGiNvYAyI0cnSyNWUx/CujyjIB9XLKQJxePTHiWGwPAc8O7dKyNkUlRvXWtFbTfovk9qv6aSOfX8PgqKUoTN+S1qVX3U1b0o0g9BX4OPs4DVXc/OQDLovErUBqJvrGsasuTP60QuSx86yipqGwVJgmVyS6Jc5ENY7N2nNvVb6mCy7V9g4p1lgKvcwlFbaWKIdtQVQGwftvfOP2+u3iEu5AFjmJS8Lun+MvuUpLSZMdIPWrCv4w3Mclawqy7fILOFiWZQooAs1oMiDYaWoDjCkpS/MtSZHUoLOlVHhGbKAjGWtAGypC36k="
+
+before_install: scripts/bootstrap.py
+install:
+  - node --version
+  - npm --version
+  - npm install --progress false --depth 0 -g gulp-cli
+  - npm install --progress false --depth 0
+
+script:
+  - gulp -LLLL --no-color package
+  - scripts/upload.py build
