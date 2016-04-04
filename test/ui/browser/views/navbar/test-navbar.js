@@ -1,3 +1,5 @@
+// Any copyright is dedicated to the Public Domain.
+// http://creativecommons.org/publicdomain/zero/1.0/
 
 // We need to make the actions/external not depend on electron for this to
 // be testable outside of electron, but otherwise we could do ...

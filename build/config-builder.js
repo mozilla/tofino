@@ -1,3 +1,6 @@
+// Any copyright is dedicated to the Public Domain.
+// http://creativecommons.org/publicdomain/zero/1.0/
+
 /**
  * Builds a `build-config.js` in root directory for runtime access to build configurations.
  */
