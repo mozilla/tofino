@@ -1,8 +1,18 @@
+
+/**
+ * Given a search query, format it into a search engine's URL
+ */
+export function getSearchURL(query) {
+  // See https://dxr.mozilla.org/mozilla-central/source/browser/locales/en-US/searchplugins
+  // for a list of providers.
+  return 'https://www.google.com/search?ie=utf-8&oe=utf-8&q=' + encodeURIComponent(query);
+}
+
 /**
  * Convert whatever the user typed into the URL bar into an actual URL
  */
 export function fixURL(typed) {
-  if (typed.includes('://')) {
+  if (typed.includes('://') || typed.trim().startsWith('data:')) {
     return typed;
   }
 
@@ -10,7 +20,7 @@ export function fixURL(typed) {
     return `http://${typed}`;
   }
 
-  return 'https://www.google.com/search?ie=utf-8&oe=utf-8&q=' + encodeURIComponent(typed);
+  return getSearchURL(typed);
 }
 
 /**

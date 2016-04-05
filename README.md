@@ -36,7 +36,7 @@ The following tasks will most likely not need to be used externally, but as depe
 
 ## Testing
 
-Currently just eslint tests.
+Currently runs eslint and ui tests with mocha.
 
 ```
 npm test
