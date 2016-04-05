@@ -9,7 +9,7 @@ import { getCurrentWebView } from '../../browser-util';
 /**
  * The section below the tabs containing the location bar and navigation buttons
  */
-const NavBar = ({ page, dispatch }) => {
+const NavBar = ({ page, dispatch, ipcRenderer }) => {
   if (page == null) {
     return <div id="browser-navbar"></div>;
   }
@@ -29,7 +29,7 @@ const NavBar = ({ page, dispatch }) => {
         onClick={e => getCurrentWebView(e.target.ownerDocument).reload()}
         disabled={!page.canRefresh} />
 
-      <Location {...{ page }} />
+      <Location {...{ page, ipcRenderer }} />
 
       <Btn title="Home" icon="home fa-lg"
         onClick={e => getCurrentWebView(e.target.ownerDocument).goToIndex(0)}
@@ -48,6 +48,7 @@ const NavBar = ({ page, dispatch }) => {
 NavBar.propTypes = {
   page: PropTypes.object,
   dispatch: PropTypes.func.isRequired,
+  ipcRenderer: PropTypes.object.isRequired,
 };
 
 export default connect()(NavBar);

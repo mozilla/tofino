@@ -1,5 +1,4 @@
 
-import { ipcRenderer } from 'electron';
 import { createTab, setPageOrder } from '../../actions/main-actions';
 import { getBestDropItem, getWebView } from '../../browser-util';
 
@@ -16,10 +15,11 @@ window.addEventListener('dragend', () => currentDragTarget = null);
  *
  */
 export class TabDragDrop {
-  constructor(page, pageOrder, pageIndex) {
+  constructor(page, pageOrder, pageIndex, ipcRenderer) {
     this.page = page;
     this.pageIndex = pageIndex;
     this.pageOrder = pageOrder;
+    this.ipcRenderer = ipcRenderer;
 
     this.handlers = {
       onDragStart: this.onDragStart.bind(this),
@@ -46,7 +46,7 @@ export class TabDragDrop {
     if (e.dataTransfer.dropEffect === 'none') {
       const webview = getWebView(e.target.ownerDocument, pageIndex);
       const guestInstanceId = webview.guestinstance;
-      ipcRenderer.send('tab-detach', { page, guestInstanceId });
+      this.ipcRenderer.send('tab-detach', { page, guestInstanceId });
     }
   }
 
