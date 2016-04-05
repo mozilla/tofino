@@ -28,6 +28,7 @@ class BrowserWindow extends Component {
     return (
       <div id="browser-chrome" className={"platform-" + platform} >
         <NavBar page={pages.get(currentPageIndex)}
+                pages={pages}
                 ipcRenderer={ipcRenderer} />
         <TabBar {...{ pages, pageOrder, currentPageIndex }} />
         <div id="content-area">

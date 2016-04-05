@@ -64,3 +64,16 @@
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
 }
+
+#pages-button .page-count {
+  background-color: #4D4D4D;
+  color: #fff;
+  font-size: 70%;
+  width: 16px;
+  height: 14px;
+  padding-top: 2px;
+  text-align: center;
+  border-radius: 3px;
+  display: inline-block;
+  margin-right: 6px;
+}
