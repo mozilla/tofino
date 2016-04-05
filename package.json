@@ -59,5 +59,8 @@
     "webpack-dev-middleware": "1.5.1",
     "webpack-hot-middleware": "2.10.0",
     "webpack-merge": "0.8.4"
+  },
+  "engines": {
+    "node": ">=5.8.0"
   }
 }
