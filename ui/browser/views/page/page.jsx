@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import Status from './status.jsx';
 import Search from './search.jsx';
 
-import browserDB from '../../../shared/browser-db';
 import { fixURL } from '../../browser-util';
 import { contextMenu, menuWebViewContext } from '../../actions/external';
 import { closeTab, setPageDetails } from '../../actions/main-actions';
@@ -17,10 +16,10 @@ import { closeTab, setPageDetails } from '../../actions/main-actions';
  */
 class Page extends Component {
   componentDidMount() {
-    const { page, pageIndex, dispatch } = this.props;
+    const { page, pageIndex, dispatch, browserDB } = this.props;
     const webview = this.webview.webview;
 
-    addListenersToWebView(webview, page, pageIndex, dispatch);
+    addListenersToWebView(webview, page, pageIndex, dispatch, browserDB);
 
     // set location, if given
     if (!page.guestInstanceId && page.location) {
@@ -58,7 +57,7 @@ export default connect()(Page);
 /**
  * WebView wasn't designed for React...
  */
-function addListenersToWebView(webview, page, pageIndex, dispatch) {
+function addListenersToWebView(webview, page, pageIndex, dispatch, browserDB) {
   webview.addEventListener('did-start-loading', () => {
     dispatch(setPageDetails(pageIndex, {
       isLoading: true,

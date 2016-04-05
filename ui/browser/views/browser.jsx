@@ -2,6 +2,7 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 
+import browserDB from '../../shared/browser-db';
 import TabBar from './tabbar/tabbar.jsx';
 import NavBar from './navbar/navbar.jsx';
 import Page from './page/page.jsx';
@@ -35,7 +36,8 @@ class BrowserWindow extends Component {
           {pages.map((page, pageIndex) => (
             <Page key={'page-' + pageIndex}
               page={page} pageIndex={pageIndex}
-              isActive={pageIndex === currentPageIndex} />
+              isActive={pageIndex === currentPageIndex}
+              browserDB={browserDB} />
           ))}
         </div>
       </div>
