@@ -9,7 +9,7 @@ import { getCurrentWebView } from '../../browser-util';
 /**
  * The section below the tabs containing the location bar and navigation buttons
  */
-const NavBar = ({ page, dispatch, ipcRenderer }) => {
+const NavBar = ({ page, pages, dispatch, ipcRenderer }) => {
   if (page == null) {
     return <div id="browser-navbar"></div>;
   }
@@ -19,6 +19,10 @@ const NavBar = ({ page, dispatch, ipcRenderer }) => {
       <Btn title="Menu" icon="bars fa-lg"
         onClick={() => menuBrowser(dispatch)} />
 
+      <a id="pages-button">
+        <span className="page-count">{pages.length}</span>
+        {"Pages"}
+      </a>
       <Btn title="Back" icon="arrow-left fa-lg"
         onClick={e => getCurrentWebView(e.target.ownerDocument).goBack()}
         disabled={!page.canGoBack} />
