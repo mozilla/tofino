@@ -1,7 +1,6 @@
 
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
-import { ipcRenderer } from 'electron';
 import Btn from './btn.jsx';
 import { menuLocationContext, bookmark, unbookmark } from '../../actions/external';
 import { setLocation } from '../../actions/main-actions';
@@ -20,7 +19,7 @@ class Location extends Component {
   }
 
   componentDidMount() {
-    ipcRenderer.on('focus-urlbar', () => this.refs.input.select());
+    this.props.ipcRenderer.on('focus-urlbar', () => this.refs.input.select());
   }
 
   handleKeyDown(ev) {
@@ -70,6 +69,7 @@ class Location extends Component {
 Location.propTypes = {
   page: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
+  ipcRenderer: PropTypes.object.isRequired,
 };
 
 export default connect()(Location);

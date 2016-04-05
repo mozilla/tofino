@@ -1,7 +1,6 @@
 
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
-import { ipcRenderer } from 'electron';
 
 import TabBar from './tabbar/tabbar.jsx';
 import NavBar from './navbar/navbar.jsx';
@@ -19,16 +18,17 @@ require('../../shared/web-view');
  */
 class BrowserWindow extends Component {
   componentDidMount() {
-    attachListeners(this.props.dispatch, this.props.currentPageIndex);
+    attachListeners(this.props);
   }
 
   render() {
-    const { pages, currentPageIndex, pageOrder } = this.props;
+    const { pages, currentPageIndex, pageOrder, ipcRenderer } = this.props;
     const platformClass = `platform-${platform}`;
 
     return (
       <div id="browser-chrome" className={"platform-" + platform} >
-        <NavBar page={pages.get(currentPageIndex)} />
+        <NavBar page={pages.get(currentPageIndex)}
+                ipcRenderer={ipcRenderer} />
         <TabBar {...{ pages, pageOrder, currentPageIndex }} />
         <div id="content-area">
           {pages.map((page, pageIndex) => (
@@ -47,11 +47,12 @@ BrowserWindow.propTypes = {
   pages: PropTypes.object.isRequired,
   currentPageIndex: PropTypes.number.isRequired,
   dispatch: PropTypes.func.isRequired,
+  ipcRenderer: PropTypes.object.isRequired,
 };
 
 export default connect()(BrowserWindow);
 
-function attachListeners(dispatch, pageIndex) {
+function attachListeners({ dispatch, currentPageIndex, ipcRenderer }) {
   // attach keyboard shortcuts
   // :TODO: replace this with menu hotkeys
   document.body.addEventListener('keydown', e => {
