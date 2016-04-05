@@ -13,5 +13,5 @@ module.exports = env => cb => {
     command = `NODE_ENV=production ${command}`;
   }
   console.log(`Executing command: ${command}`);
-  exec(command, err => err ? cb(err) : cb());
+  exec(command, err => err ? cb(err) : cb()).stdout.pipe(process.stdout);
 };
