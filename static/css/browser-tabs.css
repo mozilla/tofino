@@ -2,12 +2,10 @@
   display: flex;
   background: linear-gradient(to bottom, #ddd 90%, #bbb);
   font-size: 13px;
-  -webkit-app-region: drag;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
 }
 #browser-tabs > div {
-  -webkit-app-region: no-drag;
   /*flex: 1;*/
   display: flex;
   min-width: 200px;

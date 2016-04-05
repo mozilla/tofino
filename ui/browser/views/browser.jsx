@@ -9,6 +9,9 @@ import Page from './page/page.jsx';
 
 import { updateMenu } from '../actions/external';
 import { createTab, attachTab, setPageDetails } from '../actions/main-actions';
+
+import { platform } from '../../../build-config';
+
 require('../../shared/web-view');
 
 /**
@@ -21,11 +24,12 @@ class BrowserWindow extends Component {
 
   render() {
     const { pages, currentPageIndex, pageOrder } = this.props;
+    const platformClass = `platform-${platform}`;
 
     return (
-      <div id="browser-chrome">
-        <TabBar {...{ pages, pageOrder, currentPageIndex }} />
+      <div id="browser-chrome" className={"platform-" + platform} >
         <NavBar page={pages.get(currentPageIndex)} />
+        <TabBar {...{ pages, pageOrder, currentPageIndex }} />
         <div id="content-area">
           {pages.map((page, pageIndex) => (
             <Page key={'page-' + pageIndex}

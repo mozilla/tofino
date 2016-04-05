@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Btn from './btn.jsx';
 import Location from './location.jsx';
-import { menuBrowser, bookmark, unbookmark } from '../../actions/external';
+import { menuBrowser, maximize, minimize, close } from '../../actions/external';
 import { getCurrentWebView } from '../../browser-util';
 
 /**
@@ -14,39 +14,33 @@ const NavBar = ({ page, dispatch }) => {
     return <div id="browser-navbar"></div>;
   }
 
-  const onBookmark = e => {
-    const webview = getCurrentWebView(e.target.ownerDocument);
-    const title = webview.getTitle();
-    const url = webview.getURL();
-    if (page.isBookmarked) {
-      unbookmark(url, dispatch);
-    } else {
-      bookmark(title, url, dispatch);
-    }
-  };
-
   return (
     <div id="browser-navbar">
+      <Btn title="Menu" icon="bars fa-lg"
+        onClick={() => menuBrowser(dispatch)} />
+
       <Btn title="Back" icon="arrow-left fa-lg"
         onClick={e => getCurrentWebView(e.target.ownerDocument).goBack()}
         disabled={!page.canGoBack} />
       <Btn title="Forward" icon="arrow-right fa-lg"
         onClick={e => getCurrentWebView(e.target.ownerDocument).goForward()}
         disabled={!page.canGoForward} />
-      <div className="input-group">
-        <Location {...{ page }} />
-        <Btn title="Refresh" icon="refresh"
-          onClick={e => getCurrentWebView(e.target.ownerDocument).reload()}
-          disabled={!page.canRefresh} />
-      </div>
-      <Btn title="Bookmark"
-        icon={page.isBookmarked ? 'star fa-lg' : 'star-o fa-lg'}
-        onClick={onBookmark} />
+      <Btn title="Refresh" icon="refresh"
+        onClick={e => getCurrentWebView(e.target.ownerDocument).reload()}
+        disabled={!page.canRefresh} />
+
+      <Location {...{ page }} />
+
       <Btn title="Home" icon="home fa-lg"
         onClick={e => getCurrentWebView(e.target.ownerDocument).goToIndex(0)}
         disabled={!page.canGoBack} />
-      <Btn title="Menu" icon="bars fa-lg"
-        onClick={() => menuBrowser(dispatch)} />
+
+      <Btn title="Minimize" icon="minus fa-lg"
+        onClick={minimize} />
+      <Btn title="Maximize" icon="square-o fa-lg"
+        onClick={maximize} />
+      <Btn title="Close" icon="times fa-lg"
+        onClick={close} />
     </div>
   );
 };

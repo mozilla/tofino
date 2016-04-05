@@ -2,7 +2,8 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { ipcRenderer } from 'electron';
-import { menuLocationContext } from '../../actions/external';
+import Btn from './btn.jsx';
+import { menuLocationContext, bookmark, unbookmark } from '../../actions/external';
 import { setLocation } from '../../actions/main-actions';
 import { fixURL, getCurrentWebView } from '../../browser-util';
 
@@ -38,13 +39,30 @@ class Location extends Component {
     const { page, dispatch } = this.props;
     const value = page.userTyped !== null ? page.userTyped : page.location;
 
+    const onBookmark = e => {
+      const webview = getCurrentWebView(e.target.ownerDocument);
+      const title = webview.getTitle();
+      const url = webview.getURL();
+      if (page.isBookmarked) {
+        unbookmark(url, dispatch);
+      } else {
+        bookmark(title, url, dispatch);
+      }
+    };
+
     return (
-      <input id="urlbar-input" type="text" ref="input"
-        value={value}
-        onChange={ev => dispatch(setLocation(ev.target.value))}
-        onClick={ev => ev.target.select()}
-        onContextMenu={ev => menuLocationContext(ev.target, dispatch)}
-        onKeyDown={this.handleKeyDown} />
+      <div id="browser-location-bar">
+        <input id="urlbar-input" type="text" ref="input"
+          value={value}
+          onChange={ev => dispatch(setLocation(ev.target.value))}
+          onClick={ev => ev.target.select()}
+          onContextMenu={ev => menuLocationContext(ev.target, dispatch)}
+          onKeyDown={this.handleKeyDown} />
+
+        <Btn title="Bookmark"
+          icon={page.isBookmarked ? 'star fa-lg' : 'star-o fa-lg'}
+          onClick={onBookmark} />
+      </div>
     );
   }
 }

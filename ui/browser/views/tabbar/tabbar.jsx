@@ -2,7 +2,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Tab from './tab.jsx';
-import { menuTabContext, maximize, minimize, close } from '../../actions/external';
+import { menuTabContext } from '../../actions/external';
 import { createTab, closeTab, setCurrentTab } from '../../actions/main-actions';
 import { TabBarDragDrop, TabDragDrop } from './dragdrop';
 
@@ -16,16 +16,6 @@ const TabBar = ({ pageOrder, pages, currentPageIndex, dispatch }) => {
   return (
     <div id="browser-tabs" dragzone="copy string:test/uri-list"
       {...barDragDrop.handlers}>
-
-      <a className="close" onClick={close}>
-        <i className="fa fa-circle" />
-      </a>
-      <a className="minimize" onClick={minimize}>
-        <i className="fa fa-circle" />
-      </a>
-      <a className="maximize" onClick={maximize}>
-        <i className="fa fa-circle" />
-      </a>
 
       {pageOrder.map((i) => {
         const page = pages.get(i);
