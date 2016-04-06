@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
+  <style>
+    path#head {
+      fill: none;
+      stroke: #4c4c4c;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 2px;
+    }
+
+    path#tail {
+      fill: #4c4c4c;
+    }
+  </style>
+
+  <g id="glyph-arrow-reload">
+    <path id="tail" d="M11.859,7a4,4,0,1,0-.475,3.114l1.691,1.057A6,6,0,1,1,13.9,7H11.859Z"/>
+    <path id="head" d="M14,3V7H10"/>
+  </g>
+</svg>
