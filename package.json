@@ -1,5 +1,5 @@
 {
-  "name": "blueharvest",
+  "name": "fawkes",
   "version": "0.1.0",
   "description": "Experimental prototype",
   "main": "app/main/main.js",
@@ -8,7 +8,7 @@
     "test": "node_modules/.bin/mocha",
     "postinstall": "node_modules/.bin/gulp download-electron"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "dependencies": {
     "babel-core": "6.7.4",
     "babel-polyfill": "6.7.4",
