@@ -1,4 +1,4 @@
-Simple exploration into using Electron to build a browser.
+# Simple exploration into using Electron to build a browser.
 
 The code uses examples from many different places, but the foundation was started from a set of posts from Paul Frazee:
 
@@ -40,6 +40,19 @@ Currently runs eslint and ui tests with mocha.
 
 ```
 npm test
+```
+
+## Landing code
+
+Use squashed merge by preference.
+
+Make sure your commit message references the issue or bug number, if there is one, identifies the reviewers, and follows a readable style, with the long description including any additional information that's likely to help future spelunkers. For example:
+
+```
+    Issue #6 - Frobnicate the URL bazzer before flattening pilchard. r=mossop,rnewman
+    
+    The frobnication method used is as described in Podder's Miscellany, page 15.
+    Note that this pull request doesn't include tests, because we're bad people.
 ```
 
 ## License
