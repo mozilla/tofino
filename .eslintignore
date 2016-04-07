@@ -1,9 +1,3 @@
 build
 electron
 node_modules
-<<<<<<< dce463a733ae88f54921900dc8ec2bb0c81b13b2
-=======
-src/libs
-src/node_modules
-dist
->>>>>>> Fix let/babel/eslint conflicts that prevented app from running
