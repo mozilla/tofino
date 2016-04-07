@@ -1,21 +1,29 @@
 
-# Simple exploration into using Electron to build a browser.
+# Project Tofino
 
-Project Tofino is a UI experiment. The current tabbed interface to our browsers
-might not be the best way to get things done, so we're going to play with some
-ideas.
+Project Tofino is a browser interaction experiment.
 
-This project is extremely immature. It's currently at the "OK, lets throw some
-stuff together to see what happens" stage. Please adjust your expectations
-accordingly.
+The kinds of things we use browsers for on PCs and mobile devices are
+different than they were when the current “tabs across the top” browsers were
+designed.  We believe we can do a lot better by focusing on the tasks and
+activities users engage browsers for. Project Tofino is one of our
+explorations.
+
+This project is extremely immature.  It's currently at the "OK, lets throw
+some stuff together to see what happens" stage. Please adjust your
+expectations accordingly.  The tools we’re using are not a statement on
+the set of technologies we’ll use to build a final product if these ideas
+pan out.  We’re looking for the quickest way to build the experiments we
+want, not a long-term technical strategy.
 
 If you like a wild ride and you've got another browser for real work, we'd
-love to have your comments on what works and what doesn't.
+love to have your comments on what works and what doesn't.  But right now
+the “what works” list is a lot shorter than the “what doesn’t” list, so maybe
+check back in a few weeks when there’s more to look at.
 
-At least we will when when we've got something worth looking at. Right now it's
-just stuff thrown together. Maybe pop back in a couple of weeks and there might
-be something worth looking at.
+We blog here: https://medium.com/project-tofino
 
+We hang out on Slack here: https://project-tofino.slack.com (you can get an invite at http://tofino-slack-invite.mozilla.io)
 
 ## Build
 
