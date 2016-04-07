@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
 import Tab from './tab.jsx';
 import { menuTabContext } from '../../actions/external';
 import { createTab, closeTab, setCurrentTab } from '../../actions/main-actions';
@@ -61,4 +60,4 @@ TabBar.propTypes = {
   dispatch: PropTypes.func.isRequired,
 };
 
-export default connect()(TabBar);
+export default TabBar;
