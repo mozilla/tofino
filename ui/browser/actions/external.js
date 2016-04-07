@@ -196,7 +196,7 @@ export function bookmark(title, url, dispatch) {
   browserDB.bookmarks.add({ url, title, created: new Date() });
   dispatch(setPageDetails(-1, { isBookmarked: true }));
 
-  this.updateMenu();
+  updateMenu();
 }
 
 /**
@@ -206,7 +206,7 @@ export function unbookmark(url, dispatch) {
   browserDB.bookmarks.where('url').equals(url).delete();
   dispatch(setPageDetails(-1, { isBookmarked: false }));
 
-  this.updateMenu();
+  updateMenu();
 }
 
 /**
