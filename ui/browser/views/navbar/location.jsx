@@ -70,7 +70,8 @@ class Location extends Component {
           onKeyDown={this.handleKeyDown} />
 
         <Btn title="Bookmark"
-          icon={page.isBookmarked ? 'star fa-lg' : 'star-o fa-lg'}
+          // TODO Need an asset for this
+          image={page.isBookmarked ? '' : ''}
           onClick={onBookmark} />
       </div>
     );

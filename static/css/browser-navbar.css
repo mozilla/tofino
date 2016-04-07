@@ -6,7 +6,7 @@
   padding: 0 5px;
   font-size: 15px;
   font-weight: 100;
-  background: linear-gradient(to bottom, #eee, #ddd);
+  background: #fcfcfc;
   border-bottom: 1px solid #aaa;
 
   /* Makes electron app draggable */
@@ -19,61 +19,4 @@
    * this here for now
   -webkit-app-region: no-drag;
   */
-  text-decoration: none;
-  color: #777;
-  cursor: pointer;
-  padding: 9px 7px 0;
-}
-
-#browser-navbar a:hover {
-  text-decoration: none;
-  color: blue;
-}
-
-#browser-navbar a.disabled {
-  color: #bbb;
-  cursor: default;
-}
-
-#browser-navbar .fa-home,
-#browser-navbar .fa-star-o,
-#browser-navbar .fa-arrow-left,
-#browser-navbar .fa-arrow-right,
-#browser-navbar .fa-refresh {
-  /* small positioning adjustment */
-  position: relative;
-  top: -1px;
-}
-
-#browser-navbar .input-group {
-  flex: 1;
-  display: flex;
-  margin: 0 5px;
-}
-
-#browser-navbar .input-group a {
-  border: 1px solid #bbb;
-  border-left: 0;
-  padding: 4px 0;
-  margin: 4px 0 3px;
-  flex: 0 0 30px;
-  text-align: center;
-}
-
-#browser-navbar a:last-child {
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px;
-}
-
-#pages-button .page-count {
-  background-color: #4D4D4D;
-  color: #fff;
-  font-size: 70%;
-  width: 16px;
-  height: 14px;
-  padding-top: 2px;
-  text-align: center;
-  border-radius: 3px;
-  display: inline-block;
-  margin-right: 6px;
 }
