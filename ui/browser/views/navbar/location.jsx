@@ -11,10 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes, Component } from 'react';
-import { connect } from 'react-redux';
 import Btn from './btn.jsx';
-import { menuLocationContext, bookmark, unbookmark } from '../../actions/external';
-import { setLocation } from '../../actions/main-actions';
 import { fixURL, getCurrentWebView } from '../../browser-util';
 
 /**
@@ -40,13 +37,13 @@ class Location extends Component {
       webview.setAttribute('src', location);
     } else if (ev.keyCode === 27) { // esc
       // Restore back to page location and reset userTyped
-      this.props.dispatch(setLocation());
+      this.props.onLocationReset();
       ev.target.select();
     }
   }
 
   render() {
-    const { page, dispatch } = this.props;
+    const { page, onLocationChange, onLocationContextMenu, bookmark, unbookmark } = this.props;
     const value = page.userTyped !== null ? page.userTyped : page.location;
 
     const onBookmark = e => {
@@ -54,9 +51,9 @@ class Location extends Component {
       const title = webview.getTitle();
       const url = webview.getURL();
       if (page.isBookmarked) {
-        unbookmark(url, dispatch);
+        unbookmark(url);
       } else {
-        bookmark(title, url, dispatch);
+        bookmark(title, url);
       }
     };
 
@@ -64,9 +61,9 @@ class Location extends Component {
       <div id="browser-location-bar">
         <input id="urlbar-input" type="text" ref="input"
           value={value}
-          onChange={ev => dispatch(setLocation(ev.target.value))}
+          onChange={onLocationChange}
           onClick={ev => ev.target.select()}
-          onContextMenu={ev => menuLocationContext(ev.target, dispatch)}
+          onContextMenu={onLocationContextMenu}
           onKeyDown={this.handleKeyDown} />
 
         <Btn title="Bookmark"
@@ -79,8 +76,12 @@ class Location extends Component {
 
 Location.propTypes = {
   page: PropTypes.object.isRequired,
-  dispatch: PropTypes.func.isRequired,
+  onLocationChange: PropTypes.func.isRequired,
+  onLocationContextMenu: PropTypes.func.isRequired,
+  onLocationReset: PropTypes.func.isRequired,
+  bookmark: PropTypes.func.isRequired,
+  unbookmark: PropTypes.func.isRequired,
   ipcRenderer: PropTypes.object.isRequired,
 };
 
-export default connect()(Location);
+export default Location;

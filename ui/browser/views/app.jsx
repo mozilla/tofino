@@ -17,12 +17,15 @@ import BrowserWindow from './browser.jsx';
 import * as actions from '../actions/main-actions';
 import { ipcRenderer } from 'electron';
 
-export const App = ({ state }) => (
-  <BrowserWindow pages={state.pages}
-    pageOrder={state.pageOrder}
-    currentPageIndex={state.currentPageIndex}
-    ipcRenderer={ipcRenderer} />
-);
+export const App = function({ state, dispatch }) {
+  return (
+    <BrowserWindow pages={state.pages}
+      pageOrder={state.pageOrder}
+      currentPageIndex={state.currentPageIndex}
+      ipcRenderer={ipcRenderer}
+      dispatch={dispatch} />
+  );
+}
 
 App.propTypes = {
   state: PropTypes.object.isRequired,
@@ -38,4 +41,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps)(App);

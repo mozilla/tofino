@@ -11,15 +11,18 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes, Component } from 'react';
-import { connect } from 'react-redux';
 
 import browserDB from '../../shared/browser-db';
 import TabBar from './tabbar/tabbar.jsx';
 import NavBar from './navbar/navbar.jsx';
 import Page from './page/page.jsx';
 
-import { updateMenu } from '../actions/external';
-import { createTab, attachTab, setPageDetails } from '../actions/main-actions';
+import {
+  bookmark, unbookmark, menuLocationContext,
+  updateMenu, menuBrowser, maximize, minimize, close
+} from '../actions/external';
+import { createTab, attachTab, setPageDetails, setLocation } from '../actions/main-actions';
+import { getCurrentWebView } from '../browser-util';
 
 import { platform } from '../../../build-config';
 
@@ -34,21 +37,39 @@ class BrowserWindow extends Component {
   }
 
   render() {
-    const { pages, currentPageIndex, pageOrder, ipcRenderer } = this.props;
+    const { dispatch, pages, currentPageIndex, pageOrder, ipcRenderer } = this.props;
     const platformClass = `platform-${platform}`;
+    const navBack = e => getCurrentWebView(e.target.ownerDocument).goBack();
+    const navForward = e => getCurrentWebView(e.target.ownerDocument).goForward();
+    const navRefresh = e => getCurrentWebView(e.target.ownerDocument).reload();
+    const openMenu = () => menuBrowser(dispatch);
 
     return (
       <div id="browser-chrome" className={"platform-" + platform} >
         <NavBar page={pages.get(currentPageIndex)}
                 pages={pages}
+                navBack={navBack}
+                navForward={navForward}
+                navRefresh={navRefresh}
+                minimize={minimize}
+                maximize={maximize}
+                close={close}
+                openMenu={openMenu}
+                bookmark={(title, url) => bookmark(title, url, dispatch)}
+                unbookmark={url => unbookmark(url, dispatch)}
+                onLocationChange={e => dispatch(setLocation(e.target.value))}
+                onLocationContextMenu={e => menuLocationContext(e.target, dispatch)}
+                onLocationReset={() => dispatch(setLocation())}
                 ipcRenderer={ipcRenderer} />
-        <TabBar {...{ pages, pageOrder, currentPageIndex }} />
+        <TabBar {...{ pages, pageOrder, currentPageIndex, dispatch }} />
         <div id="content-area">
           {pages.map((page, pageIndex) => (
             <Page key={'page-' + pageIndex}
               page={page} pageIndex={pageIndex}
               isActive={pageIndex === currentPageIndex}
               browserDB={browserDB} />
+              dispatch={dispatch}
+              isActive={pageIndex === currentPageIndex} />
           ))}
         </div>
       </div>
@@ -64,7 +85,7 @@ BrowserWindow.propTypes = {
   ipcRenderer: PropTypes.object.isRequired,
 };
 
-export default connect()(BrowserWindow);
+export default BrowserWindow;
 
 function attachListeners({ dispatch, currentPageIndex, ipcRenderer }) {
   // attach keyboard shortcuts
