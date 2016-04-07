@@ -29,6 +29,9 @@ const globalShortcut = electron.globalShortcut;
 const root = path.dirname(__dirname);
 const staticDir = path.join(__dirname, '..', '..', 'static');
 
+// Keep a global reference to the hidden window.
+const hiddenWindow = require('../services/hidden-window');
+
 // Keep a global references of the window objects, if you don't, the windows will
 // be closed automatically when the JavaScript object is garbage collected.
 const mainWindows = [];
