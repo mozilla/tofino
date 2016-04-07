@@ -22,11 +22,8 @@ the “what works” list is a lot shorter than the “what doesn’t” list, s
 check back in a few weeks when there’s more to look at.
 
 We blog here: https://medium.com/project-tofino
-We hang out on Slack here: https://project-tofino.slack.com (you can get an invite at http://tofino-slack-invite.mozilla.io)
-Project Tofino is a UI experiment. The current tabbed interface to our browsers
-might not be the best way to get things done, so we're going to play with some
-ideas.
 
+We hang out on Slack here: https://project-tofino.slack.com (you can get an invite at http://tofino-slack-invite.mozilla.io)
 
 ## Build
 
