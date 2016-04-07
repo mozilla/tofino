@@ -47,7 +47,6 @@ class Page extends Component {
         <web-view className={`webview-${pageIndex}`}
           ref={node => { if (node != null) this.webview = node; }}
           guestinstance={page.guestInstanceId}
-          preload="../content/content.js"
           onContextMenu={() => dispatch(contextMenu())}
           style={{ height: '100%' /* I have no idea why we need this */ }} />
         <Status page={page} />

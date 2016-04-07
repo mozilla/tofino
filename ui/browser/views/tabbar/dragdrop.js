@@ -127,8 +127,8 @@ export class TabBarDragDrop {
 
     // Find the tab target or default to the last tab
     const document = e.target.ownerDocument;
-    let tabIndex = pageOrder.length - 1;
-    for (let i = 0; i < pages.length; i++) {
+    let tabIndex = pageOrder.size - 1;
+    for (let i = 0; i < pages.size ; i++) {
       const element = document.querySelector(`.browser-tab-${i}`);
       if (element.contains(e.target)) {
         tabIndex = pageOrder.indexOf(i);
