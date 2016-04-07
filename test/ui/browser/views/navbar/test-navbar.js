@@ -12,6 +12,7 @@ function createSpyProps() {
   return {
     page: new Page(),
     pages: new Set(),
+    pageAreaVisible: false,
     ipcRenderer: Object.create(null),
     navBack: expect.createSpy(),
     navForward: expect.createSpy(),
@@ -25,6 +26,7 @@ function createSpyProps() {
     onLocationChange: expect.createSpy(),
     onLocationContextMenu: expect.createSpy(),
     onLocationReset: expect.createSpy(),
+    setPageAreaVisibility: expect.createSpy(),
   };
 }
 

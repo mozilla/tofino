@@ -23,6 +23,7 @@ const initialState = new State({
   pages: Immutable.List.of(new Page({ location: HOME_PAGE })),
   pageOrder: Immutable.List.of(0),
   currentPageIndex: 0,
+  pageAreaVisible: false,
 });
 
 export default function basic(state = initialState, action) {
@@ -51,6 +52,9 @@ export default function basic(state = initialState, action) {
     case types.SET_PAGE_ORDER:
       return setPageOrder(state, action.pageOrder);
 
+    case types.SET_PAGE_AREA_VISIBILITY:
+      return setPageAreaVisibility(state, action.visible);
+
     default:
       return state;
   }
@@ -60,7 +64,8 @@ function createTab(state, location = HOME_PAGE) {
   const page = new Page({ location });
   return state.update('pages', pages => pages.push(page))
               .set('currentPageIndex', state.pages.size)
-              .update('pageOrder', po => po.push(state.pages.size));
+              .update('pageOrder', po => po.push(state.pages.size))
+              .set('pageAreaVisible', true);
 }
 
 function duplicateTab(state, pageIndex) {
@@ -109,7 +114,9 @@ function closeTab(state, pageIndex) {
     }
   }
 
-  return new State({ pages, pageOrder, currentPageIndex });
+  return state.set('pages', pages)
+              .set('pageOrder', pageOrder)
+              .set('currentPageIndex', currentPageIndex);
 }
 
 function setLocation(state, userTyped) {
@@ -133,4 +140,8 @@ function setCurrentTab(state, pageIndex) {
 
 function setPageOrder(state, pageOrder) {
   return state.set('pageOrder', pageOrder);
+}
+
+function setPageAreaVisibility(state, visible) {
+  return state.set('pageAreaVisible', visible);
 }

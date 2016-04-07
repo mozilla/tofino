@@ -20,6 +20,7 @@ export const App = function({ state, dispatch }) {
     <BrowserWindow pages={state.pages}
       pageOrder={state.pageOrder}
       currentPageIndex={state.currentPageIndex}
+      pageAreaVisible={state.pageAreaVisible}
       ipcRenderer={ipcRenderer}
       dispatch={dispatch} />
   );

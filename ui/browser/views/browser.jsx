@@ -22,7 +22,10 @@ import {
   unbookmark as unbookmarkAction,
   menuLocationContext, updateMenu, menuBrowser, maximize, minimize, close,
 } from '../actions/external';
-import { createTab, attachTab, setPageDetails, setLocation } from '../actions/main-actions';
+import {
+  setPageAreaVisibility as setPageAreaVisibilityAction,
+  createTab, attachTab, setPageDetails, setLocation,
+} from '../actions/main-actions';
 import { getCurrentWebView } from '../browser-util';
 
 import { platform } from '../../../build-config';
@@ -38,7 +41,8 @@ class BrowserWindow extends Component {
   }
 
   render() {
-    const { dispatch, pages, currentPageIndex, pageOrder, ipcRenderer } = this.props;
+    const { dispatch, pages, currentPageIndex, pageOrder, ipcRenderer,
+            pageAreaVisible } = this.props;
     const navBack = e => getCurrentWebView(e.target.ownerDocument).goBack();
     const navForward = e => getCurrentWebView(e.target.ownerDocument).goForward();
     const navRefresh = e => getCurrentWebView(e.target.ownerDocument).reload();
@@ -48,14 +52,16 @@ class BrowserWindow extends Component {
     const onLocationChange = e => dispatch(setLocation(e.target.value));
     const onLocationContextMenu = e => menuLocationContext(e.target, dispatch);
     const onLocationReset = () => dispatch(setLocation());
+    const setPageAreaVisibility = (visible) => dispatch(setPageAreaVisibilityAction(visible));
 
     return (
       <div id="browser-chrome" className={`platform-${platform}`} >
         <NavBar page={pages.get(currentPageIndex)}
           {...{ pages, navBack, navForward, navRefresh, minimize, maximize,
             close, openMenu, onLocationChange, onLocationContextMenu,
-            onLocationReset, bookmark, unbookmark, ipcRenderer }} />
-        <TabBar {...{ pages, pageOrder, currentPageIndex, dispatch }} />
+            onLocationReset, bookmark, unbookmark, pageAreaVisible, ipcRenderer,
+            setPageAreaVisibility }} />
+        <TabBar {...{ pages, pageOrder, currentPageIndex, pageAreaVisible, dispatch }} />
         <div id="content-area">
           {pages.map((page, pageIndex) => (
             <Page key={`page-${pageIndex}`}
@@ -76,6 +82,7 @@ BrowserWindow.propTypes = {
   currentPageIndex: PropTypes.number.isRequired,
   dispatch: PropTypes.func.isRequired,
   ipcRenderer: PropTypes.object.isRequired,
+  pageAreaVisible: PropTypes.bool.isRequired,
 };
 
 export default BrowserWindow;

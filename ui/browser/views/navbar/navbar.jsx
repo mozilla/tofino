@@ -20,8 +20,8 @@ import Location from './location.jsx';
 function NavBar(props) {
   const {
     navBack, navForward, navRefresh, page, pages, openMenu, ipcRenderer,
-    minimize, maximize, close, bookmark, unbookmark,
-    onLocationChange, onLocationContextMenu, onLocationReset,
+    minimize, maximize, close, bookmark, unbookmark, setPageAreaVisibility,
+    onLocationChange, onLocationContextMenu, onLocationReset, pageAreaVisible,
   } = props;
 
   if (page == null) {
@@ -34,31 +34,25 @@ function NavBar(props) {
         title="Menu" image="glyph-menu-16.svg"
         clickHandler={openMenu} />
 
-      <a id="pages-button" style={{
-        borderWidth: '0px 1px',
-        borderColor: '#D6D6D6',
-        borderStyle: 'solid',
-        margin: '8px 8px 0px 8px',
-        padding: '0px 10px',
-        height: '22px',
-      }}>
-        <span id="browser-navbar-pages-count" style={{
-          backgroundColor: '#4d4d4d',
-          color: '#fff',
-          fontSize: '10px',
-          width: '16px',
-          height: '14px',
-          paddingTop: '2px',
-          textAlign: 'center',
-          borderRadius: '3px',
-          display: 'inline-block',
-          margin: '0px 6px 0px 0px',
-        }}>{pages.size}</span>
-        <span style={{
-          fontSize: '12px',
-        }}>{"Pages"}</span>
-      </a>
-
+      <Btn id="pages-button" title="Pages"
+        active={pageAreaVisible}
+        clickHandler={() => { setPageAreaVisibility(!pageAreaVisible); }}>
+          <span id="browser-navbar-pages-count" style={{
+            backgroundColor: '#4d4d4d',
+            color: '#fff',
+            fontSize: '10px',
+            width: '16px',
+            height: '14px',
+            paddingTop: '2px',
+            textAlign: 'center',
+            borderRadius: '3px',
+            display: 'inline-block',
+            margin: '0px 6px 0px 0px',
+          }}>{pages.size}</span>
+          <span style={{
+            fontSize: '12px',
+          }}>{"Pages"}</span>
+      </Btn>
       <Btn id="browser-navbar-back"
         title="Back" image="glyph-arrow-nav-back-16.svg"
         clickHandler={navBack}
@@ -92,6 +86,7 @@ function NavBar(props) {
 NavBar.propTypes = {
   page: PropTypes.object,
   pages: PropTypes.object.isRequired,
+  pageAreaVisible: PropTypes.bool.isRequired,
   ipcRenderer: PropTypes.object.isRequired,
   navBack: PropTypes.func.isRequired,
   navForward: PropTypes.func.isRequired,
@@ -107,6 +102,7 @@ NavBar.propTypes = {
   onLocationChange: PropTypes.func.isRequired,
   onLocationContextMenu: PropTypes.func.isRequired,
   onLocationReset: PropTypes.func.isRequired,
+  setPageAreaVisibility: PropTypes.func.isRequired,
 };
 
 export default NavBar;

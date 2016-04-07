@@ -20,36 +20,48 @@ const noop = function() {};
  * A button for the NavBar.
  * `image` must be a valid CSS path to an image.
  */
-const Btn = ({ id, disabled, title, image, clickHandler }) => (
-  <button
-    type={"button"}
-    style={{
-      backgroundImage: image ? `url(assets/${image})` : `url(${DEFAULT})`,
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: `${HEIGHT} ${WIDTH}`,
+const Btn = ({ id, disabled, active, title, image, clickHandler, children }) => {
+  const styles = {
+    opacity: (disabled ? '0.5' : '1'),
+    cursor: (disabled ? 'default' : 'pointer'),
+    margin: '8px 3px 0px 3px',
+    height: HEIGHT,
+    display: 'inline-block',
+    padding: '0',
+    border: '0',
+    backgroundColor: (active ? '#DFE1E4' : 'transparent'),
+  };
+  if (image) {
+    styles.backgroundImage = image ? `url(assets/${image})` : `url(${DEFAULT})`;
+    styles.backgroundRepeat = 'no-repeat';
+    styles.backgroundSize = `${HEIGHT} ${WIDTH}`;
+    styles.width = WIDTH;
+  }
 
-      opacity: (disabled ? '0.5' : '1'),
-      cursor: (disabled ? 'default' : 'pointer'),
-      margin: '8px 3px 0px 3px',
-      width: WIDTH,
-      height: HEIGHT,
-      display: 'inline-block',
-      padding: '0',
-      border: '0',
-      backgroundColor: 'transparent',
-    }}
+  return (
+    <button
+      type={"button"}
+      style={styles}
 
-    // Don't bind a real handler if this button is disabled
-    onClick={disabled ? noop : clickHandler}
-    {...{ id, disabled, title }}>
-  </button>
-);
+      // Don't bind a real handler if this button is disabled
+      onClick={disabled ? noop : clickHandler}
+      {...{ id, disabled, title }}>
+      {children}
+    </button>
+  );
+};
 
 Btn.propTypes = {
   disabled: PropTypes.bool,
+  active: PropTypes.bool,
   id: PropTypes.string,
   image: PropTypes.string,
   title: PropTypes.string.isRequired,
+  icon: PropTypes.string,
+  children: React.PropTypes.oneOfType([
+    React.PropTypes.arrayOf(React.PropTypes.node),
+    React.PropTypes.node,
+  ]),
   clickHandler: PropTypes.func.isRequired,
 };
 

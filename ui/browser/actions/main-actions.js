@@ -42,3 +42,7 @@ export function setCurrentTab(pageIndex) {
 export function setPageOrder(pageOrder) {
   return { type: types.SET_PAGE_ORDER, pageOrder, instrument: true };
 }
+
+export function setPageAreaVisibility(visible) {
+  return { type: types.SET_PAGE_AREA_VISIBILITY, visible };
+}

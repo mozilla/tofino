@@ -25,6 +25,9 @@ export const State = Immutable.Record({
 
   // The currently displayed tab
   currentPageIndex: -1,
+
+  // Should page section be visible in UI
+  pageAreaVisible: false,
 });
 
 /**
