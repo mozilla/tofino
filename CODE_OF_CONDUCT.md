@@ -1,13 +1,13 @@
 ---
 layout: default
-title: The Fawkes Code of Conduct
+title: The Project Tofino Code of Conduct
 ---
 
-# The Fawkes Code of Conduct
+# The Project Tofino Code of Conduct
 
 ## Conduct
 
-**Contact**: [fawkes-mods@mozilla.com](mailto:fawkes-mods@mozilla.com)
+**Contact**: [tofino-mods@mozilla.com](mailto:tofino-mods@mozilla.com)
 
 * We are committed to providing a friendly, safe and welcoming environment for
   all, regardless of level of experience, gender, gender identity and
@@ -31,8 +31,8 @@ title: The Fawkes Code of Conduct
 * Private harassment is also unacceptable. No matter who you are, if you feel
   you have been or are being harassed or made uncomfortable by a community
   member, please contact the
-  [Fawkes moderation team](mailto:fawkes-mods@mozilla.com) immediately. Whether
-  you're a regular contributor or a newcomer, we care about making this
+  [Project Tofino moderation team](mailto:tofino-mods@mozilla.com) immediately.
+  Whether you're a regular contributor or a newcomer, we care about making this
   community a safe place for you and we've got your back.
 * Likewise any spamming, trolling, flaming, baiting or other attention-stealing
   behaviour is not welcome.
@@ -42,11 +42,12 @@ title: The Fawkes Code of Conduct
 
 These are the policies for upholding our community's standards of conduct. If
 you feel that a thread needs moderation, please contact the
-[Fawkes moderation team](mailto:fawkes-mods@mozilla.com).
+[Project Tofino moderation team](mailto:tofino-mods@mozilla.com).
 
-1. Remarks that violate the Fawkes standards of conduct, including hateful,
-   hurtful, oppressive, or exclusionary remarks, are not allowed. (Cursing is
-   allowed, but never targeting another user, and never in a hateful manner.)
+1. Remarks that violate the Project Tofino standards of conduct, including
+   hateful, hurtful, oppressive, or exclusionary remarks, are not allowed.
+   (Cursing is allowed, but never targeting another user, and never in a
+   hateful manner.)
 2. Remarks that moderators find inappropriate, whether listed in the code of
    conduct or not, are also not allowed.
 3. Moderators will first respond to such remarks with a warning.
@@ -63,27 +64,28 @@ you feel that a thread needs moderation, please contact the
    moderator creates an inappropriate situation, they should expect less leeway
    than others.
 
-In the Fawkes community we strive to go the extra step to look out for each
-other. Don't just aim to be technically unimpeachable, try to be your best self.
-In particular, avoid flirting with offensive or sensitive issues, particularly
-if they're off-topic; this all too often leads to unnecessary fights, hurt
-feelings, and damaged trust; worse, it can drive people away from the community
-entirely.
+In the Project Tofino community we strive to go the extra step to look out for
+each other. Don't just aim to be technically unimpeachable, try to be your best
+self. In particular, avoid flirting with offensive or sensitive issues,
+particularly if they're off-topic; this all too often leads to unnecessary
+fights, hurt feelings, and damaged trust; worse, it can drive people away from
+the community entirely.
 
 And if someone takes issue with something you said or did, resist the urge to
 be defensive. Just stop doing what it was they complained about and apologize.
 Even if you feel you were misinterpreted or unfairly accused, chances are good
 there was something you could've communicated better — remember that it's your
-responsibility to make your fellow Fawkes community members comfortable.
+responsibility to make your fellow Project Tofino community members comfortable.
 Everyone wants to get along and we are all here first and foremost because we
 want to talk about cool technology. You will find that people will be eager to
 assume good intent and forgive as long as you earn their trust.
 
-The enforcement policies listed above apply to all official Fawkes venues. For
-other projects adopting the Fawkes Code of Conduct, please contact the
-maintainers of those projects for enforcement. If you wish to use this code of
-conduct for your own project, consider explicitly mentioning your moderation
-policy or making a copy with your own moderation policy so as to avoid confusion.
+The enforcement policies listed above apply to all official Project Tofino
+venues. For other projects adopting the Project Tofino Code of Conduct, please
+contact the maintainers of those projects for enforcement. If you wish to use
+this code of conduct for your own project, consider explicitly mentioning your
+moderation policy or making a copy with your own moderation policy so as to
+avoid confusion.
 
 *Adapted from [The Rust Code of Conduct](https://www.rust-lang.org/conduct.html)
 which is based on the [Citizen Code of Conduct](http://citizencodeofconduct.org),
