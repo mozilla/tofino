@@ -13,32 +13,32 @@ specific language governing permissions and limitations under the License.
 import * as types from '../constants/action-types';
 
 export function createTab(location) {
-  return { type: types.CREATE_TAB, location };
+  return { type: types.CREATE_TAB, location, instrument: true };
 }
 
 export function duplicateTab(pageIndex) {
-  return { type: types.DUPLICATE_TAB, pageIndex };
+  return { type: types.DUPLICATE_TAB, pageIndex, instrument: true };
 }
 export function attachTab(page) {
-  return { type: types.ATTACH_TAB, page };
+  return { type: types.ATTACH_TAB, page, instrument: true };
 }
 
 export function closeTab(pageIndex) {
-  return { type: types.CLOSE_TAB, pageIndex };
+  return { type: types.CLOSE_TAB, pageIndex, instrument: true };
 }
 
 export function setLocation(userTyped) {
-  return { type: types.SET_LOCATION, userTyped };
+  return { type: types.SET_LOCATION, userTyped, instrument: true };
 }
 
 export function setPageDetails(pageIndex, details) {
-  return { type: types.SET_PAGE_DETAILS, pageIndex, details };
+  return { type: types.SET_PAGE_DETAILS, pageIndex, details, instrument: false };
 }
 
 export function setCurrentTab(pageIndex) {
-  return { type: types.SET_CURRENT_TAB, pageIndex };
+  return { type: types.SET_CURRENT_TAB, pageIndex, instrument: true };
 }
 
 export function setPageOrder(pageOrder) {
-  return { type: types.SET_PAGE_ORDER, pageOrder };
+  return { type: types.SET_PAGE_ORDER, pageOrder, instrument: true };
 }

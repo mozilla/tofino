@@ -13,6 +13,14 @@ specific language governing permissions and limitations under the License.
 import { applyMiddleware, createStore } from 'redux';
 import createLogger from 'redux-logger';
 import rootReducer from '../reducers';
+import * as instrument from '../../shared/instrument';
+
+const instrumenter = store => next => action => { // eslint-disable-line no-unused-vars
+  if (action.instrument) {
+    instrument.event('event', action.type);
+  }
+  return next(action);
+};
 
 export default function configureStore() {
   const logger = createLogger({
@@ -21,7 +29,7 @@ export default function configureStore() {
     stateTransformer(state) { return state.toJS(); },
   });
 
-  const store = createStore(rootReducer, applyMiddleware(logger));
+  const store = createStore(rootReducer, applyMiddleware(logger, instrumenter));
 
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers
