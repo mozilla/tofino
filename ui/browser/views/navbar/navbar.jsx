@@ -31,7 +31,7 @@ const NavBar = ({ page, pages, dispatch, ipcRenderer }) => {
         onClick={() => menuBrowser(dispatch)} />
 
       <a id="pages-button">
-        <span className="page-count">{pages.length}</span>
+        <span className="page-count">{pages.size}</span>
         {"Pages"}
       </a>
       <Btn title="Back" icon="arrow-left fa-lg"
