@@ -25,6 +25,7 @@ const BrowserMenu = require('./browser-menu').default;
 const isProduction = require('../../shared/util').isProduction;
 const ipc = electron.ipcMain;
 const globalShortcut = electron.globalShortcut;
+const electronLocalshortcut = require('electron-localshortcut');
 
 const root = path.dirname(__dirname);
 const staticDir = path.join(__dirname, '..', '..', 'static');
@@ -59,6 +60,10 @@ function createWindow(tabInfo) {
     if (index > -1) {
       mainWindows.splice(index, 1);
     }
+  });
+
+  electronLocalshortcut.register(browser, 'CmdOrCtrl+L', () => {
+    browser.webContents.send('focus-urlbar');
   });
 
   browser.webContents.once('did-finish-load', () => {
@@ -100,11 +105,6 @@ server.serve(staticDir);
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 app.on('ready', () => {
-  // Register some global shortcuts
-  globalShortcut.register('CmdOrCtrl+L', () => {
-    BrowserWindow.getFocusedWindow().webContents.send('focus-urlbar');
-  });
-
   registerFileProtocol('atom', url => {
     if (url.indexOf('/') === '-1') {
       url = url + '/index.html';
