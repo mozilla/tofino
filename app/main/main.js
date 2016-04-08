@@ -18,6 +18,7 @@ require('babel-register')();
 
 const path = require('path');
 const electron = require('electron');
+const instrument = require('../services/instrument');
 const server = require('../services/server');
 const app = electron.app; // control application life.
 const BrowserWindow = electron.BrowserWindow;  // create native browser window.
@@ -137,6 +138,11 @@ app.on('activate', () => {
   if (mainWindows.length === 0) {
     createWindow();
   }
+});
+
+ipc.on('instrument-event', (event, args) => {
+  // Until we transpile app/, we can't destructure in the argument list or inline here.
+  instrument.event(args.name, args.method, args.label, args.value);
 });
 
 ipc.on('new-window', createWindow);
