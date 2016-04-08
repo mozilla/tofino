@@ -31,32 +31,52 @@ class NavBar extends Component {
 
     return (
       <div id="browser-navbar">
-        <Btn title="Menu" icon="bars fa-lg"
+        <Btn title="Menu" image="glyph-menu-16.svg"
           onClick={openMenu} />
 
-        <a id="pages-button">
-          <span className="page-count">{pages.size}</span>
-          {"Pages"}
+        <a id="pages-button" style={{
+          borderWidth: "0px 1px",
+          borderColor: "#D6D6D6",
+          borderStyle: "solid",
+          margin: "8px 8px 0px 8px",
+          padding: "0px 10px",
+          height: "22px",
+        }}>
+          <span style={{
+            backgroundColor: "#4d4d4d",
+            color: "#fff",
+            fontSize: "10px",
+            width: "16px",
+            height: "14px",
+            paddingTop: "2px",
+            textAlign: "center",
+            borderRadius: "3px",
+            display: "inline-block",
+            margin: "0px 6px 0px 0px"
+          }}>{pages.size}</span>
+          <span style={{
+            fontSize: "12px",
+          }}>{"Pages"}</span>
         </a>
-        <Btn title="Back" icon="arrow-left fa-lg"
+
+        <Btn title="Back" image="glyph-arrow-nav-back-16.svg"
           onClick={navBack}
           disabled={!page.canGoBack} />
-        <Btn title="Forward" icon="arrow-right fa-lg"
+        <Btn title="Forward" image="glyph-arrow-nav-forward-16.svg"
           onClick={navForward}
           disabled={!page.canGoForward} />
-        <Btn title="Refresh" icon="refresh"
+        <Btn title="Refresh" image="glyph-arrow-reload-16.svg"
           onClick={navRefresh}
           disabled={!page.canRefresh} />
 
         <Location {
           ...{page, ipcRenderer, bookmark, unbookmark, onLocationChange, onLocationContextMenu, onLocationReset}
         } />
-
-        <Btn title="Minimize" icon="minus fa-lg"
+        <Btn title="Minimize" image="glyph-window-minimize-16.svg"
           onClick={minimize} />
-        <Btn title="Maximize" icon="square-o fa-lg"
+        <Btn title="Maximize" image="glyph-window-maximize-16.svg"
           onClick={maximize} />
-        <Btn title="Close" icon="times fa-lg"
+        <Btn title="Close" image="glyph-window-close-16.svg"
           onClick={close} />
       </div>
     );

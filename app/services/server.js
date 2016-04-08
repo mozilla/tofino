@@ -39,6 +39,9 @@ export function serve(staticDir) {
   const fontsDir = path.join(staticDir, 'fonts');
   app.use('/fonts/', express.static(fontsDir));
 
+  const assetsDir = path.join(staticDir, 'assets');
+  app.use('/assets/', express.static(assetsDir));
+
   const index = path.join(staticDir, 'browser.html');
   function showIndex(req, res) {
     res.sendFile(index);
