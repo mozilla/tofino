@@ -10,6 +10,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
+import UrlUtil from '../shared/url-util';
+
 /**
  * Given a search query, format it into a search engine's URL
  */
@@ -23,12 +25,16 @@ export function getSearchURL(query) {
  * Convert whatever the user typed into the URL bar into an actual URL
  */
 export function fixURL(typed) {
-  if (typed.includes('://') || typed.trim().startsWith('data:')) {
+  if (UrlUtil.isDataUrl(typed)) {
     return typed;
   }
 
-  if (!typed.includes(' ') && typed.includes('.')) {
-    return `http://${typed}`;
+  if (typed.includes('://')) {
+    return typed;
+  }
+
+  if (UrlUtil.isURL(typed) && !typed.includes(' ')) {
+    return UrlUtil.getUrlFromInput(typed);
   }
 
   return getSearchURL(typed);
