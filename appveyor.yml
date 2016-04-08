@@ -1,22 +1,15 @@
 platform: x64
 
 environment:
-  nodejs_version: "4.2"
-  UPLOAD_URL: https://www.fractalbrew.com/files/bh2016/.upload.php
-  UPLOAD_USER:
-    secure: 6Fzk44dia+l3niWwWqfeuQ==
-  UPLOAD_PASS:
-    secure: cEuVnVlZhqzYO8NSeH4j3g==
+  nodejs_version: "5.9"
 
 install:
   - ps: Install-Product node $env:nodejs_version
   - node --version
   - npm --version
-  - npm install --progress false --depth 0 -g gulp-cli
   - npm install --progress false --depth 0
 
 build: off
 
 after_test:
-  - gulp -LLLL --no-color package
-  - python scripts\upload.py build
+  - npm test
