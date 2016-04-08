@@ -13,10 +13,6 @@
   -webkit-app-region: drag;
 }
 
-#browser-navbar a {
-  /* We should possibly make buttons in the navbar
-   * NOT drag the entire electron app window, but just leaving
-   * this here for now
+#browser-navbar a, #browser-navbar input {
   -webkit-app-region: no-drag;
-  */
 }
