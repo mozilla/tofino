@@ -13,6 +13,9 @@ specific language governing permissions and limitations under the License.
 /* eslint-disable strict */
 'use strict';
 
+// Must go before any require statements.
+const browserStartTime = Date.now();
+
 require('babel-polyfill');
 require('babel-register')();
 
@@ -68,6 +71,9 @@ function createWindow(tabInfo) {
   });
 
   browser.webContents.once('did-finish-load', () => {
+    const browserDidFinishLoadTime = Date.now();
+    instrument.event('browser', 'READY', 'ms', browserDidFinishLoadTime - browserStartTime);
+
     browser.show();
 
     if (tabInfo) {
@@ -100,12 +106,18 @@ function registerFileProtocol(scheme, mapper) {
   });
 }
 
+const appStartupTime = Date.now();
+instrument.event('app', 'STARTUP');
+
 // Kick off the internal webserver so we have HMR
 server.serve(staticDir);
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 app.on('ready', () => {
+  const appReadyTime = Date.now();
+  instrument.event('app', 'READY', 'ms', appReadyTime - appStartupTime);
+
   registerFileProtocol('atom', url => {
     if (url.indexOf('/') === '-1') {
       url = `${url}/index.html`;
