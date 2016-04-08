@@ -6,16 +6,20 @@ osx_image: xcode7.2
 sudo: required
 dist: trusty
 
-env:
-  - secure: "nNvjOscSTApr8E3HWlVzAqG6IHRMOxiMemKgo/SMQlMMdQcn45oxkUuitcWDO+/xD8VVV1UE4Zpm1BzBti4hxSY4Kf8PqurB1fvyIcYtP3lXUG8WJ98+vUyAzlIz/8WI/TNTr4oZda6eonSLQ/HwO/lJ4VNn9dC6qkI847KGx3IqaVRgTibbOA31nUXt/bfT8ins+PKzcyqCP8NZkvZqYtWLwMY4kR0kWdPiWrhrCjFtL/Y1ATL3w5qhcoqPcniDAkpxxDSvwPvqf341nQwetEclcNWyJlHre3XtFpPCRi/QrDncSoIV+i1uWzzTll9Se7k9QEOc7RC9FOCjOF4z6bkBhHW64CA38SqdmgMFPS/736tgiRGKLsDGiNvYAyI0cnSyNWUx/CujyjIB9XLKQJxePTHiWGwPAc8O7dKyNkUlRvXWtFbTfovk9qv6aSOfX8PgqKUoTN+S1qVX3U1b0o0g9BX4OPs4DVXc/OQDLovErUBqJvrGsasuTP60QuSx86yipqGwVJgmVyS6Jc5ENY7N2nNvVb6mCy7V9g4p1lgKvcwlFbaWKIdtQVQGwftvfOP2+u3iEu5AFjmJS8Lun+MvuUpLSZMdIPWrCv4w3Mclawqy7fILOFiWZQooAs1oMiDYaWoDjCkpS/MtSZHUoLOlVHhGbKAjGWtAGypC36k="
-
 before_install: scripts/bootstrap.py
 install:
+  - nvm --version
+  - nvm install 5.9
   - node --version
   - npm --version
-  - npm install --progress false --depth 0 -g gulp-cli
   - npm install --progress false --depth 0
 
 script:
-  - gulp -LLLL --no-color package
-  - scripts/upload.py build
+  - npm test
+
+notifications:
+  slack:
+    secure: Vc1nxyKmmhqd6z+Abfm0648gZB4U7nkV2tmMwtVQppJ39mNXn0pUK74Z8Ub4gXCyyj2Y0/JmsuqOVSeaABY16n5LuP6KD3WUKyF8PzjWKLe5d5uR+Y0WP8ZtA2AOL0VjZyVM6TtXsZpZKB7+e9VeoeMbU5V2AOSfzvsUmvNHldY4+KarT/QiiNTNBaXsNFoWs+wMKWxDWcV/97BzULS1CTBp0INK+fB6fCoUypS8rzqgUPEC1EmIPMbS72Hjz83QfEUd/O+DMeceDqzCTSHgwYFvivNAWfAeNNekWCfDW7z7q8SeduixTGTlIjtLAWbQD2anw3xgu+PHcJNbF1evIysDI3fn4JH4bHL7Tu5uCL77aIWKWY+0QZRXNnV6tza3nIFLDOEGw0yBc2+W8dKSERpaKbRZ5PyCFJ1v5AG7whtXajG6xelvfhCP1lK5FWmyrycNKdaxlG37xafXQZ4wGWt4Zj81zyywk+PwM1hWVw5kOKDVlOI34z3/tZFMCqzfwPcIC7L8X1TeWAhphbEfMa1PUi3WVawQqex36zogvLg6MW41NuEBXHykM3/3F0Ef11h09yiHhnVlYN/4s/R8FSydGBr3xG1o9Pn4C/YqvB2KBWPO4hp2/vng0yJi6uBE9sHR3p0sJ3WFQhboNfJDL8Ey6DWcxirQhHKlyvbbvpo=
+    on_success: change
+    on_failure: always
+    on_pull_requests: false

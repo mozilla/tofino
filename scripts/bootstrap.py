@@ -16,7 +16,7 @@ def main():
 
     if platform == "osx":
         run(["brew", "update"])
-        run(["brew", "install", "node"])
+        run(["brew", "install", "nvm"])
 
 def run(args = []):
     sys.stderr.write("Running %s\n" % (" ".join(args)))
