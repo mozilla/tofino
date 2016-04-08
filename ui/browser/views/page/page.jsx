@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes, Component } from 'react';
-import { connect } from 'react-redux';
 
 import Status from './status.jsx';
 import Search from './search.jsx';
@@ -62,7 +61,7 @@ Page.propTypes = {
   dispatch: PropTypes.func.isRequired,
 };
 
-export default connect()(Page);
+export default Page;
 
 /**
  * WebView wasn't designed for React...
