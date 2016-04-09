@@ -10,6 +10,11 @@ Node code that runs in the main process and has access to Electron APIs. Spawns 
 
 Services used in the main-process.
 
+### services/hidden-window
+
+Long lived hidden `BrowserWindow` instance that exposes HTML5 events
+and APIs from a background content process to the main process.
+
 ## shared
 
 Utilities and modules used by both main-process/node code and render-process/browser code.
