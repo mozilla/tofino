@@ -4,9 +4,9 @@
   "description": "Experimental prototype",
   "main": "app/main/main.js",
   "scripts": {
-    "start": "node_modules/.bin/gulp run",
-    "test": "node_modules/.bin/mocha",
-    "postinstall": "node_modules/.bin/gulp download-electron"
+    "start": "gulp run",
+    "test": "mocha",
+    "postinstall": "electron-rebuild"
   },
   "license": "Apache-2.0",
   "dependencies": {
@@ -30,9 +30,9 @@
     "redux-logger": "2.6.1"
   },
   "devDependencies": {
-    "electron-download": "2.1.0",
     "electron-packager": "5.2.1",
     "electron-prebuilt": "0.37.2",
+    "electron-rebuild": "1.1.3",
     "enzyme": "2.2.0",
     "eslint": "2.4.0",
     "eslint-config-airbnb": "6.2.0",

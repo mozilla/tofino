@@ -13,7 +13,6 @@ const zip = require('gulp-vinyl-zip');
 
 const buildUtils = require('./utils');
 const manifest = require('../package.json');
-const electronConfig = require('./electron-config');
 
 const arch = 'x64';
 const platform = os.platform();
@@ -63,7 +62,7 @@ module.exports = () => {
     arch,
     platform,
     ignore: ignore,
-    version: electronConfig.version,
+    version: buildUtils.getElectronVersion(),
     dir: path.join(__dirname, '..'),
     icon: path.join(__dirname, '..', 'branding', 'app-icon'),
     out: path.join(__dirname, '..', 'dist'),
