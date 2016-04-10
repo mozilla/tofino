@@ -7,7 +7,6 @@ const exec = require('child_process').exec;
 const path = require('path');
 
 const manifest = require('../package.json');
-const electronConfig = require('./electron-config');
 const buildUtils = require('./utils');
 
 module.exports = env => cb => {

@@ -3,19 +3,12 @@
 
 const path = require('path');
 const os = require('os');
+const fs = require('fs');
 
 const manifest = require('../package.json');
 
 const IS_TRAVIS = exports.IS_TRAVIS = process.env.TRAVIS === 'true';
 const IS_APPVEYOR = exports.IS_APPVEYOR = process.env.APPVETOR === 'True';
-
-const electronDir = path.join(__dirname, '..', 'electron');
-const electronPaths = {
-  darwin: path.join(electronDir, 'Electron.app', 'Contents', 'MacOS', 'Electron'),
-  freebsd: path.join(electronDir, 'electron'),
-  linux: path.join(electronDir, 'electron'),
-  win32: path.join(electronDir, 'electron.exe'),
-};
 
 exports.getAppVersion = function getAppVersion() {
   return IS_TRAVIS ? `${manifest.version}-${process.env.TRAVIS_BUILD_NUMBER}` :
@@ -23,6 +16,11 @@ exports.getAppVersion = function getAppVersion() {
          manifest.version;
 };
 
-exports.getElectronPath = function getElectronPath() {
-  return electronPaths[os.platform()];
+function getElectronPath() {
+  return require('electron-prebuilt');
+};
+exports.getElectronPath = getElectronPath;
+
+exports.getElectronVersion = function getElectronVersion() {
+  return fs.readFileSync(path.join(path.dirname(getElectronPath()), 'version'), 'utf-8').replace(/^v/, '');
 };

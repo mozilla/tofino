@@ -10,7 +10,6 @@ const path = require('path');
 const os = require('os');
 const fs = require('fs');
 
-const electronConfig = require('./electron-config');
 const buildUtils = require('./utils');
 
 const platform = os.platform();
@@ -23,7 +22,7 @@ const BASE_CONFIG = {
   arch,
 
   // Electron information
-  electron: electronConfig,
+  electron: buildUtils.getElectronVersion(),
 
   // Other environment settings
 
