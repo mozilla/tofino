@@ -44,6 +44,7 @@ export class TabDragDrop {
     const { pageIndex, pageOrder } = this;
 
     const tabIndex = pageOrder.indexOf(pageIndex);
+
     // e.dataTransfer.setData('text/uri-list', page.location);
     // e.dataTransfer.setData('text/plain', page.location);
     e.dataTransfer.setData('application/vnd.mozilla.bh.page',
@@ -165,6 +166,7 @@ export class TabBarDragDrop {
     const data = e.dataTransfer.getData('application/vnd.mozilla.bh.page');
     if (data) {
       const dragData = JSON.parse(data);
+
       // Move the tab back to its original index
       const newPageOrder = pageOrder.filter(p => p !== dragData.pageIndex);
       newPageOrder.splice(dragData.tabIndex, 0, dragData.pageIndex);

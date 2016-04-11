@@ -27,6 +27,15 @@
     "eqeqeq": ["error", "allow-null"],
     "prefer-template": ["error"],
     "prefer-arrow-callback": ["error"],
+    "lines-around-comment": ["error", {
+      "beforeBlockComment": true,
+      "afterBlockComment": false,
+      "beforeLineComment": true,
+      "afterLineComment": false,
+      "allowBlockStart": true,
+      "allowObjectStart": true,
+      "allowArrayStart": true
+    }],
     "react/jsx-closing-bracket-location": ["warn", "after-props"],
     "react/prefer-es6-class": ["off"],
   }

@@ -19,8 +19,10 @@ import Immutable from 'immutable';
 export const State = Immutable.Record({
   // This is a list of Page objects (see below)
   pages: Immutable.List(),
+
   // This should be the order in which tabs are displayed.
   pageOrder: Immutable.List(),
+
   // The currently displayed tab
   currentPageIndex: -1,
 });
