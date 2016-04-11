@@ -6,7 +6,6 @@ import React from 'react';
 import { shallow } from 'enzyme';
 
 import NavBar from '../../../../../ui/browser/views/navbar/navbar.jsx';
-import { Page } from '../../../../../ui/browser/model/index';
 
 function createSpyProps() {
   return {
@@ -27,10 +26,10 @@ function createSpyProps() {
   };
 }
 
-describe('NavBar', function() {
-  describe('NavBar', function() {
-    it('should render the empty case', function() {
-      let props = createSpyProps();
+describe('NavBar', () => {
+  describe('NavBar', () => {
+    it('should render the empty case', () => {
+      const props = createSpyProps();
       delete props.page;
       const wrapper = shallow(
         <NavBar {...props} />
@@ -40,35 +39,35 @@ describe('NavBar', function() {
     });
   });
 
-  describe('Menu button', function() {
+  describe('Menu button', () => {
     it('calls handler');
   });
-  describe('Back button', function() {
+  describe('Back button', () => {
     it('calls handler');
     it('is disabled if page cannot go back');
     it('is not disabled if page can go back');
   });
-  describe('Forward button', function() {
+  describe('Forward button', () => {
     it('calls handler');
     it('is disabled if page cannot go forward');
     it('is not disabled if page can go forward');
   });
-  describe('Refresh button', function() {
+  describe('Refresh button', () => {
     it('calls handler');
     it('is disabled if page cannot be refreshed');
     it('is not disabled if page can be refreshed');
   });
-  describe('Pages button', function() {
+  describe('Pages button', () => {
     it('calls handler');
     it('has correct page count');
   });
-  describe('Minimize button ', function() {
+  describe('Minimize button ', () => {
     it('calls handler');
   });
-  describe('Maximize button ', function() {
+  describe('Maximize button ', () => {
     it('calls handler');
   });
-  describe('Close button ', function() {
+  describe('Close button ', () => {
     it('calls handler');
   });
 });

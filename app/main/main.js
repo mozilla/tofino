@@ -107,7 +107,7 @@ server.serve(staticDir);
 app.on('ready', () => {
   registerFileProtocol('atom', url => {
     if (url.indexOf('/') === '-1') {
-      url = url + '/index.html';
+      url = `${url}/index.html`;
     }
     return path.normalize(path.join(root, 'content', url));
   });

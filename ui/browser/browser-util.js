@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
 export function getSearchURL(query) {
   // See https://dxr.mozilla.org/mozilla-central/source/browser/locales/en-US/searchplugins
   // for a list of providers.
-  return 'https://www.google.com/search?ie=utf-8&oe=utf-8&q=' + encodeURIComponent(query);
+  return `https://www.google.com/search?ie=utf-8&oe=utf-8&q=${encodeURIComponent(query)}`;
 }
 
 /**

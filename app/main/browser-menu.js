@@ -212,7 +212,7 @@ const BrowserMenu = {
         label: name,
         submenu: [
           {
-            label: 'About ' + name,
+            label: `About ${name}`,
             role: 'about',
           },
           {
@@ -227,7 +227,7 @@ const BrowserMenu = {
             type: 'separator',
           },
           {
-            label: 'Hide ' + name,
+            label: `Hide ${name}`,
             accelerator: 'Command+H',
             role: 'hide',
           },
@@ -275,7 +275,7 @@ const BrowserMenu = {
         label: name,
         submenu: [
           {
-            label: 'About ' + name,
+            label: `About ${name}`,
             role: 'about',
           },
           {
@@ -290,7 +290,7 @@ const BrowserMenu = {
             type: 'separator',
           },
           {
-            label: 'Hide ' + name,
+            label: `Hide ${name}`,
             accelerator: 'Command+H',
             role: 'hide',
           },
