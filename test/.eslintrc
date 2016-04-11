@@ -1,15 +1,5 @@
 {
   "env": {
-    "mocha": true,
-    "es6": true
-  },
-
-  "globals": {
-    "browser": true
-  },
-
-  "rules": {
-    "func-names": 0,
-    "prefer-arrow-callback": 0
+    "mocha": true
   }
 }

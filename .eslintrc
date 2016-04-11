@@ -19,12 +19,14 @@
     "new-cap": ["error", {
       "capIsNewExceptions": ["Immutable.List", "Immutable.Map", "Immutable.Record", "Immutable.Set"]
     }],
+    "func-names": "off",
     "space-before-function-paren": ["error", "never"],
     "no-param-reassign": ["off"],
     "no-return-assign": ["off"],
     "no-use-before-define": ["off"],
     "eqeqeq": ["error", "allow-null"],
     "prefer-template": ["error"],
+    "prefer-arrow-callback": ["error"],
     "react/jsx-closing-bracket-location": ["warn", "after-props"],
     "react/prefer-es6-class": ["off"],
   }
