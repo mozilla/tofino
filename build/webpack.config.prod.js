@@ -1,8 +1,10 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-import webpack from 'webpack';
-import defaultConfig from './webpack.config.default';
+'use strict';
+
+const webpack = require('webpack');
+const defaultConfig = require('./webpack.config.default');
 
 /**
  * Production config. Inspired by

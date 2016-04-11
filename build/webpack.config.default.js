@@ -1,6 +1,8 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
+'use strict';
+
 const path = require('path');
 
 /**
@@ -9,7 +11,7 @@ const path = require('path');
  *
  * Changes for running in development/live are made in webpack.config.{dev|prod}.js
  */
-let root = path.join(__dirname, '..');
+const root = path.join(__dirname, '..');
 
 module.exports = {
   entry: {
@@ -31,7 +33,7 @@ module.exports = {
         include: [
           path.join(root, 'ui'),
           path.join(root, 'shared'),
-        ]
+        ],
       },
     ],
   },

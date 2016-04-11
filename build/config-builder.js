@@ -1,10 +1,11 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
+'use strict';
+
 /**
  * Builds a `build-config.js` in root directory for runtime access to build configurations.
  */
-
 
 const path = require('path');
 const os = require('os');
@@ -43,10 +44,9 @@ const BASE_CONFIG = {
   packaged: false,
 };
 
-exports.buildConfig = function(config, fileName='build-config.js') {
-  let configToWrite = Object.assign({}, BASE_CONFIG, config);
-
-  let content = `module.exports = ${JSON.stringify(configToWrite, null, 2)}`;
+exports.buildConfig = function(config, fileName = 'build-config.js') {
+  const configToWrite = Object.assign({}, BASE_CONFIG, config);
+  const content = `module.exports = ${JSON.stringify(configToWrite, null, 2)}`;
 
   fs.writeFileSync(path.join(__dirname, '..', fileName), content);
   return configToWrite;
