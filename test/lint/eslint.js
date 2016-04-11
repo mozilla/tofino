@@ -4,6 +4,7 @@
 import lint from 'mocha-eslint';
 
 const paths = [
+  '*.js',
   './app',
   './build',
   './shared',
