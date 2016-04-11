@@ -1,9 +1,14 @@
 {
-  "ecmaFeatures": {
-    "globalReturn": false,
-    "modules": true,
-    "blockBindings": true,
-    "jsx": true
+  "extends": "airbnb",
+
+  "parser": "babel-eslint",
+
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "ecmaFeatures": {
+      "jsx": true,
+      "globalReturn": true
+    }
   },
 
   "env": {
@@ -16,18 +21,17 @@
     "react"
   ],
 
-  "extends": "airbnb",
-  "parser": "babel-eslint",
-
   "rules": {
-    "new-cap": [2, {"capIsNewExceptions": ["Immutable.List", "Immutable.Map", "Immutable.Record", "Immutable.Set"]}],
-    "no-param-reassign": [0],
-    "no-return-assign": [0],
-    "no-use-before-define": [0],
-    "eqeqeq": [2, "allow-null"],
-    "prefer-template": [0],
-    "space-before-function-paren": [2, "never"],
-    "react/jsx-closing-bracket-location": [1, "after-props"],
-    "react/prefer-es6-class": [0],
+    "new-cap": ["error", {
+      "capIsNewExceptions": ["Immutable.List", "Immutable.Map", "Immutable.Record", "Immutable.Set"]
+    }],
+    "space-before-function-paren": ["error", "never"],
+    "no-param-reassign": ["off"],
+    "no-return-assign": ["off"],
+    "no-use-before-define": ["off"],
+    "eqeqeq": ["error", "allow-null"],
+    "prefer-template": ["error"],
+    "react/jsx-closing-bracket-location": ["warn", "after-props"],
+    "react/prefer-es6-class": ["off"],
   }
 }
