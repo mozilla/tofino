@@ -20,7 +20,7 @@ Guidelines:
   spelunkers.
   For example:
   ```
-  Issue #6 - Frobnicate the URL bazzer before flattening pilchard. r=mossop,rnewman
+  Frobnicate the URL bazzer before flattening pilchard. Fixes #6. r=mossop,rnewman
 
   The frobnication method used is as described in Podder's Miscellany, page 15.
   Note that this pull request doesn't include tests, because we're bad people.
