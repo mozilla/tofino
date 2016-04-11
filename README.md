@@ -45,14 +45,7 @@ The following `gulp` tasks are implemented.
 
 * `run` - Runs the build. Builds the client/renderer code via webpack in `production` mode. Should be rather similar to a packaged build.
 * `run-dev` - Runs the build in `development` with hot module reloading via webpack.
-* `package` - Creates a distributable package. **Currently broken**. But closer to working.
-
-The following tasks will most likely not need to be used externally, but as dependencies.
-
-* `electron-download` - Downloads a target of electron to use. Should automatically be called after the first `npm install`, so shouldn't be needed.
-* `clean-package` - Removes `./dist` directory.
-* `build` - Builds the client/renderer code.
-* `build-dev` - Builds the client/renderer code in development mode.
+* `package` - Creates a distributable package.
 
 
 ## Testing
