@@ -8,8 +8,8 @@ import { shallow } from 'enzyme';
 import Tab from '../../../../../ui/browser/views/tabbar/tab.jsx';
 import { Page } from '../../../../../ui/browser/model/index';
 
-describe('components - NavBar', function() {
-  it('should render the basic case', function() {
+describe('components - NavBar', () => {
+  it('should render the basic case', () => {
     const page = new Page({
       location: 'https://www.mozilla.org',
       title: 'Mozilla Home',

@@ -4,8 +4,8 @@
 import expect from 'expect';
 import { State, Page } from '../../../ui/browser/model/index';
 
-describe('Data model: Page', function() {
-  it('should do the basics', function() {
+describe('Data model: Page', () => {
+  it('should do the basics', () => {
     const page1 = new Page();
     expect(page1.location).toEqual(undefined);
     expect(page1.title).toEqual('New Tab');
@@ -16,8 +16,8 @@ describe('Data model: Page', function() {
   });
 });
 
-describe('Data model: State', function() {
-  it('should do the basics', function() {
+describe('Data model: State', () => {
+  it('should do the basics', () => {
     const state1 = new State();
     expect(state1.pages.size).toEqual(0);
     expect(state1.pageOrder.size).toEqual(0);
