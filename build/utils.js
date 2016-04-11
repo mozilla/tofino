@@ -22,5 +22,5 @@ function getElectronPath() {
 exports.getElectronPath = getElectronPath;
 
 exports.getElectronVersion = function getElectronVersion() {
-  return fs.readFileSync(path.join(path.dirname(getElectronPath()), 'version'), 'utf-8').replace(/^v/, '');
+  return manifest.devDependencies['electron-prebuilt'];
 };
