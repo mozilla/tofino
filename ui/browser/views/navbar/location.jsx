@@ -62,13 +62,13 @@ class Location extends Component {
         <input id="urlbar-input" type="text" ref="input"
           value={value}
           onChange={onLocationChange}
-          onClick={ev => ev.target.select()}
+          clickHandler={ev => ev.target.select()}
           onContextMenu={onLocationContextMenu}
           onKeyDown={this.handleKeyDown} />
 
         <Btn title="Bookmark"
           image={page.isBookmarked ? '' : ''}
-          onClick={onBookmark} />
+          clickHandler={onBookmark} />
       </div>
     );
   }

@@ -30,8 +30,9 @@ function NavBar(props) {
 
   return (
     <div id="browser-navbar">
-      <Btn title="Menu" image="glyph-menu-16.svg"
-        onClick={openMenu} />
+      <Btn id="browser-navbar-menu"
+        title="Menu" image="glyph-menu-16.svg"
+        clickHandler={openMenu} />
 
       <a id="pages-button" style={{
         borderWidth: '0px 1px',
@@ -41,7 +42,7 @@ function NavBar(props) {
         padding: '0px 10px',
         height: '22px',
       }}>
-        <span style={{
+        <span id="browser-navbar-pages-count" style={{
           backgroundColor: '#4d4d4d',
           color: '#fff',
           fontSize: '10px',
@@ -58,33 +59,39 @@ function NavBar(props) {
         }}>{"Pages"}</span>
       </a>
 
-      <Btn title="Back" image="glyph-arrow-nav-back-16.svg"
-        onClick={navBack}
+      <Btn id="browser-navbar-back"
+        title="Back" image="glyph-arrow-nav-back-16.svg"
+        clickHandler={navBack}
         disabled={!page.canGoBack} />
-      <Btn title="Forward" image="glyph-arrow-nav-forward-16.svg"
-        onClick={navForward}
+      <Btn id="browser-navbar-forward"
+        title="Forward" image="glyph-arrow-nav-forward-16.svg"
+        clickHandler={navForward}
         disabled={!page.canGoForward} />
-      <Btn title="Refresh" image="glyph-arrow-reload-16.svg"
-        onClick={navRefresh}
+      <Btn id="browser-navbar-refresh"
+        title="Refresh" image="glyph-arrow-reload-16.svg"
+        clickHandler={navRefresh}
         disabled={!page.canRefresh} />
 
       <Location {
         ...{ page, ipcRenderer, bookmark, unbookmark,
           onLocationChange, onLocationContextMenu, onLocationReset }
       } />
-      <Btn title="Minimize" image="glyph-window-minimize-16.svg"
-        onClick={minimize} />
-      <Btn title="Maximize" image="glyph-window-maximize-16.svg"
-        onClick={maximize} />
-      <Btn title="Close" image="glyph-window-close-16.svg"
-        onClick={close} />
+      <Btn id="browser-navbar-minimize"
+        title="Minimize" image="glyph-window-minimize-16.svg"
+        clickHandler={minimize} />
+      <Btn id="browser-navbar-maximize"
+        title="Maximize" image="glyph-window-maximize-16.svg"
+        clickHandler={maximize} />
+      <Btn id="browser-navbar-close"
+        title="Close" image="glyph-window-close-16.svg"
+        clickHandler={close} />
     </div>
   );
 }
 
 NavBar.propTypes = {
   page: PropTypes.object,
-  pages: PropTypes.object,
+  pages: PropTypes.object.isRequired,
   ipcRenderer: PropTypes.object.isRequired,
   navBack: PropTypes.func.isRequired,
   navForward: PropTypes.func.isRequired,
