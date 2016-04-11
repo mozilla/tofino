@@ -14,13 +14,15 @@ import React, { PropTypes } from 'react';
 
 const HEIGHT = '20px';
 const WIDTH = '20px';
+const noop = function() {};
 
 /**
  * A button for the NavBar.
  * `image` must be a valid CSS path to an image.
  */
-const Btn = ({ disabled, title, image, onClick }) => (
-  <a href="#"
+const Btn = ({ id, disabled, title, image, clickHandler }) => (
+  <button
+    type={"button"}
     style={{
       backgroundImage: image ? `url(assets/${image})` : `url(${DEFAULT})`,
       backgroundRepeat: 'no-repeat',
@@ -28,22 +30,27 @@ const Btn = ({ disabled, title, image, onClick }) => (
 
       opacity: (disabled ? '0.5' : '1'),
       cursor: (disabled ? 'default' : 'pointer'),
-
       margin: '8px 3px 0px 3px',
       width: WIDTH,
       height: HEIGHT,
       display: 'inline-block',
       padding: '0',
+      border: '0',
+      backgroundColor: 'transparent',
     }}
-    {...{ title, onClick }}>
-  </a>
+
+    // Don't bind a real handler if this button is disabled
+    onClick={disabled ? noop : clickHandler}
+    {...{ id, disabled, title }}>
+  </button>
 );
 
 Btn.propTypes = {
   disabled: PropTypes.bool,
+  id: PropTypes.string,
+  image: PropTypes.string,
   title: PropTypes.string.isRequired,
-  image: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired,
+  clickHandler: PropTypes.func.isRequired,
 };
 
 export default Btn;
