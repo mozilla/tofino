@@ -10,11 +10,18 @@ const manifest = require('../package.json');
 const buildUtils = require('./utils');
 
 module.exports = env => cb => {
-  let command = `${buildUtils.getElectronPath()} ${path.join(__dirname, '..', manifest.main)}`;
-  let environ = {};
-  if (env === "production") {
-    environ["NODE_ENV"] = 'production';
+  const command = `${buildUtils.getElectronPath()} ${path.join(__dirname, '..', manifest.main)}`;
+  const environ = {};
+  if (env === 'production') {
+    environ.NODE_ENV = 'production';
   }
+
   console.log(`Executing command: ${command}`);
-  exec(command, { env: environ }, err => err ? cb(err) : cb()).stdout.pipe(process.stdout);
+
+  exec(command, { env: environ }, err => {
+    if (err) {
+      return cb(err);
+    }
+    return cb();
+  }).stdout.pipe(process.stdout);
 };

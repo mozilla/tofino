@@ -4,7 +4,6 @@
 'use strict';
 
 const path = require('path');
-
 const rimraf = require('rimraf');
 
 module.exports = cb => {

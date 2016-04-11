@@ -16,6 +16,7 @@ const manifest = require('../package.json');
 
 const arch = 'x64';
 const platform = os.platform();
+
 const IGNORE = [
   // Ignore build stuff
   '/appveyor.yml',
@@ -30,6 +31,7 @@ const IGNORE = [
 
   // Ignore source code
   '/ui($|/)',
+
   // Ignore `/app` and `/shared` once we compile main process code
   // ahead of time, rather than during runtime
   // '/app($|/)',
@@ -37,7 +39,7 @@ const IGNORE = [
 ];
 
 function packageApp(options) {
-  let rs = through2.obj();
+  const rs = through2.obj();
 
   packager(options, (err, packed) => {
     if (err) {
@@ -46,7 +48,7 @@ function packageApp(options) {
       return;
     }
 
-    let globs = packed.map(d => d + '/**');
+    const globs = packed.map(d => `${d}/**`);
     vinyl.src(globs, { followSymlinks: false, ignore: packed, dot: true }).pipe(rs);
   });
 
@@ -54,14 +56,14 @@ function packageApp(options) {
 }
 
 module.exports = () => {
-  let packageName = `${manifest.name}-${buildUtils.getAppVersion()}-${platform}-${arch}.zip`;
-  let devDependencies = Object.keys(manifest.devDependencies).map(dep => '/node_modules/' + dep + '($|/)');
-  let ignore = IGNORE.concat(devDependencies);
+  const packageName = `${manifest.name}-${buildUtils.getAppVersion()}-${platform}-${arch}.zip`;
+  const devDeps = Object.keys(manifest.devDependencies).map(dep => `/node_modules/${dep}($|/)`);
+  const ignore = IGNORE.concat(devDeps);
 
   return packageApp({
     arch,
     platform,
-    ignore: ignore,
+    ignore,
     version: buildUtils.getElectronVersion(),
     dir: path.join(__dirname, '..'),
     icon: path.join(__dirname, '..', 'branding', 'app-icon'),
