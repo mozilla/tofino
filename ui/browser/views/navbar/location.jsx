@@ -67,7 +67,6 @@ class Location extends Component {
           onKeyDown={this.handleKeyDown} />
 
         <Btn title="Bookmark"
-          // TODO Need an asset for this
           image={page.isBookmarked ? '' : ''}
           onClick={onBookmark} />
       </div>
