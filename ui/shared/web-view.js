@@ -10,8 +10,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-/* eslint func-names: 0 */
-
 /**
  * React doesn't support non-HTML attributes unless the element is a custom
  * element which must have a hyphen in the tag name. This means React can't
