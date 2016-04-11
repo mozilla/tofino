@@ -3,13 +3,25 @@
 
 import lint from 'mocha-eslint';
 
+const all = '/**/';
+const valid = '*.@(js|jsx)';
+
 const paths = [
+<<<<<<< HEAD
   'gulpfile.js',
   './app',
   './build',
   './shared',
   './test',
   './ui',
+=======
+  `${valid}`,
+  `app${all}${valid}`,
+  `build${all}${valid}`,
+  `shared${all}${valid}`,
+  `test${all}${valid}`,
+  `ui${all}${valid}`,
+>>>>>>> eslint-jsx-tests
 ];
 
 const options = {

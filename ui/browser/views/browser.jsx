@@ -20,7 +20,7 @@ import Page from './page/page.jsx';
 import {
   bookmark as bookmarkAction,
   unbookmark as unbookmarkAction,
-  menuLocationContext, updateMenu, menuBrowser, maximize, minimize, close
+  menuLocationContext, updateMenu, menuBrowser, maximize, minimize, close,
 } from '../actions/external';
 import { createTab, attachTab, setPageDetails, setLocation } from '../actions/main-actions';
 import { getCurrentWebView } from '../browser-util';
@@ -39,7 +39,6 @@ class BrowserWindow extends Component {
 
   render() {
     const { dispatch, pages, currentPageIndex, pageOrder, ipcRenderer } = this.props;
-    const platformClass = `platform-${platform}`;
     const navBack = e => getCurrentWebView(e.target.ownerDocument).goBack();
     const navForward = e => getCurrentWebView(e.target.ownerDocument).goForward();
     const navRefresh = e => getCurrentWebView(e.target.ownerDocument).reload();
@@ -51,16 +50,15 @@ class BrowserWindow extends Component {
     const onLocationReset = () => dispatch(setLocation());
 
     return (
-      <div id="browser-chrome" className={"platform-" + platform} >
+      <div id="browser-chrome" className={`platform-${platform}`} >
         <NavBar page={pages.get(currentPageIndex)}
-                {...{
-                  pages, navBack, navForward, navRefresh, minimize, maximize, close,
-                  openMenu, onLocationChange, onLocationContextMenu, onLocationReset,
-                  bookmark, unbookmark, ipcRenderer }} />
+          {...{ pages, navBack, navForward, navRefresh, minimize, maximize,
+            close, openMenu, onLocationChange, onLocationContextMenu,
+            onLocationReset, bookmark, unbookmark, ipcRenderer }} />
         <TabBar {...{ pages, pageOrder, currentPageIndex, dispatch }} />
         <div id="content-area">
           {pages.map((page, pageIndex) => (
-            <Page key={'page-' + pageIndex}
+            <Page key={`page-${pageIndex}`}
               page={page} pageIndex={pageIndex}
               isActive={pageIndex === currentPageIndex}
               browserDB={browserDB}
@@ -87,10 +85,10 @@ function attachListeners({ dispatch, currentPageIndex, ipcRenderer }) {
   // :TODO: replace this with menu hotkeys
   document.body.addEventListener('keydown', e => {
     if (e.metaKey && e.keyCode === 70) { // cmd+f
-      setPageDetails(pageIndex, { isSearching: true });
+      setPageDetails(currentPageIndex, { isSearching: true });
       e.target.ownerDocument.querySelector('#browser-page-search input').focus();
     } else if (e.keyCode === 27) { // esc
-      setPageDetails(pageIndex, { isSearching: false });
+      setPageDetails(currentPageIndex, { isSearching: false });
       e.target.ownerDocument.querySelector('#browser-page-search input').blur();
     }
   });
