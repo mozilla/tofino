@@ -59,6 +59,7 @@ Page.propTypes = {
   pageIndex: PropTypes.number.isRequired,
   isActive: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
+  browserDB: PropTypes.object.isRequired,
 };
 
 export default Page;
