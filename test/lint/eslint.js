@@ -3,7 +3,7 @@
 
 import lint from 'mocha-eslint';
 
-const paths = ['./shared', './app', './ui'];
+const paths = ['./shared', './app', './ui', './test'];
 
 const options = {
   alwaysWarn: false,
