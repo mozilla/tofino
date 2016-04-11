@@ -10,20 +10,21 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { PropTypes, Component } from 'react';
+/* eslint indent: ["off"] */
+
+import React, { PropTypes } from 'react';
 import Btn from './btn.jsx';
 import Location from './location.jsx';
 
 /**
  * The section below the tabs containing the location bar and navigation buttons
  */
-class NavBar extends Component {
-  render() {
-
+ function NavBar(props) {
     const {
-      navBack, navForward, navRefresh, page, pages, openMenu, ipcRenderer, minimize, maximize, close,
-      setLocation, bookmark, unbookmark, onLocationChange, onLocationContextMenu, onLocationReset
-    } = this.props;
+      navBack, navForward, navRefresh, page, pages, openMenu, ipcRenderer,
+      minimize, maximize, close, bookmark, unbookmark,
+      onLocationChange, onLocationContextMenu, onLocationReset,
+    } = props;
 
     if (page == null) {
       return <div id="browser-navbar"></div>;
@@ -35,27 +36,27 @@ class NavBar extends Component {
           onClick={openMenu} />
 
         <a id="pages-button" style={{
-          borderWidth: "0px 1px",
-          borderColor: "#D6D6D6",
-          borderStyle: "solid",
-          margin: "8px 8px 0px 8px",
-          padding: "0px 10px",
-          height: "22px",
+          borderWidth: '0px 1px',
+          borderColor: '#D6D6D6',
+          borderStyle: 'solid',
+          margin: '8px 8px 0px 8px',
+          padding: '0px 10px',
+          height: '22px',
         }}>
           <span style={{
-            backgroundColor: "#4d4d4d",
-            color: "#fff",
-            fontSize: "10px",
-            width: "16px",
-            height: "14px",
-            paddingTop: "2px",
-            textAlign: "center",
-            borderRadius: "3px",
-            display: "inline-block",
-            margin: "0px 6px 0px 0px"
+            backgroundColor: '#4d4d4d',
+            color: '#fff',
+            fontSize: '10px',
+            width: '16px',
+            height: '14px',
+            paddingTop: '2px',
+            textAlign: 'center',
+            borderRadius: '3px',
+            display: 'inline-block',
+            margin: '0px 6px 0px 0px',
           }}>{pages.size}</span>
           <span style={{
-            fontSize: "12px",
+            fontSize: '12px',
           }}>{"Pages"}</span>
         </a>
 
@@ -70,7 +71,8 @@ class NavBar extends Component {
           disabled={!page.canRefresh} />
 
         <Location {
-          ...{page, ipcRenderer, bookmark, unbookmark, onLocationChange, onLocationContextMenu, onLocationReset}
+          ...{ page, ipcRenderer, bookmark, unbookmark,
+            onLocationChange, onLocationContextMenu, onLocationReset }
         } />
         <Btn title="Minimize" image="glyph-window-minimize-16.svg"
           onClick={minimize} />
@@ -80,11 +82,11 @@ class NavBar extends Component {
           onClick={close} />
       </div>
     );
-  }
-};
+}
 
 NavBar.propTypes = {
   page: PropTypes.object,
+  pages: PropTypes.object,
   ipcRenderer: PropTypes.object.isRequired,
   navBack: PropTypes.func.isRequired,
   navForward: PropTypes.func.isRequired,
