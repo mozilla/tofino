@@ -4,7 +4,7 @@
 import lint from 'mocha-eslint';
 
 const paths = [
-  '*.js',
+  'gulpfile.js',
   './app',
   './build',
   './shared',
