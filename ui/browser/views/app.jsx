@@ -11,11 +11,9 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes } from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import BrowserWindow from './browser.jsx';
-import * as actions from '../actions/main-actions';
 import { ipcRenderer } from 'electron';
+import BrowserWindow from './browser.jsx';
 
 export const App = function({ state, dispatch }) {
   return (
@@ -25,20 +23,15 @@ export const App = function({ state, dispatch }) {
       ipcRenderer={ipcRenderer}
       dispatch={dispatch} />
   );
-}
+};
 
 App.propTypes = {
   state: PropTypes.object.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state) {
   return { state };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: bindActionCreators(actions, dispatch),
-  };
 }
 
 export default connect(mapStateToProps)(App);
