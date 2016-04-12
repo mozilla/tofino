@@ -24,6 +24,8 @@ function NavBar(props) {
     onLocationChange, onLocationContextMenu, onLocationReset,
   } = props;
 
+  const pagesText = pages.size === 1 ? 'Page' : 'Pages';
+
   if (page == null) {
     return <div id="browser-navbar"></div>;
   }
@@ -56,7 +58,7 @@ function NavBar(props) {
         }}>{pages.size}</span>
         <span style={{
           fontSize: '12px',
-        }}>{"Pages"}</span>
+        }}>{pagesText}</span>
       </a>
 
       <Btn id="browser-navbar-back"

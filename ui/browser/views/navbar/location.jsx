@@ -64,7 +64,10 @@ class Location extends Component {
           onChange={onLocationChange}
           clickHandler={ev => ev.target.select()}
           onContextMenu={onLocationContextMenu}
-          onKeyDown={this.handleKeyDown} />
+          onKeyDown={this.handleKeyDown}
+          style={{
+            padding: '5px 10px',
+          }} />
 
         <Btn title="Bookmark"
           image={page.isBookmarked ? '' : ''}
