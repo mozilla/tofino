@@ -175,9 +175,13 @@ const BrowserMenu = {
         role: 'minimize',
       },
       {
-        label: 'Close',
+        label: 'Close Tab',
         accelerator: 'CmdOrCtrl+W',
-        role: 'close',
+        click(item, focusedWindow) {
+          if (focusedWindow) {
+            focusedWindow.webContents.send('close-tab');
+          }
+        },
       },
       {
         type: 'separator',
