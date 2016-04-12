@@ -4,7 +4,9 @@
   "description": "Experimental prototype",
   "main": "app/main/main.js",
   "scripts": {
-    "start": "gulp run",
+    "start": "node build/main.js --run",
+    "start-dev": "node build/main.js --run-dev",
+    "package": "node build/main.js --package",
     "test": "mocha",
     "postinstall": "electron-rebuild"
   },
@@ -39,11 +41,7 @@
     "eslint-plugin-react": "4.2.3",
     "expect": "1.16.0",
     "glob": "7.0.3",
-    "gulp": "3.9.1",
-    "gulp-babel": "6.1.2",
-    "gulp-sourcemaps": "1.6.0",
-    "gulp-vinyl-zip": "1.2.2",
-    "gulp-watch": "4.3.5",
+    "gulp-vinyl-zip": "^1.2.2",
     "jsdom": "8.1.0",
     "merge-stream": "1.0.0",
     "mocha": "2.4.5",

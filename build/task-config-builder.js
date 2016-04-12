@@ -13,14 +13,10 @@ const fs = require('fs');
 
 const buildUtils = require('./utils');
 
-const platform = os.platform();
-const arch = 'x64';
-
-
 const BASE_CONFIG = {
   // System information
-  platform,
-  arch,
+  platform: os.platform(),
+  arch: 'x64',
 
   // Electron information
   electron: buildUtils.getElectronVersion(),
@@ -44,10 +40,14 @@ const BASE_CONFIG = {
   packaged: false,
 };
 
-exports.buildConfig = function(config, fileName = 'build-config.js') {
+module.exports = config => new Promise((resolve, reject) => {
   const configToWrite = Object.assign({}, BASE_CONFIG, config);
   const content = `module.exports = ${JSON.stringify(configToWrite, null, 2)}`;
 
-  fs.writeFileSync(path.join(__dirname, '..', fileName), content);
-  return configToWrite;
-};
+  fs.writeFile(path.join(__dirname, '..', 'build-config.js'), content, err => {
+    if (err) {
+      reject(err);
+    }
+    resolve();
+  });
+});

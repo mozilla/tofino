@@ -6,6 +6,11 @@
 const path = require('path');
 const rimraf = require('rimraf');
 
-module.exports = cb => {
-  rimraf(path.join(__dirname, '..', 'dist'), cb);
-};
+module.exports = () => new Promise((resolve, reject) => {
+  rimraf(path.join(__dirname, '..', 'dist'), err => {
+    if (err) {
+      reject(err);
+    }
+    resolve();
+  });
+});

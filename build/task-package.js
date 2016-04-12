@@ -14,8 +14,8 @@ const zip = require('gulp-vinyl-zip');
 const buildUtils = require('./utils');
 const manifest = require('../package.json');
 
-const arch = 'x64';
-const platform = os.platform();
+const ARCH = 'x64';
+const PLATFORM = os.platform();
 
 const IGNORE = [
   // Ignore build stuff
@@ -56,17 +56,21 @@ function packageApp(options) {
 }
 
 module.exports = () => {
-  const packageName = `${manifest.name}-${buildUtils.getAppVersion()}-${platform}-${arch}.zip`;
   const devDeps = Object.keys(manifest.devDependencies).map(dep => `/node_modules/${dep}($|/)`);
-  const ignore = IGNORE.concat(devDeps);
+  const pathsToIgnore = IGNORE.concat(devDeps);
 
-  return packageApp({
-    arch,
-    platform,
-    ignore,
+  const packagedApp = packageApp({
+    arch: ARCH,
+    platform: PLATFORM,
+    ignore: pathsToIgnore,
     version: buildUtils.getElectronVersion(),
     dir: path.join(__dirname, '..'),
     icon: path.join(__dirname, '..', 'branding', 'app-icon'),
     out: path.join(__dirname, '..', 'dist'),
-  }).pipe(zip.dest(path.join(__dirname, '..', 'dist', packageName)));
+  });
+
+  const packageName = `${manifest.name}-${buildUtils.getAppVersion()}-${PLATFORM}-${ARCH}.zip`;
+  const distPath = path.join(__dirname, '..', 'dist', packageName);
+
+  return packagedApp.pipe(zip.dest(distPath));
 };

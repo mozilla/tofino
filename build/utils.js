@@ -8,7 +8,7 @@ const manifest = require('../package.json');
 const IS_TRAVIS = exports.IS_TRAVIS = process.env.TRAVIS === 'true';
 const IS_APPVEYOR = exports.IS_APPVEYOR = process.env.APPVETOR === 'True';
 
-exports.getAppVersion = function getAppVersion() {
+exports.getAppVersion = () => {
   if (IS_TRAVIS) {
     return `${manifest.version}-${process.env.TRAVIS_BUILD_NUMBER}`;
   }
@@ -18,12 +18,6 @@ exports.getAppVersion = function getAppVersion() {
   return manifest.version;
 };
 
-function getElectronPath() {
-  return require('electron-prebuilt');
-}
+exports.getElectronPath = () => require('electron-prebuilt');
 
-exports.getElectronPath = getElectronPath;
-
-exports.getElectronVersion = function getElectronVersion() {
-  return manifest.devDependencies['electron-prebuilt'];
-};
+exports.getElectronVersion = () => manifest.devDependencies['electron-prebuilt'];
