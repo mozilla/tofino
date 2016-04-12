@@ -8,12 +8,15 @@ const webpack = require('webpack');
 const webpackProdConfig = require('./webpack.config.prod');
 const webpackDevConfig = require('./webpack.config.dev');
 
-module.exports = callback => {
-  const config = require('../build-config').development ? webpackDevConfig : webpackProdConfig;
+module.exports = () => new Promise((resolve, reject) => {
+  const config = require('../build-config').development
+    ? webpackDevConfig
+    : webpackProdConfig;
+
   try {
     const compiler = webpack(config);
-    compiler.run(callback);
-  } catch (e) {
-    callback(e);
+    compiler.run(resolve);
+  } catch (err) {
+    reject(err);
   }
-};
+});
