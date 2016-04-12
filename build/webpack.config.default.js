@@ -5,6 +5,11 @@
 
 const path = require('path');
 
+const ExternalsPlugin = require('../node_modules/webpack/lib/ExternalsPlugin');
+const FunctionModulePlugin = require('../node_modules/webpack/lib/FunctionModulePlugin');
+const NodeTemplatePlugin = require('../node_modules/webpack/lib/node/NodeTemplatePlugin');
+const LoaderTargetPlugin = require('../node_modules/webpack/lib/LoaderTargetPlugin');
+
 /**
  * The intent is that this config is kept as simple as possible - just the
  * minimum needed to build, without development or production optimizations.
@@ -37,7 +42,44 @@ module.exports = {
       },
     ],
   },
-  target: 'atom',
+  target: (compiler) => {
+    compiler.apply(
+      new NodeTemplatePlugin({
+        asyncChunkLoading: true,
+      }),
+      new FunctionModulePlugin({
+        path: path.join(root, 'static', 'built'),
+        filename: '[name].js',
+        sourceMapFilename: '[file].map',
+        publicPath: 'http://localhost:8765/built/',
+      }),
+      new ExternalsPlugin('commonjs', [
+        'app',
+        'auto-updater',
+        'browser-window',
+        'content-tracing',
+        'dialog',
+        'electron',
+        'global-shortcut',
+        'ipc',
+        'ipc-main',
+        'menu',
+        'menu-item',
+        'power-monitor',
+        'power-save-blocker',
+        'protocol',
+        'session',
+        'web-contents',
+        'tray',
+        'clipboard',
+        'crash-reporter',
+        'native-image',
+        'screen',
+        'shell',
+      ]),
+      new LoaderTargetPlugin('atom')
+    );
+  },
   plugins: [
   ],
 };
