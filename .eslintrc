@@ -6,8 +6,7 @@
   "parserOptions": {
     "ecmaVersion": 6,
     "ecmaFeatures": {
-      "jsx": true,
-      "globalReturn": true
+      "jsx": true
     }
   },
 
