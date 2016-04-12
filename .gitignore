@@ -1,6 +1,5 @@
 /.idea/
 npm-debug.log
-electron
 node_modules
 dist
 *.sw*
