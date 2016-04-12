@@ -18,7 +18,7 @@
     "new-cap": ["error", {
       "capIsNewExceptions": ["Immutable.List", "Immutable.Map", "Immutable.Record", "Immutable.Set"]
     }],
-    "func-names": "off",
+    "func-names": ["off"],
     "space-before-function-paren": ["error", "never"],
     "no-param-reassign": ["off"],
     "no-return-assign": ["off"],
