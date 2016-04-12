@@ -13,7 +13,6 @@ specific language governing permissions and limitations under the License.
 import Immutable from 'immutable';
 import * as types from '../constants/action-types';
 import { State, Page } from '../model';
-import { objectEntries } from '../../../shared/util';
 
 /**
  * Fairly sure we should hard code this
@@ -122,7 +121,7 @@ function setPageDetails(state, pageIndex, details) {
     pageIndex = state.currentPageIndex;
   }
   let newState = state;
-  for (const [key, value] of objectEntries(details)) {
+  for (const [key, value] of Object.entries(details)) {
     newState = newState.setIn(['pages', pageIndex, key], value);
   }
   return newState;

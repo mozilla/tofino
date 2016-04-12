@@ -3,6 +3,7 @@
 
 'use strict';
 
+require('babel-polyfill');
 require('babel-register')();
 
 if (~process.argv.indexOf('--run')) {
