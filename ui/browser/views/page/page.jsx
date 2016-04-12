@@ -115,6 +115,8 @@ function addListenersToWebView(webview, page, pageIndex, dispatch, browserDB) {
       menuWebViewContext(e.args[0], dispatch);
     } else if (e.channel === 'show-bookmarks') {
       // console.log('got a menu');
+    } else if (e.channel === 'close-tab') {
+      dispatch(closeTab(pageIndex));
     }
   });
 
