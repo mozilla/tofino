@@ -1,4 +1,3 @@
-
 # Project Tofino
 
 Project Tofino is a browser interaction experiment.
@@ -31,21 +30,18 @@ We hang out on Slack here: https://project-tofino.slack.com (you can get an invi
 
 ```
 brew install node --with-full-icu
-npm install --global gulp-cli
 ```
 
-Everytime update from the git repository you may need to install or update any new node dependencies:
+Every time update from the git repository you may need to install or update any new node dependencies:
 ```
 npm install
 ```
 
 ### Tasks
 
-The following `gulp` tasks are implemented.
-
-* `run` - Runs the build. Builds the client/renderer code via webpack in `production` mode. Should be rather similar to a packaged build.
-* `run-dev` - Runs the build in `development` with hot module reloading via webpack.
-* `package` - Creates a distributable package.
+* `npm run` - Runs the build. Builds the client/renderer code via webpack in `production` mode. Should be rather similar to a packaged build.
+* `npm run-dev` - Runs the build in `development` with hot module reloading via webpack.
+* `npm package` - Creates a distributable package.
 
 
 ## Testing

@@ -9,7 +9,7 @@ const path = require('path');
 const manifest = require('../package.json');
 const buildUtils = require('./utils');
 
-module.exports = env => cb => {
+module.exports = env => new Promise((resolve, reject) => {
   const command = `${buildUtils.getElectronPath()} ${path.join(__dirname, '..', manifest.main)}`;
   const environ = {};
   if (env === 'production') {
@@ -20,8 +20,8 @@ module.exports = env => cb => {
 
   exec(command, { env: environ }, err => {
     if (err) {
-      return cb(err);
+      reject(err);
     }
-    return cb();
+    resolve();
   }).stdout.pipe(process.stdout);
-};
+});

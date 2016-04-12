@@ -7,7 +7,6 @@ const all = '/**/';
 const valid = '*.@(js|jsx)';
 
 const paths = [
-  'gulpfile.js',
   `app${all}${valid}`,
   `build${all}${valid}`,
   `shared${all}${valid}`,
