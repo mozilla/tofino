@@ -38,6 +38,9 @@ const BASE_CONFIG = {
 
   // Whether or not the build is packaged in an electron distributable
   packaged: false,
+
+  // The Google Analytics tracking identifier to use when instrumenting.
+  googleAnalyticsTrackingID: 'UA-76122102-1',
 };
 
 module.exports = config => new Promise((resolve, reject) => {
