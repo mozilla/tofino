@@ -23,26 +23,12 @@ import { development } from '../build-config';
  * similar mutated entries
  */
 export function mapObject(source, mapper) {
-  const keys = Object.keys(source);
-  const entries = keys.map(key => [key, source[key]]);
+  const entries = Object.entries(source);
   const newEntries = entries.map(mapper);
 
   const dest = {};
   newEntries.forEach(([newKey, newValue]) => { dest[newKey] = newValue; });
   return dest;
-}
-
-/**
- * A generator to iterate over the properties of the 'thing' object where each
- * property yields `[key, value, index]`
- */
-export function * objectEntries(thing) {
-  if (thing != null) {
-    const keys = Object.keys(thing);
-    for (let i = 0; i < keys.length; i++) {
-      yield [keys[i], thing[keys[i]], i];
-    }
-  }
 }
 
 /**
