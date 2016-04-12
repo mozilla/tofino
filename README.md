@@ -39,9 +39,9 @@ npm install
 
 ### Tasks
 
-* `npm run` - Runs the build. Builds the client/renderer code via webpack in `production` mode. Should be rather similar to a packaged build.
-* `npm run-dev` - Runs the build in `development` with hot module reloading via webpack.
-* `npm package` - Creates a distributable package.
+* `npm start` - Runs the build. Builds the client/renderer code via webpack in `production` mode. Should be rather similar to a packaged build.
+* `npm run start-dev` - Runs the build in `development` with hot module reloading via webpack.
+* `npm run package` - Creates a distributable package.
 
 
 ## Testing
