@@ -23,8 +23,8 @@ function NavBar(props) {
     minimize, maximize, close, bookmark, unbookmark,
     onLocationChange, onLocationContextMenu, onLocationReset,
   } = props;
-  
-  let pagesText = pages.size === 1 ? "Page" : "Pages";
+
+  const pagesText = pages.size === 1 ? 'Page' : 'Pages';
 
   if (page == null) {
     return <div id="browser-navbar"></div>;
