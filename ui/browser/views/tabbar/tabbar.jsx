@@ -29,7 +29,8 @@ const TabBar = ({ pageOrder, pages, currentPageIndex, dispatch, pageAreaVisible 
   }
 
   return (
-    <div id="browser-tabs" dragzone="copy string:test/uri-list"
+    <div id="browser-tabs"
+      dragzone="copy string:test/uri-list"
       {...barDragDrop.handlers}>
 
       {pageOrder.map((i) => {
@@ -37,7 +38,8 @@ const TabBar = ({ pageOrder, pages, currentPageIndex, dispatch, pageAreaVisible 
         const dragDrop = new TabDragDrop(page, pageOrder, i);
 
         return (
-          <Tab key={`browser-tab-${i}`} className={`browser-tab-${i}`}
+          <Tab key={`browser-tab-${i}`}
+            className={`browser-tab-${i}`}
             isActive={currentPageIndex === i}
             page={page}
             onClick={() => dispatch(setCurrentTab(i))}
@@ -51,7 +53,8 @@ const TabBar = ({ pageOrder, pages, currentPageIndex, dispatch, pageAreaVisible 
         );
       })}
 
-      <a className="newtab" onClick={() => dispatch(createTab())}>
+      <a className="newtab"
+        onClick={() => dispatch(createTab())}>
         <i className="fa fa-plus" />
       </a>
     </div>

@@ -59,7 +59,9 @@ class Location extends Component {
 
     return (
       <div id="browser-location-bar">
-        <input id="urlbar-input" type="text" ref="input"
+        <input ref="input"
+          id="urlbar-input"
+          type="text"
           value={value}
           onChange={onLocationChange}
           clickHandler={ev => ev.target.select()}

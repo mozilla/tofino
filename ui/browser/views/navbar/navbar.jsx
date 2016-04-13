@@ -31,13 +31,17 @@ function NavBar(props) {
   return (
     <div id="browser-navbar">
       <Btn id="browser-navbar-menu"
-        title="Menu" image="glyph-menu-16.svg"
+        title="Menu"
+        image="glyph-menu-16.svg"
         clickHandler={openMenu} />
 
-      <Btn id="pages-button" title="Pages"
+      <Btn id="pages-button"
+        title="Pages"
         active={pageAreaVisible}
         clickHandler={() => { setPageAreaVisibility(!pageAreaVisible); }}>
-          <span id="browser-navbar-pages-count" style={{
+
+        <span id="browser-navbar-pages-count"
+          style={{
             backgroundColor: '#4d4d4d',
             color: '#fff',
             fontSize: '10px',
@@ -48,21 +52,29 @@ function NavBar(props) {
             borderRadius: '3px',
             display: 'inline-block',
             margin: '0px 6px 0px 0px',
-          }}>{pages.size}</span>
-          <span style={{
-            fontSize: '12px',
-          }}>{"Pages"}</span>
+          }}>
+          {pages.size}
+        </span>
+        <span style={{
+          fontSize: '12px',
+        }}>
+          {"Pages"}
+        </span>
       </Btn>
+
       <Btn id="browser-navbar-back"
-        title="Back" image="glyph-arrow-nav-back-16.svg"
+        title="Back"
+        image="glyph-arrow-nav-back-16.svg"
         clickHandler={navBack}
         disabled={!page.canGoBack} />
       <Btn id="browser-navbar-forward"
-        title="Forward" image="glyph-arrow-nav-forward-16.svg"
+        title="Forward"
+        image="glyph-arrow-nav-forward-16.svg"
         clickHandler={navForward}
         disabled={!page.canGoForward} />
       <Btn id="browser-navbar-refresh"
-        title="Refresh" image="glyph-arrow-reload-16.svg"
+        title="Refresh"
+        image="glyph-arrow-reload-16.svg"
         clickHandler={navRefresh}
         disabled={!page.canRefresh} />
 
@@ -71,13 +83,16 @@ function NavBar(props) {
           onLocationChange, onLocationContextMenu, onLocationReset }
       } />
       <Btn id="browser-navbar-minimize"
-        title="Minimize" image="glyph-window-minimize-16.svg"
+        title="Minimize"
+        image="glyph-window-minimize-16.svg"
         clickHandler={minimize} />
       <Btn id="browser-navbar-maximize"
-        title="Maximize" image="glyph-window-maximize-16.svg"
+        title="Maximize"
+        image="glyph-window-maximize-16.svg"
         clickHandler={maximize} />
       <Btn id="browser-navbar-close"
-        title="Close" image="glyph-window-close-16.svg"
+        title="Close"
+        image="glyph-window-close-16.svg"
         clickHandler={close} />
     </div>
   );
