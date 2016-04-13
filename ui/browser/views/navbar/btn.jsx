@@ -30,7 +30,7 @@ const Btn = ({ style, id, disabled, active, title, image, clickHandler, children
     padding: '0',
     border: '0',
     backgroundColor: (active ? '#DFE1E4' : 'transparent'),
-    ...style
+    ...style,
   };
 
   if (image) {

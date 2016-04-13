@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { PropTypes, createClass } from 'react';
+import React, { PropTypes, Component } from 'react';
 import Btn from './btn.jsx';
 import { fixURL, getCurrentWebView } from '../../browser-util';
 
@@ -20,27 +20,24 @@ import { fixURL, getCurrentWebView } from '../../browser-util';
  * to ipcRenderer on mount, and because the key-down event handler is non
  * trivial.
  */
-const Location = createClass({
+class Location extends Component {
 
-  propTypes: {
-    page: PropTypes.object.isRequired,
-    onLocationChange: PropTypes.func.isRequired,
-    onLocationContextMenu: PropTypes.func.isRequired,
-    onLocationReset: PropTypes.func.isRequired,
-    bookmark: PropTypes.func.isRequired,
-    unbookmark: PropTypes.func.isRequired,
-    ipcRenderer: PropTypes.object.isRequired,
-  },
-
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+    this.state = {
       showURLBar: false,
     };
-  },
+
+    this.handleTitleClick = this.handleTitleClick.bind(this);
+    this.handleTitleFocus = this.handleTitleFocus.bind(this);
+    this.handleURLBarFocus = this.handleURLBarFocus.bind(this);
+    this.handleURLBarBlur = this.handleURLBarBlur.bind(this);
+  }
+
 
   componentDidMount() {
     this.props.ipcRenderer.on('focus-urlbar', () => this.refs.input.select());
-  },
+  }
 
   componentDidUpdate() {
     // If we're showing the URL bar, it should be focused. The scenario
@@ -49,23 +46,23 @@ const Location = createClass({
     if (this.state.showURLBar && document.activeElement !== this.refs.input) {
       this.refs.input.focus();
     }
-  },
+  }
 
-  onTitleClick() {
+  handleTitleClick() {
     this.setState({ showURLBar: true });
-  },
+  }
 
-  onTitleFocus() {
+  handleTitleFocus() {
     this.setState({ showURLBar: true });
-  },
+  }
 
-  onURLBarFocus() {
+  handleURLBarFocus() {
     this.refs.input.select();
-  },
+  }
 
-  onURLBarBlur() {
+  handleURLBarBlur() {
     this.setState({ showURLBar: false });
-  },
+  }
 
   handleKeyDown(ev) {
     if (ev.keyCode === 13) { // enter
@@ -77,7 +74,7 @@ const Location = createClass({
       this.props.onLocationReset();
       ev.target.select();
     }
-  },
+  }
 
   render() {
     const { page, onLocationChange, onLocationContextMenu, bookmark, unbookmark } = this.props;
@@ -94,7 +91,6 @@ const Location = createClass({
         bookmark(title, url);
       }
     };
-
 
     return (
       <div id="browser-location-bar"
@@ -115,8 +111,8 @@ const Location = createClass({
           }} />
         <span id="browser-location-title-bar"
           tabIndex={0}
-          onClick={this.onTitleClick}
-          onFocus={this.onTitleFocus}
+          onClick={this.handleTitleClick}
+          onFocus={this.handleTitleFocus}
           style={{
             flex: 1,
             display: showURLBar ? 'none' : 'block',
@@ -126,9 +122,11 @@ const Location = createClass({
           }}>
           {page.title}
         </span>
-        <input id="urlbar-input" type="text" ref="input"
-          onFocus={this.onURLBarFocus}
-          onBlur={this.onURLBarBlur}
+        <input id="urlbar-input"
+          type="text"
+          ref="input"
+          onFocus={this.handleURLBarFocus}
+          onBlur={this.handleURLBarBlur}
           showURLBar={showURLBar}
           style={{
             flex: 1,
@@ -152,7 +150,17 @@ const Location = createClass({
           }} />
       </div>
     );
-  },
-});
+  }
+}
+
+Location.propTypes = {
+  page: PropTypes.object.isRequired,
+  onLocationChange: PropTypes.func.isRequired,
+  onLocationContextMenu: PropTypes.func.isRequired,
+  onLocationReset: PropTypes.func.isRequired,
+  bookmark: PropTypes.func.isRequired,
+  unbookmark: PropTypes.func.isRequired,
+  ipcRenderer: PropTypes.object.isRequired,
+};
 
 export default Location;
