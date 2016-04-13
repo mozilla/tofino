@@ -33,7 +33,7 @@
       "allowObjectStart": true,
       "allowArrayStart": true
     }],
-    "react/jsx-closing-bracket-location": ["warn", "after-props"],
+    "react/jsx-closing-bracket-location": ["error", "after-props"],
     "react/prefer-es6-class": ["off"],
   }
 }
