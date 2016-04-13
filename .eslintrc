@@ -24,8 +24,6 @@
     "no-return-assign": ["off"],
     "no-use-before-define": ["off"],
     "eqeqeq": ["error", "allow-null"],
-    "prefer-template": ["error"],
-    "prefer-arrow-callback": ["error"],
     "lines-around-comment": ["error", {
       "beforeBlockComment": true,
       "afterBlockComment": false,
@@ -35,7 +33,7 @@
       "allowObjectStart": true,
       "allowArrayStart": true
     }],
-    "react/jsx-closing-bracket-location": ["warn", "after-props"],
+    "react/jsx-closing-bracket-location": ["error", "after-props"],
     "react/prefer-es6-class": ["off"],
   }
 }
