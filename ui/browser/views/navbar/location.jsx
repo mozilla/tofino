@@ -67,7 +67,7 @@ class Location extends Component {
           onKeyDown={this.handleKeyDown} />
 
         <Btn title="Bookmark"
-          image={page.isBookmarked ? '' : ''}
+          image={page.isBookmarked ? 'glyph-bookmark-filled-16.svg' : 'glyph-bookmark-hollow-16.svg'}
           clickHandler={onBookmark} />
       </div>
     );
