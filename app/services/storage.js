@@ -10,21 +10,27 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
+/* eslint no-console: 0 */
+
 /**
- * Disable the eslint "strict" and "no-commonjs" rules, since this is a script
- * that runs in node without any babel support, so it's not not a module
- * implicitly running in strict mode, and we can't use the import syntax.
+ * The storage module that makes up the majority of the profile service.
+ *
+ * @module Storage
  */
 
-/* eslint-disable strict */
-/* eslint-disable import/no-commonjs */
+import sqlite3 from 'sqlite3';
 
-'use strict';
+export function open(path) {
+  sqlite3.verbose();
 
-// Must go before any require statements.
-const browserStartTime = Date.now();
+  const db = new sqlite3.Database(path);
+  db.get('PRAGMA user_version', (err, row) => {
+    if (err) {
+      console.log('Unable to fetch DB user_version.');
+      return;
+    }
+    console.log(`User version: ${row.user_version}.`);
+  });
 
-require('babel-polyfill');
-require('babel-register')();
-
-require('./browser').default(browserStartTime);
+  return db;
+}
