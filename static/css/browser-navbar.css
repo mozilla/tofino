@@ -13,6 +13,6 @@
   -webkit-app-region: drag;
 }
 
-#browser-navbar a, #browser-navbar input {
+#browser-navbar a, #browser-navbar input, #browser-navbar button, #browser-location-bar {
   -webkit-app-region: no-drag;
 }
