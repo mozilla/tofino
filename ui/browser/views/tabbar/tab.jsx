@@ -24,6 +24,7 @@ class Tab extends Component {
 
     this.onDragStart = this.onDragStart.bind(this);
     this.onDragEnd = this.onDragEnd.bind(this);
+    this.onClick = this.onClick.bind(this);
   }
 
   onDragStart(event) {
@@ -36,11 +37,20 @@ class Tab extends Component {
     this.props.onDragEnd(event);
   }
 
+  onClick(event) {
+    const { onClick, onClose } = this.props;
+    if (!!event && event.button === 1) {
+      onClose(event);
+    } else {
+      onClick(event);
+    }
+  }
+
   render() {
     const {
-      page, isActive, onClose, onDragEnter, onDrop, onClick, onContextMenu,
+      page, isActive, onClose, onDragEnter, onDrop, onContextMenu,
     } = this.props;
-    const { onDragStart, onDragEnd } = this;
+    const { onDragStart, onDragEnd, onClick } = this;
 
     const title = page.title || 'loading';
     const classes = [
