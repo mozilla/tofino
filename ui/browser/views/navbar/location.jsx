@@ -51,14 +51,6 @@ const Location = createClass({
     }
   },
 
-  /*
-  shouldComponentUpdate(nextProps) {
-    // Currently only update if more changed other than what
-    // the user typed into the URL bar
-    return nextProps.page.userTyped === this.props.page.userTyped;
-  },
-  */
-
   onTitleClick() {
     this.setState({ showURLBar: true });
   },
@@ -109,14 +101,17 @@ const Location = createClass({
         style={{
           flex: 1,
           display: 'flex',
-          margin: '0 5px',
+          margin: '5px 50px',
+          backgroundColor: '#fff',
+          border: 'solid 1px #e5e5e5',
+          borderRadius: '3px',
         }}>
         <Btn title="Info"
           image={''}
           clickHandler={function() {}}
           style={{
-            flex: 1,
             display: 'flex',
+            margin: '0px 3px 0px 3px',
           }} />
         <span id="browser-location-title-bar"
           tabIndex={0}
@@ -124,7 +119,10 @@ const Location = createClass({
           onFocus={this.onTitleFocus}
           style={{
             flex: 1,
-            display: showURLBar ? 'none' : 'flex',
+            display: showURLBar ? 'none' : 'block',
+            marginTop: '3px',
+            textAlign: 'center',
+            overflow: 'hidden',
           }}>
           {page.title}
         </span>
@@ -134,7 +132,9 @@ const Location = createClass({
           showURLBar={showURLBar}
           style={{
             flex: 1,
-            display: showURLBar ? 'flex' : 'none',
+            margin: '0px 10px',
+            padding: '0px 10px',
+            display: showURLBar ? 'block' : 'none',
           }}
           defaultValue={urlValue}
           onChange={onLocationChange}
@@ -147,8 +147,8 @@ const Location = createClass({
             : 'glyph-bookmark-hollow-16.svg'}
           clickHandler={onBookmark}
           style={{
-            flex: 1,
             display: 'flex',
+            margin: '2px 6px 0px 6px',
           }} />
       </div>
     );
