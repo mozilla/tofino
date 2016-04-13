@@ -70,6 +70,10 @@ function createWindow(tabInfo) {
     browser.webContents.send('focus-urlbar');
   });
 
+  electronLocalshortcut.register(browser, 'CmdOrCtrl+R', () => {
+    browser.webContents.send('page-reload');
+  });
+
   browser.webContents.once('did-finish-load', () => {
     const browserDidFinishLoadTime = Date.now();
     instrument.event('browser', 'READY', 'ms', browserDidFinishLoadTime - browserStartTime);
