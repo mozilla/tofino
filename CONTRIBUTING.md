@@ -5,28 +5,113 @@ This project is very new, so we'll probably revise these guidelines. Please
 comment on a bug before putting significant effort in, if you'd like to
 contribute.
 
-Guidelines:
+## Guidelines
 
 * Follow the Style Guide (see below)
 * Keep work branches in your own github fork, rebase your own branches at will
 * Squash or rebase branches before merging to master so the commits make sense
-  on their own
+on their own
 * Get a SGTM from someone relevant before merging
 * Keep commits to master bisect safe (i.e. each commit should pass all tests)
 * Sign-off commits before merging (see below)
 * Make sure your commit message references the issue or bug number, if there is
-  one, identifies the reviewers, and follows a readable style, with the long
-  description including any additional information that's likely to help future
-  spelunkers.
-  For example:
-  ```
-  Frobnicate the URL bazzer before flattening pilchard. Fixes #6. r=mossop,rnewman
+one, identifies the reviewers, and follows a readable style, with the long
+description including any additional information that's likely to help future
+spelunkers (see below)
 
-  The frobnication method used is as described in Podder's Miscellany, page 15.
-  Note that this pull request doesn't include tests, because we're bad people.
+```
+Frobnicate the URL bazzer before flattening pilchard, r=mossop,rnewman. Fixes #6.
 
-  Signed-off-by: Random J Developer <random@developer.example.org>
-  ```
+The frobnication method used is as described in Podder's Miscellany, page 15.
+Note that this pull request doesn't include tests, because we're bad people.
+
+Signed-off-by: Random J Developer <random@developer.example.org>
+```
+
+## Example
+
+* Fork this repo at [github.com/mozilla/tofino](https://github.com/mozilla/tofino#fork-destination-box)
+
+* Clone your fork locally. Make sure you use the correct clone URL.
+```
+git clone git@github.com:YOURNAME/tofino.git
+```
+Check your remotes:
+```
+git remote --verbose
+```
+Make sure you have an upstream remote defined:
+```
+git remote add upstream https://github.com/mozilla/tofino
+```
+
+* Create a new branch to start working on a bug or feature:
+```
+git checkout -b some-new-branch
+```
+
+* Do some work, making sure you signoff every commit:
+```
+git commit --signoff --message “Some commit message”
+```
+
+* Rebase your work during development and before submitting a pull request,
+avoiding merge commits, such that your commits are a logical sequence to
+read rather than a record of your fevered typing/ Make sure you're on the correct branch and are pulling from the correct upstream:
+```
+git checkout some-new-branch
+git pull upstream master --rebase
+```
+Or using `git reset --soft` (as described in [a tale of tree trees](http://www.infoq.com/presentations/A-Tale-of-Three-Trees))
+
+* Update your fork with the local changes on your branch:
+```
+git push origin some-new-branch
+```
+
+* Submit a pull request. It would be helpful if you also flagged somebody
+for review, by typing their @username in the comments section.
+
+### Addressing review comments
+
+#### Adding more commits
+After submitting a pull request, certain review comments might need to be
+addressed. All you have to do is commit your new work, and simply update
+your fork with the local changes on your branch again. The pull request
+will automatically update with your new changes.
+
+#### Signoff earlier commits
+If you forgot to signoff some earlier commits, do an incremental rebase
+on the branch you're working on. Find the earliest commit hash you want to
+change, e.g. "1234567" (via `git log`), then use it in the rebase command
+to start an interactive rebase. Type `edit` instead of `pick` for the
+commits you want to edit.
+```
+git rebase --interactive '1234567^'
+git commit --amend --signoff --no-edit
+git rebase --continue
+```
+
+#### Squashing earlier commits
+While you're working, committing often is a good idea. However, it might
+not make sense to have commits that are too granular or don't make sense
+on their own before closing a pull request and merging back to upstream master.
+Find the earliest commit hash you want to change, e.g. "1234567"
+(via `git log`), then use it in the rebase command to start an interactive
+rebase. Type `squash` instead of `pick` for the commits you want to squash
+into their parents.
+```
+git rebase --interactive '1234567^'
+```
+
+#### Properly set name and email
+Update your `.gitconfig` with the proper information. You might need to
+update the earlier commits and sign them off as well, see above.
+```
+git config --global user.name “Foo Bar“
+git config --global user.email john@doe.com
+git commit --amend --reset-author --no-edit
+```
 
 # Style Guide
 
@@ -58,7 +143,6 @@ proven need that cannot easily be met without the module and its code quality,
 API style and size will be taken into account when judging that. The same
 applies though to a lesser extent to modules that are only needed for develop
 / build / package activities.
-
 
 # How to sign-off your commits
 
