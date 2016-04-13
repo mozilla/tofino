@@ -12,25 +12,27 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes } from 'react';
 
-const HEIGHT = '20px';
-const WIDTH = '20px';
+const HEIGHT = '16px';
+const WIDTH = '16px';
 const noop = function() {};
 
 /**
  * A button for the NavBar.
  * `image` must be a valid CSS path to an image.
  */
-const Btn = ({ id, disabled, active, title, image, clickHandler, children }) => {
+const Btn = ({ style, id, disabled, active, title, image, clickHandler, children }) => {
   const styles = {
     opacity: (disabled ? '0.5' : '1'),
     cursor: (disabled ? 'default' : 'pointer'),
-    margin: '8px 3px 0px 3px',
+    margin: '10px 6px 0px 6px',
     height: HEIGHT,
     display: 'inline-block',
     padding: '0',
     border: '0',
     backgroundColor: (active ? '#DFE1E4' : 'transparent'),
+    ...style,
   };
+
   if (image) {
     styles.backgroundImage = image ? `url(assets/${image})` : `url(${DEFAULT})`;
     styles.backgroundRepeat = 'no-repeat';
@@ -52,6 +54,7 @@ const Btn = ({ id, disabled, active, title, image, clickHandler, children }) => 
 };
 
 Btn.propTypes = {
+  style: PropTypes.object,
   disabled: PropTypes.bool,
   active: PropTypes.bool,
   id: PropTypes.string,
