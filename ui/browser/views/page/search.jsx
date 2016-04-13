@@ -17,8 +17,11 @@ import { inPageSearch } from '../../actions/external';
  * In page search
  */
 const Search = ({ isActive }) => (
-  <div id="browser-page-search" className={isActive ? 'visible' : 'hidden'}>
-    <input type="text" placeholder="Search..." onKeyDown={inPageSearch} />
+  <div id="browser-page-search"
+    className={isActive ? 'visible' : 'hidden'}>
+    <input type="text"
+      placeholder="Search..."
+      onKeyDown={inPageSearch} />
   </div>
 );
 

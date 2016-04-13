@@ -55,7 +55,8 @@ class BrowserWindow extends Component {
     const setPageAreaVisibility = (visible) => dispatch(setPageAreaVisibilityAction(visible));
 
     return (
-      <div id="browser-chrome" className={`platform-${platform}`} >
+      <div id="browser-chrome"
+        className={`platform-${platform}`} >
         <NavBar page={pages.get(currentPageIndex)}
           {...{ pages, navBack, navForward, navRefresh, minimize, maximize,
             close, openMenu, onLocationChange, onLocationContextMenu,
@@ -65,7 +66,8 @@ class BrowserWindow extends Component {
         <div id="content-area">
           {pages.map((page, pageIndex) => (
             <Page key={`page-${pageIndex}`}
-              page={page} pageIndex={pageIndex}
+              page={page}
+              pageIndex={pageIndex}
               isActive={pageIndex === currentPageIndex}
               browserDB={browserDB}
               dispatch={dispatch} />

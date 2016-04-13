@@ -17,7 +17,8 @@ describe('components - NavBar', () => {
     const onClick = expect.createSpy();
 
     const wrapper = shallow(
-      <Tab page={page} isActive
+      <Tab isActive
+        page={page}
         onClose={expect.createSpy()}
         onDragStart={expect.createSpy()}
         onDragEnd={expect.createSpy()}

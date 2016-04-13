@@ -1,5 +1,5 @@
 {
-  "extends": "airbnb",
+  "extends": ["airbnb", "plugin:react/recommended"],
 
   "parser": "babel-eslint",
 
@@ -34,6 +34,12 @@
       "allowArrayStart": true
     }],
     "react/jsx-closing-bracket-location": ["error", "after-props"],
+    "react/jsx-indent": ["error", 2],
+    "react/jsx-indent-props": ["error", 2],
+    "react/jsx-max-props-per-line": ["error", { "maximum": 1 }],
+    "react/jsx-equals-spacing": ["error", "never"],
+    "react/jsx-curly-spacing": ["error", "never"],
+    "react/jsx-handler-names": ["error"],
     "react/prefer-es6-class": ["off"],
   }
 }
