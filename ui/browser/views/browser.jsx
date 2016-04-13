@@ -24,7 +24,7 @@ import {
 } from '../actions/external';
 import {
   setPageAreaVisibility as setPageAreaVisibilityAction,
-  createTab, attachTab, setPageDetails, setLocation,
+  createTab, attachTab, closeTab, setPageDetails, setLocation,
 } from '../actions/main-actions';
 import { getCurrentWebView } from '../browser-util';
 
@@ -122,5 +122,9 @@ function attachListeners({ dispatch, currentPageIndex, ipcRenderer }) {
     const page = tabInfo.page;
     page.guestInstanceId = tabInfo.guestInstanceId;
     dispatch(attachTab(page));
+  });
+
+  ipcRenderer.on('close-tab', () => {
+    dispatch(closeTab(currentPageIndex));
   });
 }
