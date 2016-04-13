@@ -62,7 +62,7 @@ class Location extends Component {
         <input id="urlbar-input" type="text" ref="input"
           value={value}
           onChange={onLocationChange}
-          clickHandler={ev => ev.target.select()}
+          onClick={ev => ev.target.select()}
           onContextMenu={onLocationContextMenu}
           onKeyDown={this.handleKeyDown} />
 
