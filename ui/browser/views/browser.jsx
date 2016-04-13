@@ -129,4 +129,8 @@ function attachListeners({ dispatch, currentPageIndex, ipcRenderer }) {
   ipcRenderer.on('close-tab', () => {
     dispatch(closeTab(currentPageIndex));
   });
+
+  ipcRenderer.on('page-reload', () => {
+    getCurrentWebView(document).reload();
+  });
 }
