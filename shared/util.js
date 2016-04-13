@@ -10,7 +10,11 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { development } from '../build-config';
+import path from 'path';
+import { packaged, projectPath, development } from '../build-config';
+
+import { remote } from 'electron';
+const app = remote.require('app');
 
 /**
  * When you want to create a new object containing mutated keys/values compared
@@ -53,4 +57,16 @@ export function debounce(func, wait) {
  */
 export function isProduction() {
   return !development;
+}
+
+/**
+ * Returns an absolute path to the project root. When packaged, this will return
+ * a string pointing to a file in Electron's asar store.
+ */
+export function getFilePathToRoot() {
+  if (packaged) {
+    return app.getAppPath();
+  } else {
+    return projectPath;
+  }
 }

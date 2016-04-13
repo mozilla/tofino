@@ -22,6 +22,7 @@ export const App = function({ state, dispatch }) {
       currentPageIndex={state.currentPageIndex}
       pageAreaVisible={state.pageAreaVisible}
       ipcRenderer={ipcRenderer}
+      currentWebviewScroll={state.currentWebviewScroll}
       dispatch={dispatch} />
   );
 };

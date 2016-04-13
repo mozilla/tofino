@@ -32,6 +32,10 @@ const BASE_CONFIG = {
   // If this build occurred on Appveyor
   appveyor: buildUtils.IS_APPVEYOR,
 
+  // The absolute path to the project's root. Will be `undefined` in
+  // a packaged build.
+  projectPath: path.join(__dirname, '..'),
+
   // The `development` option indicates whether or not the build is
   // using hot reloading and unminified content and other things like that.
   development: true,
@@ -45,8 +49,15 @@ const BASE_CONFIG = {
 
 module.exports = config => new Promise((resolve, reject) => {
   const configToWrite = Object.assign({}, BASE_CONFIG, config);
-  const content = `module.exports = ${JSON.stringify(configToWrite, null, 2)}`;
 
+  // Wipe `projectPath` if this isn't in development mode -- does not make
+  // sense otherwise, as it would need dynamically need to reference an asar path
+  // within Electron.
+  if (!configToWrite.development) {
+    configToWrite.projectPath = void 0;
+  }
+
+  const content = `module.exports = ${JSON.stringify(configToWrite, null, 2)}`;
   fs.writeFile(path.join(__dirname, '..', 'build-config.js'), content, err => {
     if (err) {
       reject(err);

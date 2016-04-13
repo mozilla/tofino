@@ -25,6 +25,7 @@ import {
 import {
   setPageAreaVisibility as setPageAreaVisibilityAction,
   createTab, attachTab, closeTab, setPageDetails, setLocation,
+  setWebviewScroll
 } from '../actions/main-actions';
 import { getCurrentWebView } from '../browser-util';
 
@@ -42,7 +43,7 @@ class BrowserWindow extends Component {
 
   render() {
     const { dispatch, pages, currentPageIndex, pageOrder, ipcRenderer,
-            pageAreaVisible } = this.props;
+            pageAreaVisible, currentWebviewScroll } = this.props;
     const navBack = e => getCurrentWebView(e.target.ownerDocument).goBack();
     const navForward = e => getCurrentWebView(e.target.ownerDocument).goForward();
     const navRefresh = e => getCurrentWebView(e.target.ownerDocument).reload();
@@ -53,6 +54,7 @@ class BrowserWindow extends Component {
     const onLocationContextMenu = e => menuLocationContext(e.target, dispatch);
     const onLocationReset = () => dispatch(setLocation());
     const setPageAreaVisibility = (visible) => dispatch(setPageAreaVisibilityAction(visible));
+    const handleWebviewScroll = top => dispatch(setWebviewScroll(top));
 
     return (
       <div id="browser-chrome" className={`platform-${platform}`} >
@@ -68,6 +70,7 @@ class BrowserWindow extends Component {
               page={page} pageIndex={pageIndex}
               isActive={pageIndex === currentPageIndex}
               browserDB={browserDB}
+              handleWebviewScroll={handleWebviewScroll}
               dispatch={dispatch} />
           ))}
         </div>
