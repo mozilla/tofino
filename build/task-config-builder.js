@@ -47,7 +47,7 @@ export default config => new Promise((resolve, reject) => {
   const content = [];
 
   for (const [key, value] of Object.entries(configToWrite)) {
-    content.push(`export const ${key} = '${value}';\n`);
+    content.push(`export const ${key} = ${JSON.stringify(value)};\n`);
   }
 
   fs.writeFile(path.join(__dirname, '..', 'build-config.js'), content.join(''), err => {
