@@ -10,7 +10,13 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
+/**
+ * Disable the eslint "strict" and "no-commonjs" rules, since this is a script
+ * that runs in node without any babel support, so it's not not a module
+ * implicitly running in strict mode, and we can't use the import syntax.
+ */
 /* eslint-disable strict */
+/* eslint-disable import/no-commonjs */
 'use strict';
 
 // Must go before any require statements.

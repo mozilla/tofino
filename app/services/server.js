@@ -15,12 +15,12 @@ specific language governing permissions and limitations under the License.
 // Putting a web server in the node process probably isn't the best idea from
 // a live perf POV, but from a dev perf POV, it enables HMR which kills.
 
-const path = require('path');
-const http = require('http');
-const express = require('express');
-const morgan = require('morgan');
+import path from 'path';
+import http from 'http';
+import express from 'express';
+import morgan from 'morgan';
 
-const { isProduction } = require('../../shared/util');
+import { isProduction } from '../../shared/util';
 
 const port = 8765;
 const host = undefined; // 'localhost';

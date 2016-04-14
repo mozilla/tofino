@@ -10,9 +10,10 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-const ipc = require('electron').ipcRenderer;
-require('./hover-status');
-require('./context-menu');
+import { ipcRenderer as ipc } from 'electron';
+
+import './hover-status';
+import './context-menu';
 
 window.addEventListener('message', (event) => {
   if (event.origin !== 'atom://') {
