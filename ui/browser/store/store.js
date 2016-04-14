@@ -32,7 +32,9 @@ export default function configureStore() {
   const store = createStore(rootReducer, applyMiddleware(logger, instrumenter));
 
   if (module.hot) {
-    // Enable Webpack hot module replacement for reducers
+    // Enable Webpack hot module replacement for reducers. We need to use
+    // `require` here, since native module imports don't have lazy loading
+    // and need to be at the top level.
     module.hot.accept('../reducers', () => {
       const nextReducer = require('../reducers/index').default;
       store.replaceReducer(nextReducer);

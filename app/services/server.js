@@ -56,7 +56,8 @@ export function serve(staticDir) {
     app.use('/built/', express.static(builtDir));
   } else {
     // These are only used in development environment where we rebuild
-    // modules on request.
+    // modules on request. Need to use `require` here since native module
+    // imports don't have lazy loading and need to be at the top level.
     try {
       const webpack = require('webpack');
       const devMiddleware = require('webpack-dev-middleware');
