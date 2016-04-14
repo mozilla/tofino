@@ -29,7 +29,8 @@
     "react-dom": "0.14.7",
     "react-redux": "4.4.1",
     "redux": "3.3.1",
-    "redux-logger": "2.6.1"
+    "redux-logger": "2.6.1",
+    "request": "2.71.0"
   },
   "devDependencies": {
     "electron-packager": "5.2.1",
