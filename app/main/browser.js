@@ -10,36 +10,24 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-/**
- * Disable the eslint "strict" and "no-commonjs" rules, since this is a script
- * that runs in node without any babel support, so it's not not a module
- * implicitly running in strict mode, and we can't use the import syntax.
- */
-/* eslint-disable strict */
-/* eslint-disable import/no-commonjs */
-'use strict';
+import path from 'path';
+import electron from 'electron';
+import electronLocalshortcut from 'electron-localshortcut';
 
-// Must go before any require statements.
-const browserStartTime = Date.now();
+import BrowserMenu from './browser-menu';
+import * as instrument from '../services/instrument';
+import * as server from '../services/server';
+import { isProduction } from '../../shared/util';
 
-require('babel-polyfill');
-require('babel-register')();
-
-const path = require('path');
-const electron = require('electron');
-const instrument = require('../services/instrument');
-const server = require('../services/server');
-const app = electron.app; // control application life.
 const BrowserWindow = electron.BrowserWindow;  // create native browser window.
-const BrowserMenu = require('./browser-menu').default;
-const isProduction = require('../../shared/util').isProduction;
+const app = electron.app; // control application life.
 const ipc = electron.ipcMain;
 const globalShortcut = electron.globalShortcut;
-const electronLocalshortcut = require('electron-localshortcut');
 
 const root = path.dirname(__dirname);
 const staticDir = path.join(__dirname, '..', '..', 'static');
 
+export default function(browserStartTime) {
 // Keep a global references of the window objects, if you don't, the windows will
 // be closed automatically when the JavaScript object is garbage collected.
 const mainWindows = [];
@@ -176,3 +164,4 @@ ipc.on('window-ready', event => {
 ipc.on('update-menu', (event, data) => BrowserMenu.build(data));
 
 ipc.on('tab-detach', (event, tabInfo) => createWindow(tabInfo));
+}
