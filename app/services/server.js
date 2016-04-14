@@ -15,12 +15,12 @@ specific language governing permissions and limitations under the License.
 // Putting a web server in the node process probably isn't the best idea from
 // a live perf POV, but from a dev perf POV, it enables HMR which kills.
 
-const path = require('path');
-const http = require('http');
-const express = require('express');
-const morgan = require('morgan');
+import path from 'path';
+import http from 'http';
+import express from 'express';
+import morgan from 'morgan';
 
-const { isProduction } = require('../../shared/util');
+import { isProduction } from '../../shared/util';
 
 const port = 8765;
 const host = undefined; // 'localhost';
@@ -56,12 +56,13 @@ export function serve(staticDir) {
     app.use('/built/', express.static(builtDir));
   } else {
     // These are only used in development environment where we rebuild
-    // modules on request.
+    // modules on request. Need to use `require` here since native module
+    // imports don't have lazy loading and need to be at the top level.
     try {
       const webpack = require('webpack');
       const devMiddleware = require('webpack-dev-middleware');
       const hotMiddleware = require('webpack-hot-middleware');
-      const webpackConfig = require('../../build/webpack.config.dev');
+      const webpackConfig = require('../../build/webpack.config.dev').default;
 
       const compiler = webpack(webpackConfig);
 

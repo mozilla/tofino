@@ -22,15 +22,17 @@ import {
   unbookmark as unbookmarkAction,
   menuLocationContext, updateMenu, menuBrowser, maximize, minimize, close,
 } from '../actions/external';
+
 import {
   setPageAreaVisibility as setPageAreaVisibilityAction,
   createTab, attachTab, closeTab, setPageDetails, setLocation,
 } from '../actions/main-actions';
+
 import { getCurrentWebView } from '../browser-util';
 
 import { platform } from '../../../build-config';
 
-require('../../shared/web-view');
+import '../../shared/web-view';
 
 /**
  *

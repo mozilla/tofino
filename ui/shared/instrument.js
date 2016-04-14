@@ -1,5 +1,3 @@
-/* eslint func-names: 0 */
-
 /**
  * Send instrumentation messages to the main process instrument
  * service.  This just provides a typed interface instead of message

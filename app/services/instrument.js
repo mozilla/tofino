@@ -5,10 +5,10 @@
  * @module instrument
  */
 
-import { googleAnalyticsTrackingID } from '../../build-config';
+import { app } from 'electron';
+import request from 'request';
 
-const { app } = require('electron');
-const request = require('request');
+import { googleAnalyticsTrackingID } from '../../build-config';
 
 /**
  * Send an instrumentation payload to Google Analytics.

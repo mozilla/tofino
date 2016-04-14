@@ -1,14 +1,19 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-'use strict';
+/**
+ * Disable eslint "import" rules, since it cannot handle importing directly
+ * from .json files, which we do in fact support through webpack.
+ */
+/* eslint-disable import/namespace, import/default, import/no-named-as-default */
 
-const manifest = require('../package.json');
+import manifest from '../package.json';
+import electronPath from 'electron-prebuilt';
 
-const IS_TRAVIS = exports.IS_TRAVIS = process.env.TRAVIS === 'true';
-const IS_APPVEYOR = exports.IS_APPVEYOR = process.env.APPVETOR === 'True';
+export const IS_TRAVIS = process.env.TRAVIS === 'true';
+export const IS_APPVEYOR = process.env.APPVETOR === 'True';
 
-exports.getAppVersion = () => {
+export const getAppVersion = () => {
   if (IS_TRAVIS) {
     return `${manifest.version}-${process.env.TRAVIS_BUILD_NUMBER}`;
   }
@@ -18,6 +23,8 @@ exports.getAppVersion = () => {
   return manifest.version;
 };
 
-exports.getElectronPath = () => require('electron-prebuilt');
+export const getManifest = () => manifest;
 
-exports.getElectronVersion = () => manifest.devDependencies['electron-prebuilt'];
+export const getElectronPath = () => electronPath;
+
+export const getElectronVersion = () => manifest.devDependencies['electron-prebuilt'];

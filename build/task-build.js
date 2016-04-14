@@ -1,15 +1,13 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-'use strict';
+import webpack from 'webpack';
 
-const webpack = require('webpack');
+import webpackProdConfig from './webpack.config.prod';
+import webpackDevConfig from './webpack.config.dev';
+import { development } from '../build-config';
 
-const webpackProdConfig = require('./webpack.config.prod');
-const webpackDevConfig = require('./webpack.config.dev');
-const { development } = require('../build-config');
-
-module.exports = () => new Promise((resolve, reject) => {
+export default () => new Promise((resolve, reject) => {
   const config = development ? webpackDevConfig : webpackProdConfig;
   try {
     const compiler = webpack(config);

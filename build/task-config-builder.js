@@ -1,17 +1,16 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-'use strict';
-
 /**
- * Builds a `build-config.js` in root directory for runtime access to build configurations.
+ * Creates a `build-config.js` in root directory for runtime access to
+ * build configurations.
  */
 
-const path = require('path');
-const os = require('os');
-const fs = require('fs');
+import path from 'path';
+import os from 'os';
+import fs from 'fs';
 
-const buildUtils = require('./utils');
+import * as BuildUtils from './utils';
 
 const BASE_CONFIG = {
   // System information
@@ -19,18 +18,18 @@ const BASE_CONFIG = {
   arch: 'x64',
 
   // Electron information
-  electron: buildUtils.getElectronVersion(),
+  electron: BuildUtils.getElectronVersion(),
 
   // Other environment settings
 
   // Version number, with extra build numbers if in a CI environment
-  version: buildUtils.getAppVersion,
+  version: BuildUtils.getAppVersion(),
 
   // If this build occurred on Travis CI
-  travis: buildUtils.IS_TRAVIS,
+  travis: BuildUtils.IS_TRAVIS,
 
   // If this build occurred on Appveyor
-  appveyor: buildUtils.IS_APPVEYOR,
+  appveyor: BuildUtils.IS_APPVEYOR,
 
   // The `development` option indicates whether or not the build is
   // using hot reloading and unminified content and other things like that.
@@ -43,11 +42,15 @@ const BASE_CONFIG = {
   googleAnalyticsTrackingID: 'UA-76122102-1',
 };
 
-module.exports = config => new Promise((resolve, reject) => {
+export default config => new Promise((resolve, reject) => {
   const configToWrite = Object.assign({}, BASE_CONFIG, config);
-  const content = `module.exports = ${JSON.stringify(configToWrite, null, 2)}`;
+  const content = [];
 
-  fs.writeFile(path.join(__dirname, '..', 'build-config.js'), content, err => {
+  for (const [key, value] of Object.entries(configToWrite)) {
+    content.push(`export const ${key} = '${value}';\n`);
+  }
+
+  fs.writeFile(path.join(__dirname, '..', 'build-config.js'), content.join(''), err => {
     if (err) {
       reject(err);
     }

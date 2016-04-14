@@ -1,5 +1,10 @@
 {
-  "extends": ["airbnb", "plugin:react/recommended"],
+  "extends": [
+    "airbnb",
+    "plugin:react/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings"
+  ],
 
   "parser": "babel-eslint",
 
@@ -11,6 +16,7 @@
   },
 
   "plugins": [
+    "import",
     "react"
   ],
 
@@ -41,5 +47,12 @@
     "react/jsx-curly-spacing": ["error", "never"],
     "react/jsx-handler-names": ["error"],
     "react/prefer-es6-class": ["off"],
+    "import/no-unresolved": ["error", {
+      "ignore": ["^electron$", "\\./build-config$"],
+      "commonjs": true
+    }],
+    "import/no-commonjs": ["error"],
+    "import/no-amd": ["error"],
+    "import/imports-first": ["error"]
   }
 }

@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-const Dexie = require('dexie');
+import Dexie from 'dexie';
 
 const browserDB = new Dexie('MyDB');
 browserDB.version(1).stores({
@@ -18,4 +18,4 @@ browserDB.version(1).stores({
 });
 browserDB.open();
 
-module.exports = browserDB;
+export default browserDB;
