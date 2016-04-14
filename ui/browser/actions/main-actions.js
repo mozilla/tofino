@@ -46,3 +46,7 @@ export function setPageOrder(pageOrder) {
 export function setPageAreaVisibility(visible) {
   return { type: types.SET_PAGE_AREA_VISIBILITY, visible };
 }
+
+export function setWebviewScroll(y) {
+  return { type: types.SET_WEBVIEW_SCROLL, y };
+}

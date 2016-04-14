@@ -24,6 +24,8 @@ const initialState = new State({
   pageOrder: Immutable.List.of(0),
   currentPageIndex: 0,
   pageAreaVisible: false,
+  // How far the webview has scroll in pixels
+  currentWebviewScroll: 0,
 });
 
 export default function basic(state = initialState, action) {
@@ -54,6 +56,9 @@ export default function basic(state = initialState, action) {
 
     case types.SET_PAGE_AREA_VISIBILITY:
       return setPageAreaVisibility(state, action.visible);
+
+    case types.SET_WEBVIEW_SCROLL:
+      return setWebviewScroll(state, action.y);
 
     default:
       return state;
@@ -144,4 +149,8 @@ function setPageOrder(state, pageOrder) {
 
 function setPageAreaVisibility(state, visible) {
   return state.set('pageAreaVisible', visible);
+}
+
+function setWebviewScroll(state, y) {
+  return state.set('currentWebviewScroll', y);
 }

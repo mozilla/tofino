@@ -24,6 +24,7 @@
     "electron-localshortcut": "0.6.0",
     "express": "4.13.4",
     "immutable": "3.7.6",
+    "lodash.throttle": "^4.0.1",
     "morgan": "1.7.0",
     "react": "0.14.7",
     "react-dom": "0.14.7",

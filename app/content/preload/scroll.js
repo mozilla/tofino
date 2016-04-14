@@ -10,13 +10,11 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-export const CREATE_TAB = 'CREATE_TAB';
-export const DUPLICATE_TAB = 'DUPLICATE_TAB';
-export const ATTACH_TAB = 'ATTACH_TAB';
-export const CLOSE_TAB = 'CLOSE_TAB';
-export const SET_LOCATION = 'SET_LOCATION';
-export const SET_PAGE_DETAILS = 'SET_PAGE_DETAILS';
-export const SET_CURRENT_TAB = 'SET_CURRENT_TAB';
-export const SET_PAGE_ORDER = 'SET_PAGE_ORDER';
-export const SET_PAGE_AREA_VISIBILITY = 'SET_PAGE_AREA_VISIBILITY';
-export const SET_WEBVIEW_SCROLL = 'SET_WEBVIEW_SCROLL';
+const ipc = require('electron').ipcRenderer;
+const throttle = require('lodash.throttle');
+// How often the scroll handler may be fired at most
+const THROTTLE_TIMER = 1000;
+
+window.addEventListener('scroll', throttle(e => {
+  ipc.sendToHost('scroll', window.scrollY);
+}, THROTTLE_TIMER, { trailing: true });

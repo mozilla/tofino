@@ -22,14 +22,18 @@ function NavBar(props) {
     navBack, navForward, navRefresh, page, pages, openMenu, ipcRenderer,
     minimize, maximize, close, bookmark, unbookmark, setPageAreaVisibility,
     onLocationChange, onLocationContextMenu, onLocationReset, pageAreaVisible,
+    currentWebviewScroll
   } = props;
 
   if (page == null) {
     return <div id="browser-navbar"></div>;
   }
 
+  console.log('scroll', currentWebviewScroll);
   return (
-    <div id="browser-navbar">
+    <div id="browser-navbar" style={{
+        opacity: currentWebviewScroll > 100 ? '0.5' : '1'
+      }}>
       <Btn id="browser-navbar-menu"
         title="Menu"
         image="glyph-menu-16.svg"

@@ -10,14 +10,18 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
+import path from 'path';
 import React, { PropTypes, Component } from 'react';
 
 import Status from './status.jsx';
 import Search from './search.jsx';
 
+import { getFilePathToRoot } from '../../../../shared/util';
 import { fixURL } from '../../browser-util';
 import { contextMenu, menuWebViewContext } from '../../actions/external';
 import { closeTab, setPageDetails } from '../../actions/main-actions';
+
+const PRELOAD_SCRIPT_PATH = `file://${path.join(getFilePathToRoot(), 'app', 'content', 'preload', 'content.js')}`;
 
 /**
  * A Page is made up of an in-page search component, a web-view and a status
@@ -26,10 +30,10 @@ import { closeTab, setPageDetails } from '../../actions/main-actions';
  */
 class Page extends Component {
   componentDidMount() {
-    const { page, pageIndex, dispatch, browserDB } = this.props;
+    const { page, pageIndex, dispatch, handleWebviewScroll, browserDB } = this.props;
     const webview = this.webview.webview;
 
-    addListenersToWebView(webview, page, pageIndex, dispatch, browserDB);
+    addListenersToWebView(webview, page, pageIndex, dispatch, browserDB, handleWebviewScroll);
 
     // set location, if given
     if (!page.guestInstanceId && page.location) {
@@ -47,6 +51,7 @@ class Page extends Component {
         <web-view className={`webview-${pageIndex}`}
           ref={node => { if (node != null) this.webview = node; }}
           guestinstance={page.guestInstanceId}
+          preload={PRELOAD_SCRIPT_PATH}
           onContextMenu={() => dispatch(contextMenu())}
           style={{ height: '100%' /* I have no idea why we need this */ }} />
         <Status page={page} />
@@ -61,6 +66,7 @@ Page.propTypes = {
   isActive: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
   browserDB: PropTypes.object.isRequired,
+  handleWebviewScroll: PropTypes.func.isRequired,
 };
 
 export default Page;
@@ -68,7 +74,7 @@ export default Page;
 /**
  * WebView wasn't designed for React...
  */
-function addListenersToWebView(webview, page, pageIndex, dispatch, browserDB) {
+function addListenersToWebView(webview, page, pageIndex, dispatch, browserDB, handleWebviewScroll) {
   webview.addEventListener('did-start-loading', () => {
     dispatch(setPageDetails(pageIndex, {
       isLoading: true,
@@ -109,22 +115,28 @@ function addListenersToWebView(webview, page, pageIndex, dispatch, browserDB) {
   });
 
   webview.addEventListener('ipc-message', e => {
-    if (e.channel === 'status') {
-      dispatch(setPageDetails(pageIndex, {
-        statusText: e.args[0],
-      }));
-    } else if (e.channel === 'contextmenu-data') {
-      menuWebViewContext(e.args[0], dispatch);
-    } else if (e.channel === 'show-bookmarks') {
-      // console.log('got a menu');
-    }
-  });
-
-  webview.addEventListener('ipc-message', e => {
-    if (e.channel === 'channel-message' && e.args[1] === 'bookmarks-update') {
-      browserDB.bookmarks.toArray().then((bookmarks) => {
-        webview.send('channel-message', 'host', 'bookmarks-data', bookmarks);
-      });
+    switch (e.channel) {
+      case 'status':
+        dispatch(setPageDetails(pageIndex, {
+          statusText: e.args[0],
+        }));
+        break;
+      case 'contextmenu-data':
+        menuWebViewContext(e.args[0], dispatch);
+        break;
+      case 'show-bookmarks':
+        // console.log('got a menu');
+        break;
+      case 'channel-message':
+        if (e.args[1] === 'bookmarks-update') {
+          browserDB.bookmarks.toArray().then((bookmarks) => {
+            webview.send('channel-message', 'host', 'bookmarks-data', bookmarks);
+          });
+        }
+        break;
+      case 'scroll':
+        handleWebviewScroll(e.args[0]);
+        break;
     }
   });
 

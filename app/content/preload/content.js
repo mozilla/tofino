@@ -13,6 +13,7 @@ specific language governing permissions and limitations under the License.
 const ipc = require('electron').ipcRenderer;
 require('./hover-status');
 require('./context-menu');
+require('./scroll');
 
 window.addEventListener('message', (event) => {
   if (event.origin !== 'atom://') {
