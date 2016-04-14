@@ -14,6 +14,7 @@ import browserDB from '../../shared/browser-db';
 import { createTab, setLocation, setPageDetails, duplicateTab, closeTab } from './main-actions';
 import { getCurrentWebView, fixURL } from '../browser-util';
 import { remote, clipboard, ipcRenderer } from 'electron';
+
 const { Menu, MenuItem } = remote;
 
 /*
