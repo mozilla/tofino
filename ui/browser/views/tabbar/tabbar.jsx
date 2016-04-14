@@ -14,14 +14,17 @@ import React, { PropTypes } from 'react';
 import Tab from './tab.jsx';
 import { menuTabContext } from '../../actions/external';
 import { createTab, closeTab, setCurrentTab } from '../../actions/main-actions';
-import { TabBarDragDrop, TabDragDrop } from './dragdrop';
+
+// TODO Fix up dragDrop
+// import { TabBarDragDrop, TabDragDrop } from './dragdrop';
 
 /**
  * The TabBar runs across the top of each browser window, containing the
  * window management buttons, and browser tabs
  */
-const TabBar = ({ pageOrder, pages, currentPageIndex, dispatch, pageAreaVisible }) => {
-  const barDragDrop = new TabBarDragDrop(pages, pageOrder, dispatch);
+const TabBar = ({ pages, currentPageIndex, dispatch, pageAreaVisible }) => {
+  // TODO Fix up dragDrop
+  const barDragDrop = { handlers: {} }; // new TabBarDragDrop(pages, dispatch);
 
   // This is the 'pages' section, which can be collapsed
   if (!pageAreaVisible) {
@@ -33,9 +36,9 @@ const TabBar = ({ pageOrder, pages, currentPageIndex, dispatch, pageAreaVisible 
       dragzone="copy string:test/uri-list"
       {...barDragDrop.handlers}>
 
-      {pageOrder.map((i) => {
-        const page = pages.get(i);
-        const dragDrop = new TabDragDrop(page, pageOrder, i);
+      {pages.map((page, i) => {
+        // TODO Fix up dragDrop
+        const dragDrop = { handlers: {} }; // new TabDragDrop(page, pages, i);
 
         return (
           <Tab key={`browser-tab-${i}`}
@@ -62,7 +65,6 @@ const TabBar = ({ pageOrder, pages, currentPageIndex, dispatch, pageAreaVisible 
 };
 
 TabBar.propTypes = {
-  pageOrder: PropTypes.object.isRequired,
   pages: PropTypes.object.isRequired,
   currentPageIndex: PropTypes.number.isRequired,
   dispatch: PropTypes.func.isRequired,

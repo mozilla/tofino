@@ -18,7 +18,6 @@ import BrowserWindow from './browser.jsx';
 export const App = function({ state, dispatch }) {
   return (
     <BrowserWindow pages={state.pages}
-      pageOrder={state.pageOrder}
       currentPageIndex={state.currentPageIndex}
       pageAreaVisible={state.pageAreaVisible}
       ipcRenderer={ipcRenderer}

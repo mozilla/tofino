@@ -21,7 +21,6 @@ const HOME_PAGE = 'https://www.mozilla.org/';
 
 const initialState = new State({
   pages: Immutable.List.of(new Page({ location: HOME_PAGE })),
-  pageOrder: Immutable.List.of(0),
   currentPageIndex: 0,
   pageAreaVisible: false,
 });
@@ -50,7 +49,7 @@ export default function basic(state = initialState, action) {
       return setCurrentTab(state, action.pageIndex);
 
     case types.SET_PAGE_ORDER:
-      return setPageOrder(state, action.pageOrder);
+      return setPageOrder(state, action.pageIndex, action.updatedIndex);
 
     case types.SET_PAGE_AREA_VISIBILITY:
       return setPageAreaVisibility(state, action.visible);
@@ -64,7 +63,6 @@ function createTab(state, location = HOME_PAGE) {
   const page = new Page({ location });
   return state.update('pages', pages => pages.push(page))
               .set('currentPageIndex', state.pages.size)
-              .update('pageOrder', po => po.push(state.pages.size))
               .set('pageAreaVisible', true);
 }
 
@@ -72,22 +70,17 @@ function duplicateTab(state, pageIndex) {
   const location = state.pages.get(pageIndex);
   const page = new Page({ location });
   return state.update('pages', pages => pages.push(page))
-              .set('currentPageIndex', state.pages.size)
-              .update('pageOrder', po => po.push(state.pages.size));
+              .set('currentPageIndex', state.pages.size);
 }
 
 function attachTab(state, page) {
   const newPage = new Page(page);
   return new State({
     pages: Immutable.List.of(newPage),
-    pageOrder: Immutable.List.of(0),
     currentPageIndex: 0,
   });
 }
 
-// TODO: There must be a better way to do this
-// Also it's broken
-// Really, I don't think there's much need for separating pages and pageOrder
 function closeTab(state, pageIndex) {
   // last tab, full reset
   if (state.pages.size === 1) {
@@ -99,14 +92,9 @@ function closeTab(state, pageIndex) {
 
   const pages = state.pages.delete(pageIndex);
 
-  // Update the page order
-  const orderIndex = state.pageOrder.indexOf(pageIndex);
-  let pageOrder = state.pageOrder.delete(orderIndex);
-  pageOrder = pageOrder.map(i => (i < pageIndex ? i : i - 1));
-
   if (currentPageIndex === pageIndex) {
     // If this was the selected page then select the one earlier in page order
-    currentPageIndex = orderIndex > 0 ? orderIndex - 1 : orderIndex;
+    currentPageIndex = pageIndex > 0 ? pageIndex - 1 : pageIndex;
   } else {
     // Otherwise update to the new index
     if (currentPageIndex > pageIndex) {
@@ -115,7 +103,6 @@ function closeTab(state, pageIndex) {
   }
 
   return state.set('pages', pages)
-              .set('pageOrder', pageOrder)
               .set('currentPageIndex', currentPageIndex);
 }
 
@@ -138,8 +125,11 @@ function setCurrentTab(state, pageIndex) {
   return state.set('currentPageIndex', pageIndex);
 }
 
-function setPageOrder(state, pageOrder) {
-  return state.set('pageOrder', pageOrder);
+function setPageOrder(state, pageIndex, updatedIndex) {
+  const page = state.pages[pageIndex];
+  let pages = state.pages.delete(pageIndex);
+  pages = pages.splice(updatedIndex, 0, page);
+  return state.set('pages', pages);
 }
 
 function setPageAreaVisibility(state, visible) {
