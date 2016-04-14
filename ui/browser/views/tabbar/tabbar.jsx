@@ -42,7 +42,7 @@ const TabBar = ({ pageOrder, pages, currentPageIndex, dispatch, pageAreaVisible 
             className={`browser-tab-${i}`}
             isActive={currentPageIndex === i}
             page={page}
-            onClick={() => dispatch(setCurrentTab(i))}
+            onClick={e => dispatch(e.button === 1 ? closeTab(i) : setCurrentTab(i))}
             onContextMenu={() => menuTabContext(i, dispatch)}
             onClose={e => {
               e.preventDefault();
