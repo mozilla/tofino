@@ -67,7 +67,7 @@ function createTab(state, location = HOME_PAGE) {
 }
 
 function duplicateTab(state, pageIndex) {
-  const location = state.pages.get(pageIndex);
+  const location = state.pages.get(pageIndex).location;
   const page = new Page({ location });
   return state.update('pages', pages => pages.push(page))
               .set('currentPageIndex', state.pages.size);
