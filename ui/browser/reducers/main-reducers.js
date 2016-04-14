@@ -82,8 +82,10 @@ function attachTab(state, page) {
 }
 
 function closeTab(state, pageIndex) {
+  const pageCount = state.pages.size;
+
   // last tab, full reset
-  if (state.pages.size === 1) {
+  if (pageCount === 1) {
     return initialState;
   }
 
@@ -92,14 +94,11 @@ function closeTab(state, pageIndex) {
 
   const pages = state.pages.delete(pageIndex);
 
-  if (currentPageIndex === pageIndex) {
-    // If this was the selected page then select the one earlier in page order
-    currentPageIndex = pageIndex > 0 ? pageIndex - 1 : pageIndex;
-  } else {
-    // Otherwise update to the new index
-    if (currentPageIndex > pageIndex) {
-      currentPageIndex--;
-    }
+  // If tab closed comes before our current tab, or if this is the right-most
+  // tab and it's selected, decrement the current page index
+  if (currentPageIndex > pageIndex ||
+       (currentPageIndex === pageIndex && pageIndex === (pageCount - 1))) {
+    currentPageIndex--;
   }
 
   return state.set('pages', pages)
