@@ -1,16 +1,14 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-'use strict';
-
-const webpack = require('webpack');
-const defaultConfig = require('./webpack.config.default');
+import webpack from 'webpack';
+import defaultConfig from './webpack.config.default';
 
 /**
  * Production config. Inspired by
  * https://github.com/gaearon/react-transform-boilerplate/blob/master/webpack.config.prod.js
  */
-module.exports = {
+export default {
   ...defaultConfig,
   plugins: [
     ...(defaultConfig.plugins || []),

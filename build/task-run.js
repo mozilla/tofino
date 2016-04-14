@@ -1,16 +1,14 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-'use strict';
+import { exec } from 'child_process';
+import path from 'path';
 
-const exec = require('child_process').exec;
-const path = require('path');
+import * as BuildUtils from './utils';
 
-const manifest = require('../package.json');
-const buildUtils = require('./utils');
-
-module.exports = env => new Promise((resolve, reject) => {
-  const command = `${buildUtils.getElectronPath()} ${path.join(__dirname, '..', manifest.main)}`;
+export default env => new Promise((resolve, reject) => {
+  const manifest = BuildUtils.getManifest();
+  const command = `${BuildUtils.getElectronPath()} ${path.join(__dirname, '..', manifest.main)}`;
   const environ = {};
   if (env === 'production') {
     environ.NODE_ENV = 'production';

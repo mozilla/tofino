@@ -1,18 +1,15 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-'use strict';
+import path from 'path';
+import os from 'os';
 
-const path = require('path');
-const os = require('os');
+import through2 from 'through2';
+import packager from 'electron-packager';
+import vinyl from 'vinyl-fs';
+import zip from 'gulp-vinyl-zip';
 
-const through2 = require('through2');
-const packager = require('electron-packager');
-const vinyl = require('vinyl-fs');
-const zip = require('gulp-vinyl-zip');
-
-const buildUtils = require('./utils');
-const manifest = require('../package.json');
+import * as BuildUtils from './utils';
 
 const ARCH = 'x64';
 const PLATFORM = os.platform();
@@ -55,7 +52,9 @@ function packageApp(options) {
   return rs;
 }
 
-module.exports = () => {
+export default () => {
+  const manifest = BuildUtils.getManifest();
+
   const devDeps = Object.keys(manifest.devDependencies).map(dep => `/node_modules/${dep}($|/)`);
   const pathsToIgnore = IGNORE.concat(devDeps);
 
@@ -63,13 +62,13 @@ module.exports = () => {
     arch: ARCH,
     platform: PLATFORM,
     ignore: pathsToIgnore,
-    version: buildUtils.getElectronVersion(),
+    version: BuildUtils.getElectronVersion(),
     dir: path.join(__dirname, '..'),
     icon: path.join(__dirname, '..', 'branding', 'app-icon'),
     out: path.join(__dirname, '..', 'dist'),
   });
 
-  const packageName = `${manifest.name}-${buildUtils.getAppVersion()}-${PLATFORM}-${ARCH}.zip`;
+  const packageName = `${manifest.name}-${BuildUtils.getAppVersion()}-${PLATFORM}-${ARCH}.zip`;
   const distPath = path.join(__dirname, '..', 'dist', packageName);
 
   return packagedApp.pipe(zip.dest(distPath));

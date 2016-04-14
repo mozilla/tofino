@@ -1,9 +1,7 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-'use strict';
-
-const path = require('path');
+import path from 'path';
 
 /**
  * The intent is that this config is kept as simple as possible - just the
@@ -13,7 +11,7 @@ const path = require('path');
  */
 const root = path.join(__dirname, '..');
 
-module.exports = {
+export default {
   entry: {
     browser: ['babel-polyfill', path.join(root, 'ui', 'browser', 'index.js')],
   },

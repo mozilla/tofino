@@ -61,7 +61,7 @@ export function serve(staticDir) {
       const webpack = require('webpack');
       const devMiddleware = require('webpack-dev-middleware');
       const hotMiddleware = require('webpack-hot-middleware');
-      const webpackConfig = require('../../build/webpack.config.dev');
+      const webpackConfig = require('../../build/webpack.config.dev').default;
 
       const compiler = webpack(webpackConfig);
 
