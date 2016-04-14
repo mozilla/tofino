@@ -45,9 +45,13 @@ const BASE_CONFIG = {
 
 module.exports = config => new Promise((resolve, reject) => {
   const configToWrite = Object.assign({}, BASE_CONFIG, config);
-  const content = `module.exports = ${JSON.stringify(configToWrite, null, 2)}`;
+  const content = [];
 
-  fs.writeFile(path.join(__dirname, '..', 'build-config.js'), content, err => {
+  for (const [key, value] of Object.entries(configToWrite)) {
+    content.push(`export const ${key} = '${value}';\n`);
+  }
+
+  fs.writeFile(path.join(__dirname, '..', 'build-config.js'), content.join(''), err => {
     if (err) {
       reject(err);
     }

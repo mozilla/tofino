@@ -31,6 +31,7 @@ module.exports = {
         test: /\.jsx?$/,
         loader: 'babel-loader',
         include: [
+          path.join(root, 'build-config.js'),
           path.join(root, 'ui'),
           path.join(root, 'shared'),
         ],
