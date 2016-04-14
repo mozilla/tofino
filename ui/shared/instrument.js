@@ -8,7 +8,14 @@
  * @module instrument
  */
 
-import { ipcRenderer } from 'electron';
+// Stub out ipcRenderer when electron cannot be found (unit tests)
+const ipcRenderer = (function() {
+  try {
+    return require('electron').ipcRenderer;
+  } catch (e) {
+    return { send() {} };
+  }
+}());
 
 /**
  * Send an instrumentation event to Google Analytics.
