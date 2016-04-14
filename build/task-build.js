@@ -9,10 +9,11 @@ import { development } from '../build-config';
 
 export default () => new Promise((resolve, reject) => {
   const config = development ? webpackDevConfig : webpackProdConfig;
-  try {
-    const compiler = webpack(config);
-    compiler.run(resolve);
-  } catch (err) {
-    reject(err);
-  }
+  const compiler = webpack(config);
+  compiler.run(resolve, err => {
+    if (err) {
+      reject(err);
+    }
+    resolve();
+  });
 });

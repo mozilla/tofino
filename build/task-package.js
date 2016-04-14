@@ -35,41 +35,48 @@ const IGNORE = [
   // '/shared($|/)',
 ];
 
-function packageApp(options) {
+const packageApp = options => new Promise((resolve, reject) => {
   const rs = through2.obj();
 
   packager(options, (err, packed) => {
     if (err) {
       rs.emit('error', err);
       rs.end();
+      reject(err);
       return;
     }
 
     const globs = packed.map(d => `${d}/**`);
-    vinyl.src(globs, { followSymlinks: false, ignore: packed, dot: true }).pipe(rs);
+    vinyl.src(globs, {
+      followSymlinks: false,
+      ignore: packed,
+      dot: true,
+    }).pipe(rs);
   });
 
-  return rs;
-}
+  resolve(rs);
+});
 
-export default () => {
+export default async function() {
   const manifest = BuildUtils.getManifest();
+  const electronVersion = BuildUtils.getElectronVersion();
+  const appVersion = BuildUtils.getAppVersion();
 
   const devDeps = Object.keys(manifest.devDependencies).map(dep => `/node_modules/${dep}($|/)`);
   const pathsToIgnore = IGNORE.concat(devDeps);
 
-  const packagedApp = packageApp({
+  const packagedApp = await packageApp({
     arch: ARCH,
     platform: PLATFORM,
     ignore: pathsToIgnore,
-    version: BuildUtils.getElectronVersion(),
+    version: electronVersion,
     dir: path.join(__dirname, '..'),
     icon: path.join(__dirname, '..', 'branding', 'app-icon'),
     out: path.join(__dirname, '..', 'dist'),
   });
 
-  const packageName = `${manifest.name}-${BuildUtils.getAppVersion()}-${PLATFORM}-${ARCH}.zip`;
+  const packageName = `${manifest.name}-${appVersion}-${PLATFORM}-${ARCH}.zip`;
   const distPath = path.join(__dirname, '..', 'dist', packageName);
 
-  return packagedApp.pipe(zip.dest(distPath));
-};
+  packagedApp.pipe(zip.dest(distPath));
+}

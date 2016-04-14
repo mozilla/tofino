@@ -14,12 +14,18 @@
 require('babel-polyfill');
 require('babel-register')();
 
+const handleTaskFailed = e => {
+  /* eslint no-console: 0 */
+  console.error('Build failed.');
+  console.error(e.stack);
+};
+
 const Tasks = require('./tasks').default;
 
 if (~process.argv.indexOf('--run')) {
-  Tasks.run();
+  Tasks.run().then(null, handleTaskFailed);
 } else if (~process.argv.indexOf('--run-dev')) {
-  Tasks.runDev();
+  Tasks.runDev().then(null, handleTaskFailed);
 } else if (~process.argv.indexOf('--package')) {
-  Tasks.package();
+  Tasks.package().then(null, handleTaskFailed);
 }
