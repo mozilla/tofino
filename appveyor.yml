@@ -1,4 +1,5 @@
 platform: x64
+image: Visual Studio 2013
 
 environment:
   nodejs_version: "5.9"
@@ -23,9 +24,9 @@ test_script:
   - npm test
   - npm run package
 
-artifacts:
-  - path: 'dist/*.zip'
-    name: package
+before_deploy:
+  - cd dist
+  - appveyor PushArtifact *.zip
 
 deploy:
   provider: S3
@@ -36,5 +37,4 @@ deploy:
   bucket:
     secure: a/ijSslVXIxT1KRgwK6oWBJiOYD2DS5KCC5JpEDtXaU=
   set_public: true
-  artifact: package
   folder: mozilla/tofino/builds
