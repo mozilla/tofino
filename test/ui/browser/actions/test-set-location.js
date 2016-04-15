@@ -1,6 +1,9 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
+import 'babel-polyfill';
+import 'babel-register';
+
 import expect from 'expect'; // eslint-disable-line
 import configureStore from '../../../../ui/browser/store/store';
 import * as actions from '../../../../ui/browser/actions/main-actions'; // eslint-disable-line
@@ -8,6 +11,8 @@ import * as actions from '../../../../ui/browser/actions/main-actions'; // eslin
 describe('Action - SET_LOCATION', () => {
   beforeEach(function() {
     this.store = configureStore();
+    this.getState = () => this.store.getState();
+    this.dispatch = this.store.dispatch;
   });
 
   it('Should set location');

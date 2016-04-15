@@ -1,7 +1,11 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
+import 'babel-polyfill';
+import 'babel-register';
+
 import expect from 'expect';
+
 import configureStore from '../../../../ui/browser/store/store';
 import * as actions from '../../../../ui/browser/actions/main-actions';
 
@@ -20,7 +24,10 @@ function getSelectedPageURL(state) {
 describe('Action - SET_PAGE_ORDER', () => {
   beforeEach(function() {
     this.store = configureStore();
-    const { dispatch, getState } = this.store;
+    this.getState = () => this.store.getState();
+    this.dispatch = this.store.dispatch;
+
+    const { dispatch, getState } = this;
     dispatch(actions.createTab('http://moz1.org'));
     dispatch(actions.createTab('http://moz2.org'));
     dispatch(actions.createTab('http://moz3.org'));
@@ -33,7 +40,7 @@ describe('Action - SET_PAGE_ORDER', () => {
   });
 
   it('Should update page order when moving a tab to the left', function() {
-    const { dispatch, getState } = this.store;
+    const { dispatch, getState } = this;
 
     dispatch(actions.setPageOrder(4, 2));
     expect(getState().pages.size).toEqual(5);
@@ -45,7 +52,7 @@ describe('Action - SET_PAGE_ORDER', () => {
   });
 
   it('Should update page order when moving a tab to the right', function() {
-    const { dispatch, getState } = this.store;
+    const { dispatch, getState } = this;
 
     dispatch(actions.setPageOrder(3, 0));
     expect(getState().pages.size).toEqual(5);
@@ -57,7 +64,7 @@ describe('Action - SET_PAGE_ORDER', () => {
   });
 
   it('Should still reference currently selected page when moving current page', function() {
-    const { dispatch, getState } = this.store;
+    const { dispatch, getState } = this;
 
     dispatch(actions.setCurrentTab(2));
     dispatch(actions.setPageOrder(2, 0));
@@ -69,7 +76,7 @@ describe('Action - SET_PAGE_ORDER', () => {
   });
 
   it('Should still reference currently selected page when moving page after', function() {
-    const { dispatch, getState } = this.store;
+    const { dispatch, getState } = this;
 
     dispatch(actions.setCurrentTab(2));
     dispatch(actions.setPageOrder(0, 4));
@@ -81,7 +88,7 @@ describe('Action - SET_PAGE_ORDER', () => {
   });
 
   it('Should still reference currently selected page when moving page before', function() {
-    const { dispatch, getState } = this.store;
+    const { dispatch, getState } = this;
 
     dispatch(actions.setCurrentTab(2));
     dispatch(actions.setPageOrder(4, 0));

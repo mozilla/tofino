@@ -1,6 +1,9 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
+import 'babel-polyfill';
+import 'babel-register';
+
 import expect from 'expect';
 import configureStore from '../../../../ui/browser/store/store';
 import * as actions from '../../../../ui/browser/actions/main-actions';
@@ -8,15 +11,19 @@ import * as actions from '../../../../ui/browser/actions/main-actions';
 describe('Action - CLOSE_TAB', () => {
   beforeEach(function() {
     this.store = configureStore();
-    this.store.dispatch(actions.createTab('https://moz.org/1'));
-    this.store.dispatch(actions.createTab('https://moz.org/2'));
-    this.store.dispatch(actions.createTab('https://moz.org/3'));
-    expect(this.store.getState().currentPageIndex).toEqual(3);
-    expect(this.store.getState().pages.size).toEqual(4);
+    this.getState = () => this.store.getState();
+    this.dispatch = this.store.dispatch;
+
+    const { getState, dispatch } = this;
+    dispatch(actions.createTab('https://moz.org/1'));
+    dispatch(actions.createTab('https://moz.org/2'));
+    dispatch(actions.createTab('https://moz.org/3'));
+    expect(getState().currentPageIndex).toEqual(3);
+    expect(getState().pages.size).toEqual(4);
   });
 
   it('Should maintain tab selection when destroying a tab before the selected tab', function() {
-    const { getState, dispatch } = this.store;
+    const { getState, dispatch } = this;
 
     dispatch(actions.closeTab(1));
     expect(getState().pages.size).toEqual(3);
@@ -26,7 +33,7 @@ describe('Action - CLOSE_TAB', () => {
   });
 
   it('Should maintain tab selection when destroying a tab after the selected tab', function() {
-    const { getState, dispatch } = this.store;
+    const { getState, dispatch } = this;
 
     dispatch(actions.setCurrentTab(1));
     dispatch(actions.closeTab(3));
@@ -38,7 +45,7 @@ describe('Action - CLOSE_TAB', () => {
   });
 
   it('Should destroy a selected tab and select next when it is not last tab', function() {
-    const { getState, dispatch } = this.store;
+    const { getState, dispatch } = this;
 
     dispatch(actions.setCurrentTab(1));
     dispatch(actions.closeTab(1));
@@ -50,7 +57,7 @@ describe('Action - CLOSE_TAB', () => {
   });
 
   it('Should destroy a selected tab and select previous when it is the last tab', function() {
-    const { getState, dispatch } = this.store;
+    const { getState, dispatch } = this;
 
     dispatch(actions.closeTab(3));
     expect(getState().pages.size).toEqual(3);
@@ -60,7 +67,7 @@ describe('Action - CLOSE_TAB', () => {
   });
 
   it('Destroying the last tab should reset state', function() {
-    const { getState, dispatch } = this.store;
+    const { getState, dispatch } = this;
     dispatch(actions.closeTab(3));
     dispatch(actions.closeTab(2));
     dispatch(actions.closeTab(1));

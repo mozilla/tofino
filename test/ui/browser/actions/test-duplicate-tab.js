@@ -1,6 +1,9 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
+import 'babel-polyfill';
+import 'babel-register';
+
 import expect from 'expect';
 import configureStore from '../../../../ui/browser/store/store';
 import * as actions from '../../../../ui/browser/actions/main-actions';
@@ -8,10 +11,12 @@ import * as actions from '../../../../ui/browser/actions/main-actions';
 describe('Action - DUPLICATE_TAB', () => {
   beforeEach(function() {
     this.store = configureStore();
+    this.getState = () => this.store.getState();
+    this.dispatch = this.store.dispatch;
   });
 
   it('Should create a new tab with source\'s location and select it', function() {
-    const { getState, dispatch } = this.store;
+    const { getState, dispatch } = this;
     expect(getState().currentPageIndex).toEqual(0);
 
     dispatch(actions.createTab('https://moz.org/1'));

@@ -11,7 +11,10 @@ import * as actions from '../../../../ui/browser/actions/main-actions';
 describe('Action - SET_PAGE_DETAILS', () => {
   beforeEach(function() {
     this.store = configureStore();
-    const { dispatch } = this.store;
+    this.getState = () => this.store.getState();
+    this.dispatch = this.store.dispatch;
+
+    const { dispatch } = this;
     dispatch(actions.createTab('http://moz1.org'));
     dispatch(actions.createTab('http://moz2.org'));
     dispatch(actions.createTab('http://moz3.org'));
@@ -29,7 +32,7 @@ describe('Action - SET_PAGE_DETAILS', () => {
   });
 
   it('Should update page values', function() {
-    const { dispatch, getState } = this.store;
+    const { dispatch, getState } = this;
 
     dispatch(actions.setPageDetails(1, {
       title: 'Mozzerella Firefox',
@@ -40,7 +43,7 @@ describe('Action - SET_PAGE_DETAILS', () => {
   });
 
   it('Should do nothing if page does not exist', function() {
-    const { dispatch, getState } = this.store;
+    const { dispatch, getState } = this;
 
     dispatch(actions.setPageDetails(10, {
       title: 'Mozzerella Firefox',
@@ -51,7 +54,7 @@ describe('Action - SET_PAGE_DETAILS', () => {
   });
 
   it('Cannot add new properties to a Page', function() {
-    const { dispatch, getState } = this.store;
+    const { dispatch, getState } = this;
 
     try {
       dispatch(actions.setPageDetails(2, {
@@ -67,7 +70,7 @@ describe('Action - SET_PAGE_DETAILS', () => {
   });
 
   it('Should modify the currently selected page if index `-1` given', function() {
-    const { dispatch, getState } = this.store;
+    const { dispatch, getState } = this;
 
     expect(getState().currentPageIndex).toEqual(0);
     dispatch(actions.setPageDetails(-1, {
@@ -87,7 +90,7 @@ describe('Action - SET_PAGE_DETAILS', () => {
   });
 
   it('only allows numbered `pageIndex`', function() {
-    const { dispatch } = this.store;
+    const { dispatch } = this;
 
     ([null, void 0, '-1', '1', {}]).forEach(val => {
       try {
