@@ -1,4 +1,6 @@
-platform: x64
+platform:
+  - x86
+  - x64
 
 environment:
   nodejs_version: "5.9"
@@ -7,13 +9,34 @@ branches:
   only:
     - master
 
+cache:
+  - node_modules
+  - %APPDATA%\npm-cache
+
 install:
   - ps: Install-Product node $env:nodejs_version
   - node --version
   - npm --version
+  - set npm_config_arch=%PLATFORM%
   - npm install --progress false --depth 0
 
 build: off
 
-after_test:
+test_script:
   - npm test
+
+before_deploy:
+  - npm run package
+
+artifacts:
+  - path: dist/*.zip
+
+deploy:
+  - provider: S3
+    access_key_id:
+      secure: xsHB6zN4IRGJy9uUocU3+6/nZPa408ARYut11Wg30CA=
+    secret_access_key:
+      secure: 8L4sC5l97dY13Jnv/6Gd8Fe//FpnOuMQWu7st2LNLRhX4LjQ9uSLfObqRT0HsBqw
+    bucket:
+      secure: a/ijSslVXIxT1KRgwK6oWBJiOYD2DS5KCC5JpEDtXaU=
+    set_public: true
