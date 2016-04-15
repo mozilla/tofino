@@ -43,7 +43,7 @@ class BrowserWindow extends Component {
   }
 
   render() {
-    const { dispatch, pages, currentPageIndex, pageOrder, ipcRenderer,
+    const { dispatch, pages, currentPageIndex, ipcRenderer,
             pageAreaVisible } = this.props;
     const navBack = e => getCurrentWebView(e.target.ownerDocument).goBack();
     const navForward = e => getCurrentWebView(e.target.ownerDocument).goForward();
@@ -64,7 +64,7 @@ class BrowserWindow extends Component {
             close, openMenu, onLocationChange, onLocationContextMenu,
             onLocationReset, bookmark, unbookmark, pageAreaVisible, ipcRenderer,
             setPageAreaVisibility }} />
-        <TabBar {...{ pages, pageOrder, currentPageIndex, pageAreaVisible, dispatch }} />
+        <TabBar {...{ pages, currentPageIndex, pageAreaVisible, dispatch }} />
         <div id="content-area">
           {pages.map((page, pageIndex) => (
             <Page key={`page-${pageIndex}`}
@@ -81,7 +81,6 @@ class BrowserWindow extends Component {
 }
 
 BrowserWindow.propTypes = {
-  pageOrder: PropTypes.object.isRequired,
   pages: PropTypes.object.isRequired,
   currentPageIndex: PropTypes.number.isRequired,
   dispatch: PropTypes.func.isRequired,
