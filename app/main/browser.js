@@ -33,6 +33,16 @@ const staticDir = path.join(__dirname, '..', '..', 'static');
 // be closed automatically when the JavaScript object is garbage collected.
 const mainWindows = [];
 
+process.on('uncaughtException', (err) => {
+  console.log(err.stack);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, p) => {
+  console.log(`Unhandled Rejection at: Promise ${p}, reason: ${reason}`);
+  process.exit(2);
+});
+
 function fileUrl(str) {
   let pathName = path.resolve(str).replace(/\\/g, '/');
 
