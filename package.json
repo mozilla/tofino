@@ -8,6 +8,7 @@
     "dev": "node build/main.js --run-dev",
     "package": "node build/main.js --package",
     "test": "mocha",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
     "postinstall": "electron-rebuild"
   },
   "license": "Apache-2.0",
@@ -33,6 +34,7 @@
     "request": "2.71.0"
   },
   "devDependencies": {
+    "coveralls": "^2.11.9",
     "electron-packager": "5.2.1",
     "electron-prebuilt": "0.37.5",
     "electron-rebuild": "1.1.3",
@@ -49,6 +51,7 @@
     "mocha": "2.4.5",
     "mocha-eslint": "2.0.2",
     "mocha-jsdom": "1.1.0",
+    "nyc": "^6.4.0",
     "react-addons-test-utils": "0.14.7",
     "redux-devtools": "3.1.1",
     "rimraf": "2.5.2",
