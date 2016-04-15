@@ -62,7 +62,7 @@ read rather than a record of your fevered typing/ Make sure you're on the correc
 git checkout some-new-branch
 git pull upstream master --rebase
 ```
-Or using `git reset --soft` (as described in [a tale of tree trees](http://www.infoq.com/presentations/A-Tale-of-Three-Trees))
+Or using `git reset --soft` (as described in [a tale of three trees](http://www.infoq.com/presentations/A-Tale-of-Three-Trees))
 
 * Update your fork with the local changes on your branch:
 ```
