@@ -5,13 +5,12 @@ platform:
 environment:
   nodejs_version: "5.9"
 
-branches:
-  only:
-    - master
+pull_requests:
+  do_not_increment_build_number: true
 
 cache:
   - node_modules
-  - %APPDATA%\npm-cache
+  - '%APPDATA%\npm-cache'
 
 install:
   - ps: Install-Product node $env:nodejs_version

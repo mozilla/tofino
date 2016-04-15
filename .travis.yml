@@ -32,9 +32,8 @@ install:
 script:
   - npm test
 
-branches:
-  only:
-    - master
+after_success:
+  - npm run package
 
 notifications:
   slack:
