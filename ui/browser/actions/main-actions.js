@@ -39,8 +39,8 @@ export function setCurrentTab(pageIndex) {
   return { type: types.SET_CURRENT_TAB, pageIndex, instrument: true };
 }
 
-export function setPageOrder(pageOrder) {
-  return { type: types.SET_PAGE_ORDER, pageOrder, instrument: true };
+export function setPageOrder(pageIndex, updatedIndex) {
+  return { type: types.SET_PAGE_ORDER, pageIndex, updatedIndex, instrument: true };
 }
 
 export function setPageAreaVisibility(visible) {

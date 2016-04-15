@@ -125,10 +125,28 @@ function setCurrentTab(state, pageIndex) {
 }
 
 function setPageOrder(state, pageIndex, updatedIndex) {
-  const page = state.pages[pageIndex];
-  let pages = state.pages.delete(pageIndex);
+  let currentPageIndex = state.currentPageIndex;
+  const page = state.pages.get(pageIndex);
+
+  // If we're moving our current page, or moving a page 'over'
+  // our selected tab, ensure the index is still referencing the same page
+  if (currentPageIndex === pageIndex) {
+    currentPageIndex = updatedIndex;
+  } else {
+    if (pageIndex < currentPageIndex) {
+      currentPageIndex--;
+    }
+    if (updatedIndex <= currentPageIndex) {
+      currentPageIndex++;
+    }
+  }
+
+  // First remove the page we want to move, then add back to the array,
+  // maybe we want to do this in a faster way?
+  let pages = state.pages.splice(pageIndex, 1);
   pages = pages.splice(updatedIndex, 0, page);
-  return state.set('pages', pages);
+  return state.set('pages', pages)
+              .set('currentPageIndex', currentPageIndex);
 }
 
 function setPageAreaVisibility(state, visible) {
