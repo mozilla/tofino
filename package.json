@@ -7,7 +7,7 @@
     "start": "node build/main.js --run",
     "dev": "node build/main.js --run-dev",
     "package": "node build/main.js --package",
-    "test": "mocha",
+    "test": "NODE_ENV=test mocha",
     "postinstall": "electron-rebuild"
   },
   "license": "Apache-2.0",

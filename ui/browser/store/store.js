@@ -22,14 +22,23 @@ const instrumenter = store => next => action => { // eslint-disable-line no-unus
   return next(action);
 };
 
-export default function configureStore() {
-  const logger = createLogger({
-    duration: true,
-    collapsed: true,
-    stateTransformer(state) { return state.toJS(); },
-  });
+const logger = createLogger({
+  duration: true,
+  collapsed: true,
+  stateTransformer(state) { return state.toJS(); },
+});
 
-  const store = createStore(rootReducer, applyMiddleware(logger, instrumenter));
+export default function configureStore() {
+  const middlewares = [instrumenter];
+
+  // NODE_ENV is only set when testing, as it runs in a node environment,
+  // rather than a webpacked one where we do not use NODE_ENV. Don't use
+  // logging middleware in tests.
+  if (process.env.NODE_ENV !== 'test') {
+    middlewares.unshift(logger);
+  }
+
+  const store = createStore(rootReducer, applyMiddleware(...middlewares));
 
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers. We need to use
