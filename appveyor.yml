@@ -13,7 +13,7 @@ cache:
   - '%APPDATA%\npm-cache'
 
 install:
-  - ps: Install-Product node $env:nodejs_version
+  - ps: Install-Product node $env:nodejs_version $env:PLATFORM
   - node --version
   - npm --version
   - set npm_config_arch=%PLATFORM%
@@ -28,7 +28,8 @@ before_deploy:
   - npm run package
 
 artifacts:
-  - path: dist/*.zip
+  - path: 'dist/*.zip'
+    name: package
 
 deploy:
   - provider: S3
@@ -39,3 +40,5 @@ deploy:
     bucket:
       secure: a/ijSslVXIxT1KRgwK6oWBJiOYD2DS5KCC5JpEDtXaU=
     set_public: true
+    artifact: package
+    folder: mozilla/tofino/builds
