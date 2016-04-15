@@ -21,8 +21,6 @@ build: off
 
 test_script:
   - npm test
-
-before_deploy:
   - npm run package
 
 artifacts:
@@ -38,5 +36,5 @@ deploy:
   bucket:
     secure: a/ijSslVXIxT1KRgwK6oWBJiOYD2DS5KCC5JpEDtXaU=
   set_public: true
-  artifact: /.*\.zip/
+  artifact: package
   folder: mozilla/tofino/builds
