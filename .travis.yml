@@ -42,3 +42,5 @@ deploy:
   local-dir: dist
   upload-dir: mozilla/tofino/builds
   acl: public_read
+  on:
+    all_branches: true

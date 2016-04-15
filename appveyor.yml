@@ -1,6 +1,4 @@
-platform:
-  - x86
-  - x64
+platform: x64
 
 environment:
   nodejs_version: "5.9"
@@ -32,13 +30,13 @@ artifacts:
     name: package
 
 deploy:
-  - provider: S3
-    access_key_id:
-      secure: xsHB6zN4IRGJy9uUocU3+6/nZPa408ARYut11Wg30CA=
-    secret_access_key:
-      secure: 8L4sC5l97dY13Jnv/6Gd8Fe//FpnOuMQWu7st2LNLRhX4LjQ9uSLfObqRT0HsBqw
-    bucket:
-      secure: a/ijSslVXIxT1KRgwK6oWBJiOYD2DS5KCC5JpEDtXaU=
-    set_public: true
-    artifact: package
-    folder: mozilla/tofino/builds
+  provider: S3
+  access_key_id:
+    secure: xsHB6zN4IRGJy9uUocU3+6/nZPa408ARYut11Wg30CA=
+  secret_access_key:
+    secure: 8L4sC5l97dY13Jnv/6Gd8Fe//FpnOuMQWu7st2LNLRhX4LjQ9uSLfObqRT0HsBqw
+  bucket:
+    secure: a/ijSslVXIxT1KRgwK6oWBJiOYD2DS5KCC5JpEDtXaU=
+  set_public: true
+  artifact: /.*\.zip/
+  folder: mozilla/tofino/builds
