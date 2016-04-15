@@ -10,6 +10,9 @@
 import manifest from '../package.json';
 import electronPath from 'electron-prebuilt';
 
+export const IS_TRAVIS = process.env.TRAVIS === 'true';
+export const IS_APPVEYOR = process.env.APPVEYOR === 'True';
+
 export const getAppVersion = () => manifest.version;
 
 export const getManifest = () => manifest;
