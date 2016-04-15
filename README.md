@@ -30,18 +30,28 @@ We hang out on Slack here: https://project-tofino.slack.com (you can get an invi
 
 ## Build
 
-### Dependencies
+### Windows
+
+* Install Node: https://nodejs.org/en/
+* Install Visual Studio 2013: https://www.visualstudio.com/news/vs2013-community-vs
+  * Make sure you use the VS command line or otherwise have your environment variables set correctly.
+
+### Linux
+
+Install node 5 through the package manager of your Linux distribution or if not available see https://nodejs.org/en/download/.
+
+### OSX
 
 ```
 brew install node --with-full-icu
 ```
 
-Every time update from the git repository you may need to install or update any new node dependencies:
+Every time you update from the git repository you may need to install or update any new node dependencies:
 ```
 npm install
 ```
 
-### Tasks
+## Developing
 
 * `npm start` - Runs the build. Builds the client/renderer code via webpack in `production` mode. Should be rather similar to a packaged build.
 * `npm run dev` - Runs the build in `development` with hot module reloading via webpack.
