@@ -10,7 +10,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import browserDB from '../../shared/browser-db';
 import { createTab, setPageDetails, duplicateTab, closeTab } from './main-actions';
 import { getCurrentWebView, fixURL } from '../browser-util';
 import { remote, clipboard, ipcRenderer } from 'electron';
@@ -191,26 +190,6 @@ export function contextMenu(e) {
 }
 
 /**
- * The action for the '✫' bookmark button
- */
-export function bookmark(title, url, dispatch) {
-  browserDB.bookmarks.add({ url, title, created: new Date() });
-  dispatch(setPageDetails(-1, { isBookmarked: true }));
-
-  updateMenu();
-}
-
-/**
- * The undo action for the '✫' bookmark button
- */
-export function unbookmark(url, dispatch) {
-  browserDB.bookmarks.where('url').equals(url).delete();
-  dispatch(setPageDetails(-1, { isBookmarked: false }));
-
-  updateMenu();
-}
-
-/**
  * 'Zoom' on OSX
  */
 export function maximize() {
@@ -247,14 +226,6 @@ export function inPageSearch(ev) {
   }
 }
 
-/**
- * TODO: What does this do?
- */
 export function updateMenu() {
-  const stuff = [
-    browserDB.bookmarks.orderBy('created').reverse().limit(5).toArray(),
-  ];
-  Promise.all(stuff).then((values) => {
-    ipcRenderer.send('update-menu', { bookmarks: values[0] });
-  });
+  // TODO: update menus, possibly with last N bookmarks or history visits.
 }

@@ -18,6 +18,7 @@ import Search from './search.jsx';
 import { fixURL } from '../../browser-util';
 import { contextMenu, menuWebViewContext } from '../../actions/external';
 import { closeTab, setPageDetails } from '../../actions/main-actions';
+import * as profileCommands from '../../../../app/shared/profile-commands';
 
 /**
  * A Page is made up of an in-page search component, a web-view and a status
@@ -26,10 +27,10 @@ import { closeTab, setPageDetails } from '../../actions/main-actions';
  */
 class Page extends Component {
   componentDidMount() {
-    const { page, pageIndex, dispatch, browserDB } = this.props;
+    const { page, pageIndex, dispatch, ipcRenderer } = this.props;
     const webview = this.webview.webview;
 
-    addListenersToWebView(webview, page, pageIndex, dispatch, browserDB);
+    addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer);
 
     // set location, if given
     if (!page.guestInstanceId && page.location) {
@@ -63,7 +64,7 @@ Page.propTypes = {
   pageIndex: PropTypes.number.isRequired,
   isActive: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
-  browserDB: PropTypes.object.isRequired,
+  ipcRenderer: PropTypes.object.isRequired,
 };
 
 export default Page;
@@ -71,7 +72,7 @@ export default Page;
 /**
  * WebView wasn't designed for React...
  */
-function addListenersToWebView(webview, page, pageIndex, dispatch, browserDB) {
+function addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer) {
   webview.addEventListener('did-start-loading', () => {
     dispatch(setPageDetails(pageIndex, {
       isLoading: true,
@@ -95,20 +96,17 @@ function addListenersToWebView(webview, page, pageIndex, dispatch, browserDB) {
   });
 
   webview.addEventListener('did-stop-loading', () => {
+    const url = webview.getURL();
     dispatch(setPageDetails(pageIndex, {
       statusText: false,
-      location: webview.getURL(),
+      location: url,
       canGoBack: webview.canGoBack(),
       canGoForward: webview.canGoForward(),
       userTyped: null,
       isLoading: false,
     }));
 
-    browserDB.bookmarks.where('url').equals(page.location).count((count) => {
-      dispatch(setPageDetails(pageIndex, {
-        isBookmarked: (count > 0),
-      }));
-    });
+    ipcRenderer.send('profile-command', profileCommands.visited(url));
   });
 
   webview.addEventListener('ipc-message', e => {
@@ -120,14 +118,6 @@ function addListenersToWebView(webview, page, pageIndex, dispatch, browserDB) {
       menuWebViewContext(e.args[0], dispatch);
     } else if (e.channel === 'show-bookmarks') {
       // console.log('got a menu');
-    }
-  });
-
-  webview.addEventListener('ipc-message', e => {
-    if (e.channel === 'channel-message' && e.args[1] === 'bookmarks-update') {
-      browserDB.bookmarks.toArray().then((bookmarks) => {
-        webview.send('channel-message', 'host', 'bookmarks-data', bookmarks);
-      });
     }
   });
 

@@ -11,7 +11,7 @@ import * as actions from '../../../../ui/browser/actions/main-actions'; // eslin
 describe('Action - ATTACH_TAB', () => {
   beforeEach(function() {
     this.store = configureStore();
-    this.getState = () => this.store.getState();
+    this.getState = () => this.store.getState().browserWindow;
     this.dispatch = this.store.dispatch;
   });
 

@@ -10,7 +10,7 @@ import configureStore from '../../../../ui/browser/store/store';
 describe('Action - Default', () => {
   beforeEach(function() {
     this.store = configureStore();
-    this.getState = () => this.store.getState();
+    this.getState = () => this.store.getState().browserWindow;
     this.dispatch = this.store.dispatch;
   });
 

@@ -29,7 +29,7 @@ export default {
         loader: 'babel-loader',
         include: [
           path.join(root, 'ui'),
-          path.join(root, 'shared'),
+          path.join(root, 'app', 'shared'),
         ],
       },
     ],

@@ -77,7 +77,8 @@ class Location extends Component {
   }
 
   render() {
-    const { page, onLocationChange, onLocationContextMenu, bookmark, unbookmark } = this.props;
+    const { page, onLocationChange, onLocationContextMenu,
+      isBookmarked, bookmark, unbookmark } = this.props;
     const urlValue = page.userTyped !== null ? page.userTyped : page.location;
     const { showURLBar } = this.state;
 
@@ -85,12 +86,22 @@ class Location extends Component {
       const webview = getCurrentWebView(e.target.ownerDocument);
       const title = webview.getTitle();
       const url = webview.getURL();
-      if (page.isBookmarked) {
+      if (isBookmarked(url)) {
         unbookmark(url);
       } else {
         bookmark(title, url);
       }
     };
+
+    const bookmarkImage = (() => {
+      if (page.isLoading) {
+        return 'glyph-bookmark-unknown-16.svg';
+      }
+      if (isBookmarked(page.location)) {
+        return 'glyph-bookmark-filled-16.svg';
+      }
+      return 'glyph-bookmark-hollow-16.svg';
+    })();
 
     return (
       <div id="browser-location-bar"
@@ -140,9 +151,8 @@ class Location extends Component {
           onContextMenu={onLocationContextMenu} />
 
         <Btn title="Bookmark"
-          image={page.isBookmarked
-            ? 'glyph-bookmark-filled-16.svg'
-            : 'glyph-bookmark-hollow-16.svg'}
+          image={bookmarkImage}
+          disabled={page.isLoading}
           clickHandler={onBookmark}
           style={{
             display: 'flex',
@@ -158,6 +168,7 @@ Location.propTypes = {
   onLocationChange: PropTypes.func.isRequired,
   onLocationContextMenu: PropTypes.func.isRequired,
   onLocationReset: PropTypes.func.isRequired,
+  isBookmarked: PropTypes.func.isRequired,
   bookmark: PropTypes.func.isRequired,
   unbookmark: PropTypes.func.isRequired,
   ipcRenderer: PropTypes.object.isRequired,

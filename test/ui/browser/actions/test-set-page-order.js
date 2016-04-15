@@ -24,7 +24,7 @@ function getSelectedPageURL(state) {
 describe('Action - SET_PAGE_ORDER', () => {
   beforeEach(function() {
     this.store = configureStore();
-    this.getState = () => this.store.getState();
+    this.getState = () => this.store.getState().browserWindow;
     this.dispatch = this.store.dispatch;
 
     const { dispatch, getState } = this;

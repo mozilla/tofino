@@ -13,7 +13,7 @@ const HOME_PAGE = 'https://www.mozilla.org/';
 describe('Action - CREATE_TAB', () => {
   beforeEach(function() {
     this.store = configureStore();
-    this.getState = () => this.store.getState();
+    this.getState = () => this.store.getState().browserWindow;
     this.dispatch = this.store.dispatch;
   });
 

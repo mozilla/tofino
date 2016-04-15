@@ -42,3 +42,11 @@ export function setPageOrder(pageIndex, updatedIndex) {
 export function setPageAreaVisibility(visible) {
   return { type: types.SET_PAGE_AREA_VISIBILITY, visible };
 }
+
+export function bookmark(url, title) {
+  return { type: types.SET_BOOKMARK_STATE, url, isBookmarked: true, title };
+}
+
+export function unbookmark(url) {
+  return { type: types.SET_BOOKMARK_STATE, url, isBookmarked: false };
+}

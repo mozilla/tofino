@@ -11,7 +11,7 @@ import * as actions from '../../../../ui/browser/actions/main-actions';
 describe('Action - SET_PAGE_DETAILS', () => {
   beforeEach(function() {
     this.store = configureStore();
-    this.getState = () => this.store.getState();
+    this.getState = () => this.store.getState().browserWindow;
     this.dispatch = this.store.dispatch;
 
     const { dispatch } = this;
@@ -36,10 +36,8 @@ describe('Action - SET_PAGE_DETAILS', () => {
 
     dispatch(actions.setPageDetails(1, {
       title: 'Mozzerella Firefox',
-      isBookmarked: true,
     }));
     expect(getState().pages.get(1).title).toEqual('Mozzerella Firefox');
-    expect(getState().pages.get(1).isBookmarked).toEqual(true);
   });
 
   it('Should do nothing if page does not exist', function() {

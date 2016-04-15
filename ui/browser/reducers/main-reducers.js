@@ -15,6 +15,7 @@ import assert from 'assert';
 import Immutable from 'immutable';
 import * as types from '../constants/action-types';
 import { State, Page } from '../model';
+import * as profileDiffTypes from '../../../app/shared/constants/profile-diff-types';
 
 /**
  * Fairly sure we should hard code this
@@ -52,6 +53,13 @@ export default function basic(state = initialState, action) {
 
     case types.SET_PAGE_AREA_VISIBILITY:
       return setPageAreaVisibility(state, action.visible);
+
+    case types.SET_BOOKMARK_STATE:
+      return setBookmarkState(state, action.url, action.isBookmarked);
+
+    case profileDiffTypes.BOOKMARKS: {
+      return setBookmarks(state, Immutable.Set(action.payload));
+    }
 
     default:
       return state;
@@ -149,4 +157,14 @@ function setPageOrder(state, pageIndex, updatedIndex) {
 
 function setPageAreaVisibility(state, visible) {
   return state.set('pageAreaVisible', visible);
+}
+
+function setBookmarkState(state, url, isBookmarked) {
+  return state.setIn(['profile', 'bookmarks'], isBookmarked
+    ? state.profile.bookmarks.add(url)
+    : state.profile.bookmarks.delete(url));
+}
+
+function setBookmarks(state, bookmarks) {
+  return state.setIn(['profile', 'bookmarks'], bookmarks);
 }
