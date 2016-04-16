@@ -25,7 +25,7 @@ import {
 
 import {
   setPageAreaVisibility as setPageAreaVisibilityAction,
-  createTab, attachTab, closeTab, setPageDetails, setLocation,
+  createTab, attachTab, closeTab, setPageDetails,
 } from '../actions/main-actions';
 
 import { getCurrentWebView } from '../browser-util';
@@ -51,9 +51,9 @@ class BrowserWindow extends Component {
     const openMenu = () => menuBrowser(dispatch);
     const bookmark = (title, url) => bookmarkAction(title, url, dispatch);
     const unbookmark = (url) => unbookmarkAction(url, dispatch);
-    const onLocationChange = e => dispatch(setLocation(e.target.value));
+    const onLocationChange = e => dispatch(setPageDetails({ userTyped: e.target.value }));
     const onLocationContextMenu = e => menuLocationContext(e.target, dispatch);
-    const onLocationReset = () => dispatch(setLocation());
+    const onLocationReset = () => dispatch(setPageDetails({ userTyped: void 0 }));
     const setPageAreaVisibility = (visible) => dispatch(setPageAreaVisibilityAction(visible));
 
     return (

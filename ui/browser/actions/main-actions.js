@@ -27,10 +27,6 @@ export function closeTab(pageIndex) {
   return { type: types.CLOSE_TAB, pageIndex, instrument: true };
 }
 
-export function setLocation(userTyped) {
-  return { type: types.SET_LOCATION, userTyped, instrument: true };
-}
-
 export function setPageDetails(pageIndex, details) {
   return { type: types.SET_PAGE_DETAILS, pageIndex, details, instrument: false };
 }

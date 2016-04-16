@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import browserDB from '../../shared/browser-db';
-import { createTab, setLocation, setPageDetails, duplicateTab, closeTab } from './main-actions';
+import { createTab, setPageDetails, duplicateTab, closeTab } from './main-actions';
 import { getCurrentWebView, fixURL } from '../browser-util';
 import { remote, clipboard, ipcRenderer } from 'electron';
 
@@ -70,7 +70,7 @@ export function menuLocationContext(input, dispatch) {
       const value = input.value;
       clipboard.writeText(value.slice(input.selectionStart, input.selectionEnd));
       const loc = value.slice(0, input.selectionStart) + value.slice(input.selectionEnd);
-      dispatch(setLocation(loc));
+      dispatch(setPageDetails(-1, { userTyped: loc }));
     },
   }));
 
@@ -79,7 +79,7 @@ export function menuLocationContext(input, dispatch) {
     click: () => {
       const before = input.value.slice(0, input.selectionStart);
       const after = input.value.slice(input.selectionEnd);
-      dispatch(setLocation(before + clipboard.readText() + after));
+      dispatch(setPageDetails(-1, { userTyped: `${before}${clipboard.readText()}${after}` }));
     },
   }));
 
@@ -89,7 +89,7 @@ export function menuLocationContext(input, dispatch) {
       const before = input.value.slice(0, input.selectionStart);
       const after = input.value.slice(input.selectionEnd);
       const loc = before + clipboard.readText() + after;
-      dispatch(setLocation(loc));
+      dispatch(setPageDetails(-1, { userTyped: loc }));
 
       const webview = getCurrentWebView(ev.target.ownerDocument);
       webview.setAttribute('src', fixURL(loc));
