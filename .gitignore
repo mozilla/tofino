@@ -3,7 +3,7 @@ npm-debug.log
 node_modules
 dist
 *.sw*
-static/built
-build-config.js
+lib
+build-config.json
 .DS_Store
 .nyc_output/

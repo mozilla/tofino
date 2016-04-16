@@ -3,7 +3,6 @@
 
 import webpack from 'webpack';
 import defaultConfig from './webpack.config.default';
-import { mapObject } from '../shared/util';
 
 /**
  * Development config. Inspired by
@@ -13,20 +12,12 @@ export default {
   ...defaultConfig,
   debug: true,
   devtool: 'source-map',
-  entry: mapObject(defaultConfig.entry, ([name, sources]) => {
-    const newSources = [
-      'webpack-hot-middleware/client?reload=true',
-      ...sources,
-    ];
-    return [name, newSources];
-  }),
   output: {
     ...defaultConfig.output,
     pathinfo: true,
   },
   plugins: [
     ...(defaultConfig.plugins || []),
-    new webpack.HotModuleReplacementPlugin(),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify('development'),

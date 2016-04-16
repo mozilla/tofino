@@ -17,7 +17,7 @@ require('babel-register')();
 const handleTaskFailed = e => {
   /* eslint no-console: 0 */
   console.error('Build failed.');
-  console.error(e.stack);
+  console.error(e);
 };
 
 const Tasks = require('./tasks').default;

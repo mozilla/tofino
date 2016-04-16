@@ -8,7 +8,7 @@
 
 import path from 'path';
 import os from 'os';
-import fs from 'fs';
+import fs from 'fs-promise';
 
 import * as BuildUtils from './utils';
 
@@ -42,18 +42,9 @@ const BASE_CONFIG = {
   googleAnalyticsTrackingID: 'UA-76122102-1',
 };
 
-export default config => new Promise((resolve, reject) => {
+export default async function(config) {
   const configToWrite = Object.assign({}, BASE_CONFIG, config);
-  const content = [];
 
-  for (const [key, value] of Object.entries(configToWrite)) {
-    content.push(`export const ${key} = ${JSON.stringify(value)};\n`);
-  }
-
-  fs.writeFile(path.join(__dirname, '..', 'build-config.js'), content.join(''), err => {
-    if (err) {
-      reject(err);
-    }
-    resolve();
-  });
-});
+  await fs.writeFile(path.join(__dirname, '..', 'build-config.json'),
+                     JSON.stringify(configToWrite));
+}

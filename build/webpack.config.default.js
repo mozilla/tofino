@@ -17,10 +17,9 @@ export default {
   },
   context: root,
   output: {
-    path: path.join(root, 'static', 'built'),
+    path: path.join(root, 'lib', 'ui'),
     filename: '[name].js',
     sourceMapFilename: '[file].map',
-    publicPath: 'http://localhost:8765/built/',
   },
   module: {
     loaders: [
@@ -29,7 +28,6 @@ export default {
         test: /\.jsx?$/,
         loader: 'babel-loader',
         include: [
-          path.join(root, 'build-config.js'),
           path.join(root, 'ui'),
           path.join(root, 'shared'),
         ],
