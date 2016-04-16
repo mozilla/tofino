@@ -30,8 +30,6 @@ import {
 
 import { getCurrentWebView } from '../browser-util';
 
-import { platform } from '../../../build-config';
-
 import '../../shared/web-view';
 
 /**
@@ -57,8 +55,7 @@ class BrowserWindow extends Component {
     const setPageAreaVisibility = (visible) => dispatch(setPageAreaVisibilityAction(visible));
 
     return (
-      <div id="browser-chrome"
-        className={`platform-${platform}`} >
+      <div id="browser-chrome">
         <NavBar page={pages.get(currentPageIndex)}
           {...{ pages, navBack, navForward, navRefresh, minimize, maximize,
             close, openMenu, onLocationChange, onLocationContextMenu,
