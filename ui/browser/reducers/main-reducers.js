@@ -133,9 +133,11 @@ function navigatePageBack(state, pageIndex) {
     pageIndex = state.currentPageIndex;
   }
 
-  return state.setIn(['pages', pageIndex, 'executeCommand'], attachUnique({
+  assert(state.pages.get(pageIndex).canGoBack, 'Page cannot go back.');
+
+  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push(attachUnique({
     command: 'back',
-  }));
+  })));
 }
 
 function navigatePageForward(state, pageIndex) {
@@ -146,9 +148,11 @@ function navigatePageForward(state, pageIndex) {
     pageIndex = state.currentPageIndex;
   }
 
-  return state.setIn(['pages', pageIndex, 'executeCommand'], attachUnique({
+  assert(state.pages.get(pageIndex).canGoForward, 'Page cannot go forward.');
+
+  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push(attachUnique({
     command: 'forward',
-  }));
+  })));
 }
 
 function navigatePageRefresh(state, pageIndex) {
@@ -159,9 +163,11 @@ function navigatePageRefresh(state, pageIndex) {
     pageIndex = state.currentPageIndex;
   }
 
-  return state.setIn(['pages', pageIndex, 'executeCommand'], attachUnique({
+  assert(state.pages.get(pageIndex).canRefresh, 'Page cannot refresh.');
+
+  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push(attachUnique({
     command: 'refresh',
-  }));
+  })));
 }
 
 function navigatePageTo(state, pageIndex, location) {
@@ -174,10 +180,10 @@ function navigatePageTo(state, pageIndex, location) {
     pageIndex = state.currentPageIndex;
   }
 
-  return state.setIn(['pages', pageIndex, 'executeCommand'], attachUnique({
+  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push(attachUnique({
     location,
     command: 'navigate-to',
-  }));
+  })));
 }
 
 function setPageDetails(state, pageIndex, details) {

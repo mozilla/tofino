@@ -138,31 +138,6 @@ class Location extends Component {
     const urlValue = page.userTyped !== null ? page.userTyped : page.location;
     const { showURLBar } = this.state;
 
-<<<<<<< HEAD
-=======
-    const onBookmark = e => {
-      // TODO avoid Location reaching into the webview for this information
-      const webview = getCurrentWebView(e.target.ownerDocument);
-      const title = webview.getTitle();
-      const url = webview.getURL();
-      if (isBookmarked(url)) {
-        unbookmark(url);
-      } else {
-        bookmark(title, url);
-      }
-    };
-
-    const bookmarkImage = (() => {
-      if (page.isLoading) {
-        return 'glyph-bookmark-unknown-16.svg';
-      }
-      if (isBookmarked(page.location)) {
-        return 'glyph-bookmark-filled-16.svg';
-      }
-      return 'glyph-bookmark-hollow-16.svg';
-    })();
-
->>>>>>> Navigation commands for WebView should be handled by Redux actions via state changes observed by Page. r=vp,linclark
     return (
       <div id="browser-location-bar"
         className={LOCATION_BAR_STYLE}>
