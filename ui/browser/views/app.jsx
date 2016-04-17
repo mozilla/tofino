@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
 import { ipcRenderer } from 'electron';
 import BrowserWindow from './browser.jsx';
 
-export const App = function({ state, dispatch }) {
+const App = function({ state, dispatch }) {
   return (
     <BrowserWindow pages={state.pages}
       currentPageIndex={state.currentPageIndex}

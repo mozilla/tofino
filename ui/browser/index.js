@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import 'babel-polyfill';
 import React from 'react';
-import { render } from 'react-dom';
+import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { ipcRenderer } from 'electron';
 import App from './views/app.jsx';
@@ -34,4 +34,4 @@ const chrome = React.createElement(Provider, { store }, app);
 
 const onRender = () => ipcRenderer.send('window-ready');
 
-render(chrome, container, onRender);
+ReactDOM.render(chrome, container, onRender);
