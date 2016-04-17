@@ -10,6 +10,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
+import assert from 'assert';
+
 import Immutable from 'immutable';
 import * as types from '../constants/action-types';
 import { State, Page } from '../model';
@@ -38,9 +40,6 @@ export default function basic(state = initialState, action) {
 
     case types.CLOSE_TAB:
       return closeTab(state, action.pageIndex);
-
-    case types.SET_LOCATION:
-      return setLocation(state, action.userTyped);
 
     case types.SET_PAGE_DETAILS:
       return setPageDetails(state, action.pageIndex, action.details);
@@ -105,11 +104,10 @@ function closeTab(state, pageIndex) {
               .set('currentPageIndex', currentPageIndex);
 }
 
-function setLocation(state, userTyped) {
-  return state.setIn(['pages', state.currentPageIndex, 'userTyped'], userTyped);
-}
-
 function setPageDetails(state, pageIndex, details) {
+  assert(typeof pageIndex === 'number',
+    '`pageIndex` must be a number.');
+
   if (pageIndex === -1) {
     pageIndex = state.currentPageIndex;
   }
