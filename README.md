@@ -2,6 +2,7 @@
 
 [![Linux Build Status](https://travis-ci.org/mozilla/tofino.svg?branch=master)](https://travis-ci.org/mozilla/tofino)
 [![Windows Build Status](https://ci.appveyor.com/api/projects/status/7bf9bqpw24u93kjl/branch/master?svg=true)](https://ci.appveyor.com/project/Mossop/tofino-u1hv8/branch/master)
+[![Coverage Status](https://coveralls.io/repos/github/mozilla/tofino/badge.svg?branch=master)](https://coveralls.io/github/mozilla/tofino?branch=master)
 
 
 Project Tofino is a browser interaction experiment.
