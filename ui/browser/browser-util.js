@@ -40,8 +40,7 @@ export function fixURL(typed) {
 export function getBestDropItem(dataTransfer) {
   let uriitem = null;
   let textitem = null;
-  for (let i = 0; i < dataTransfer.items.length; i++) {
-    const item = dataTransfer.items[i];
+  for (const item of dataTransfer.items) {
     if (item.type === 'application/vnd.mozilla.bh.page') {
       return item;
     }
