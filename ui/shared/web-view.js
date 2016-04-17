@@ -16,28 +16,25 @@ specific language governing permissions and limitations under the License.
  * render most of the attributes of a <webview> so we use this <web-view> as a
  * wrapper.
  */
-(function() {
-  class WebView extends HTMLElement {
-    createdCallback() {
-      const shadow = this.createShadowRoot();
+class WebView extends HTMLElement {
+  createdCallback() {
+    this.webview = document.createElement('webview');
 
-      this.webview = document.createElement('webview');
-      for (let i = 0; i < this.attributes.length; i++) {
-        const attr = this.attributes[i];
-        this.webview.setAttribute(attr.name, attr.value);
-      }
-
-      shadow.appendChild(this.webview);
+    for (const { name, value } of Array.from(this.attributes)) {
+      this.webview.setAttribute(name, value);
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
-      if (newValue) {
-        this.webview.setAttribute(name, newValue);
-      } else {
-        this.webview.removeAttribute(name);
-      }
-    }
+    const shadow = this.createShadowRoot();
+    shadow.appendChild(this.webview);
   }
 
-  document.registerElement('web-view', WebView);
-}());
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (newValue) {
+      this.webview.setAttribute(name, newValue);
+    } else {
+      this.webview.removeAttribute(name);
+    }
+  }
+}
+
+document.registerElement('web-view', WebView);
