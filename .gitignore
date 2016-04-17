@@ -6,3 +6,4 @@ dist
 static/built
 build-config.js
 .DS_Store
+.nyc_output/
