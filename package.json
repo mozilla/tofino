@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Experimental prototype",
   "main": "app/main/main.js",
+  "repository": "https://github.com/mozilla/tofino",
   "scripts": {
     "start": "node build/main.js --run",
     "dev": "node build/main.js --run-dev",
