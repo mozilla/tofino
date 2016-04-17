@@ -50,3 +50,19 @@ export function bookmark(url, title) {
 export function unbookmark(url) {
   return { type: types.SET_BOOKMARK_STATE, url, isBookmarked: false };
 }
+
+export function navigatePageTo(pageIndex, location) {
+  return { type: types.NAVIGATE_PAGE_TO, pageIndex, location };
+}
+
+export function navigatePageBack(pageIndex) {
+  return { type: types.NAVIGATE_PAGE_BACK, pageIndex };
+}
+
+export function navigatePageForward(pageIndex) {
+  return { type: types.NAVIGATE_PAGE_FORWARD, pageIndex };
+}
+
+export function navigatePageRefresh(pageIndex) {
+  return { type: types.NAVIGATE_PAGE_REFRESH, pageIndex };
+}

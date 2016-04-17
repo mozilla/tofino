@@ -24,12 +24,12 @@ import {
 import {
   setPageAreaVisibility as setPageAreaVisibilityAction,
   createTab, attachTab, closeTab, setPageDetails,
+  navigatePageBack, navigatePageForward, navigatePageRefresh, navigatePageTo,
 } from '../actions/main-actions';
 
 import * as mainActions from '../actions/main-actions';
 import * as profileCommands from '../../../app/shared/profile-commands';
 
-import { getCurrentWebView } from '../browser-util';
 import '../../shared/web-view';
 
 const BROWSER_WINDOW_STYLE = Style.registerStyle({
@@ -69,10 +69,9 @@ class BrowserWindow extends Component {
     const {
       ipcRenderer, dispatch, profile, pages, currentPageIndex, pageAreaVisible,
     } = this.props;
-
-    const navBack = e => getCurrentWebView(e.target.ownerDocument).goBack();
-    const navForward = e => getCurrentWebView(e.target.ownerDocument).goForward();
-    const navRefresh = e => getCurrentWebView(e.target.ownerDocument).reload();
+    const navBack = () => dispatch(navigatePageBack(-1));
+    const navForward = () => dispatch(navigatePageForward(-1));
+    const navRefresh = () => dispatch(navigatePageRefresh(-1));
     const openMenu = () => menuBrowser(dispatch);
     const isBookmarked = (url) => profile.bookmarks.has(url);
     const bookmark = (title, url) => {
@@ -91,6 +90,7 @@ class BrowserWindow extends Component {
     const onLocationContextMenu = e => menuLocationContext(e.target, dispatch);
     const onLocationReset = () => dispatch(setPageDetails(-1, { userTyped: void 0 }));
     const setPageAreaVisibility = (visible) => dispatch(setPageAreaVisibilityAction(visible));
+    const navigateTo = loc => dispatch(navigatePageTo(-1, loc));
 
     return (
       <div className={BROWSER_WINDOW_STYLE} >
@@ -98,7 +98,7 @@ class BrowserWindow extends Component {
           {...{ pages, navBack, navForward, navRefresh, minimize, maximize,
             close, openMenu, onLocationChange, onLocationContextMenu,
             onLocationReset, isBookmarked, bookmark, unbookmark, pageAreaVisible, ipcRenderer,
-            setPageAreaVisibility }} />
+            setPageAreaVisibility, navigateTo }} />
         <TabBar {...{ pages, currentPageIndex, pageAreaVisible, dispatch }} />
         <div className={CONTENT_AREA_STYLE}>
           {pages.map((page, pageIndex) => (
@@ -157,6 +157,6 @@ function attachIPCRendererListeners({ dispatch, currentPageIndex, ipcRenderer })
   });
 
   ipcRenderer.on('page-reload', () => {
-    getCurrentWebView(document).reload();
+    dispatch(navigatePageRefresh(-1));
   });
 }

@@ -71,3 +71,13 @@ export function getWebView(document, pageIndex) {
   }
   return element.webview;
 }
+
+/**
+ * Takes an object and attaches a unique `id` to it.
+ *
+ * @TODO Should we start using UUIDs?
+ */
+let ATTACH_UNIQUE_ID = 0;
+export function attachUnique(obj) {
+  return Object.assign(obj, { id: ATTACH_UNIQUE_ID++ });
+}

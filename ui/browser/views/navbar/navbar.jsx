@@ -53,6 +53,7 @@ function NavBar(props) {
     navBack, navForward, navRefresh, page, pages, openMenu, ipcRenderer,
     minimize, maximize, close, isBookmarked, bookmark, unbookmark, setPageAreaVisibility,
     onLocationChange, onLocationContextMenu, onLocationReset, pageAreaVisible,
+    navigateTo,
   } = props;
 
   if (page == null) {
@@ -102,7 +103,9 @@ function NavBar(props) {
         disabled={!page.canRefresh} />
       <Location {
         ...{ page, ipcRenderer, isBookmarked, bookmark, unbookmark,
-          onLocationChange, onLocationContextMenu, onLocationReset } } />
+          onLocationChange, onLocationContextMenu, onLocationReset,
+          navigateTo }
+      } />
       <Btn id="browser-navbar-minimize"
         className={NAVBAR_BUTTON_STYLE}
         title="Minimize"
@@ -143,6 +146,7 @@ NavBar.propTypes = {
   onLocationContextMenu: PropTypes.func.isRequired,
   onLocationReset: PropTypes.func.isRequired,
   setPageAreaVisibility: PropTypes.func.isRequired,
+  navigateTo: PropTypes.func.isRequired,
 };
 
 export default NavBar;

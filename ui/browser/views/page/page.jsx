@@ -33,6 +33,7 @@ const WEB_VIEW_INLINE_STYLE = {
 };
 
 class Page extends Component {
+
   componentDidMount() {
     const { page, pageIndex, dispatch, ipcRenderer } = this.props;
     const { webview } = this.refs.webviewWrapper;
@@ -41,6 +42,39 @@ class Page extends Component {
 
     if (!page.guestInstanceId && page.location) {
       webview.setAttribute('src', fixURL(page.location));
+    }
+  }
+
+  /**
+   * After Page receives new properties, check to see if the id
+   * of the latest command has changed and execute the command on WebView
+   */
+  componentDidUpdate({ page }) {
+    const currentPage = this.props.page;
+    const previousCommandId = page.executeCommand && page.executeCommand.id;
+    const currentCommandId = currentPage.executeCommand && currentPage.executeCommand.id;
+    if (previousCommandId !== currentCommandId) {
+      this.executeCommand(currentPage.executeCommand);
+    }
+  }
+
+  executeCommand(command) {
+    const { webview } = this.webview;
+    switch (command.command) {
+      case 'back':
+        webview.goBack();
+        break;
+      case 'forward':
+        webview.goForward();
+        break;
+      case 'refresh':
+        webview.reload();
+        break;
+      case 'navigate-to':
+        webview.setAttribute('src', command.location);
+        break;
+      default:
+        throw new Error(`Unknown command for WebView: ${command.command}`);
     }
   }
 

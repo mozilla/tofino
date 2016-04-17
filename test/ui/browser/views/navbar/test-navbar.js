@@ -28,6 +28,7 @@ function createSpyProps() {
     onLocationContextMenu: expect.createSpy(),
     onLocationReset: expect.createSpy(),
     setPageAreaVisibility: expect.createSpy(),
+    navigateTo: expect.createSpy(),
   };
 }
 
