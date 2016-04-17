@@ -65,7 +65,7 @@ export function getCurrentWebView(document) {
  *
  */
 export function getWebView(document, pageIndex) {
-  const element = document.querySelector(`web-view.webview-${pageIndex}`);
+  const element = document.querySelector(`.webview-${pageIndex}`);
   if (element == null) {
     throw new Error(`No webview for pageIndex=${pageIndex}`);
   }
