@@ -45,9 +45,9 @@ class Page extends Component {
         className={isActive ? 'visible' : 'hidden'}>
         <Search isActive={page.isSearching} />
 
-        { /* Need to use `class` here instead of `className` since `WebView`
+        { /* Need to use `class` here instead of `className` since `WebViewWrapper`
            * is not a React component, therefore it expects real attributes. */ }
-        <web-view class={`webview-${pageIndex}`}
+        <webview-wrapper class={`webview-${pageIndex}`}
           ref={node => { if (node != null) this.webview = node; }}
           guestinstance={page.guestInstanceId}
           onContextMenu={() => dispatch(contextMenu())}

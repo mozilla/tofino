@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
  * render most of the attributes of a <webview> so we use this <web-view> as a
  * wrapper.
  */
-class WebView extends HTMLElement {
+class WebViewWrapper extends HTMLElement {
   createdCallback() {
     this.webview = document.createElement('webview');
 
@@ -37,4 +37,4 @@ class WebView extends HTMLElement {
   }
 }
 
-document.registerElement('web-view', WebView);
+document.registerElement('webview-wrapper', WebViewWrapper);
