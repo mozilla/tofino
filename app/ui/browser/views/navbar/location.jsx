@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes, Component } from 'react';
 
 import Style from '../../browser-style';
-import Btn from './btn.jsx';
+import Btn from './btn';
 
 import { fixURL, getCurrentWebView } from '../../browser-util';
 

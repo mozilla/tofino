@@ -2,8 +2,8 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import expect from 'expect';
-import configureStore from '../../../../ui/browser/store/store';
-import * as actions from '../../../../ui/browser/actions/main-actions';
+import configureStore from '../../../../app/ui/browser/store/store';
+import * as actions from '../../../../app/ui/browser/actions/main-actions';
 
 const RUST_URL = 'http://rust-lang.org';
 

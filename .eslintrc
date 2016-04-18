@@ -20,6 +20,17 @@
     "react"
   ],
 
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".jsx"
+        ]
+      },
+    }
+  },
+
   "rules": {
     "new-cap": ["error", {
       "capIsNewExceptions": ["Immutable.List", "Immutable.Map", "Immutable.Record", "Immutable.Set"]

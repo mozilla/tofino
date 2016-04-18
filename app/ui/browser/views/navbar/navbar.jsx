@@ -13,8 +13,8 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes } from 'react';
 
 import Style from '../../browser-style';
-import Btn from './btn.jsx';
-import Location from './location.jsx';
+import Btn from './btn';
+import Location from './location';
 
 const NAVBAR_STYLE = Style.registerStyle({
   alignItems: 'center',

@@ -11,11 +11,12 @@ specific language governing permissions and limitations under the License.
 */
 
 import assert from 'assert';
+import 'babel-polyfill';
 
 import Immutable from 'immutable';
 import * as types from '../constants/action-types';
 import { State, Page } from '../model';
-import * as profileDiffTypes from '../../../app/shared/constants/profile-diff-types';
+import * as profileDiffTypes from '../../../shared/constants/profile-diff-types';
 import { attachUnique } from '../browser-util';
 
 /**

@@ -14,7 +14,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { ipcRenderer } from 'electron';
-import App from './views/app.jsx';
+import App from './views/app';
 import configureStore from './store/store';
 
 const store = configureStore();

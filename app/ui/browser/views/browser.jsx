@@ -13,16 +13,16 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes, Component } from 'react';
 
 import Style from '../browser-style';
-import TabBar from './tabbar/tabbar.jsx';
-import NavBar from './navbar/navbar.jsx';
-import Page from './page/page.jsx';
+import TabBar from './tabbar/tabbar';
+import NavBar from './navbar/navbar';
+import Page from './page/page';
 
 import {
   menuLocationContext, updateMenu, menuBrowser, maximize, minimize, close,
 } from '../actions/external';
 
 import * as actions from '../actions/main-actions';
-import * as profileCommands from '../../../app/shared/profile-commands';
+import * as profileCommands from '../../../shared/profile-commands';
 
 import '../../shared/web-view';
 
