@@ -50,7 +50,7 @@ class Page extends Component {
            * is not a React component, therefore it expects real attributes. */ }
         <webview-wrapper class={`webview-${pageIndex}`}
           ref={node => { if (node != null) this.webview = node; }}
-          guestinstance={page.guestInstanceId}
+          guestInstanceId={page.guestInstanceId}
           onContextMenu={() => dispatch(contextMenu())}
           style={{ height: '100%' /* I have no idea why we need this */ }} />
         <Status page={page} />

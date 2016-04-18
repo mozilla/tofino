@@ -57,7 +57,7 @@ export class TabDragDrop {
 
     if (e.dataTransfer.dropEffect === 'none') {
       const webview = getWebView(e.target.ownerDocument, pageIndex);
-      const guestInstanceId = webview.guestinstance;
+      const guestInstanceId = webview.guestInstanceId;
       this.ipcRenderer.send('tab-detach', { page, guestInstanceId });
     }
   }
