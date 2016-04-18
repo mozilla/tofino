@@ -30,7 +30,6 @@
     "coveralls": "2.11.9",
     "babel-core": "6.7.4",
     "babel-eslint": "6.0.0-beta.6",
-    "babel-loader": "6.2.4",
     "babel-preset-es2015-node5": "1.2.0",
     "babel-preset-react": "6.5.0",
     "babel-preset-stage-2": "6.5.0",
@@ -58,11 +57,7 @@
     "through2": "2.0.1",
     "vinyl-file": "2.0.0",
     "vinyl-fs": "2.4.2",
-    "vinyl-named": "1.1.0",
-    "webpack": "1.12.14",
-    "webpack-dev-middleware": "1.5.1",
-    "webpack-hot-middleware": "2.10.0",
-    "webpack-merge": "0.8.4"
+    "vinyl-named": "1.1.0"
   },
   "engines": {
     "node": ">=5.8.0"

@@ -6,8 +6,8 @@ import 'babel-register';
 
 import expect from 'expect';
 
-import configureStore from '../../../../ui/browser/store/store';
-import * as actions from '../../../../ui/browser/actions/main-actions';
+import configureStore from '../../../../app/ui/browser/store/store';
+import * as actions from '../../../../app/ui/browser/actions/main-actions';
 
 /**
  * Takes a pages List and maps the location ('http://moz1.org')

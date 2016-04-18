@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
 import { ipcRenderer } from 'electron';
 
 import Style from '../browser-style';
-import BrowserWindow from './browser.jsx';
+import BrowserWindow from './browser';
 
 const APP_STYLE = Style.registerStyle({
   width: '100%',

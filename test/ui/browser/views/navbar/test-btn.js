@@ -5,7 +5,7 @@ import expect from 'expect';
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import Btn from '../../../../../ui/browser/views/navbar/btn.jsx';
+import Btn from '../../../../../app/ui/browser/views/navbar/btn';
 const noop = function() {};
 
 describe('Btn', () => {

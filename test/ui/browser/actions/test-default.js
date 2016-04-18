@@ -5,7 +5,7 @@ import 'babel-polyfill';
 import 'babel-register';
 
 import expect from 'expect';
-import configureStore from '../../../../ui/browser/store/store';
+import configureStore from '../../../../app/ui/browser/store/store';
 
 describe('Action - Default', () => {
   beforeEach(function() {
