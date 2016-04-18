@@ -10,11 +10,11 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-// import { combineReducers } from 'redux';
-import main from './main-reducers';
+import { combineReducers } from 'redux';
+import browserWindow from './main-reducers';
 
-// const rootReducer = combineReducers({
-//   basic,
-// });
+const rootReducer = combineReducers({
+  browserWindow,
+});
 
-export default main;
+export default rootReducer;

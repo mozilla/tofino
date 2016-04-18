@@ -14,6 +14,16 @@ specific language governing permissions and limitations under the License.
 // Must go before any require statements.
 const browserStartTime = Date.now();
 
+process.on('uncaughtException', (err) => {
+  console.log(err.stack);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, p) => {
+  console.log(`Unhandled Rejection at: Promise ${p}, reason: ${reason}`);
+  process.exit(2);
+});
+
 import path from 'path';
 import electron from 'electron';
 import electronLocalshortcut from 'electron-localshortcut';
@@ -21,6 +31,9 @@ import electronLocalshortcut from 'electron-localshortcut';
 import BrowserMenu from './browser-menu';
 import * as instrument from '../services/instrument';
 import * as BUILD_CONFIG from '../../build-config';
+import rootReducer from './reducers';
+import * as profileDiffs from '../shared/profile-diffs';
+import { createStore, applyMiddleware } from 'redux';
 
 const BrowserWindow = electron.BrowserWindow;  // create native browser window.
 const app = electron.app; // control application life.
@@ -32,6 +45,30 @@ const staticDir = path.join(__dirname, '..', '..', 'static');
 // Keep a global references of the window objects, if you don't, the windows will
 // be closed automatically when the JavaScript object is garbage collected.
 const mainWindows = [];
+
+function sendToAllWindows(event, args) {
+  for (const mainWindow of mainWindows) {
+    mainWindow.webContents.send(event, args);
+  }
+}
+
+const logger = store => next => action => { // eslint-disable-line no-unused-vars
+  console.log(`action ${JSON.stringify(action)}`);
+  return next(action);
+};
+
+const store = createStore(rootReducer, applyMiddleware(logger));
+let currentState;
+
+function sendDiffsToWindows(force = false) {
+  const previousState = currentState;
+  currentState = store.getState();
+  if (force || !previousState || currentState.bookmarks !== previousState.bookmarks) {
+    sendToAllWindows('profile-diff', profileDiffs.bookmarks(currentState.bookmarks.toJS()));
+  }
+}
+
+store.subscribe(sendDiffsToWindows);
 
 function fileUrl(str) {
   let pathName = path.resolve(str).replace(/\\/g, '/');
@@ -91,6 +128,9 @@ function createWindow(tabInfo) {
     } else {
       browser.webContents.send('new-tab');
     }
+
+    // TODO: Don't achieve this with a hammer.
+    sendDiffsToWindows(true);
   });
 }
 
@@ -134,13 +174,16 @@ ipc.on('instrument-event', (event, args) => {
   instrument.event(args.name, args.method, args.label, args.value);
 });
 
-ipc.on('new-window', createWindow);
+ipc.on('new-window', () => createWindow());
 
 ipc.on('window-ready', event => {
   BrowserWindow.fromWebContents(event.sender).show();
 });
 
-ipc.on('update-menu', (event, data) => BrowserMenu.build(data));
+// ipc.on('update-menu', (event, data) => BrowserMenu.build(data));
 
 ipc.on('tab-detach', (event, tabInfo) => createWindow(tabInfo));
 
+ipc.on('profile-command', (event, args) => {
+  store.dispatch(args);
+});

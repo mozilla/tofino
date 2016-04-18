@@ -20,7 +20,7 @@ import Location from './location.jsx';
 function NavBar(props) {
   const {
     navBack, navForward, navRefresh, page, pages, openMenu, ipcRenderer,
-    minimize, maximize, close, bookmark, unbookmark, setPageAreaVisibility,
+    minimize, maximize, close, isBookmarked, bookmark, unbookmark, setPageAreaVisibility,
     onLocationChange, onLocationContextMenu, onLocationReset, pageAreaVisible,
   } = props;
 
@@ -79,7 +79,7 @@ function NavBar(props) {
         disabled={!page.canRefresh} />
 
       <Location {
-        ...{ page, ipcRenderer, bookmark, unbookmark,
+        ...{ page, ipcRenderer, isBookmarked, bookmark, unbookmark,
           onLocationChange, onLocationContextMenu, onLocationReset }
       } />
       <Btn id="browser-navbar-minimize"
@@ -112,6 +112,7 @@ NavBar.propTypes = {
   openMenu: PropTypes.func.isRequired,
 
   // For <Location>
+  isBookmarked: PropTypes.func.isRequired,
   bookmark: PropTypes.func.isRequired,
   unbookmark: PropTypes.func.isRequired,
   onLocationChange: PropTypes.func.isRequired,

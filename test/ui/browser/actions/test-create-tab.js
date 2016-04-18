@@ -1,6 +1,9 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
+import 'babel-polyfill';
+import 'babel-register';
+
 import expect from 'expect';
 import configureStore from '../../../../ui/browser/store/store';
 import * as actions from '../../../../ui/browser/actions/main-actions';
@@ -10,10 +13,12 @@ const HOME_PAGE = 'https://www.mozilla.org/';
 describe('Action - CREATE_TAB', () => {
   beforeEach(function() {
     this.store = configureStore();
+    this.getState = () => this.store.getState().browserWindow;
+    this.dispatch = this.store.dispatch;
   });
 
   it('Should create a new tab with default location and select it', function() {
-    const { getState, dispatch } = this.store;
+    const { getState, dispatch } = this;
     expect(getState().currentPageIndex).toEqual(0);
 
     dispatch(actions.createTab());
@@ -25,7 +30,7 @@ describe('Action - CREATE_TAB', () => {
   });
 
   it('Should create a new tab with given location and select it', function() {
-    const { getState, dispatch } = this.store;
+    const { getState, dispatch } = this;
     dispatch(actions.createTab());
     dispatch(actions.createTab('https://github.com/'));
 

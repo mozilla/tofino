@@ -17,10 +17,11 @@ import BrowserWindow from './browser.jsx';
 
 const App = function({ state, dispatch }) {
   return (
-    <BrowserWindow pages={state.pages}
-      currentPageIndex={state.currentPageIndex}
-      pageAreaVisible={state.pageAreaVisible}
+    <BrowserWindow pages={state.browserWindow.pages}
+      currentPageIndex={state.browserWindow.currentPageIndex}
+      pageAreaVisible={state.browserWindow.pageAreaVisible}
       ipcRenderer={ipcRenderer}
+      profile={state.browserWindow.profile}
       dispatch={dispatch} />
   );
 };

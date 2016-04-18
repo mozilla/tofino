@@ -13,6 +13,13 @@ specific language governing permissions and limitations under the License.
 import Immutable from 'immutable';
 
 /**
+ * The browser window's view of its profile.
+ */
+export const Profile = Immutable.Record({
+  bookmarks: Immutable.Set(),
+});
+
+/**
  * The top level definition of what a browser looks like.
  * (At least a new-born browser that can do little more than cry)
  */
@@ -25,6 +32,8 @@ export const State = Immutable.Record({
 
   // Should page section be visible in UI
   pageAreaVisible: false,
+
+  profile: new Profile(),
 });
 
 /**
@@ -40,5 +49,4 @@ export const Page = Immutable.Record({
   canGoBack: false,
   canGoForward: false,
   canRefresh: false,
-  isBookmarked: false,
 });

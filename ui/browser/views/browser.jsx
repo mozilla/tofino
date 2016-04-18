@@ -12,14 +12,11 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes, Component } from 'react';
 
-import browserDB from '../../shared/browser-db';
 import TabBar from './tabbar/tabbar.jsx';
 import NavBar from './navbar/navbar.jsx';
 import Page from './page/page.jsx';
 
 import {
-  bookmark as bookmarkAction,
-  unbookmark as unbookmarkAction,
   menuLocationContext, updateMenu, menuBrowser, maximize, minimize, close,
 } from '../actions/external';
 
@@ -27,6 +24,9 @@ import {
   setPageAreaVisibility as setPageAreaVisibilityAction,
   createTab, attachTab, closeTab, setPageDetails,
 } from '../actions/main-actions';
+
+import * as mainActions from '../actions/main-actions';
+import * as profileCommands from '../../../app/shared/profile-commands';
 
 import { getCurrentWebView } from '../browser-util';
 
@@ -60,13 +60,25 @@ class BrowserWindow extends Component {
 
   render() {
     const { dispatch, pages, currentPageIndex, ipcRenderer,
+            profile,
             pageAreaVisible } = this.props;
     const navBack = e => getCurrentWebView(e.target.ownerDocument).goBack();
     const navForward = e => getCurrentWebView(e.target.ownerDocument).goForward();
     const navRefresh = e => getCurrentWebView(e.target.ownerDocument).reload();
     const openMenu = () => menuBrowser(dispatch);
-    const bookmark = (title, url) => bookmarkAction(title, url, dispatch);
-    const unbookmark = (url) => unbookmarkAction(url, dispatch);
+    const isBookmarked = (url) => profile.bookmarks.has(url);
+    const bookmark = (title, url) => {
+      // Update this window's state before telling the profile service.
+      dispatch(mainActions.bookmark(url, title));
+      ipcRenderer.send('profile-command',
+        profileCommands.bookmark(url, title));
+    };
+    const unbookmark = (url) => {
+      // Update this window's state before telling the profile service.
+      dispatch(mainActions.unbookmark(url));
+      ipcRenderer.send('profile-command',
+        profileCommands.unbookmark(url));
+    };
     const onLocationChange = e => dispatch(setPageDetails({ userTyped: e.target.value }));
     const onLocationContextMenu = e => menuLocationContext(e.target, dispatch);
     const onLocationReset = () => dispatch(setPageDetails({ userTyped: void 0 }));
@@ -77,7 +89,7 @@ class BrowserWindow extends Component {
         <NavBar page={pages.get(currentPageIndex)}
           {...{ pages, navBack, navForward, navRefresh, minimize, maximize,
             close, openMenu, onLocationChange, onLocationContextMenu,
-            onLocationReset, bookmark, unbookmark, pageAreaVisible, ipcRenderer,
+            onLocationReset, isBookmarked, bookmark, unbookmark, pageAreaVisible, ipcRenderer,
             setPageAreaVisibility }} />
         <TabBar {...{ pages, currentPageIndex, pageAreaVisible, dispatch }} />
         <div id="content-area">
@@ -86,7 +98,7 @@ class BrowserWindow extends Component {
               page={page}
               pageIndex={pageIndex}
               isActive={pageIndex === currentPageIndex}
-              browserDB={browserDB}
+              ipcRenderer={ipcRenderer}
               dispatch={dispatch} />
           ))}
         </div>
@@ -100,12 +112,17 @@ BrowserWindow.propTypes = {
   currentPageIndex: PropTypes.number.isRequired,
   dispatch: PropTypes.func.isRequired,
   ipcRenderer: PropTypes.object.isRequired,
+  profile: PropTypes.object.isRequired,
   pageAreaVisible: PropTypes.bool.isRequired,
 };
 
 export default BrowserWindow;
 
 function attachIPCRendererListeners({ dispatch, currentPageIndex, ipcRenderer }) {
+  ipcRenderer.on('profile-diff', (event, args) => {
+    dispatch(args);
+  });
+
   ipcRenderer.on('new-tab', () => dispatch(createTab()));
 
   // TODO: Avoid this re-dispatch back to the main process

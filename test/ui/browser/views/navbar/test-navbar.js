@@ -21,6 +21,7 @@ function createSpyProps() {
     maximize: expect.createSpy(),
     close: expect.createSpy(),
     openMenu: expect.createSpy(),
+    isBookmarked: expect.createSpy(),
     bookmark: expect.createSpy(),
     unbookmark: expect.createSpy(),
     onLocationChange: expect.createSpy(),

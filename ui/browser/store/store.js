@@ -26,7 +26,15 @@ export default function configureStore() {
   const logger = createLogger({
     duration: true,
     collapsed: true,
-    stateTransformer(state) { return state.toJS(); },
+    stateTransformer(state) {
+      // combineReducers composes a JS object.  Assume each composed state object is an Immutable
+      // instance.
+      const transformed = {};
+      Object.keys(state).forEach((key) => {
+        transformed[key] = state[key].toJS();
+      });
+      return transformed;
+    },
   });
 
   const store = createStore(rootReducer, applyMiddleware(logger, instrumenter));
