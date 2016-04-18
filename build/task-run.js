@@ -1,6 +1,8 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
+/* eslint no-console: 0 */
+
 import { exec } from 'child_process';
 import path from 'path';
 
