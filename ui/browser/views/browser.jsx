@@ -36,8 +36,26 @@ import '../../shared/web-view';
  *
  */
 class BrowserWindow extends Component {
+  constructor(props) {
+    super(props);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+  }
+
   componentDidMount() {
-    attachListeners(this.props);
+    document.body.addEventListener('keydown', this.handleKeyDown);
+
+    updateMenu();
+    attachIPCRendererListeners(this.props);
+  }
+
+  handleKeyDown({ metaKey, keyCode }) {
+    const { dispatch, currentPageIndex } = this.props;
+
+    if (metaKey && keyCode === 70) { // cmd+f
+      dispatch(setPageDetails(currentPageIndex, { isSearching: true }));
+    } else if (keyCode === 27) { // esc
+      dispatch(setPageDetails(currentPageIndex, { isSearching: false }));
+    }
   }
 
   render() {
@@ -87,25 +105,10 @@ BrowserWindow.propTypes = {
 
 export default BrowserWindow;
 
-function attachListeners({ dispatch, currentPageIndex, ipcRenderer }) {
-  // attach keyboard shortcuts
-  // :TODO: replace this with menu hotkeys
-  document.body.addEventListener('keydown', e => {
-    if (e.metaKey && e.keyCode === 70) { // cmd+f
-      setPageDetails(currentPageIndex, { isSearching: true });
-      e.target.ownerDocument.querySelector('#browser-page-search input').focus();
-    } else if (e.keyCode === 27) { // esc
-      setPageDetails(currentPageIndex, { isSearching: false });
-      e.target.ownerDocument.querySelector('#browser-page-search input').blur();
-    }
-  });
-
-  // Setup the app menu
-  updateMenu();
-
+function attachIPCRendererListeners({ dispatch, currentPageIndex, ipcRenderer }) {
   ipcRenderer.on('new-tab', () => dispatch(createTab()));
 
-  // TODO: Avoid this Re-dispatch back to the main process
+  // TODO: Avoid this re-dispatch back to the main process
   ipcRenderer.on('new-window', () => {
     ipcRenderer.send('new-window');
   });
