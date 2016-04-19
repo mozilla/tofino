@@ -36,7 +36,7 @@ function send(payload) {
         }
         reject(error);
       });
-  });
+  }).catch(() => {});
 }
 
 /**
