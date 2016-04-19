@@ -23,9 +23,11 @@ const handleTaskFailed = e => {
 const Tasks = require('./tasks').default;
 
 if (~process.argv.indexOf('--run')) {
-  Tasks.run().then(null, handleTaskFailed);
+  const taskArgs = process.argv.slice(1 + process.argv.indexOf('--run'));
+  Tasks.run(taskArgs).then(null, handleTaskFailed);
 } else if (~process.argv.indexOf('--run-dev')) {
-  Tasks.runDev().then(null, handleTaskFailed);
+  const taskArgs = process.argv.slice(1 + process.argv.indexOf('--run-dev'));
+  Tasks.runDev(taskArgs).then(null, handleTaskFailed);
 } else if (~process.argv.indexOf('--package')) {
   Tasks.package().then(null, handleTaskFailed);
 }

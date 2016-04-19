@@ -23,14 +23,14 @@ export default {
     await require('./task-build').default();
   },
 
-  async run() {
+  async run(args = []) {
     await this.build();
-    await require('./task-run').default('production');
+    await require('./task-run').default('production', args);
   },
 
-  async runDev() {
+  async runDev(args = []) {
     await this.buildDev();
-    await require('./task-run').default('development');
+    await require('./task-run').default('development', args);
   },
 
   async clean() {

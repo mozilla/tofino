@@ -3,14 +3,15 @@
 
 /* eslint no-console: 0 */
 
-import { exec } from 'child_process';
+import { spawn } from 'child_process';
 import path from 'path';
 
 import * as BuildUtils from './utils';
 
-export default env => new Promise((resolve, reject) => {
+export default (env, args = []) => new Promise((resolve, reject) => {
   const manifest = BuildUtils.getManifest();
-  const command = `${BuildUtils.getElectronPath()} ${path.join(__dirname, '..', manifest.main)}`;
+  const command = BuildUtils.getElectronPath();
+  const script = path.join(__dirname, '..', manifest.main);
   const environ = {};
   if (env === 'production') {
     environ.NODE_ENV = 'production';
@@ -18,7 +19,7 @@ export default env => new Promise((resolve, reject) => {
 
   console.log(`Executing command: ${command}`);
 
-  exec(command, { env: environ }, err => {
+  spawn(command, [script, ...args], { env: environ }, err => {
     if (err) {
       reject(err);
     }
