@@ -49,20 +49,14 @@ const NAVBAR_PAGES_COUNT_STYLE = Style.registerStyle({
 });
 
 function NavBar(props) {
-  const {
-    navBack, navForward, navRefresh, page, pages, openMenu, ipcRenderer,
-    minimize, maximize, close, isBookmarked, bookmark, unbookmark, setPageAreaVisibility,
-    onLocationChange, onLocationContextMenu, onLocationReset, pageAreaVisible,
-    navigateTo,
-  } = props;
-
-  if (page == null) {
+  if (props.page == null) {
     return (
       <div id="browser-navbar"
         className={NAVBAR_STYLE} />
     );
   }
 
+  const pagesButtonClickHandler = () => props.setPageAreaVisibility(!props.pageAreaVisible);
   return (
     <div id="browser-navbar"
       className={NAVBAR_STYLE}>
@@ -70,14 +64,14 @@ function NavBar(props) {
         className={NAVBAR_BUTTON_STYLE}
         title="Menu"
         image="glyph-menu-16.svg"
-        clickHandler={openMenu} />
+        clickHandler={props.openMenu} />
       <Btn id="pages-button"
         className={NAVBAR_BUTTON_STYLE}
         title="Pages"
-        clickHandler={() => { setPageAreaVisibility(!pageAreaVisible); }}>
+        clickHandler={pagesButtonClickHandler}>
         <div id="browser-navbar-pages-count"
           className={NAVBAR_PAGES_COUNT_STYLE}>
-          {pages.size}
+          {props.pages.size}
         </div>
         <span>
           {"Pages"}
@@ -87,40 +81,36 @@ function NavBar(props) {
         className={NAVBAR_BUTTON_STYLE}
         title="Back"
         image="glyph-arrow-nav-back-16.svg"
-        clickHandler={navBack}
-        disabled={!page.canGoBack} />
+        clickHandler={props.navBack}
+        disabled={!props.page.canGoBack} />
       <Btn id="browser-navbar-forward"
         className={NAVBAR_BUTTON_STYLE}
         title="Forward"
         image="glyph-arrow-nav-forward-16.svg"
-        clickHandler={navForward}
-        disabled={!page.canGoForward} />
+        clickHandler={props.navForward}
+        disabled={!props.page.canGoForward} />
       <Btn id="browser-navbar-refresh"
         className={NAVBAR_BUTTON_STYLE}
         title="Refresh"
         image="glyph-arrow-reload-16.svg"
-        clickHandler={navRefresh}
-        disabled={!page.canRefresh} />
-      <Location {
-        ...{ page, ipcRenderer, isBookmarked, bookmark, unbookmark,
-          onLocationChange, onLocationContextMenu, onLocationReset,
-          navigateTo }
-      } />
+        clickHandler={props.navRefresh}
+        disabled={!props.page.canRefresh} />
+      <Location { ...props } />
       <Btn id="browser-navbar-minimize"
         className={NAVBAR_BUTTON_STYLE}
         title="Minimize"
         image="glyph-window-minimize-16.svg"
-        clickHandler={minimize} />
+        clickHandler={props.minimize} />
       <Btn id="browser-navbar-maximize"
         className={NAVBAR_BUTTON_STYLE}
         title="Maximize"
         image="glyph-window-maximize-16.svg"
-        clickHandler={maximize} />
+        clickHandler={props.maximize} />
       <Btn id="browser-navbar-close"
         className={NAVBAR_BUTTON_STYLE}
         title="Close"
         image="glyph-window-close-16.svg"
-        clickHandler={close} />
+        clickHandler={props.close} />
     </div>
   );
 }

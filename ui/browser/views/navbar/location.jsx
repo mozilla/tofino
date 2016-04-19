@@ -134,7 +134,7 @@ class Location extends Component {
   }
 
   render() {
-    const { page, onLocationChange, onLocationContextMenu } = this.props;
+    const { page } = this.props;
     const urlValue = page.userTyped !== null ? page.userTyped : page.location;
     const { showURLBar } = this.state;
 
@@ -163,9 +163,9 @@ class Location extends Component {
           defaultValue={urlValue}
           onFocus={this.handleURLBarFocus}
           onBlur={this.handleURLBarBlur}
-          onChange={onLocationChange}
+          onChange={this.props.onLocationChange}
           onKeyDown={this.handleURLBarKeyDown}
-          onContextMenu={onLocationContextMenu} />
+          onContextMenu={this.props.onLocationContextMenu} />
         <Btn title="Bookmark"
           className={LOCATION_BAR_BUTTONS_STYLE}
           image={this.getBookmarkIcon()}
