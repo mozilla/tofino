@@ -158,11 +158,12 @@ class Location extends Component {
           </span>
         </div>
         <input id="urlbar-input"
-          className={INPUT_BAR_STYLE}
-          hidden={!showURLBar}
+          is="tofino-input"
+          class={INPUT_BAR_STYLE}
+          style={!showURLBar ? {display: 'none'} : {}}
           type="text"
           ref="input"
-          defaultValue={urlValue}
+          value={urlValue}
           onFocus={this.handleURLBarFocus}
           onBlur={this.handleURLBarBlur}
           onChange={onLocationChange}
