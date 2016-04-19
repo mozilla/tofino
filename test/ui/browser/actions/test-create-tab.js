@@ -5,8 +5,8 @@ import 'babel-polyfill';
 import 'babel-register';
 
 import expect from 'expect';
-import configureStore from '../../../../ui/browser/store/store';
-import * as actions from '../../../../ui/browser/actions/main-actions';
+import configureStore from '../../../../app/ui/browser/store/store';
+import * as actions from '../../../../app/ui/browser/actions/main-actions';
 
 const HOME_PAGE = 'https://www.mozilla.org/';
 

@@ -40,7 +40,7 @@ const app = electron.app; // control application life.
 const ipc = electron.ipcMain;
 const globalShortcut = electron.globalShortcut;
 
-const staticDir = path.join(__dirname, '..', '..', 'static');
+const uiDir = path.join(__dirname, '..', 'ui');
 
 // Keep a global references of the window objects, if you don't, the windows will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -92,7 +92,7 @@ function createWindow(tabInfo) {
   });
   mainWindows.push(browser);
 
-  browser.loadURL(fileUrl(path.join(staticDir, 'browser.html')));
+  browser.loadURL(fileUrl(path.join(uiDir, 'browser', 'browser.html')));
 
   if (BUILD_CONFIG.development) {
     browser.openDevTools({ detach: true });

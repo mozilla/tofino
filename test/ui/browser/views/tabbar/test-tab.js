@@ -5,8 +5,8 @@ import expect from 'expect';
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import Tab from '../../../../../ui/browser/views/tabbar/tab.jsx';
-import { Page } from '../../../../../ui/browser/model/index';
+import Tab from '../../../../../app/ui/browser/views/tabbar/tab';
+import { Page } from '../../../../../app/ui/browser/model/index';
 
 describe('components - NavBar', () => {
   it('should render the basic case', () => {

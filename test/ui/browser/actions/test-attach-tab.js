@@ -5,8 +5,8 @@ import 'babel-polyfill';
 import 'babel-register';
 
 import expect from 'expect'; // eslint-disable-line
-import configureStore from '../../../../ui/browser/store/store';
-import * as actions from '../../../../ui/browser/actions/main-actions'; // eslint-disable-line
+import configureStore from '../../../../app/ui/browser/store/store';
+import * as actions from '../../../../app/ui/browser/actions/main-actions'; // eslint-disable-line
 
 describe('Action - ATTACH_TAB', () => {
   beforeEach(function() {

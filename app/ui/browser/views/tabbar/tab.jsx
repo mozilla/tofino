@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes, Component } from 'react';
 
 import Style from '../../browser-style';
-import Btn from '../navbar/btn.jsx';
+import Btn from '../navbar/btn';
 
 const TAB_STYLE = Style.registerStyle({
   alignSelf: 'stretch',

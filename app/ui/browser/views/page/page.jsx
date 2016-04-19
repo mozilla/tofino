@@ -13,13 +13,13 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes, Component } from 'react';
 
 import Style from '../../browser-style';
-import Status from './status.jsx';
-import Search from './search.jsx';
+import Status from './status';
+import Search from './search';
 
 import { fixURL } from '../../browser-util';
 import { contextMenu, menuWebViewContext } from '../../actions/external';
 import { closeTab, setPageDetails } from '../../actions/main-actions';
-import * as profileCommands from '../../../../app/shared/profile-commands';
+import * as profileCommands from '../../../../shared/profile-commands';
 
 const PAGE_STYLE = Style.registerStyle({
   // Mark this as the relative anchor for floating children (e.g. search bar).

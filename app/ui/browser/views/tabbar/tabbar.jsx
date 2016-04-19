@@ -13,8 +13,8 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes } from 'react';
 
 import Style from '../../browser-style';
-import Tab from './tab.jsx';
-import Btn from '../navbar/btn.jsx';
+import Tab from './tab';
+import Btn from '../navbar/btn';
 import { menuTabContext } from '../../actions/external';
 import { createTab, closeTab, setCurrentTab } from '../../actions/main-actions';
 

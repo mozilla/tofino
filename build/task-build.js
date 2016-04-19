@@ -1,26 +1,9 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-import webpack from 'webpack';
 import { transformFile } from 'babel-core';
 import fs from 'fs-promise';
 import path from 'path';
-
-import webpackProdConfig from './webpack.config.prod';
-import webpackDevConfig from './webpack.config.dev';
-import { development } from '../build-config';
-
-// Webpacks the UI used in the BrowserWindow
-const webpackBuild = () => new Promise((resolve, reject) => {
-  const config = development ? webpackDevConfig : webpackProdConfig;
-  const compiler = webpack(config);
-  compiler.run(resolve, err => {
-    if (err) {
-      reject(err);
-    }
-    resolve();
-  });
-});
 
 const transpile = (filename, options = {}) => new Promise((resolve, reject) => {
   transformFile(filename, options, (err, result) => {
@@ -44,6 +27,9 @@ async function buildFile({ path: sourceFile, stats: sourceStats }, targetFile) {
 
   const extension = path.extname(sourceFile);
   if (extension === '.js' || extension === '.jsx') {
+    if (extension === '.jsx') {
+      targetFile = targetFile.substring(0, targetFile.length - 1);
+    }
     const { code } = await transpile(sourceFile);
     await fs.writeFile(targetFile, code);
   } else {
@@ -71,4 +57,4 @@ async function babelBuild() {
   await Promise.all(files.map(p => buildFile(p, getTargetPath(p.path))));
 }
 
-export default () => Promise.all([webpackBuild(), babelBuild()]);
+export default () => babelBuild();

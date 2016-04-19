@@ -2,7 +2,7 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import expect from 'expect';
-import { State, Page } from '../../../ui/browser/model/index';
+import { State, Page } from '../../../app/ui/browser/model/index';
 
 describe('Data model: Page', () => {
   it('should do the basics', () => {
