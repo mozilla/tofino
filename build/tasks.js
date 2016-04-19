@@ -29,8 +29,20 @@ export default {
   },
 
   async runDev(args = []) {
+    const chokidar = require('chokidar');
+
     await this.buildDev();
+
+    const { buildFile, appDir } = require('./task-build');
+    const watcher = chokidar.watch(appDir, {
+      ignoreInitial: true,
+    });
+
+    watcher.on('add', buildFile);
+    watcher.on('change', buildFile);
+
     await require('./task-run').default('development', args);
+    watcher.close();
   },
 
   async clean() {
