@@ -36,7 +36,7 @@ export function fixURL(typed) {
                   !URLUtil.getURL(typed).path.includes('%20'));
 
   if (isURL) {
-    return URLUtil.getURLFromInput(typed);
+    return URLUtil.fixupURLString(typed);
   }
 
   return getSearchURL(typed);

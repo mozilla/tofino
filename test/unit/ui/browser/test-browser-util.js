@@ -16,16 +16,14 @@ describe('utils', () => {
         'data:about',
         'view-source:http://foo.com/',
         'rtsp://100.100.100.100/rtsp.mp4',
-
-        // @TODO Handle spaces in GET parameters
-        // 'https://foo.com/?a= b',
-
-        // @TODO url.parse is converting this to https://xn--e28h.com
-        // 'https://😀.com',
       ];
       for (const url of UNCHANGED_URLS) {
         expect(fixURL(url)).toEqual(url);
       }
+
+      // @TODO url.parse is converting this to https://xn--e28h.com
+      it('@TODO: handle https://😀.com');
+      it('@TODO: handle spaces in GET parameters: https://foo.com/?a= b');
     });
 
     it('should append protocol onto URIs', () => {
@@ -39,14 +37,13 @@ describe('utils', () => {
         [' mozilla.org', 'http://mozilla.org'],
         ['mozilla.org ', 'http://mozilla.org'],
         ['mozilla.org/foobar', 'http://mozilla.org/foobar'],
-
-        // @TODO: How should this input be handled?
-        // ['https://foo', 'https://foo.com'],
-        // ['http://foo', 'http://foo.com'],
       ];
       for (const [input, url] of CHANGED_URLS) {
         expect(fixURL(input)).toEqual(url);
       }
+
+      it('@TODO: handle http://foo somehow');
+      it('@TODO: handle https://foo somehow');
     });
 
     it('should use a search engine for queries', () => {

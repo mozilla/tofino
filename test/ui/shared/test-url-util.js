@@ -43,10 +43,6 @@ describe('URLUtil', () => {
   });
 
   describe('isURL', () => {
-    it.skip('absolute file path without scheme', () => {
-      expect(URLUtil.isURL('/file/path/to/file')).toEqual(true);
-    });
-
     it('absolute file path with scheme', () => {
       expect(URLUtil.isURL('file:///file/path/to/file')).toEqual(true);
     });
@@ -57,6 +53,16 @@ describe('URLUtil', () => {
 
     it('detects falsy URLs', () => {
       expect(URLUtil.isURL('foobar')).toEqual(false);
+    });
+  });
+
+  describe('fixupURLString', () => {
+    it('returns the input for non valid URLs', () => {
+      expect(URLUtil.fixupURLString('foo')).toEqual('foo');
+    });
+
+    it('returns a URL string for valid inputs', () => {
+      expect(URLUtil.fixupURLString('foo.com')).toEqual('http://foo.com');
     });
   });
 });
