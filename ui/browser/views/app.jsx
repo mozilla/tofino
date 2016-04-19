@@ -13,12 +13,18 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { ipcRenderer } from 'electron';
+
 import Style from '../browser-style';
 import BrowserWindow from './browser.jsx';
 
+const APP_STYLE = Style.registerStyle({
+  width: '100%',
+  height: '100%',
+});
+
 const App = function({ state, dispatch }) {
   return (
-    <div>
+    <div className={APP_STYLE}>
       <BrowserWindow ipcRenderer={ipcRenderer}
         dispatch={dispatch}
         profile={state.browserWindow.profile}
