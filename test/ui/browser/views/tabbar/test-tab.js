@@ -14,6 +14,7 @@ describe('components - NavBar', () => {
       location: 'https://www.mozilla.org',
       title: 'Mozilla Home',
     });
+
     const onClick = expect.createSpy();
 
     const wrapper = shallow(
@@ -27,12 +28,6 @@ describe('components - NavBar', () => {
         onClick={onClick}
         onContextMenu={expect.createSpy()} />
     );
-
-    expect(wrapper.html()).toEqual(
-      '<div class="active" draggable="true" title="Mozilla Home">' +
-        '<span>Mozilla Home</span>' +
-        '<a><i class="fa fa-close"></i></a>' +
-      '</div>');
 
     wrapper.find('div').simulate('click');
     expect(onClick).toHaveBeenCalled();

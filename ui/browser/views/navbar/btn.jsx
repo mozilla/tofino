@@ -80,7 +80,7 @@ Btn.propTypes = {
     React.PropTypes.arrayOf(React.PropTypes.node),
     React.PropTypes.node,
   ]),
-  onClick: PropTypes.func.isRequired,
+  clickHandler: PropTypes.func.isRequired,
 };
 
 export default Btn;
