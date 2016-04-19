@@ -5,6 +5,10 @@ import { transformFile } from 'babel-core';
 import fs from 'fs-promise';
 import path from 'path';
 
+export const appDir = path.resolve(path.join(__dirname, '..', 'app'));
+export const libDir = path.resolve(path.join(__dirname, '..', 'lib'));
+const getTargetPath = (sourcePath) => path.resolve(libDir, path.relative(appDir, sourcePath));
+
 const transpile = (filename, options = {}) => new Promise((resolve, reject) => {
   transformFile(filename, options, (err, result) => {
     if (err) {
@@ -15,7 +19,9 @@ const transpile = (filename, options = {}) => new Promise((resolve, reject) => {
   });
 });
 
-async function buildFile({ path: sourceFile, stats: sourceStats }, targetFile) {
+export async function buildFile(sourceFile, sourceStats) {
+  let targetFile = getTargetPath(sourceFile);
+
   try {
     const targetStats = await fs.stat(targetFile);
     if (targetStats.mtime > sourceStats.mtime) {
@@ -38,9 +44,6 @@ async function buildFile({ path: sourceFile, stats: sourceStats }, targetFile) {
 
 async function babelBuild() {
   const source = path.resolve(path.join(__dirname, '..', 'app'));
-  const target = path.resolve(path.join(__dirname, '..', 'lib'));
-
-  const getTargetPath = (sourcePath) => path.resolve(target, path.relative(source, sourcePath));
 
   const paths = await fs.walk(source);
 
@@ -53,7 +56,7 @@ async function babelBuild() {
 
   // Build all the files
   const files = paths.filter(p => p.stats.isFile());
-  await Promise.all(files.map(p => buildFile(p, getTargetPath(p.path))));
+  await Promise.all(files.map(p => buildFile(p.path, p.stats)));
 }
 
 export default () => babelBuild();

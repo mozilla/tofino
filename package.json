@@ -37,6 +37,7 @@
     "babel-preset-react": "6.5.0",
     "babel-preset-stage-2": "6.5.0",
     "babel-register": "6.7.2",
+    "chokidar": "1.4.3",
     "coveralls": "2.11.9",
     "electron-packager": "5.2.1",
     "electron-prebuilt": "0.37.6",
