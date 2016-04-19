@@ -1,4 +1,5 @@
-/* global describe, it */
+// Any copyright is dedicated to the Public Domain.
+// http://creativecommons.org/publicdomain/zero/1.0/
 
 import expect from 'expect';
 import URLUtil from '../../../ui/shared/url-util';
