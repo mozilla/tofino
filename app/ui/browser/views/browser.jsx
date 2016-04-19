@@ -18,7 +18,7 @@ import NavBar from './navbar/navbar';
 import Page from './page/page';
 
 import {
-  menuLocationContext, updateMenu, menuBrowser, maximize, minimize, close,
+  menuLocationContext, menuBrowser, maximize, minimize, close,
 } from '../actions/external';
 
 import * as actions from '../actions/main-actions';
@@ -45,7 +45,6 @@ class BrowserWindow extends Component {
   componentDidMount() {
     document.body.addEventListener('keydown', this.handleKeyDown);
 
-    updateMenu();
     attachIPCRendererListeners(this.props);
   }
 

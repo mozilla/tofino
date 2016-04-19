@@ -234,7 +234,3 @@ export function inPageSearch(ev) {
     webview.executeJavaScript(script);
   }
 }
-
-export function updateMenu() {
-  // TODO: update menus, possibly with last N bookmarks or history visits.
-}

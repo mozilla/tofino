@@ -47,13 +47,14 @@ const uiDir = path.join(__dirname, '..', 'ui');
 const mainWindows = [];
 
 function sendToAllWindows(event, args) {
+  console.log(`diff ${JSON.stringify(args)}`);
   for (const mainWindow of mainWindows) {
     mainWindow.webContents.send(event, args);
   }
 }
 
 const logger = store => next => action => { // eslint-disable-line no-unused-vars
-  console.log(`action ${JSON.stringify(action)}`);
+  console.log(`command ${JSON.stringify(action)}`);
   return next(action);
 };
 
@@ -64,7 +65,19 @@ function sendDiffsToWindows(force = false) {
   const previousState = currentState;
   currentState = store.getState();
   if (force || !previousState || currentState.bookmarks !== previousState.bookmarks) {
-    sendToAllWindows('profile-diff', profileDiffs.bookmarks(currentState.bookmarks.toJS()));
+    const bookmarkSet = currentState.bookmarks
+      .valueSeq()
+      .map(bookmark => bookmark.location)
+      .toSet();
+    sendToAllWindows('profile-diff', profileDiffs.bookmarks(bookmarkSet.toJS()));
+  }
+
+  if (force || !previousState || currentState.bookmarks !== previousState.bookmarks) {
+    const recentBookmarks = currentState.bookmarks
+      .valueSeq()
+      .sortBy(bookmark => bookmark.createdAt)
+      .take(5);
+    BrowserMenu.build({ bookmarks: recentBookmarks });
   }
 }
 
@@ -179,8 +192,6 @@ ipc.on('new-window', () => createWindow());
 ipc.on('window-ready', event => {
   BrowserWindow.fromWebContents(event.sender).show();
 });
-
-// ipc.on('update-menu', (event, data) => BrowserMenu.build(data));
 
 ipc.on('tab-detach', (event, tabInfo) => createWindow(tabInfo));
 
