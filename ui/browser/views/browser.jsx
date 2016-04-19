@@ -60,9 +60,9 @@ class BrowserWindow extends Component {
     const { dispatch, currentPageIndex } = this.props;
 
     if (metaKey && keyCode === 70) { // cmd+f
-      dispatch(setPageDetails(currentPageIndex, { isSearching: true }));
+      dispatch(setPageDetails({ pageIndex: currentPageIndex, isSearching: true }));
     } else if (keyCode === 27) { // esc
-      dispatch(setPageDetails(currentPageIndex, { isSearching: false }));
+      dispatch(setPageDetails({ pageIndex: currentPageIndex, isSearching: false }));
     }
   }
 

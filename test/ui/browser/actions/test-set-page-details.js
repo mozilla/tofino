@@ -19,13 +19,16 @@ describe('Action - SET_PAGE_DETAILS', () => {
     dispatch(actions.createTab('http://moz2.org'));
     dispatch(actions.createTab('http://moz3.org'));
     dispatch(actions.closeTab(0));
-    dispatch(actions.setPageDetails(0, {
+    dispatch(actions.setPageDetails({
+      pageIndex: 0,
       title: 'moz1',
     }));
-    dispatch(actions.setPageDetails(1, {
+    dispatch(actions.setPageDetails({
+      pageIndex: 1,
       title: 'moz2',
     }));
-    dispatch(actions.setPageDetails(2, {
+    dispatch(actions.setPageDetails({
+      pageIndex: 2,
       title: 'moz3',
     }));
     dispatch(actions.setCurrentTab(0));
@@ -34,7 +37,8 @@ describe('Action - SET_PAGE_DETAILS', () => {
   it('Should update page values', function() {
     const { dispatch, getState } = this;
 
-    dispatch(actions.setPageDetails(1, {
+    dispatch(actions.setPageDetails({
+      pageIndex: 1,
       title: 'Mozzerella Firefox',
     }));
     expect(getState().pages.get(1).title).toEqual('Mozzerella Firefox');
@@ -43,7 +47,8 @@ describe('Action - SET_PAGE_DETAILS', () => {
   it('Should do nothing if page does not exist', function() {
     const { dispatch, getState } = this;
 
-    dispatch(actions.setPageDetails(10, {
+    dispatch(actions.setPageDetails({
+      pageIndex: 10,
       title: 'Mozzerella Firefox',
     }));
     expect(getState().pages.get(0).title).toEqual('moz1');
@@ -55,7 +60,8 @@ describe('Action - SET_PAGE_DETAILS', () => {
     const { dispatch, getState } = this;
 
     try {
-      dispatch(actions.setPageDetails(2, {
+      dispatch(actions.setPageDetails({
+        pageIndex: 2,
         myVerySpecialProperty: 'Well, hello',
       }));
       expect(false).toEqual(true,
@@ -71,7 +77,8 @@ describe('Action - SET_PAGE_DETAILS', () => {
     const { dispatch, getState } = this;
 
     expect(getState().currentPageIndex).toEqual(0);
-    dispatch(actions.setPageDetails(-1, {
+    dispatch(actions.setPageDetails({
+      pageIndex: -1,
       title: 'Mozzerella Firefox',
     }));
     expect(getState().pages.get(0).title).toEqual('Mozzerella Firefox');
@@ -79,7 +86,8 @@ describe('Action - SET_PAGE_DETAILS', () => {
     expect(getState().pages.get(2).title).toEqual('moz3');
 
     dispatch(actions.setCurrentTab(2));
-    dispatch(actions.setPageDetails(-1, {
+    dispatch(actions.setPageDetails({
+      pageIndex: -1,
       title: 'pasta pasta pasta',
     }));
     expect(getState().pages.get(0).title).toEqual('Mozzerella Firefox');
@@ -92,7 +100,10 @@ describe('Action - SET_PAGE_DETAILS', () => {
 
     ([null, void 0, '-1', '1', {}]).forEach(val => {
       try {
-        dispatch(actions.setPageDetails(val, { title: 'New Tab!' }));
+        dispatch(actions.setPageDetails({
+          pageIndex: val,
+          title: 'New Tab!',
+        }));
         expect(false).toEqual(true,
           `setPageDetails with a non-number pageIndex should throw: ${val}`);
       } catch (e) {

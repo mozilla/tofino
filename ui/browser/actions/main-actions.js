@@ -27,8 +27,8 @@ export function closeTab(pageIndex) {
   return { type: types.CLOSE_TAB, pageIndex, instrument: true };
 }
 
-export function setPageDetails(pageIndex, details) {
-  return { type: types.SET_PAGE_DETAILS, pageIndex, details, instrument: false };
+export function setPageDetails(payload) {
+  return { type: types.SET_PAGE_DETAILS, payload, instrument: false };
 }
 
 export function setCurrentTab(pageIndex) {
@@ -44,7 +44,7 @@ export function setPageAreaVisibility(visible) {
 }
 
 export function setUserTypedLocation(payload) {
-  return { type: types.SET_USER_TYPED_LOCATION, ...payload, instrument: false };
+  return { type: types.SET_USER_TYPED_LOCATION, payload, instrument: false };
 }
 
 export function bookmark(url, title) {

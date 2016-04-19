@@ -116,14 +116,16 @@ export default Page;
 
 function addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer) {
   webview.addEventListener('did-start-loading', () => {
-    dispatch(setPageDetails(pageIndex, {
+    dispatch(setPageDetails({
+      pageIndex,
       isLoading: true,
       title: false,
     }));
   });
 
   webview.addEventListener('dom-ready', () => {
-    dispatch(setPageDetails(pageIndex, {
+    dispatch(setPageDetails({
+      pageIndex,
       canGoBack: webview.canGoBack(),
       canGoForward: webview.canGoForward(),
       canRefresh: true,
@@ -131,7 +133,8 @@ function addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer) 
   });
 
   webview.addEventListener('page-title-set', e => {
-    dispatch(setPageDetails(pageIndex, {
+    dispatch(setPageDetails({
+      pageIndex,
       title: e.title,
       location: webview.getURL(),
     }));
@@ -139,7 +142,8 @@ function addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer) 
 
   webview.addEventListener('did-stop-loading', () => {
     const url = webview.getURL();
-    dispatch(setPageDetails(pageIndex, {
+    dispatch(setPageDetails({
+      pageIndex,
       statusText: false,
       location: url,
       canGoBack: webview.canGoBack(),
@@ -156,7 +160,8 @@ function addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer) 
 
   webview.addEventListener('ipc-message', e => {
     if (e.channel === 'status') {
-      dispatch(setPageDetails(pageIndex, {
+      dispatch(setPageDetails({
+        pageIndex,
         statusText: e.args[0],
       }));
     } else if (e.channel === 'contextmenu-data') {

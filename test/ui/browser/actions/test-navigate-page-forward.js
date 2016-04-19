@@ -21,7 +21,7 @@ describe('Action - NAVIGATE_PAGE_FORWARD', () => {
     const { dispatch, getState } = this;
 
     // Ensure page can go forward
-    dispatch(actions.setPageDetails(1, { canGoForward: true }));
+    dispatch(actions.setPageDetails({ pageIndex: 1, canGoForward: true }));
 
     dispatch(actions.navigatePageForward(1));
     expect(getState().pages.get(1).commands.size).toEqual(1);
@@ -36,7 +36,7 @@ describe('Action - NAVIGATE_PAGE_FORWARD', () => {
     const { dispatch, getState } = this;
 
     // Ensure page can go forward
-    dispatch(actions.setPageDetails(2, { canGoForward: true }));
+    dispatch(actions.setPageDetails({ pageIndex: 2, canGoForward: true }));
 
     dispatch(actions.navigatePageForward(-1));
     expect(getState().currentPageIndex).toEqual(2);
@@ -47,7 +47,7 @@ describe('Action - NAVIGATE_PAGE_FORWARD', () => {
     const { dispatch, getState } = this;
 
     // Ensure page cannot go forward
-    dispatch(actions.setPageDetails(1, { canGoForward: false }));
+    dispatch(actions.setPageDetails({ pageIndex: 1, canGoForward: false }));
 
     try {
       dispatch(actions.navigatePageForward(1));

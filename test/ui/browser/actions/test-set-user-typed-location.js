@@ -19,13 +19,16 @@ describe('Action - SET_USER_TYPED_LOCATION', () => {
     dispatch(actions.createTab('http://moz2.org'));
     dispatch(actions.createTab('http://moz3.org'));
     dispatch(actions.closeTab(0));
-    dispatch(actions.setPageDetails(0, {
+    dispatch(actions.setPageDetails({
+      pageIndex: 0,
       title: 'moz1',
     }));
-    dispatch(actions.setPageDetails(1, {
+    dispatch(actions.setPageDetails({
+      pageIndex: 1,
       title: 'moz2',
     }));
-    dispatch(actions.setPageDetails(2, {
+    dispatch(actions.setPageDetails({
+      pageIndex: 2,
       title: 'moz3',
     }));
     dispatch(actions.setCurrentTab(0));

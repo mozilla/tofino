@@ -21,7 +21,7 @@ describe('Action - NAVIGATE_PAGE_BACK', () => {
     const { dispatch, getState } = this;
 
     // Ensure page can go back
-    dispatch(actions.setPageDetails(1, { canGoBack: true }));
+    dispatch(actions.setPageDetails({ pageIndex: 1, canGoBack: true }));
 
     dispatch(actions.navigatePageBack(1));
     expect(getState().pages.get(1).commands.size).toEqual(1);
@@ -36,7 +36,7 @@ describe('Action - NAVIGATE_PAGE_BACK', () => {
     const { dispatch, getState } = this;
 
     // Ensure page can go back
-    dispatch(actions.setPageDetails(2, { canGoBack: true }));
+    dispatch(actions.setPageDetails({ pageIndex: 2, canGoBack: true }));
 
     dispatch(actions.navigatePageBack(-1));
     expect(getState().currentPageIndex).toEqual(2);
@@ -48,7 +48,7 @@ describe('Action - NAVIGATE_PAGE_BACK', () => {
     const { dispatch, getState } = this;
 
     // Ensure page cannot go back
-    dispatch(actions.setPageDetails(1, { canGoBack: false }));
+    dispatch(actions.setPageDetails({ pageIndex: 1, canGoBack: false }));
 
     try {
       dispatch(actions.navigatePageBack(1));

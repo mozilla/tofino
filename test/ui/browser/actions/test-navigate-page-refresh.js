@@ -21,7 +21,7 @@ describe('Action - NAVIGATE_PAGE_REFRESH', () => {
     const { dispatch, getState } = this;
 
     // Ensure page can refresh
-    dispatch(actions.setPageDetails(1, { canRefresh: true }));
+    dispatch(actions.setPageDetails({ pageIndex: 1, canRefresh: true }));
 
     dispatch(actions.navigatePageRefresh(1));
     expect(getState().pages.get(1).commands.size).toEqual(1);
@@ -36,7 +36,7 @@ describe('Action - NAVIGATE_PAGE_REFRESH', () => {
     const { dispatch, getState } = this;
 
     // Ensure page can refresh
-    dispatch(actions.setPageDetails(2, { canRefresh: true }));
+    dispatch(actions.setPageDetails({ pageIndex: 2, canRefresh: true }));
 
     dispatch(actions.navigatePageRefresh(-1));
     expect(getState().currentPageIndex).toEqual(2);
@@ -48,7 +48,7 @@ describe('Action - NAVIGATE_PAGE_REFRESH', () => {
     const { dispatch, getState } = this;
 
     // Ensure page cannot refresh
-    dispatch(actions.setPageDetails(1, { canRefresh: false }));
+    dispatch(actions.setPageDetails({ pageIndex: 1, canRefresh: false }));
 
     try {
       dispatch(actions.navigatePageRefresh(1));

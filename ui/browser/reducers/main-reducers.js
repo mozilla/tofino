@@ -56,7 +56,7 @@ export default function basic(state = initialState, action) {
       return navigatePageTo(state, action.pageIndex, action.location);
 
     case types.SET_PAGE_DETAILS:
-      return setPageDetails(state, action.pageIndex, action.details);
+      return setPageDetails(state, action);
 
     case types.SET_CURRENT_TAB:
       return setCurrentTab(state, action.pageIndex);
@@ -189,15 +189,21 @@ function navigatePageTo(state, pageIndex, location) {
   })));
 }
 
-function setPageDetails(state, pageIndex, details) {
+function setPageDetails(state, { payload }) {
+  let pageIndex = payload.pageIndex;
   assert(typeof pageIndex === 'number',
     '`pageIndex` must be a number.');
 
   if (pageIndex === -1) {
     pageIndex = state.currentPageIndex;
   }
+
   let newState = state;
-  for (const [key, value] of Object.entries(details)) {
+  for (const [key, value] of Object.entries(payload)) {
+    if (key === 'pageIndex') {
+      continue;
+    }
+
     assert(key !== 'userTyped',
       '`userTyped` must be set in setUserTypedLocation.');
     newState = newState.setIn(['pages', pageIndex, key], value);
@@ -205,7 +211,7 @@ function setPageDetails(state, pageIndex, details) {
   return newState;
 }
 
-function setUserTypedLocation(state, { pageIndex, text }) {
+function setUserTypedLocation(state, { payload: { pageIndex, text } }) {
   assert(typeof pageIndex === 'number',
     '`pageIndex` must be a number.');
 
