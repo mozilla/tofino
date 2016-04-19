@@ -11,8 +11,44 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes, Component } from 'react';
+
+import Style from '../../browser-style';
 import Btn from './btn.jsx';
+
 import { fixURL, getCurrentWebView } from '../../browser-util';
+
+const LOCATION_BAR_STYLE = Style.registerStyle({
+  flex: 1,
+  alignSelf: 'stretch',
+  alignItems: 'center',
+  overflow: 'hidden',
+  margin: '5px 50px',
+  backgroundColor: '#fff',
+  border: '1px solid #eee',
+  borderRadius: '0 4px',
+});
+
+const LOCATION_BAR_BUTTONS_STYLE = Style.registerStyle({
+  margin: '0 3px',
+});
+
+const TITLE_BAR_STYLE = Style.registerStyle({
+  flex: 1,
+  alignItems: 'center',
+  justifyContent: 'center',
+  overflow: 'hidden',
+  '*': {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+});
+
+const INPUT_BAR_STYLE = Style.registerStyle({
+  flex: 1,
+  overflow: 'hidden',
+  border: 'none',
+});
 
 /**
  * The URL / location bar.
@@ -21,9 +57,9 @@ import { fixURL, getCurrentWebView } from '../../browser-util';
  * trivial.
  */
 class Location extends Component {
-
   constructor(props) {
     super(props);
+
     this.state = {
       showURLBar: false,
     };
@@ -32,8 +68,9 @@ class Location extends Component {
     this.handleTitleFocus = this.handleTitleFocus.bind(this);
     this.handleURLBarFocus = this.handleURLBarFocus.bind(this);
     this.handleURLBarBlur = this.handleURLBarBlur.bind(this);
+    this.handleURLBarKeyDown = this.handleURLBarKeyDown.bind(this);
+    this.toggleBookmark = this.toggleBookmark.bind(this);
   }
-
 
   componentDidMount() {
     this.props.ipcRenderer.on('focus-urlbar', () => this.refs.input.select());
@@ -42,9 +79,32 @@ class Location extends Component {
   componentDidUpdate() {
     // If we're showing the URL bar, it should be focused. The scenario
     // where this isn't true is immediately after displaying the URL bar,
-    // so give it focus
+    // so give it focus.
     if (this.state.showURLBar && document.activeElement !== this.refs.input) {
       this.refs.input.focus();
+    }
+  }
+
+  getBookmarkIcon() {
+    const { page, isBookmarked } = this.props;
+    if (page.isLoading) {
+      return 'glyph-bookmark-unknown-16.svg';
+    }
+    if (isBookmarked(page.location)) {
+      return 'glyph-bookmark-filled-16.svg';
+    }
+    return 'glyph-bookmark-hollow-16.svg';
+  }
+
+  toggleBookmark(e) {
+    const { isBookmarked, bookmark, unbookmark } = this.props;
+    const webview = getCurrentWebView(e.target.ownerDocument);
+    const title = webview.getTitle();
+    const url = webview.getURL();
+    if (isBookmarked(url)) {
+      unbookmark(url);
+    } else {
+      bookmark(title, url);
     }
   }
 
@@ -64,100 +124,55 @@ class Location extends Component {
     this.setState({ showURLBar: false });
   }
 
-  handleKeyDown(ev) {
+  handleURLBarKeyDown(ev) {
     if (ev.keyCode === 13) { // enter
       const location = fixURL(ev.target.value);
       const webview = getCurrentWebView(ev.target.ownerDocument);
       webview.setAttribute('src', location);
     } else if (ev.keyCode === 27) { // esc
-      // Restore back to page location and reset userTyped
       this.props.onLocationReset();
       ev.target.select();
     }
   }
 
   render() {
-    const { page, onLocationChange, onLocationContextMenu,
-      isBookmarked, bookmark, unbookmark } = this.props;
+    const { page, onLocationChange, onLocationContextMenu } = this.props;
     const urlValue = page.userTyped !== null ? page.userTyped : page.location;
     const { showURLBar } = this.state;
 
-    const onBookmark = e => {
-      const webview = getCurrentWebView(e.target.ownerDocument);
-      const title = webview.getTitle();
-      const url = webview.getURL();
-      if (isBookmarked(url)) {
-        unbookmark(url);
-      } else {
-        bookmark(title, url);
-      }
-    };
-
-    const bookmarkImage = (() => {
-      if (page.isLoading) {
-        return 'glyph-bookmark-unknown-16.svg';
-      }
-      if (isBookmarked(page.location)) {
-        return 'glyph-bookmark-filled-16.svg';
-      }
-      return 'glyph-bookmark-hollow-16.svg';
-    })();
-
     return (
       <div id="browser-location-bar"
-        style={{
-          flex: 1,
-          display: 'flex',
-          margin: '5px 50px',
-          backgroundColor: '#fff',
-          border: 'solid 1px #e5e5e5',
-          borderRadius: '3px',
-        }}>
+        className={LOCATION_BAR_STYLE}>
         <Btn title="Info"
-          image={''}
-          clickHandler={function() {}}
-          style={{
-            display: 'flex',
-            margin: '0px 3px 0px 3px',
-          }} />
-        <span id="browser-location-title-bar"
+          className={LOCATION_BAR_BUTTONS_STYLE}
+          image=""
+          clickHandler={() => {}} />
+        <div id="browser-location-title-bar"
+          className={TITLE_BAR_STYLE}
+          hidden={showURLBar}
           tabIndex={0}
           onClick={this.handleTitleClick}
-          onFocus={this.handleTitleFocus}
-          style={{
-            flex: 1,
-            display: showURLBar ? 'none' : 'block',
-            marginTop: '3px',
-            textAlign: 'center',
-            overflow: 'hidden',
-          }}>
-          {page.title}
-        </span>
+          onFocus={this.handleTitleFocus}>
+          <span>
+            {page.title}
+          </span>
+        </div>
         <input id="urlbar-input"
+          className={INPUT_BAR_STYLE}
+          hidden={!showURLBar}
           type="text"
           ref="input"
+          defaultValue={urlValue}
           onFocus={this.handleURLBarFocus}
           onBlur={this.handleURLBarBlur}
-          showURLBar={showURLBar}
-          style={{
-            flex: 1,
-            margin: '0px 10px',
-            padding: '0px 10px',
-            display: showURLBar ? 'block' : 'none',
-          }}
-          defaultValue={urlValue}
           onChange={onLocationChange}
-          onKeyDown={this.handleKeyDown}
+          onKeyDown={this.handleURLBarKeyDown}
           onContextMenu={onLocationContextMenu} />
-
         <Btn title="Bookmark"
-          image={bookmarkImage}
+          className={LOCATION_BAR_BUTTONS_STYLE}
+          image={this.getBookmarkIcon()}
           disabled={page.isLoading}
-          clickHandler={onBookmark}
-          style={{
-            display: 'flex',
-            margin: '2px 6px 0px 6px',
-          }} />
+          clickHandler={this.toggleBookmark} />
       </div>
     );
   }

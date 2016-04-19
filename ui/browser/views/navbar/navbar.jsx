@@ -11,12 +11,43 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes } from 'react';
+
+import Style from '../../browser-style';
 import Btn from './btn.jsx';
 import Location from './location.jsx';
 
-/**
- * The section below the tabs containing the location bar and navigation buttons
- */
+const NAVBAR_STYLE = Style.registerStyle({
+  alignItems: 'center',
+  minHeight: '35px',
+  background: '#fcfcfc',
+  padding: '0 5px',
+  fontSize: '80%',
+
+  // Makes electron app draggable.
+  WebkitAppRegion: 'drag',
+
+  // Prevent dragging when clicking on children.
+  '*': {
+    WebkitAppRegion: 'no-drag',
+  },
+});
+
+const NAVBAR_BUTTON_STYLE = Style.registerStyle({
+  margin: '0 6px',
+});
+
+const NAVBAR_PAGES_COUNT_STYLE = Style.registerStyle({
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '16px',
+  height: '14px',
+  backgroundColor: '#555',
+  color: '#fff',
+  fontSize: '80%',
+  borderRadius: '3px',
+  marginRight: '6px',
+});
+
 function NavBar(props) {
   const {
     navBack, navForward, navRefresh, page, pages, openMenu, ipcRenderer,
@@ -25,72 +56,65 @@ function NavBar(props) {
   } = props;
 
   if (page == null) {
-    return <div id="browser-navbar"></div>;
+    return (
+      <div id="browser-navbar"
+        className={NAVBAR_STYLE} />
+    );
   }
 
   return (
-    <div id="browser-navbar">
+    <div id="browser-navbar"
+      className={NAVBAR_STYLE}>
       <Btn id="browser-navbar-menu"
+        className={NAVBAR_BUTTON_STYLE}
         title="Menu"
         image="glyph-menu-16.svg"
         clickHandler={openMenu} />
-
       <Btn id="pages-button"
+        className={NAVBAR_BUTTON_STYLE}
         title="Pages"
-        active={pageAreaVisible}
         clickHandler={() => { setPageAreaVisibility(!pageAreaVisible); }}>
-
-        <span id="browser-navbar-pages-count"
-          style={{
-            backgroundColor: '#4d4d4d',
-            color: '#fff',
-            fontSize: '10px',
-            width: '16px',
-            height: '14px',
-            paddingTop: '2px',
-            textAlign: 'center',
-            borderRadius: '3px',
-            display: 'inline-block',
-            margin: '0px 6px 0px 0px',
-          }}>
+        <div id="browser-navbar-pages-count"
+          className={NAVBAR_PAGES_COUNT_STYLE}>
           {pages.size}
-        </span>
-        <span style={{
-          fontSize: '12px',
-        }}>
+        </div>
+        <span>
           {"Pages"}
         </span>
       </Btn>
-
       <Btn id="browser-navbar-back"
+        className={NAVBAR_BUTTON_STYLE}
         title="Back"
         image="glyph-arrow-nav-back-16.svg"
         clickHandler={navBack}
         disabled={!page.canGoBack} />
       <Btn id="browser-navbar-forward"
+        className={NAVBAR_BUTTON_STYLE}
         title="Forward"
         image="glyph-arrow-nav-forward-16.svg"
         clickHandler={navForward}
         disabled={!page.canGoForward} />
       <Btn id="browser-navbar-refresh"
+        className={NAVBAR_BUTTON_STYLE}
         title="Refresh"
         image="glyph-arrow-reload-16.svg"
         clickHandler={navRefresh}
         disabled={!page.canRefresh} />
-
       <Location {
         ...{ page, ipcRenderer, isBookmarked, bookmark, unbookmark,
-          onLocationChange, onLocationContextMenu, onLocationReset }
-      } />
+          onLocationChange, onLocationContextMenu, onLocationReset } } />
       <Btn id="browser-navbar-minimize"
+        className={NAVBAR_BUTTON_STYLE}
         title="Minimize"
         image="glyph-window-minimize-16.svg"
         clickHandler={minimize} />
       <Btn id="browser-navbar-maximize"
+        className={NAVBAR_BUTTON_STYLE}
         title="Maximize"
         image="glyph-window-maximize-16.svg"
         clickHandler={maximize} />
       <Btn id="browser-navbar-close"
+        className={NAVBAR_BUTTON_STYLE}
         title="Close"
         image="glyph-window-close-16.svg"
         clickHandler={close} />

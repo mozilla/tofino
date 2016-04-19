@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes, Component } from 'react';
 
+import Style from '../browser-style';
 import TabBar from './tabbar/tabbar.jsx';
 import NavBar from './navbar/navbar.jsx';
 import Page from './page/page.jsx';
@@ -29,12 +30,18 @@ import * as mainActions from '../actions/main-actions';
 import * as profileCommands from '../../../app/shared/profile-commands';
 
 import { getCurrentWebView } from '../browser-util';
-
 import '../../shared/web-view';
 
-/**
- *
- */
+const BROWSER_WINDOW_STYLE = Style.registerStyle({
+  width: '100%',
+  height: '100%',
+  flexDirection: 'column',
+});
+
+const CONTENT_AREA_STYLE = Style.registerStyle({
+  flex: 1,
+});
+
 class BrowserWindow extends Component {
   constructor(props) {
     super(props);
@@ -59,9 +66,10 @@ class BrowserWindow extends Component {
   }
 
   render() {
-    const { dispatch, pages, currentPageIndex, ipcRenderer,
-            profile,
-            pageAreaVisible } = this.props;
+    const {
+      ipcRenderer, dispatch, profile, pages, currentPageIndex, pageAreaVisible,
+    } = this.props;
+
     const navBack = e => getCurrentWebView(e.target.ownerDocument).goBack();
     const navForward = e => getCurrentWebView(e.target.ownerDocument).goForward();
     const navRefresh = e => getCurrentWebView(e.target.ownerDocument).reload();
@@ -85,14 +93,14 @@ class BrowserWindow extends Component {
     const setPageAreaVisibility = (visible) => dispatch(setPageAreaVisibilityAction(visible));
 
     return (
-      <div id="browser-chrome">
+      <div className={BROWSER_WINDOW_STYLE} >
         <NavBar page={pages.get(currentPageIndex)}
           {...{ pages, navBack, navForward, navRefresh, minimize, maximize,
             close, openMenu, onLocationChange, onLocationContextMenu,
             onLocationReset, isBookmarked, bookmark, unbookmark, pageAreaVisible, ipcRenderer,
             setPageAreaVisibility }} />
         <TabBar {...{ pages, currentPageIndex, pageAreaVisible, dispatch }} />
-        <div id="content-area">
+        <div className={CONTENT_AREA_STYLE}>
           {pages.map((page, pageIndex) => (
             <Page key={`page-${pageIndex}`}
               page={page}

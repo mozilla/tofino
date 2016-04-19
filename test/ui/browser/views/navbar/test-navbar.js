@@ -40,7 +40,7 @@ describe('NavBar', () => {
         <NavBar {...props} />
       );
 
-      expect(wrapper.html()).toEqual('<div id="browser-navbar"></div>');
+      expect(wrapper.html()).toMatch(/<div id="browser-navbar" class="[a-z0-9]+?"><\/div>/);
     });
   });
 

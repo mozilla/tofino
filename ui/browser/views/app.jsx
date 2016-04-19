@@ -13,16 +13,26 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { ipcRenderer } from 'electron';
+
+import Style from '../browser-style';
 import BrowserWindow from './browser.jsx';
+
+const APP_STYLE = Style.registerStyle({
+  width: '100%',
+  height: '100%',
+});
 
 const App = function({ state, dispatch }) {
   return (
-    <BrowserWindow pages={state.browserWindow.pages}
-      currentPageIndex={state.browserWindow.currentPageIndex}
-      pageAreaVisible={state.browserWindow.pageAreaVisible}
-      ipcRenderer={ipcRenderer}
-      profile={state.browserWindow.profile}
-      dispatch={dispatch} />
+    <div className={APP_STYLE}>
+      <BrowserWindow ipcRenderer={ipcRenderer}
+        dispatch={dispatch}
+        profile={state.browserWindow.profile}
+        pages={state.browserWindow.pages}
+        currentPageIndex={state.browserWindow.currentPageIndex}
+        pageAreaVisible={state.browserWindow.pageAreaVisible} />
+      <Style.Element />
+    </div>
   );
 };
 
@@ -35,4 +45,4 @@ function mapStateToProps(state) {
   return { state };
 }
 
-export default connect(mapStateToProps)(App);
+export default connect(mapStateToProps)(Style.component(App));
