@@ -1,3 +1,7 @@
+div {
+  display: flex;
+}
+
 [hidden] {
   display: none !important;
 }
