@@ -87,9 +87,9 @@ class BrowserWindow extends Component {
       ipcRenderer.send('profile-command',
         profileCommands.unbookmark(url));
     };
-    const onLocationChange = e => dispatch(setPageDetails({ userTyped: e.target.value }));
+    const onLocationChange = e => dispatch(setPageDetails(-1, { userTyped: e.target.value }));
     const onLocationContextMenu = e => menuLocationContext(e.target, dispatch);
-    const onLocationReset = () => dispatch(setPageDetails({ userTyped: void 0 }));
+    const onLocationReset = () => dispatch(setPageDetails(-1, { userTyped: void 0 }));
     const setPageAreaVisibility = (visible) => dispatch(setPageAreaVisibilityAction(visible));
 
     return (
