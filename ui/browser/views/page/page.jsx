@@ -82,23 +82,21 @@ class Page extends Component {
   }
 
   render() {
-    const { page, isActive, dispatch, pageIndex } = this.props;
-
     return (
-      <div className={`${PAGE_STYLE} ${isActive ? 'active-browser-page' : ''}`}
-        hidden={!isActive}>
-        <Search hidden={!page.isSearching} />
+      <div className={`${PAGE_STYLE} ${this.props.isActive ? 'active-browser-page' : ''}`}
+        hidden={!this.props.isActive}>
+        <Search hidden={!this.props.page.isSearching} />
         { /* Need to use `class` here instead of `className` since `WebViewWrapper`
            * is not a React component, therefore it expects real attributes.
            * Furthermore, actual styling needs to be applied inline and not via
            * selectors, because we want them to propagate onto the webview,
            * which doesn't have access to <style> sheets in this document. */ }
         <webview-wrapper ref="webviewWrapper"
-          class={`webview-${pageIndex}`}
+          class={`webview-${this.props.pageIndex}`}
           style={WEB_VIEW_INLINE_STYLE}
-          guestInstanceId={page.guestInstanceId}
-          onContextMenu={() => dispatch(contextMenu())} />
-        <Status page={page} />
+          guestInstanceId={this.props.page.guestInstanceId}
+          onContextMenu={() => this.props.dispatch(contextMenu())} />
+        <Status page={this.props.page} />
       </div>
     );
   }

@@ -21,14 +21,7 @@ import {
   menuLocationContext, updateMenu, menuBrowser, maximize, minimize, close,
 } from '../actions/external';
 
-import {
-  setPageAreaVisibility as setPageAreaVisibilityAction,
-  createTab, attachTab, closeTab, setPageDetails,
-  navigatePageBack, navigatePageForward, navigatePageRefresh, navigatePageTo,
-  setUserTypedLocation,
-} from '../actions/main-actions';
-
-import * as mainActions from '../actions/main-actions';
+import * as actions from '../actions/main-actions';
 import * as profileCommands from '../../../app/shared/profile-commands';
 
 import '../../shared/web-view';
@@ -60,9 +53,9 @@ class BrowserWindow extends Component {
     const { dispatch, currentPageIndex } = this.props;
 
     if (metaKey && keyCode === 70) { // cmd+f
-      dispatch(setPageDetails({ pageIndex: currentPageIndex, isSearching: true }));
+      dispatch(actions.setPageDetails({ pageIndex: currentPageIndex, isSearching: true }));
     } else if (keyCode === 27) { // esc
-      dispatch(setPageDetails({ pageIndex: currentPageIndex, isSearching: false }));
+      dispatch(actions.setPageDetails({ pageIndex: currentPageIndex, isSearching: false }));
     }
   }
 
@@ -70,51 +63,66 @@ class BrowserWindow extends Component {
     const {
       ipcRenderer, dispatch, profile, pages, currentPageIndex, pageAreaVisible,
     } = this.props;
-    const navBack = () => dispatch(navigatePageBack(-1));
-    const navForward = () => dispatch(navigatePageForward(-1));
-    const navRefresh = () => dispatch(navigatePageRefresh(-1));
+    const navBack = () => dispatch(actions.navigatePageBack(-1));
+    const navForward = () => dispatch(actions.navigatePageForward(-1));
+    const navRefresh = () => dispatch(actions.navigatePageRefresh(-1));
     const openMenu = () => menuBrowser(dispatch);
     const isBookmarked = (url) => profile.bookmarks.has(url);
     const bookmark = (title, url) => {
       // Update this window's state before telling the profile service.
-      dispatch(mainActions.bookmark(url, title));
+      dispatch(actions.bookmark(url, title));
       ipcRenderer.send('profile-command',
         profileCommands.bookmark(url, title));
     };
     const unbookmark = (url) => {
       // Update this window's state before telling the profile service.
-      dispatch(mainActions.unbookmark(url));
+      dispatch(actions.unbookmark(url));
       ipcRenderer.send('profile-command',
         profileCommands.unbookmark(url));
     };
-    const onLocationChange = e => dispatch(setUserTypedLocation({
+    const onLocationChange = e => dispatch(actions.setUserTypedLocation({
       pageIndex: -1,
       text: e.target.value,
     }));
     const onLocationContextMenu = e => menuLocationContext(e.target, dispatch);
-    const onLocationReset = () => dispatch(setUserTypedLocation({
+    const onLocationReset = () => dispatch(actions.setUserTypedLocation({
       pageIndex: -1,
       text: void 0,
     }));
-    const setPageAreaVisibility = (visible) => dispatch(setPageAreaVisibilityAction(visible));
-    const navigateTo = loc => dispatch(navigatePageTo(-1, loc));
+    const setPageAreaVisibility = visible => dispatch(actions.setPageAreaVisibility(visible));
+    const navigateTo = loc => dispatch(actions.navigatePageTo(-1, loc));
 
     return (
       <div className={BROWSER_WINDOW_STYLE} >
         <NavBar page={pages.get(currentPageIndex)}
-          {...{ pages, navBack, navForward, navRefresh, minimize, maximize,
-            close, openMenu, onLocationChange, onLocationContextMenu,
-            onLocationReset, isBookmarked, bookmark, unbookmark, pageAreaVisible, ipcRenderer,
-            setPageAreaVisibility, navigateTo }} />
-        <TabBar {...{ pages, currentPageIndex, pageAreaVisible, dispatch }} />
+          {...{
+            navBack,
+            navForward,
+            navRefresh,
+            navigateTo,
+            minimize,
+            maximize,
+            close,
+            pages,
+            openMenu,
+            onLocationChange,
+            onLocationContextMenu,
+            onLocationReset,
+            isBookmarked,
+            bookmark,
+            unbookmark,
+            pageAreaVisible,
+            ipcRenderer,
+            setPageAreaVisibility,
+          }} />
+        <TabBar {...this.props } />
         <div className={CONTENT_AREA_STYLE}>
           {pages.map((page, pageIndex) => (
             <Page key={`page-${pageIndex}`}
+              isActive={pageIndex === currentPageIndex}
               page={page}
               pageIndex={pageIndex}
-              isActive={pageIndex === currentPageIndex}
-              ipcRenderer={ipcRenderer}
-              dispatch={dispatch} />
+              {...this.props} />
           ))}
         </div>
       </div>
@@ -138,7 +146,7 @@ function attachIPCRendererListeners({ dispatch, currentPageIndex, ipcRenderer })
     dispatch(args);
   });
 
-  ipcRenderer.on('new-tab', () => dispatch(createTab()));
+  ipcRenderer.on('new-tab', () => dispatch(actions.createTab()));
 
   // TODO: Avoid this re-dispatch back to the main process
   ipcRenderer.on('new-window', () => {
@@ -146,24 +154,24 @@ function attachIPCRendererListeners({ dispatch, currentPageIndex, ipcRenderer })
   });
 
   ipcRenderer.on('show-bookmarks', () => {
-    dispatch(createTab('atom://bookmarks'));
+    dispatch(actions.createTab('atom://bookmarks'));
   });
 
   ipcRenderer.on('open-bookmark', (e, bookmark) => {
-    dispatch(createTab(bookmark.url));
+    dispatch(actions.createTab(bookmark.url));
   });
 
   ipcRenderer.on('tab-attach', (e, tabInfo) => {
     const page = tabInfo.page;
     page.guestInstanceId = tabInfo.guestInstanceId;
-    dispatch(attachTab(page));
+    dispatch(actions.attachTab(page));
   });
 
   ipcRenderer.on('close-tab', () => {
-    dispatch(closeTab(currentPageIndex));
+    dispatch(actions.closeTab(currentPageIndex));
   });
 
   ipcRenderer.on('page-reload', () => {
-    dispatch(navigatePageRefresh(-1));
+    dispatch(actions.navigatePageRefresh(-1));
   });
 }
