@@ -9,6 +9,7 @@ import 'babel-register';
 import expect from 'expect';
 
 import fs from 'fs';
+import microtime from 'microtime';
 import path from 'path';
 import tmp from 'tmp';
 
@@ -46,7 +47,8 @@ describe('open', () => {
       const storage = await ProfileStorage.open(tempDir);
 
       expect(storage instanceof ProfileStorage);
-      await storage.logUserVersion();
+      const v = await storage.userVersion();
+      console.log(`Storage version: ${v}.`);
       await storage.close();
 
       console.log('Cleaning up.');
@@ -54,6 +56,37 @@ describe('open', () => {
       // This should be the only file after we close.
       fs.unlinkSync(path.join(tempDir, 'browser.db'));
       fs.rmdirSync(tempDir);
+      done();
+    }());
+  });
+
+  it('Is created with the current version.', (done) => {
+    (async function() {
+      const tempDir = tmp.dirSync({}).name;
+      const storage = await ProfileStorage.open(tempDir);
+
+      // You'll need to bump this every time the current version changes.
+      const v = await storage.userVersion();
+      expect(v === 1);
+
+      // Make sure the tables exist.
+
+      const now = microtime.now();
+      await storage.db.run(`INSERT INTO placeEvents (id, url, ts) VALUES (1, \'http://example.com/\', ${now})`);
+      await storage.db.run(`INSERT INTO visitEvents (place, ts) VALUES (1, ${now})`);
+      const pE = await storage.db.get('SELECT ts FROM placeEvents');
+      const vE = await storage.db.get('SELECT place FROM visitEvents');
+      expect(pE.foo === now);
+      expect(vE.foo === 1);
+
+      await storage.close();
+
+      console.log('Cleaning up.');
+
+      // This should be the only file after we close.
+      fs.unlinkSync(path.join(tempDir, 'browser.db'));
+      fs.rmdirSync(tempDir);
+
       done();
     }());
   });
