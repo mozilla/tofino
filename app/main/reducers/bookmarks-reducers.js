@@ -14,19 +14,24 @@ import * as profileCommandTypes from '../../shared/constants/profile-command-typ
 
 import Immutable from 'immutable';
 
-export default function bookmarksReducer(state, command) {
-  if (typeof state === 'undefined') {
-    return Immutable.Set();
-  }
+import { Bookmark } from '../model';
 
+export default function bookmarksReducer(bookmarks = new Immutable.Map(), command) {
   const payload = command.payload;
   switch (command.type) {
     case profileCommandTypes.SET_BOOKMARK_STATE:
       if (payload.isBookmarked) {
-        return state.add(payload.url);
+        const guid = `guid-${Date.now()}`;
+        return bookmarks.set(guid, new Bookmark({
+          guid,
+          title: payload.title,
+          location: payload.url,
+          createdAt: Date.now(),
+          visitedAt: Date.now(), // TODO.
+        }));
       }
-      return state.delete(payload.url);
+      return bookmarks.filterNot(bookmark => bookmark.location === payload.url);
     default:
-      return state;
+      return bookmarks;
   }
 }

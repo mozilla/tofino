@@ -127,7 +127,7 @@ const BrowserMenu = {
     if (bookmarks) {
       bookmarks.forEach(bookmark => {
         items.submenu.push({
-          label: bookmark.title || bookmark.url,
+          label: bookmark.title || bookmark.location,
           click(item, focusedWindow) {
             if (focusedWindow) {
               focusedWindow.webContents.send('open-bookmark', bookmark);
@@ -206,8 +206,7 @@ const BrowserMenu = {
     ],
   },
 
-  build(data) {
-    data = data || {};
+  build(data = {}) {
     const template = [];
 
     if (process.platform === 'darwin') {
