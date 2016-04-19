@@ -19,10 +19,17 @@ export default (env, args = []) => new Promise((resolve, reject) => {
 
   console.log(`Executing command: ${command}`);
 
-  spawn(command, [script, ...args], { env: environ }, err => {
-    if (err) {
-      reject(err);
+  const child = spawn(command, [script, ...args], {
+    env: environ,
+    stdio: 'inherit',
+  });
+
+  child.on('error', reject);
+  child.on('exit', (code) => {
+    if (code !== 0) {
+      reject(code);
+    } else {
+      resolve();
     }
-    resolve();
-  }).stdout.pipe(process.stdout);
+  });
 });
