@@ -10,7 +10,9 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { createTab, setPageDetails, duplicateTab, closeTab } from './main-actions';
+import {
+  createTab, setPageDetails, duplicateTab, closeTab, navigatePageTo,
+} from './main-actions';
 import { getCurrentWebView, fixURL } from '../browser-util';
 import { remote, clipboard, ipcRenderer } from 'electron';
 
@@ -84,14 +86,12 @@ export function menuLocationContext(input, dispatch) {
 
   menu.append(new MenuItem({
     label: 'Paste and Go',
-    click: ev => {
+    click: () => {
       const before = input.value.slice(0, input.selectionStart);
       const after = input.value.slice(input.selectionEnd);
       const loc = before + clipboard.readText() + after;
       dispatch(setPageDetails(-1, { userTyped: loc }));
-
-      const webview = getCurrentWebView(ev.target.ownerDocument);
-      webview.setAttribute('src', fixURL(loc));
+      dispatch(navigatePageTo(-1, fixURL(loc)));
     },
   }));
 

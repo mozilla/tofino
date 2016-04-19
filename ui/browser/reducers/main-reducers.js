@@ -16,6 +16,7 @@ import Immutable from 'immutable';
 import * as types from '../constants/action-types';
 import { State, Page } from '../model';
 import * as profileDiffTypes from '../../../app/shared/constants/profile-diff-types';
+import { attachUnique } from '../browser-util';
 
 /**
  * Fairly sure we should hard code this
@@ -41,6 +42,18 @@ export default function basic(state = initialState, action) {
 
     case types.CLOSE_TAB:
       return closeTab(state, action.pageIndex);
+
+    case types.NAVIGATE_PAGE_BACK:
+      return navigatePageBack(state, action.pageIndex);
+
+    case types.NAVIGATE_PAGE_FORWARD:
+      return navigatePageForward(state, action.pageIndex);
+
+    case types.NAVIGATE_PAGE_REFRESH:
+      return navigatePageRefresh(state, action.pageIndex);
+
+    case types.NAVIGATE_PAGE_TO:
+      return navigatePageTo(state, action.pageIndex, action.location);
 
     case types.SET_PAGE_DETAILS:
       return setPageDetails(state, action.pageIndex, action.details);
@@ -110,6 +123,67 @@ function closeTab(state, pageIndex) {
 
   return state.set('pages', pages)
               .set('currentPageIndex', currentPageIndex);
+}
+
+function navigatePageBack(state, pageIndex) {
+  assert(typeof pageIndex === 'number',
+    '`pageIndex` must be a number.');
+
+  if (pageIndex === -1) {
+    pageIndex = state.currentPageIndex;
+  }
+
+  assert(state.pages.get(pageIndex).canGoBack, 'Page cannot go back.');
+
+  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push(attachUnique({
+    command: 'back',
+  })));
+}
+
+function navigatePageForward(state, pageIndex) {
+  assert(typeof pageIndex === 'number',
+    '`pageIndex` must be a number.');
+
+  if (pageIndex === -1) {
+    pageIndex = state.currentPageIndex;
+  }
+
+  assert(state.pages.get(pageIndex).canGoForward, 'Page cannot go forward.');
+
+  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push(attachUnique({
+    command: 'forward',
+  })));
+}
+
+function navigatePageRefresh(state, pageIndex) {
+  assert(typeof pageIndex === 'number',
+    '`pageIndex` must be a number.');
+
+  if (pageIndex === -1) {
+    pageIndex = state.currentPageIndex;
+  }
+
+  assert(state.pages.get(pageIndex).canRefresh, 'Page cannot refresh.');
+
+  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push(attachUnique({
+    command: 'refresh',
+  })));
+}
+
+function navigatePageTo(state, pageIndex, location) {
+  assert(typeof pageIndex === 'number',
+    '`pageIndex` must be a number.');
+  assert(typeof location === 'string',
+    '`location` must be a string.');
+
+  if (pageIndex === -1) {
+    pageIndex = state.currentPageIndex;
+  }
+
+  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push(attachUnique({
+    location,
+    command: 'navigate-to',
+  })));
 }
 
 function setPageDetails(state, pageIndex, details) {

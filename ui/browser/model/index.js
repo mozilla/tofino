@@ -49,4 +49,5 @@ export const Page = Immutable.Record({
   canGoBack: false,
   canGoForward: false,
   canRefresh: false,
+  commands: Immutable.List(),
 });

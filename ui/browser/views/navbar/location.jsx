@@ -126,9 +126,7 @@ class Location extends Component {
 
   handleURLBarKeyDown(ev) {
     if (ev.keyCode === 13) { // enter
-      const location = fixURL(ev.target.value);
-      const webview = getCurrentWebView(ev.target.ownerDocument);
-      webview.setAttribute('src', location);
+      this.props.navigateTo(fixURL(ev.target.value));
     } else if (ev.keyCode === 27) { // esc
       this.props.onLocationReset();
       ev.target.select();
@@ -187,6 +185,7 @@ Location.propTypes = {
   bookmark: PropTypes.func.isRequired,
   unbookmark: PropTypes.func.isRequired,
   ipcRenderer: PropTypes.object.isRequired,
+  navigateTo: PropTypes.func.isRequired,
 };
 
 export default Location;

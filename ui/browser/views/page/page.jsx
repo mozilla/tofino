@@ -33,6 +33,7 @@ const WEB_VIEW_INLINE_STYLE = {
 };
 
 class Page extends Component {
+
   componentDidMount() {
     const { page, pageIndex, dispatch, ipcRenderer } = this.props;
     const { webview } = this.refs.webviewWrapper;
@@ -41,6 +42,42 @@ class Page extends Component {
 
     if (!page.guestInstanceId && page.location) {
       webview.setAttribute('src', fixURL(page.location));
+    }
+  }
+
+  /**
+   * After Page receives new properties, iterate over the new commands
+   * in the queue and execute them.
+   *
+   * @TODO This queue grows indefinitely. We should drain it somehow in a
+   * Reduxy way.
+   */
+  componentDidUpdate({ page }) {
+    const currentPage = this.props.page;
+    if (page.commands.size !== currentPage.commands.size) {
+      for (let i = page.commands.size; i < currentPage.commands.size; i++) {
+        this.executeCommand(currentPage.commands.get(i));
+      }
+    }
+  }
+
+  executeCommand(command) {
+    const { webview } = this.refs.webviewWrapper;
+    switch (command.command) {
+      case 'back':
+        webview.goBack();
+        break;
+      case 'forward':
+        webview.goForward();
+        break;
+      case 'refresh':
+        webview.reload();
+        break;
+      case 'navigate-to':
+        webview.setAttribute('src', fixURL(command.location));
+        break;
+      default:
+        throw new Error(`Unknown command for WebView: ${command.command}`);
     }
   }
 

@@ -77,6 +77,9 @@ export class TabDragDrop {
     if (item.type === 'text/uri-list' || item.type === 'text/plain') {
       const url = e.dataTransfer.getData(item.type);
 
+      // TODO this whole component needs to be fixed up, and
+      // when navigate to a page, must use NAVIGATE_PAGE_TO action
+      // via `dispatch`.
       const webview = getWebView(e.target.ownerDocument, pageIndex);
       webview.setAttribute('src', url);
 
