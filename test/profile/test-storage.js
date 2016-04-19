@@ -90,4 +90,45 @@ describe('open', () => {
       done();
     }());
   });
+
+  it('Can save places across opens.', (done) => {
+    (async function () {
+      const tempDir = tmp.dirSync({}).name;
+      const storageA = await ProfileStorage.open(tempDir);
+
+      const idFoo = await storageA.savePlace('http://example.com/foo');
+      const idBar = await storageA.savePlace('http://example.com/bar');
+      const again = await storageA.savePlace('http://example.com/foo');
+
+      expect(idFoo === again);
+      expect((idBar - idFoo) === 1);
+
+      const fetched = await storageA.db.get('SELECT id FROM placeEvents WHERE url = ?', ['http://example.com/foo']);
+      expect(fetched.id === idFoo);
+
+      await storageA.close();
+
+      // Reopen a new instance.
+      const storageB = await ProfileStorage.open(tempDir);
+      const idBarB = await storageB.savePlace('http://example.com/bar');
+
+      // The ID is the same.
+      expect(idBarB === idBar);
+
+      const urlsA = await storageB.visited(0, 1);
+      expect(urlsA.length == 1);
+      const urlsB = await storageB.visited(0, 3);
+      expect(urlsB.length == 2);
+
+      await storageB.close();
+
+      console.log('Cleaning up.');
+
+      // This should be the only file after we close.
+      fs.unlinkSync(path.join(tempDir, 'browser.db'));
+      fs.rmdirSync(tempDir);
+
+      done();
+    }());
+  });
 });
