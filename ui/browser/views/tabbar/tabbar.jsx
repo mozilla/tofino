@@ -11,19 +11,38 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes } from 'react';
+
+import Style from '../../browser-style';
 import Tab from './tab.jsx';
+import Btn from '../navbar/btn.jsx';
 import { menuTabContext } from '../../actions/external';
 import { createTab, closeTab, setCurrentTab } from '../../actions/main-actions';
 
 // TODO Fix up dragDrop
 // import { TabBarDragDrop, TabDragDrop } from './dragdrop';
 
-/**
- * The TabBar runs across the top of each browser window, containing the
- * window management buttons, and browser tabs
- */
+const TABBAR_STYLE = Style.registerStyle({
+  alignItems: 'center',
+  minHeight: '25px',
+  background: '#ddd',
+  borderBottom: '1px solid #fff',
+  WebkitUserSelect: 'none',
+
+  // Makes electron app draggable.
+  WebkitAppRegion: 'drag',
+
+  // Prevent dragging when clicking on children.
+  '*': {
+    WebkitAppRegion: 'no-drag',
+  },
+});
+
+const NEW_TAB_BUTTON_STYLE = Style.registerStyle({
+  marginLeft: '8px',
+  color: '#555',
+});
+
 const TabBar = ({ pages, currentPageIndex, dispatch, pageAreaVisible }) => {
-  // TODO Fix up dragDrop
   const barDragDrop = { handlers: {} }; // new TabBarDragDrop(pages, dispatch);
 
   // This is the 'pages' section, which can be collapsed
@@ -32,7 +51,8 @@ const TabBar = ({ pages, currentPageIndex, dispatch, pageAreaVisible }) => {
   }
 
   return (
-    <div id="browser-tabs"
+    <div id="browser-tabbar"
+      className={TABBAR_STYLE}
       dragzone="copy string:test/uri-list"
       {...barDragDrop.handlers}>
 
@@ -56,10 +76,11 @@ const TabBar = ({ pages, currentPageIndex, dispatch, pageAreaVisible }) => {
         );
       })}
 
-      <a className="newtab"
-        onClick={() => dispatch(createTab())}>
+      <Btn className={NEW_TAB_BUTTON_STYLE}
+        title="Add new tab"
+        clickHandler={() => dispatch(createTab())}>
         <i className="fa fa-plus" />
-      </a>
+      </Btn>
     </div>
   );
 };

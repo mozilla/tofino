@@ -12,6 +12,39 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes, Component } from 'react';
 
+import Style from '../../browser-style';
+import Btn from '../navbar/btn.jsx';
+
+const TAB_STYLE = Style.registerStyle({
+  alignSelf: 'stretch',
+  alignItems: 'center',
+  overflow: 'hidden',
+  width: '20vw',
+  fontSize: '75%',
+  background: '#ccc',
+  color: '#777',
+  '&.active': {
+    background: '#eee',
+    color: '#555',
+  },
+  '&.dragging': {
+    opacity: '0.6',
+  },
+});
+
+const TAB_TITLE_STYLE = Style.registerStyle({
+  flex: '1',
+  marginLeft: '12px',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+});
+
+const TAB_CLOSE_BUTTON_STYLE = Style.registerStyle({
+  marginRight: '8px',
+  color: '#555',
+});
+
 /**
  * Tab is an element on the TabBar at the top of a browser window which shows
  * one of the opened tabs. The web page contained within the tab may not be
@@ -37,29 +70,31 @@ class Tab extends Component {
   }
 
   render() {
+    const { onDragStart, onDragEnd } = this;
     const {
       page, isActive, onClose, onDragEnter, onDrop, onClick, onContextMenu,
     } = this.props;
-    const { onDragStart, onDragEnd } = this;
 
-    const title = page.title || 'loading';
-    const classes = [
+    const modes = [
       ...(isActive ? ['active'] : []),
       ...(this.state.dragging ? ['dragging'] : []),
     ];
 
     return (
-      <div className={classes.join(' ')}
+      <div className={`${TAB_STYLE} ${modes.join(' ')}`}
         draggable="true"
-        {...{ title, onDragEnter, onDrop, onClick, onContextMenu,
-             onDragStart, onDragEnd }}>
+        {...{ onDragEnter, onDrop, onClick, onContextMenu, onDragStart, onDragEnd }}>
+        <span className={TAB_TITLE_STYLE}>
+          {page.title || 'Loading...'}
+        </span>
         <span>
-          {title}
           {page.isLoading ? <i className="fa fa-spinner fa-pulse" /> : null}
         </span>
-        <a onClick={onClose}>
+        <Btn className={TAB_CLOSE_BUTTON_STYLE}
+          title="Close tab"
+          clickHandler={onClose}>
           <i className="fa fa-close" />
-        </a>
+        </Btn>
       </div>
     );
   }

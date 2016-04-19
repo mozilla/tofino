@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes, Component } from 'react';
 
+import Style from '../../browser-style';
 import Status from './status.jsx';
 import Search from './search.jsx';
 
@@ -20,21 +21,26 @@ import { contextMenu, menuWebViewContext } from '../../actions/external';
 import { closeTab, setPageDetails } from '../../actions/main-actions';
 import * as profileCommands from '../../../../app/shared/profile-commands';
 
-/**
- * A Page is made up of an in-page search component, a web-view and a status
- * bar.
- * It's a heavyweight component because it needs to do things on mount
- */
+const PAGE_STYLE = Style.registerStyle({
+  // Mark this as the relative anchor for floating children (e.g. search bar).
+  position: 'relative',
+  flex: 1,
+});
+
+const WEB_VIEW_INLINE_STYLE = {
+  display: 'flex',
+  flex: 1,
+};
+
 class Page extends Component {
   componentDidMount() {
     const { page, pageIndex, dispatch, ipcRenderer } = this.props;
-    const webview = this.webview.webview;
+    const { webview } = this.refs.webviewWrapper;
 
     addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer);
 
-    // set location, if given
     if (!page.guestInstanceId && page.location) {
-      this.webview.webview.setAttribute('src', fixURL(page.location));
+      webview.setAttribute('src', fixURL(page.location));
     }
   }
 
@@ -42,17 +48,19 @@ class Page extends Component {
     const { page, isActive, dispatch, pageIndex } = this.props;
 
     return (
-      <div id="browser-page"
-        className={isActive ? 'visible' : 'hidden'}>
-        <Search isActive={page.isSearching} />
-
+      <div className={`${PAGE_STYLE} ${isActive ? 'active-browser-page' : ''}`}
+        hidden={!isActive}>
+        <Search hidden={!page.isSearching} />
         { /* Need to use `class` here instead of `className` since `WebViewWrapper`
-           * is not a React component, therefore it expects real attributes. */ }
-        <webview-wrapper class={`webview-${pageIndex}`}
-          ref={node => { if (node != null) this.webview = node; }}
+           * is not a React component, therefore it expects real attributes.
+           * Furthermore, actual styling needs to be applied inline and not via
+           * selectors, because we want them to propagate onto the webview,
+           * which doesn't have access to <style> sheets in this document. */ }
+        <webview-wrapper ref="webviewWrapper"
+          class={`webview-${pageIndex}`}
+          style={WEB_VIEW_INLINE_STYLE}
           guestInstanceId={page.guestInstanceId}
-          onContextMenu={() => dispatch(contextMenu())}
-          style={{ height: '100%' /* I have no idea why we need this */ }} />
+          onContextMenu={() => dispatch(contextMenu())} />
         <Status page={page} />
       </div>
     );
@@ -69,9 +77,6 @@ Page.propTypes = {
 
 export default Page;
 
-/**
- * WebView wasn't designed for React...
- */
 function addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer) {
   webview.addEventListener('did-start-loading', () => {
     dispatch(setPageDetails(pageIndex, {

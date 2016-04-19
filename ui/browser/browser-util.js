@@ -58,7 +58,7 @@ export function getBestDropItem(dataTransfer) {
  *
  */
 export function getCurrentWebView(document) {
-  return document.querySelector('#browser-page.visible > webview-wrapper').webview;
+  return document.querySelector('.active-browser-page > webview-wrapper').webview;
 }
 
 /**
