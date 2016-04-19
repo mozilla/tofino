@@ -19,7 +19,7 @@
  */
 
 import cbmkdirp from 'less-mkdirp';
-import microtime from 'microtime';
+import microtime from 'microtime-fast';
 import path from 'path';
 import thenify from 'thenify';
 

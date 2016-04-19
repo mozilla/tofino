@@ -9,7 +9,7 @@ import 'babel-register';
 import expect from 'expect';
 
 import fs from 'fs';
-import microtime from 'microtime';
+import microtime from 'microtime-fast';
 import path from 'path';
 import tmp from 'tmp';
 
