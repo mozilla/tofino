@@ -14,6 +14,7 @@ import { ipcRenderer as ipc } from 'electron';
 
 import './hover-status';
 import './context-menu';
+import './scroll';
 
 window.addEventListener('message', (event) => {
   if (event.origin !== 'atom://') {
