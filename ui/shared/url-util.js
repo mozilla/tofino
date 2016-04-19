@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// Modified from the following fils:
+// Modified from the following files:
 //  * http://mxr.mozilla.org/gaia/source/shared/js/url_helper.js
 //  * https://github.com/brave/browser-laptop/blob/master/js/lib/urlutil.js
 // Changed to use require('url').parse instead of window.URL and document.createElement('a')
@@ -10,7 +10,8 @@
 import { parse } from 'url';
 
 // characters, then : with optional //
-const rscheme = /^(?:[a-z\u00a1-\uffff0-9-+]+)(?::(\/\/)?)/i;
+const rScheme = /^(?:[a-z\u00a1-\uffff0-9-+]+)(?::(\/\/)?)/i;
+const rNestedProtocol = /^(data|view-source)\:.+/;
 const defaultScheme = 'http://';
 const fileScheme = 'file://';
 
@@ -30,17 +31,8 @@ const UrlUtil = {
     // - scheme + ':' (ex. http:)
     // - scheme + '://' (ex. http://)
     // - null
-    const scheme = (rscheme.exec(input) || [null])[0];
-    return scheme === 'localhost://' ? null : scheme;
-  },
-
-  /**
-   * Checks if an input has a scheme (e.g., http:// or ftp://).
-   * @param {String} input The input value.
-   * @returns {Boolean} Whether or not the input has a scheme.
-   */
-  hasScheme(input) {
-    return !!this.getScheme(input);
+    const scheme = (rScheme.exec(input) || [null])[0];
+    return scheme;
   },
 
   /**
@@ -49,18 +41,20 @@ const UrlUtil = {
    * @returns {String} path with a scheme
    */
   prependScheme(input) {
+    input = input.trim();
+
     // @TODO: expand relative path.  Should not access os.homedir();
     // if (input.startsWith('~/')) {
     //   input = input.replace(/^~/, os.homedir());
     // }
 
-    // detect absolute file paths
+    // Detect absolute file paths
     if (input.startsWith('/')) {
       input = fileScheme + input;
     }
 
     // If there's no scheme, prepend the default scheme
-    if (!this.hasScheme(input)) {
+    if (!this.getScheme(input)) {
       input = defaultScheme + input;
     }
 
@@ -73,56 +67,53 @@ const UrlUtil = {
    * @returns {String} The formatted URL.
    */
   getUrlFromInput(input) {
-    input = input.trim();
-
     input = this.prependScheme(input);
 
     if (!this.isURL(input)) {
       return input;
     }
 
-    return parse(input).href;
+    if (rNestedProtocol.test(input)) {
+      return input;
+    }
+
+    const parsed = parse(input);
+    let href = parsed.href;
+
+    // Remove trailing '/'
+    if (parsed.path === '/') {
+      href = href.substring(0, href.length - 1);
+    }
+
+    return href;
   },
 
   /**
    * Checks if a given input is a valid URL.
-   * @param {String} input The input URL.
+   * @param {String} input See getUrl
    * @returns {Boolean} Whether or not this is a valid URL.
    */
   isURL(input) {
-    function isNotURL() {
-      // for cases, ?abc and "a? b" which should searching query
-      const case1Reg = /^(\?)|(\?.+\s)/;
-
-      // for cases, pure string
-      const case2Reg = /[\?\.\s\:]/;
-
-      // for cases, data:uri and view-source:uri
-      const case3Reg = /^\w+\:.*/;
-
-      let str = input.trim();
-      if (case1Reg.test(str) || !case2Reg.test(str) ||
-          UrlUtil.getScheme(str) === str) {
-        return true;
-      }
-      if (case3Reg.test(str)) {
-        return false;
-      }
-
-      str = UrlUtil.prependScheme(str);
-      const parsed = parse(str);
-      return !parsed.protocol || !parsed.host || !parsed.host.includes('.');
+    input = input.trim();
+    if (rNestedProtocol.test(input)) {
+      return true;
     }
-    return !isNotURL();
+
+    const parsed = this.getUrl(input);
+    const isFile = parsed.protocol === 'file:';
+    const isValidHost = isFile || (parsed.host && parsed.host.includes('.'));
+    return parsed.protocol && isValidHost;
   },
 
   /**
-   * Checks if a URL is a view-source URL.
-   * @param {String} input The input URL.
-   * @returns {Boolean} Whether or not this is a view-source URL.
+   * Checks if a given input is a valid URL.
+   * @param {String} input A url-like string that doesn't
+   *                 need to have a scheme,for example 'mozilla.com'.
+   * @returns {Url} A Url object from nodejs 'url' library
    */
-  isViewSourceUrl(url) {
-    return url.toLowerCase().startsWith('view-source:');
+  getUrl(input) {
+    input = UrlUtil.prependScheme(input);
+    return parse(input);
   },
 
   /**
@@ -132,32 +123,6 @@ const UrlUtil = {
    */
   isDataUrl(url) {
     return this.isURL(url) && this.getScheme(url) === 'data:';
-  },
-
-  /**
-   * Converts a view-source url into a standard url.
-   * @param {String} input The view-source url.
-   * @returns {String} A normal url.
-   */
-  getUrlFromViewSourceUrl(input) {
-    if (!this.isViewSourceUrl(input)) {
-      return input;
-    }
-    return this.getUrlFromInput(input.substring('view-source:'.length));
-  },
-
-  /**
-   * Converts a URL into a view-source URL.
-   * @param {String} input The input URL.
-   * @returns {String} The view-source URL.
-   */
-  getViewSourceUrlFromUrl(input) {
-    if (this.isViewSourceUrl(input)) {
-      return input;
-    }
-
-    // Normalizes the actual URL before the view-source: scheme like prefix.
-    return `view-source:${this.getUrlFromViewSourceUrl(input)}`;
   },
 
   /**

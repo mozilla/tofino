@@ -29,11 +29,13 @@ export function fixURL(typed) {
     return typed;
   }
 
-  if (typed.includes('://')) {
-    return typed;
-  }
+  // @TODO: The %20 here is to handle 'www.blah.com foo' as a search,
+  // but it doesn't handle cases where spaces are included in GET params
+  const isURL = UrlUtil.isURL(typed) && (
+                  typed.includes('%20') ||
+                  !UrlUtil.getUrl(typed).path.includes('%20'));
 
-  if (UrlUtil.isURL(typed) && !typed.includes(' ')) {
+  if (isURL) {
     return UrlUtil.getUrlFromInput(typed);
   }
 

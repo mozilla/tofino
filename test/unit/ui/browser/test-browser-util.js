@@ -10,13 +10,18 @@ describe('utils', () => {
       const UNCHANGED_URIS = [
         'data:text/html,',
         'http://example.com',
-        'http://foo',
         'http://foo.com',
-        'https://foo',
         'https://foo.com',
+        'https://foo.com/?a=%20b',
         'data:about',
         'view-source:http://foo.com/',
         'rtsp://100.100.100.100/rtsp.mp4',
+
+        // @TODO Handle spaces in GET parameters
+        // 'https://foo.com/?a= b',
+
+        // @TODO url.parse is converting this to https://xn--e28h.com
+        // 'https://😀.com',
       ];
       for (const url of UNCHANGED_URIS) {
         expect(fixURL(url)).toEqual(url);
@@ -25,13 +30,19 @@ describe('utils', () => {
 
     it('should append protocol onto URIs', () => {
       const CHANGED_URIS = [
-        ['example.com', 'http://example.com/'],
-        ['example.net', 'http://example.net/'],
-        ['foo.bar', 'http://foo.bar/'],
-        ['blerg.co.uk', 'http://blerg.co.uk/'],
-        ['blach.com', 'http://blach.com/'],
-        ['www.blah.com', 'http://www.blah.com/'],
-        [' mozilla.org', 'http://mozilla.org/'],
+        ['example.com', 'http://example.com'],
+        ['example.net', 'http://example.net'],
+        ['foo.bar', 'http://foo.bar'],
+        ['blerg.co.uk', 'http://blerg.co.uk'],
+        ['blach.com', 'http://blach.com'],
+        ['www.blah.com', 'http://www.blah.com'],
+        [' mozilla.org', 'http://mozilla.org'],
+        ['mozilla.org ', 'http://mozilla.org'],
+        ['mozilla.org/foobar', 'http://mozilla.org/foobar'],
+
+        // @TODO: How should this input be handled?
+        // ['https://foo', 'https://foo.com'],
+        // ['http://foo', 'http://foo.com'],
       ];
       for (const [input, url] of CHANGED_URIS) {
         expect(fixURL(input)).toEqual(url);
@@ -40,10 +51,15 @@ describe('utils', () => {
 
     it('should use a search engine for queries', () => {
       const SEARCH_TERMS = [
+        'data',
         'data:',
+        'data: ',
+        'view-source',
+        'view-source:',
+        'view-source: ',
+        'fake-nested:http://foo.com',
         'search',
         'another search',
-        'data',
         'a ? b',
         'a . b ?',
         'what is mozilla',

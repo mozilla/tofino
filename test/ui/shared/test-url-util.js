@@ -4,22 +4,18 @@ import expect from 'expect';
 import UrlUtil from '../../../ui/shared/url-util';
 
 describe('UrlUtil', () => {
-  describe('getHostname', () => {
-    it('returns hostname for full url', () => {
-      expect(UrlUtil.getHostname('http://example.com')).toEqual('example.com');
+  describe('getUrl', () => {
+    it('returns host for full url', () => {
+      expect(UrlUtil.getUrl('http://example.com').host).toEqual('example.com');
     });
-    it('returns null for empty url', () => {
-      expect(UrlUtil.getHostname('')).toEqual(null);
+    it('returns null host for empty url', () => {
+      expect(UrlUtil.getUrl('').host).toEqual('');
     });
   });
 
   describe('getScheme', () => {
     it('is null for empty', () => {
       expect(UrlUtil.getScheme('/file/path/to/file')).toEqual(null);
-    });
-
-    it('is null for localhost', () => {
-      expect(UrlUtil.getScheme('localhost://127.0.0.1')).toEqual(null);
     });
 
     it('gets scheme with :', () => {
