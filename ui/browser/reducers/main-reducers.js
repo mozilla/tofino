@@ -67,63 +67,65 @@ export default function basic(state = initialState, action) {
 }
 
 function createTab(state, location = HOME_PAGE) {
-  const page = new Page({ location });
-  return state.update('pages', pages => pages.push(page))
-              .set('currentPageIndex', state.pages.size)
-              .set('pageAreaVisible', true);
+  return state.withMutations(mut => {
+    const page = new Page({ location });
+    mut.update('pages', pages => pages.push(page));
+    mut.set('currentPageIndex', state.pages.size);
+    mut.set('pageAreaVisible', true);
+  });
 }
 
 function duplicateTab(state, pageIndex) {
   const location = state.pages.get(pageIndex).location;
-  const page = new Page({ location });
-  return state.update('pages', pages => pages.push(page))
-              .set('currentPageIndex', state.pages.size);
+  return createTab(state, location);
 }
 
 function attachTab(state, page) {
-  const newPage = new Page(page);
-  return new State({
-    pages: Immutable.List.of(newPage),
-    currentPageIndex: 0,
+  return state.withMutations(mut => {
+    const newPage = new Page(page);
+    mut.set('pages', Immutable.List.of(newPage));
+    mut.set('currentPageIndex', 0);
   });
 }
 
 function closeTab(state, pageIndex) {
   const pageCount = state.pages.size;
 
-  // last tab, full reset
+  // If this is the last tab, do a full reset.
+  // FIXME: Do we really want to do this? It will also reset the profile
+  // and everything else. It seems more likely to me that we just want to do
+  // something like creating a new default page, similar to `attachTab`.
   if (pageCount === 1) {
     return initialState;
   }
 
-  // Remove from the pages set
-  let currentPageIndex = state.currentPageIndex;
+  return state.withMutations(mut => {
+    mut.update('pages', pages => pages.delete(pageIndex));
 
-  const pages = state.pages.delete(pageIndex);
-
-  // If tab closed comes before our current tab, or if this is the right-most
-  // tab and it's selected, decrement the current page index
-  if (currentPageIndex > pageIndex ||
-       (currentPageIndex === pageIndex && pageIndex === (pageCount - 1))) {
-    currentPageIndex--;
-  }
-
-  return state.set('pages', pages)
-              .set('currentPageIndex', currentPageIndex);
+    // If tab closed comes before our current tab, or if this is the right-most
+    // tab and it's selected, decrement the current page index.
+    const current = state.currentPageIndex;
+    if (current > pageIndex || (current === pageIndex && pageIndex === (pageCount - 1))) {
+      mut.set('currentPageIndex', current - 1);
+    }
+  });
 }
 
 function setPageDetails(state, pageIndex, details) {
+  // FIXME: Remove this after we get static analysis done with flow.
+  // See https://github.com/mozilla/tofino/issues/46
   assert(typeof pageIndex === 'number',
     '`pageIndex` must be a number.');
 
   if (pageIndex === -1) {
     pageIndex = state.currentPageIndex;
   }
-  let newState = state;
-  for (const [key, value] of Object.entries(details)) {
-    newState = newState.setIn(['pages', pageIndex, key], value);
-  }
-  return newState;
+
+  return state.withMutations(mut => {
+    for (const [key, value] of Object.entries(details)) {
+      mut.setIn(['pages', pageIndex, key], value);
+    }
+  });
 }
 
 function setCurrentTab(state, pageIndex) {
@@ -132,7 +134,6 @@ function setCurrentTab(state, pageIndex) {
 
 function setPageOrder(state, pageIndex, updatedIndex) {
   let currentPageIndex = state.currentPageIndex;
-  const page = state.pages.get(pageIndex);
 
   // If we're moving our current page, or moving a page 'over'
   // our selected tab, ensure the index is still referencing the same page
@@ -147,12 +148,18 @@ function setPageOrder(state, pageIndex, updatedIndex) {
     }
   }
 
-  // First remove the page we want to move, then add back to the array,
-  // maybe we want to do this in a faster way?
-  let pages = state.pages.splice(pageIndex, 1);
-  pages = pages.splice(updatedIndex, 0, page);
-  return state.set('pages', pages)
-              .set('currentPageIndex', currentPageIndex);
+  return state.withMutations(mut => {
+    const page = state.pages.get(pageIndex);
+
+    // Can't use `withMutations` on these `pages` operations because only `set`,
+    // `push`, `pop`, `shift`, `unshift` and `merge` may be used mutatively.
+    let pages = state.pages;
+    pages = pages.delete(pageIndex);
+    pages = pages.insert(updatedIndex, page);
+
+    mut.set('pages', pages);
+    mut.set('currentPageIndex', currentPageIndex);
+  });
 }
 
 function setPageAreaVisibility(state, visible) {
