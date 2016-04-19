@@ -41,5 +41,8 @@ require('check-dependencies')((result) => {
   } else if (~process.argv.indexOf('--test')) {
     const taskArgs = process.argv.slice(1 + process.argv.indexOf('--test'));
     Tasks.test(taskArgs).then(null, handleTaskFailed);
+  } else if (~process.argv.indexOf('--quicktest')) {
+    const taskArgs = process.argv.slice(1 + process.argv.indexOf('--test'));
+    Tasks.quickTest(taskArgs).then(null, handleTaskFailed);
   }
 });

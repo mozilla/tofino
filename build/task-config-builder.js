@@ -41,6 +41,9 @@ const BASE_CONFIG = {
   // Whether or not the build is being tested
   test: false,
 
+  // If we are running tests, do we skip deeper long running tests
+  quickTest: false,
+
   // The Google Analytics tracking identifier to use when instrumenting.
   googleAnalyticsTrackingID: 'UA-76122102-1',
 };

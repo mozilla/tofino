@@ -10,7 +10,11 @@ cache:
   directories:
     - node_modules
 
-before_install: scripts/bootstrap.py
+before_install:
+  - "export DISPLAY=:99.0"
+  - scripts/bootstrap.py
+  - sleep 3
+
 install:
   - nvm --version
   - nvm install 5.9
@@ -19,11 +23,11 @@ install:
   - npm install --progress false --depth 0
 
 script:
+  - npm run package
   - npm test
 
 after_success:
   - npm run coverage
-  - npm run package
 
 branches:
   only:
