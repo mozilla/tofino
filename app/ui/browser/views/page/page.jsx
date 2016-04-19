@@ -92,6 +92,7 @@ class Page extends Component {
            * selectors, because we want them to propagate onto the webview,
            * which doesn't have access to <style> sheets in this document. */ }
         <webview-wrapper ref="webviewWrapper"
+          preload={'../../content/preload/content.js'}
           class={`webview-${this.props.pageIndex}`}
           style={WEB_VIEW_INLINE_STYLE}
           guestInstanceId={this.props.page.guestInstanceId}
@@ -157,15 +158,22 @@ function addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer) 
   });
 
   webview.addEventListener('ipc-message', e => {
-    if (e.channel === 'status') {
-      dispatch(setPageDetails({
-        pageIndex,
-        statusText: e.args[0],
-      }));
-    } else if (e.channel === 'contextmenu-data') {
-      menuWebViewContext(e.args[0], dispatch);
-    } else if (e.channel === 'show-bookmarks') {
-      // console.log('got a menu');
+    switch (e.channel) {
+      case 'status':
+        dispatch(setPageDetails({
+          pageIndex,
+          statusText: e.args[0],
+        }));
+        break;
+      case 'contextmenu-data':
+        menuWebViewContext(e.args[0], dispatch);
+        break;
+      case 'show-bookmarks':
+        console.warn('@TODO: ipc-message:show-bookmarks');
+        break;
+      default:
+        console.warn(`@TODO: Unknown ipc-message:${e.channel}`);
+        break;
     }
   });
 
