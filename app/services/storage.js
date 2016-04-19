@@ -99,23 +99,23 @@ export class ProfileStorage {
 
   // Ordered by last visit, descending.
   async visited(since = 0, limit = 10) {
-    let out = [];
+    const out = [];
 
     // Fetch all places visited, with the latest timestamp for each.
-    let sub = `SELECT place, MAX(ts) AS latest
+    const sub = `SELECT place, MAX(ts) AS latest
     FROM visitEvents WHERE ts >= ?
     GROUP BY place ORDER BY latest DESC
     LIMIT ?`;
 
     // Grab URLs, too.
-    let withURLs = `SELECT p.url AS url, v.latest AS latest
+    const withURLs = `SELECT p.url AS url, v.latest AS latest
     FROM placeEvents AS p JOIN (${sub}) AS v
     ON p.id = v.place
     ORDER BY latest DESC`;
 
     const rows = await this.db.all(withURLs, [since, limit]);
 
-    for (let row of rows) {
+    for (const row of rows) {
       out.push(row.url);
     }
     return out;

@@ -116,9 +116,9 @@ describe('open', () => {
       expect(idBarB === idBar);
 
       const urlsA = await storageB.visited(0, 1);
-      expect(urlsA.length == 1);
+      expect(urlsA.length === 1);
       const urlsB = await storageB.visited(0, 3);
-      expect(urlsB.length == 2);
+      expect(urlsB.length === 2);
 
       await storageB.close();
 
