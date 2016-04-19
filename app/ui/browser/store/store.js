@@ -13,6 +13,7 @@ specific language governing permissions and limitations under the License.
 import { applyMiddleware, createStore } from 'redux';
 import createLogger from 'redux-logger';
 import rootReducer from '../reducers';
+import thunk from '../../shared/thunk';
 import * as instrument from '../../shared/instrument';
 
 const instrumenter = store => next => action => { // eslint-disable-line no-unused-vars
@@ -24,6 +25,7 @@ const instrumenter = store => next => action => { // eslint-disable-line no-unus
 
 export default function configureStore() {
   const logger = createLogger({
+    predicate: (getState, action) => typeof action !== 'function',
     duration: true,
     collapsed: true,
     stateTransformer(state) {
@@ -37,7 +39,7 @@ export default function configureStore() {
     },
   });
 
-  const store = createStore(rootReducer, applyMiddleware(logger, instrumenter));
+  const store = createStore(rootReducer, applyMiddleware(logger, instrumenter, thunk));
 
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers. We need to use

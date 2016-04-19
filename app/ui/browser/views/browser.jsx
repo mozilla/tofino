@@ -22,8 +22,6 @@ import {
 } from '../actions/external';
 
 import * as actions from '../actions/main-actions';
-import * as profileCommands from '../../../shared/profile-commands';
-
 import '../../shared/web-view';
 
 const BROWSER_WINDOW_STYLE = Style.registerStyle({
@@ -68,26 +66,26 @@ class BrowserWindow extends Component {
     const openMenu = () => menuBrowser(dispatch);
     const isBookmarked = (url) => profile.bookmarks.has(url);
     const bookmark = (title, url) => {
-      // Update this window's state before telling the profile service.
       dispatch(actions.bookmark(url, title));
-      ipcRenderer.send('profile-command',
-        profileCommands.bookmark(url, title));
     };
     const unbookmark = (url) => {
-      // Update this window's state before telling the profile service.
       dispatch(actions.unbookmark(url));
-      ipcRenderer.send('profile-command',
-        profileCommands.unbookmark(url));
     };
-    const onLocationChange = e => dispatch(actions.setUserTypedLocation({
-      pageIndex: -1,
-      text: e.target.value,
-    }));
+    const onLocationChange = e => {
+      const text = e.target.value;
+      dispatch(actions.setUserTypedLocation({
+        pageIndex: -1,
+        text,
+      }));
+    };
     const onLocationContextMenu = e => menuLocationContext(e.target, dispatch);
-    const onLocationReset = () => dispatch(actions.setUserTypedLocation({
-      pageIndex: -1,
-      text: void 0,
-    }));
+    const onLocationReset = () => {
+      const text = void 0;
+      dispatch(actions.setUserTypedLocation({
+        pageIndex: -1,
+        text,
+      }));
+    };
     const setPageAreaVisibility = visible => dispatch(actions.setPageAreaVisibility(visible));
     const navigateTo = loc => dispatch(actions.navigatePageTo(-1, loc));
 
