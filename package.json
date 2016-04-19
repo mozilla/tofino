@@ -39,7 +39,7 @@
     "babel-register": "6.7.2",
     "chokidar": "1.4.3",
     "coveralls": "2.11.9",
-    "electron-packager": "5.2.1",
+    "electron-packager": "7.0.0",
     "electron-prebuilt": "0.37.6",
     "electron-rebuild": "1.1.3",
     "enzyme": "2.2.0",
