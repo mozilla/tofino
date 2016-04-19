@@ -9,6 +9,7 @@
     "dev": "node build/main.js --run-dev",
     "package": "node build/main.js --package",
     "test": "nyc node build/main.js --test",
+    "quicktest": "nyc node build/main.js --quicktest",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "postinstall": "electron-rebuild -f"
   },
@@ -60,6 +61,7 @@
     "react-addons-test-utils": "0.14.7",
     "redux-devtools": "3.1.1",
     "rimraf": "2.5.2",
+    "spectron": "1.37.0",
     "through2": "2.0.1",
     "tmp": "0.0.28",
     "vinyl-file": "2.0.0",

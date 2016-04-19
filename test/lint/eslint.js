@@ -2,6 +2,7 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import lint from 'mocha-eslint';
+import { quickTest } from '../../build-config';
 
 const all = '/**/';
 const valid = '*.@(js|jsx)';
@@ -19,4 +20,6 @@ const options = {
   timeout: 10000,
 };
 
-lint(paths, options);
+if (!quickTest) {
+  lint(paths, options);
+}
