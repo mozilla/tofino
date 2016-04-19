@@ -6,8 +6,8 @@ import { fixURL, getSearchURL } from '../../../../app/ui/browser/browser-util';
 
 describe('utils', () => {
   describe('fixURL', () => {
-    it('should leave URIs unchanged', () => {
-      const UNCHANGED_URIS = [
+    it('should leave URLs unchanged', () => {
+      const UNCHANGED_URLS = [
         'data:text/html,',
         'http://example.com',
         'http://foo.com',
@@ -23,13 +23,13 @@ describe('utils', () => {
         // @TODO url.parse is converting this to https://xn--e28h.com
         // 'https://😀.com',
       ];
-      for (const url of UNCHANGED_URIS) {
+      for (const url of UNCHANGED_URLS) {
         expect(fixURL(url)).toEqual(url);
       }
     });
 
     it('should append protocol onto URIs', () => {
-      const CHANGED_URIS = [
+      const CHANGED_URLS = [
         ['example.com', 'http://example.com'],
         ['example.net', 'http://example.net'],
         ['foo.bar', 'http://foo.bar'],
@@ -44,7 +44,7 @@ describe('utils', () => {
         // ['https://foo', 'https://foo.com'],
         // ['http://foo', 'http://foo.com'],
       ];
-      for (const [input, url] of CHANGED_URIS) {
+      for (const [input, url] of CHANGED_URLS) {
         expect(fixURL(input)).toEqual(url);
       }
     });

@@ -5,7 +5,7 @@
 // Modified from the following files:
 //  * http://mxr.mozilla.org/gaia/source/shared/js/url_helper.js
 //  * https://github.com/brave/browser-laptop/blob/master/js/lib/urlutil.js
-// Changed to use require('url').parse instead of window.URL and document.createElement('a')
+// Using require('url').parse instead of window.URL and document.createElement('a')
 
 import { parse } from 'url';
 
@@ -17,9 +17,9 @@ const fileScheme = 'file://';
 
 /**
  * A simple class for parsing and dealing with URLs.
- * @class UrlUtil
+ * @class URLUtil
  */
-const UrlUtil = {
+const URLUtil = {
 
   /**
    * Extracts the scheme from a value.
@@ -66,7 +66,7 @@ const UrlUtil = {
    * @param {String} input The input value.
    * @returns {String} The formatted URL.
    */
-  getUrlFromInput(input) {
+  getURLFromInput(input) {
     input = this.prependScheme(input);
 
     if (!this.isURL(input)) {
@@ -90,7 +90,7 @@ const UrlUtil = {
 
   /**
    * Checks if a given input is a valid URL.
-   * @param {String} input See getUrl
+   * @param {String} input See getURL
    * @returns {Boolean} Whether or not this is a valid URL.
    */
   isURL(input) {
@@ -99,7 +99,7 @@ const UrlUtil = {
       return true;
     }
 
-    const parsed = this.getUrl(input);
+    const parsed = this.getURL(input);
     const isFile = parsed.protocol === 'file:';
     const isValidHost = isFile || (parsed.host && parsed.host.includes('.'));
     return parsed.protocol && isValidHost;
@@ -111,8 +111,8 @@ const UrlUtil = {
    *                 need to have a scheme,for example 'mozilla.com'.
    * @returns {Url} A Url object from nodejs 'url' library
    */
-  getUrl(input) {
-    input = UrlUtil.prependScheme(input);
+  getURL(input) {
+    input = URLUtil.prependScheme(input);
     return parse(input);
   },
 
@@ -121,7 +121,7 @@ const UrlUtil = {
    * @param {String} input The input url.
    * @returns {Boolean} Whether or not this is a data url.
    */
-  isDataUrl(url) {
+  isDataURL(url) {
     return this.isURL(url) && this.getScheme(url) === 'data:';
   },
 
@@ -135,4 +135,4 @@ const UrlUtil = {
   },
 };
 
-export default UrlUtil;
+export default URLUtil;
