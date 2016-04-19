@@ -18,7 +18,7 @@ import Search from './search.jsx';
 
 import { fixURL } from '../../browser-util';
 import { contextMenu, menuWebViewContext } from '../../actions/external';
-import { closeTab, setPageDetails } from '../../actions/main-actions';
+import { closeTab, setPageDetails, setUserTypedLocation } from '../../actions/main-actions';
 import * as profileCommands from '../../../../app/shared/profile-commands';
 
 const PAGE_STYLE = Style.registerStyle({
@@ -144,8 +144,11 @@ function addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer) 
       location: url,
       canGoBack: webview.canGoBack(),
       canGoForward: webview.canGoForward(),
-      userTyped: null,
       isLoading: false,
+    }));
+    dispatch(setUserTypedLocation({
+      pageIndex,
+      text: null,
     }));
 
     ipcRenderer.send('profile-command', profileCommands.visited(url));
