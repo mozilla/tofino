@@ -25,6 +25,7 @@ import {
   setPageAreaVisibility as setPageAreaVisibilityAction,
   createTab, attachTab, closeTab, setPageDetails,
   navigatePageBack, navigatePageForward, navigatePageRefresh, navigatePageTo,
+  setUserTypedLocation,
 } from '../actions/main-actions';
 
 import * as mainActions from '../actions/main-actions';
@@ -86,9 +87,15 @@ class BrowserWindow extends Component {
       ipcRenderer.send('profile-command',
         profileCommands.unbookmark(url));
     };
-    const onLocationChange = e => dispatch(setPageDetails(-1, { userTyped: e.target.value }));
+    const onLocationChange = e => dispatch(setUserTypedLocation({
+      pageIndex: -1,
+      text: e.target.value,
+    }));
     const onLocationContextMenu = e => menuLocationContext(e.target, dispatch);
-    const onLocationReset = () => dispatch(setPageDetails(-1, { userTyped: void 0 }));
+    const onLocationReset = () => dispatch(setUserTypedLocation({
+      pageIndex: -1,
+      text: void 0,
+    }));
     const setPageAreaVisibility = (visible) => dispatch(setPageAreaVisibilityAction(visible));
     const navigateTo = loc => dispatch(navigatePageTo(-1, loc));
 

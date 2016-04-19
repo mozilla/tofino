@@ -67,6 +67,9 @@ export default function basic(state = initialState, action) {
     case types.SET_PAGE_AREA_VISIBILITY:
       return setPageAreaVisibility(state, action.visible);
 
+    case types.SET_USER_TYPED_LOCATION:
+      return setUserTypedLocation(state, action);
+
     case types.SET_BOOKMARK_STATE:
       return setBookmarkState(state, action.url, action.isBookmarked);
 
@@ -195,8 +198,22 @@ function setPageDetails(state, pageIndex, details) {
   }
   let newState = state;
   for (const [key, value] of Object.entries(details)) {
+    assert(key !== 'userTyped',
+      '`userTyped` must be set in setUserTypedLocation.');
     newState = newState.setIn(['pages', pageIndex, key], value);
   }
+  return newState;
+}
+
+function setUserTypedLocation(state, { pageIndex, text }) {
+  assert(typeof pageIndex === 'number',
+    '`pageIndex` must be a number.');
+
+  if (pageIndex === -1) {
+    pageIndex = state.currentPageIndex;
+  }
+  let newState = state;
+  newState = newState.setIn(['pages', pageIndex, 'userTyped'], text);
   return newState;
 }
 

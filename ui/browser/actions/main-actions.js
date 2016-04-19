@@ -43,6 +43,10 @@ export function setPageAreaVisibility(visible) {
   return { type: types.SET_PAGE_AREA_VISIBILITY, visible };
 }
 
+export function setUserTypedLocation(payload) {
+  return { type: types.SET_USER_TYPED_LOCATION, ...payload, instrument: false };
+}
+
 export function bookmark(url, title) {
   return { type: types.SET_BOOKMARK_STATE, url, isBookmarked: true, title };
 }

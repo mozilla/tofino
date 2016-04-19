@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import {
-  createTab, setPageDetails, duplicateTab, closeTab, navigatePageTo,
+  createTab, setUserTypedLocation, duplicateTab, closeTab, navigatePageTo,
 } from './main-actions';
 import { getCurrentWebView, fixURL } from '../browser-util';
 import { remote, clipboard, ipcRenderer } from 'electron';
@@ -71,7 +71,10 @@ export function menuLocationContext(input, dispatch) {
       const value = input.value;
       clipboard.writeText(value.slice(input.selectionStart, input.selectionEnd));
       const loc = value.slice(0, input.selectionStart) + value.slice(input.selectionEnd);
-      dispatch(setPageDetails(-1, { userTyped: loc }));
+      dispatch(setUserTypedLocation({
+        pageIndex: -1,
+        userTyped: loc,
+      }));
     },
   }));
 
@@ -80,7 +83,10 @@ export function menuLocationContext(input, dispatch) {
     click: () => {
       const before = input.value.slice(0, input.selectionStart);
       const after = input.value.slice(input.selectionEnd);
-      dispatch(setPageDetails(-1, { userTyped: `${before}${clipboard.readText()}${after}` }));
+      dispatch(setUserTypedLocation({
+        pageIndex: -1,
+        userTyped: `${before}${clipboard.readText()}${after}`,
+      }));
     },
   }));
 
@@ -90,7 +96,10 @@ export function menuLocationContext(input, dispatch) {
       const before = input.value.slice(0, input.selectionStart);
       const after = input.value.slice(input.selectionEnd);
       const loc = before + clipboard.readText() + after;
-      dispatch(setPageDetails(-1, { userTyped: loc }));
+      dispatch(setUserTypedLocation({
+        pageIndex: -1,
+        userTyped: loc,
+      }));
       dispatch(navigatePageTo(-1, fixURL(loc)));
     },
   }));
