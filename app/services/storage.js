@@ -98,6 +98,27 @@ export class ProfileStorage {
     return this;
   }
 
+  /**
+   * Begins a transaction and runs `f`. If `f` returns a promise that rejects,
+   * rolls back the transaction and passes through the rejection. If `f` resolves
+   * to a value, commits the transaction and passes through the resolved value.
+   *
+   * @param f the function to call within a transaction.
+   * @returns {*} the result or rejection of `f`.
+   */
+  inTransaction(f) {
+    return this.db
+               .run('BEGIN TRANSACTION')
+               .then(f)
+               .then((result) =>
+                 this.db
+                     .run('COMMIT')
+                     .then(() => Promise.resolve(result)))
+               .catch((err) =>
+                 this.db.run('ROLLBACK')
+                     .then(() => Promise.reject(err)));
+  }
+
   async savePlace(url, now = microtime.now()) {
     if (this.places.has(url)) {
       return this.places.get(url);
