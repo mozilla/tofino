@@ -100,8 +100,8 @@ function createWindow(tabInfo) {
   // Create the browser window.
   const browser = new BrowserWindow({
     center: false,
-    width: 1024,
-    height: 720,
+    width: 1366,
+    height: 768,
     frame: false,
     show: false,
   });
