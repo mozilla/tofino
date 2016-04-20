@@ -163,49 +163,49 @@ class Location extends Component {
 
     let completions = null;
     if (SHOW_COMPLETIONS && profile.completions.get(urlValue) && focusedURLBar) {
-      const results = profile.completions.get(urlValue).map((completion) => {
-        return <div>{completion}</div>;
-      });
+      const results = profile.completions.get(urlValue).map((completion) =>
+        <div>{completion}</div>
+      );
       completions = <div className={LOCATION_BAR_AUTOCOMPLETE_STYLE}>{results}</div>;
     }
 
     return (
-    <div className={LOCATION_BAR_CONTAINER_STYLE}>
-      <div id="browser-location-bar"
-        className={LOCATION_BAR_STYLE}>
-        <Btn title="Info"
-          className={LOCATION_BAR_BUTTONS_STYLE}
-          image=""
-          clickHandler={() => {}} />
-        <div id="browser-location-title-bar"
-          className={TITLE_BAR_STYLE}
-          hidden={showURLBar}
-          tabIndex={0}
-          onClick={this.handleTitleClick}
-          onFocus={this.handleTitleFocus}>
-          <span>
-            {page.title}
-          </span>
+      <div className={LOCATION_BAR_CONTAINER_STYLE}>
+        <div id="browser-location-bar"
+          className={LOCATION_BAR_STYLE}>
+          <Btn title="Info"
+            className={LOCATION_BAR_BUTTONS_STYLE}
+            image=""
+            clickHandler={() => {}} />
+          <div id="browser-location-title-bar"
+            className={TITLE_BAR_STYLE}
+            hidden={showURLBar}
+            tabIndex={0}
+            onClick={this.handleTitleClick}
+            onFocus={this.handleTitleFocus}>
+            <span>
+              {page.title}
+            </span>
+          </div>
+          <input id="urlbar-input"
+            className={INPUT_BAR_STYLE}
+            hidden={!showURLBar}
+            type="text"
+            ref="input"
+            defaultValue={urlValue}
+            onFocus={this.handleURLBarFocus}
+            onBlur={this.handleURLBarBlur}
+            onChange={this.props.onLocationChange}
+            onKeyDown={this.handleURLBarKeyDown}
+            onContextMenu={this.props.onLocationContextMenu} />
+          <Btn title="Bookmark"
+            className={LOCATION_BAR_BUTTONS_STYLE}
+            image={this.getBookmarkIcon()}
+            disabled={page.isLoading}
+            clickHandler={this.toggleBookmark} />
         </div>
-        <input id="urlbar-input"
-          className={INPUT_BAR_STYLE}
-          hidden={!showURLBar}
-          type="text"
-          ref="input"
-          defaultValue={urlValue}
-          onFocus={this.handleURLBarFocus}
-          onBlur={this.handleURLBarBlur}
-          onChange={this.props.onLocationChange}
-          onKeyDown={this.handleURLBarKeyDown}
-          onContextMenu={this.props.onLocationContextMenu} />
-        <Btn title="Bookmark"
-          className={LOCATION_BAR_BUTTONS_STYLE}
-          image={this.getBookmarkIcon()}
-          disabled={page.isLoading}
-          clickHandler={this.toggleBookmark} />
+        {completions}
       </div>
-      {completions}
-    </div>
     );
   }
 }
