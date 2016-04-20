@@ -36,7 +36,7 @@ const BUTTON_STYLE = Style.registerStyle({
  * `image` must be a valid CSS path to an image.
  */
 const Btn = (props) => {
-  const { id, title, disabled, image, imgWidth, imgHeight } = props;
+  const { id, title, disabled, image, imgWidth, imgHeight, imgPosition } = props;
   const { className, style, children } = props;
   const { clickHandler } = props;
 
@@ -51,8 +51,8 @@ const Btn = (props) => {
   if (image != null) {
     custom.backgroundImage = image ? `url(assets/${image})` : `url(${BKG_IMAGE_DEFAULT})`;
     custom.backgroundRepeat = 'no-repeat';
-    custom.backgroundPosition = 'left center';
-    custom.backgroundSize = imgWidth && imgHeight ? `${imgWidth} ${imgHeight}` : BKG_SIZE_DEFAULT;
+    custom.backgroundPosition = imgPosition || 'left center';
+    custom.backgroundSize = imgWidth || imgHeight ? `${imgWidth} ${imgHeight}` : BKG_SIZE_DEFAULT;
   }
 
   return (
@@ -72,6 +72,7 @@ Btn.propTypes = {
   image: PropTypes.string,
   imgWidth: PropTypes.number,
   imgHeight: PropTypes.number,
+  imgPosition: PropTypes.string,
   id: PropTypes.string,
   className: PropTypes.string,
   style: PropTypes.object,
