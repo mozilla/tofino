@@ -33,9 +33,8 @@ import electronLocalshortcut from 'electron-localshortcut';
 import BrowserMenu from './browser-menu';
 import * as instrument from '../services/instrument';
 import * as BUILD_CONFIG from '../../build-config';
-import rootReducer from './reducers';
 import * as profileDiffs from '../shared/profile-diffs';
-import { createStore, applyMiddleware } from 'redux';
+import configureStore from './store/store';
 
 const BrowserWindow = electron.BrowserWindow;  // create native browser window.
 const app = electron.app; // control application life.
@@ -55,12 +54,7 @@ function sendToAllWindows(event, args) {
   }
 }
 
-const logger = store => next => action => { // eslint-disable-line no-unused-vars
-  console.log(`command ${JSON.stringify(action)}`);
-  return next(action);
-};
-
-const store = createStore(rootReducer, applyMiddleware(logger));
+const store = configureStore();
 let currentState;
 
 function sendDiffsToWindows(force = false) {
