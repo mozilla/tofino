@@ -18,6 +18,7 @@ const handleTaskFailed = e => {
   /* eslint no-console: 0 */
   console.error('Build failed.');
   console.error(e);
+  process.exit(1);
 };
 
 const Tasks = require('./tasks').default;
