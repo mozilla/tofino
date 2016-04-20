@@ -5,3 +5,7 @@ div {
 [hidden] {
   display: none !important;
 }
+
+:focus {
+  outline-style: none;
+}
