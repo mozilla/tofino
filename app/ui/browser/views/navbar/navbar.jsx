@@ -48,7 +48,7 @@ const NAVBAR_PAGES_COUNT_STYLE = Style.registerStyle({
   marginRight: '6px',
 });
 
-function NavBar(props) {
+const NavBar = (props) => {
   if (props.page == null) {
     return (
       <div id="browser-navbar"
@@ -56,7 +56,6 @@ function NavBar(props) {
     );
   }
 
-  const pagesButtonClickHandler = () => props.setPageAreaVisibility(!props.pageAreaVisible);
   return (
     <div id="browser-navbar"
       className={NAVBAR_STYLE}>
@@ -68,7 +67,7 @@ function NavBar(props) {
       <Btn id="pages-button"
         className={NAVBAR_BUTTON_STYLE}
         title="Pages"
-        clickHandler={pagesButtonClickHandler}>
+        clickHandler={() => props.setPageAreaVisibility(!props.pageAreaVisible)}>
         <div id="browser-navbar-pages-count"
           className={NAVBAR_PAGES_COUNT_STYLE}>
           {props.pages.size}
