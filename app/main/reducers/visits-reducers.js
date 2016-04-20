@@ -21,7 +21,7 @@ export default function visitsReducer(state, command) {
 
   const payload = command.payload;
   switch (command.type) {
-    case profileCommandTypes.VISITED:
+    case profileCommandTypes.DID_VISIT_LOCATION:
       return state.push(payload.url);
     default:
       return state;

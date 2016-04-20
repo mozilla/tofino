@@ -18,19 +18,24 @@ import { Bookmark } from '../model';
 
 export default function bookmarksReducer(bookmarks = new Immutable.Map(), command) {
   const payload = command.payload;
+  const guid = `guid-${Date.now()}`;
+
   switch (command.type) {
-    case profileCommandTypes.SET_BOOKMARK_STATE:
-      if (payload.isBookmarked) {
-        const guid = `guid-${Date.now()}`;
-        return bookmarks.set(guid, new Bookmark({
-          guid,
-          title: payload.title,
-          location: payload.url,
-          createdAt: Date.now(),
-          visitedAt: Date.now(), // TODO.
-        }));
+    case profileCommandTypes.DID_BOOKMARK_LOCATION:
+      if (bookmarks.some((bookmark) => bookmark.location === payload.url)) {
+        return bookmarks;
       }
+      return bookmarks.set(guid, new Bookmark({
+        guid,
+        title: payload.title,
+        location: payload.url,
+        createdAt: Date.now(),
+        visitedAt: Date.now(), // TODO.
+      }));
+
+    case profileCommandTypes.DID_UNBOOKMARK_LOCATION:
       return bookmarks.filterNot(bookmark => bookmark.location === payload.url);
+
     default:
       return bookmarks;
   }
