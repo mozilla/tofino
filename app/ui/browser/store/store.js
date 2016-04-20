@@ -24,7 +24,7 @@ const instrumenter = store => next => action => { // eslint-disable-line no-unus
   return next(action);
 };
 
-export default function configureStore() {
+export default function configureStore(initialState) {
   const middleware = [instrumenter, thunk];
 
   if (!BUILD_CONFIG.test) {
@@ -44,7 +44,7 @@ export default function configureStore() {
     }));
   }
 
-  const store = createStore(rootReducer, applyMiddleware(...middleware));
+  const store = createStore(rootReducer, initialState, applyMiddleware(...middleware));
 
   return store;
 }

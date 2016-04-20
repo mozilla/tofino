@@ -140,9 +140,6 @@ function createWindow(tabInfo) {
     if (tabInfo) {
       browser.webContents.send('tab-attach', tabInfo);
     }
-
-    // TODO: Don't achieve this with a hammer.
-    sendDiffsToWindows(true);
   });
 }
 
@@ -187,6 +184,17 @@ ipc.on('instrument-event', (event, args) => {
 });
 
 ipc.on('new-window', () => createWindow());
+
+ipc.on('window-loaded', (event) => {
+  console.log(`windowGuid ${BrowserWindow.fromWebContents(event.sender).id}`);
+  const bookmarkSet = store.getState().bookmarks
+    .valueSeq()
+    .map(bookmark => bookmark.location)
+    .toSet();
+  event.returnValue = {
+    bookmarks: bookmarkSet.toJS(),
+  };
+});
 
 ipc.on('window-ready', event => {
   BrowserWindow.fromWebContents(event.sender).show();
