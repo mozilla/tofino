@@ -15,6 +15,7 @@ import createLogger from 'redux-logger';
 import rootReducer from '../reducers';
 import thunk from '../../shared/thunk';
 import * as instrument from '../../shared/instrument';
+import BUILD_CONFIG from '../../../../build-config';
 
 const instrumenter = store => next => action => { // eslint-disable-line no-unused-vars
   if (action.instrument) {
@@ -24,32 +25,26 @@ const instrumenter = store => next => action => { // eslint-disable-line no-unus
 };
 
 export default function configureStore() {
-  const logger = createLogger({
-    predicate: (getState, action) => typeof action !== 'function',
-    duration: true,
-    collapsed: true,
-    stateTransformer(state) {
-      // combineReducers composes a JS object.  Assume each composed state object is an Immutable
-      // instance.
-      const transformed = {};
-      Object.keys(state).forEach((key) => {
-        transformed[key] = state[key].toJS();
-      });
-      return transformed;
-    },
-  });
+  const middleware = [instrumenter, thunk];
 
-  const store = createStore(rootReducer, applyMiddleware(logger, instrumenter, thunk));
-
-  if (module.hot) {
-    // Enable Webpack hot module replacement for reducers. We need to use
-    // `require` here, since native module imports don't have lazy loading
-    // and need to be at the top level.
-    module.hot.accept('../reducers', () => {
-      const nextReducer = require('../reducers/index').default;
-      store.replaceReducer(nextReducer);
-    });
+  if (!BUILD_CONFIG.test) {
+    middleware.unshift(createLogger({
+      predicate: (getState, action) => typeof action !== 'function',
+      duration: true,
+      collapsed: true,
+      stateTransformer(state) {
+        // combineReducers composes a JS object.  Assume each composed state object is an Immutable
+        // instance.
+        const transformed = {};
+        Object.keys(state).forEach((key) => {
+          transformed[key] = state[key].toJS();
+        });
+        return transformed;
+      },
+    }));
   }
+
+  const store = createStore(rootReducer, applyMiddleware(...middleware));
 
   return store;
 }

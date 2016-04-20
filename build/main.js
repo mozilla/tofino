@@ -30,4 +30,6 @@ if (~process.argv.indexOf('--run')) {
   Tasks.runDev(taskArgs).then(null, handleTaskFailed);
 } else if (~process.argv.indexOf('--package')) {
   Tasks.package().then(null, handleTaskFailed);
+} else if (~process.argv.indexOf('--test')) {
+  Tasks.test().then(null, handleTaskFailed);
 }

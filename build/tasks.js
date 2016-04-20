@@ -25,7 +25,7 @@ export default {
 
   async run(args = []) {
     await this.build();
-    await require('./task-run').default('production', args);
+    await require('./task-run').default(args);
   },
 
   async runDev(args = []) {
@@ -41,8 +41,13 @@ export default {
     watcher.on('add', buildFile);
     watcher.on('change', buildFile);
 
-    await require('./task-run').default('development', args);
+    await require('./task-run').default(args);
     watcher.close();
+  },
+
+  async test(args = []) {
+    await this.config({ development: false, test: true });
+    await require('./task-test').default(args);
   },
 
   async clean() {
