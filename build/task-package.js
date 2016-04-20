@@ -16,18 +16,14 @@ const PLATFORM = os.platform();
 
 const IGNORE = [
   // Ignore build stuff
-  '/appveyor.yml',
-  '/branding($|/)',
-  '/build($|/)',
-  '/dist($|/)',
+  '/\/appveyor.yml',
+  '/\/branding($|/)',
+  '/\/build($|/)',
+  '/\/dist($|/)',
   '/electron($|/)',
-  '/gulpfile.js',
   '/README.md',
   '/scripts($|/)',
   '/test($|/)',
-
-  // Ignore source code
-  '/ui($|/)',
 
   // Ignore `/app` and `/shared` once we compile main process code
   // ahead of time, rather than during runtime
