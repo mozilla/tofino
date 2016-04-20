@@ -13,9 +13,9 @@ import tmp from 'tmp';
 import { DB } from '../../app/services/sqlite';
 import { ProfileStorage } from '../../app/services/storage';
 
-describe('open', () => {
+describe('DB.open', () => {
   it('Should create the DB file.', (done) => {
-    (async function() {
+    (async function () {
       const tempPath = tmp.tmpNameSync();
       console.log(`Temporary DB is ${tempPath}.`);
 
@@ -33,9 +33,11 @@ describe('open', () => {
       done();
     }());
   });
+});
 
+describe('ProfileStorage.open', () => {
   it('Should be accessible through the directory only, including creating dirs.', (done) => {
-    (async function() {
+    (async function () {
       const parent = tmp.dirSync({}).name;
       console.log(`Temp root: ${parent}`);
 
@@ -56,10 +58,25 @@ describe('open', () => {
       done();
     }());
   });
+});
+
+describe('ProfileStorage data access', () => {
+  let tempDir = null;
+
+  beforeEach(() => {
+    tempDir = tmp.dirSync({}).name;
+  });
+
+  afterEach(() => {
+    console.log('Cleaning up.');
+
+    // This should be the only file after we close.
+    fs.unlinkSync(path.join(tempDir, 'browser.db'));
+    fs.rmdirSync(tempDir);
+  });
 
   it('Is created with the current version.', (done) => {
     (async function() {
-      const tempDir = tmp.dirSync({}).name;
       const storage = await ProfileStorage.open(tempDir);
 
       // You'll need to bump this every time the current version changes.
@@ -78,19 +95,12 @@ describe('open', () => {
 
       await storage.close();
 
-      console.log('Cleaning up.');
-
-      // This should be the only file after we close.
-      fs.unlinkSync(path.join(tempDir, 'browser.db'));
-      fs.rmdirSync(tempDir);
-
       done();
     }());
   });
 
   it('Can save places across opens.', (done) => {
     (async function () {
-      const tempDir = tmp.dirSync({}).name;
       const storageA = await ProfileStorage.open(tempDir);
 
       const idFoo = await storageA.savePlace('http://example.com/foo');
@@ -119,19 +129,12 @@ describe('open', () => {
 
       await storageB.close();
 
-      console.log('Cleaning up.');
-
-      // This should be the only file after we close.
-      fs.unlinkSync(path.join(tempDir, 'browser.db'));
-      fs.rmdirSync(tempDir);
-
       done();
     }());
   });
 
   it('Saves visits.', (done) => {
     (async function () {
-      const tempDir = tmp.dirSync({}).name;
       const storage = await ProfileStorage.open(tempDir);
 
       const idFoo = await storage.visit('http://example.com/foo');
@@ -143,19 +146,12 @@ describe('open', () => {
 
       await storage.close();
 
-      console.log('Cleaning up.');
-
-      // This should be the only file after we close.
-      fs.unlinkSync(path.join(tempDir, 'browser.db'));
-      fs.rmdirSync(tempDir);
-
       done();
     }());
   });
 
   it('Can query by URL match.', (done) => {
     (async function () {
-      const tempDir = tmp.dirSync({}).name;
       const storage = await ProfileStorage.open(tempDir);
 
       await storage.visit('http://example.com/foo/noo');
@@ -168,12 +164,6 @@ describe('open', () => {
       expect(results[1] === 'http://example.com/barbaz/noo');
 
       await storage.close();
-
-      console.log('Cleaning up.');
-
-      // This should be the only file after we close.
-      fs.unlinkSync(path.join(tempDir, 'browser.db'));
-      fs.rmdirSync(tempDir);
 
       done();
     }());
