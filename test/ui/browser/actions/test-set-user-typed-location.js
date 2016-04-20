@@ -4,6 +4,8 @@
 import expect from 'expect';
 import configureStore from '../../../../app/ui/browser/store/store';
 import * as actions from '../../../../app/ui/browser/actions/main-actions';
+import * as profileConstants from '../../../../app/shared/constants/profile-command-types';
+import { ipcMain as ipcMainMock } from '../../../../app/shared/electron';
 
 describe('Action - SET_USER_TYPED_LOCATION', () => {
   beforeEach(function() {
@@ -51,5 +53,23 @@ describe('Action - SET_USER_TYPED_LOCATION', () => {
     expect(getState().pages.get(0).userTyped).toEqual(null);
     expect(getState().pages.get(1).userTyped).toEqual(null);
     expect(getState().pages.get(2).userTyped).toEqual(null);
+  });
+
+  it('Should send a message to the main process', function(done) {
+    const { dispatch } = this;
+
+    ipcMainMock.on('profile-command', handleIpc);
+
+    dispatch(actions.setUserTypedLocation({
+      pageIndex: 1,
+      text: 'Bar',
+    }));
+
+    function handleIpc(e, ...args) {
+      expect(args[0].payload.text).toEqual('Bar');
+      expect(args[0].type).toEqual(profileConstants.SET_USER_TYPED_LOCATION);
+      ipcMainMock.removeListener('profile-command', handleIpc);
+      done();
+    }
   });
 });
