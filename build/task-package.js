@@ -14,21 +14,30 @@ import * as BuildUtils from './utils';
 const ARCH = 'x64';
 const PLATFORM = os.platform();
 
-const IGNORE = [
-  // Ignore build stuff
-  '/\/appveyor.yml',
-  '/\/branding($|/)',
-  '/\/build($|/)',
-  '/\/dist($|/)',
-  '/electron($|/)',
-  '/README.md',
-  '/scripts($|/)',
-  '/test($|/)',
+const ROOT = path.resolve(path.join(__dirname, '..'));
 
-  // Ignore `/app` and `/shared` once we compile main process code
-  // ahead of time, rather than during runtime
-  // '/app($|/)',
-  // '/shared($|/)',
+// electron-packager compares these against paths that are rooted in the root
+// but begin with "/", e.g. "/README.md"
+const IGNORE = [
+  // Ignore hidden files
+  '/\\.',
+
+  // Ignore build stuff
+  '^/appveyor.yml',
+  '^/branding($|/)',
+  '^/build($|/)',
+  '^/dist($|/)',
+  '^/scripts($|/)',
+
+  // Ignore the source code and tests
+  '^/app($|/)',
+  '^/test($|/)',
+
+  // Ignore docs
+  '^/docs($|/)',
+  '\\.md$',
+  '^/LICENSE$',
+  '^/NOTICE$',
 ];
 
 const packageApp = options => new Promise((resolve, reject) => {
@@ -58,21 +67,19 @@ export default async function() {
   const electronVersion = BuildUtils.getElectronVersion();
   const appVersion = BuildUtils.getAppVersion();
 
-  const devDeps = Object.keys(manifest.devDependencies).map(dep => `/node_modules/${dep}($|/)`);
-  const pathsToIgnore = IGNORE.concat(devDeps);
-
   const packagedApp = await packageApp({
     arch: ARCH,
     platform: PLATFORM,
-    ignore: pathsToIgnore,
+    ignore: IGNORE,
+    prune: true,
     version: electronVersion,
-    dir: path.join(__dirname, '..'),
-    icon: path.join(__dirname, '..', 'branding', 'app-icon'),
-    out: path.join(__dirname, '..', 'dist'),
+    dir: ROOT,
+    icon: path.join(ROOT, 'branding', 'app-icon'),
+    out: path.join(ROOT, 'dist'),
   });
 
   const packageName = `${manifest.name}-${appVersion}-${PLATFORM}-${ARCH}.zip`;
-  const distPath = path.join(__dirname, '..', 'dist', packageName);
+  const distPath = path.join(ROOT, 'dist', packageName);
 
   packagedApp.pipe(zip.dest(distPath));
 }
