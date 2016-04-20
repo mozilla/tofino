@@ -42,7 +42,6 @@ const Btn = (props) => {
 
   const custom = {
     opacity: (disabled ? '0.5' : '1'),
-    cursor: (disabled ? 'default' : 'pointer'),
     ...style,
   };
 
