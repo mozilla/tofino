@@ -5,9 +5,22 @@ import { transformFile } from 'babel-core';
 import fs from 'fs-promise';
 import path from 'path';
 
+import { development } from '../build-config';
+
 export const appDir = path.resolve(path.join(__dirname, '..', 'app'));
 export const libDir = path.resolve(path.join(__dirname, '..', 'lib'));
 const getTargetPath = (sourcePath) => path.resolve(libDir, path.relative(appDir, sourcePath));
+
+function fileUrl(str) {
+  let pathName = path.resolve(str).replace(/\\/g, '/');
+
+  // Windows drive letter must be prefixed with a slash
+  if (pathName[0] !== '/') {
+    pathName = `/${pathName}`;
+  }
+
+  return encodeURI(`file://${pathName}`);
+}
 
 const transpile = (filename, options = {}) => new Promise((resolve, reject) => {
   transformFile(filename, options, (err, result) => {
@@ -35,8 +48,21 @@ export async function buildFile(sourceFile, sourceStats) {
   if (extension === '.js' || extension === '.jsx') {
     const baseFile = targetFile.substring(0, targetFile.length - extension.length);
     targetFile = `${baseFile}.js`;
-    const { code } = await transpile(sourceFile);
-    await fs.writeFile(targetFile, code);
+    const mapFile = `${baseFile}.map`;
+    const results = await transpile(sourceFile, {
+      sourceMaps: development,
+      sourceFileName: fileUrl(sourceFile),
+    });
+
+    if (development) {
+      await fs.writeFile(mapFile, JSON.stringify(results.map));
+
+      // This must be an absolute URL since the devtools can't resolve relative
+      // paths from node modules.
+      results.code += `\n//# sourceMappingURL=${fileUrl(mapFile)}\n`;
+    }
+
+    await fs.writeFile(targetFile, results.code);
   } else {
     await fs.copy(sourceFile, targetFile);
   }
