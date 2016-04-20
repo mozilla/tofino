@@ -128,4 +128,28 @@ describe('open', () => {
       done();
     }());
   });
+
+  it('Saves visits.', (done) => {
+    (async function () {
+      const tempDir = tmp.dirSync({}).name;
+      const storage = await ProfileStorage.open(tempDir);
+
+      const idFoo = await storage.visit('http://example.com/foo');
+      const idBar = await storage.visit('http://example.com/bar');
+      const again = await storage.visit('http://example.com/foo');
+
+      expect(idFoo === again);
+      expect((idBar - idFoo) === 1);
+
+      await storage.close();
+
+      console.log('Cleaning up.');
+
+      // This should be the only file after we close.
+      fs.unlinkSync(path.join(tempDir, 'browser.db'));
+      fs.rmdirSync(tempDir);
+
+      done();
+    }());
+  });
 });
