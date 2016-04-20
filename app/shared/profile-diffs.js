@@ -15,3 +15,7 @@ import * as profileDiffTypes from './constants/profile-diff-types';
 export function bookmarks(newBookmarks) {
   return { type: profileDiffTypes.BOOKMARKS, payload: newBookmarks };
 }
+
+export function completions(list) {
+  return { type: profileDiffTypes.COMPLETIONS, payload: list };
+}

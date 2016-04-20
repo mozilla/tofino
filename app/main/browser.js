@@ -81,6 +81,9 @@ function sendDiffsToWindows(force = false) {
       .take(5);
     BrowserMenu.build({ bookmarks: recentBookmarks });
   }
+  if (force || !previousState || currentState.locations !== previousState.locations) {
+    sendToAllWindows('profile-diff', profileDiffs.completions(currentState.locations.toJS()));
+  }
 }
 
 store.subscribe(sendDiffsToWindows);

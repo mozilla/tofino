@@ -11,6 +11,16 @@ specific language governing permissions and limitations under the License.
 */
 
 import * as types from '../constants/action-types';
+import * as profileCommands from '../../../shared/profile-commands';
+
+// Stub out ipcRenderer when electron cannot be found (unit tests)
+const ipcRenderer = (function() {
+  try {
+    return require('electron').ipcRenderer;
+  } catch (e) {
+    return { send() {} };
+  }
+}());
 
 export function createTab(location) {
   return { type: types.CREATE_TAB, location, instrument: true };
@@ -44,15 +54,30 @@ export function setPageAreaVisibility(visible) {
 }
 
 export function setUserTypedLocation(payload) {
-  return { type: types.SET_USER_TYPED_LOCATION, payload, instrument: false };
+  return dispatch => {
+    // Update this window's state before telling the profile service.
+    dispatch({ type: types.SET_USER_TYPED_LOCATION, payload, instrument: false });
+
+    ipcRenderer.send('profile-command', profileCommands.setUserTypedLocation(payload.text));
+  };
 }
 
 export function bookmark(url, title) {
-  return { type: types.SET_BOOKMARK_STATE, url, isBookmarked: true, title };
+  return dispatch => {
+    // Update this window's state before telling the profile service.
+    dispatch({ type: types.SET_BOOKMARK_STATE, url, isBookmarked: true, title });
+
+    ipcRenderer.send('profile-command', profileCommands.bookmark(url));
+  };
 }
 
 export function unbookmark(url) {
-  return { type: types.SET_BOOKMARK_STATE, url, isBookmarked: false };
+  return dispatch => {
+    // Update this window's state before telling the profile service.
+    dispatch({ type: types.SET_BOOKMARK_STATE, url, isBookmarked: false });
+
+    ipcRenderer.send('profile-command', profileCommands.unbookmark(url));
+  };
 }
 
 export function navigatePageTo(pageIndex, location) {

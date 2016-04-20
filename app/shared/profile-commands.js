@@ -31,3 +31,12 @@ export function unbookmark(url) {
 export function visited(url) {
   return { type: profileCommandTypes.VISITED, payload: { url } };
 }
+
+export function setUserTypedLocation(text) {
+  return {
+    type: profileCommandTypes.SET_USER_TYPED_LOCATION,
+    payload: {
+      text,
+    },
+  };
+}
