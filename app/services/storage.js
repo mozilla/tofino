@@ -119,7 +119,16 @@ export class ProfileStorage {
                      .then(() => Promise.reject(err)));
   }
 
-  async savePlace(url, now = microtime.now()) {
+  /**
+   * Saves a place, expecting a transaction to be established if necessary.
+   * Does not update `this.places`! Callers should do that once the entire
+   * transaction completes.
+   *
+   * @param url the URL to store.
+   * @param now the current timestamp.
+   * @returns {*} the place ID.
+   */
+  async savePlaceWithoutEstablishingTransaction(url, now) {
     if (this.places.has(url)) {
       return this.places.get(url);
     }
@@ -129,13 +138,46 @@ export class ProfileStorage {
     const id = this.nextPlace++;
     const args = [id, url, now];
     await this.db.run('INSERT INTO placeEvents (id, url, ts) VALUES (?, ?, ?)', args);
-    this.places.set(url, id);
     return id;
   }
 
-  async visit(url, now = microtime.now()) {
-    const id = await this.savePlace(url, now);
-    return this.db.run('INSERT INTO visitEvents (place, ts) VALUES (?, ?)', [id, now]);
+  savePlace(url, now = microtime.now()) {
+    return this.inTransaction(() => this.savePlaceWithoutEstablishingTransaction(url, now))
+               .then((id) => this.savePlaceIDMapping(url, id));
+  }
+
+  /**
+   * Store a visit for a given place ID. Chains through the place ID.
+   */
+  saveVisitForPlaceWithoutEstablishingTransaction(place, now = microtime.now()) {
+    return this.db
+               .run('INSERT INTO visitEvents (place, ts) VALUES (?, ?)', [place, now])
+               .then(() => Promise.resolve(place));
+  }
+
+  savePlaceIDMapping(url, id) {
+    this.places.set(url, id);
+    return Promise.resolve(id);
+  }
+
+  /**
+   * Record a visit to a URL.
+   * @param url the visited URL.
+   * @param now (optional) microsecond timestamp.
+   * @returns {*} the place ID.
+   */
+  visit(url, now = microtime.now()) {
+    if (this.places.has(url)) {
+      return this.saveVisitForPlaceWithoutEstablishingTransaction(this.places.get(url), now);
+    }
+
+    return this.inTransaction(() =>
+                 this.savePlaceWithoutEstablishingTransaction(url, now)
+                     .then((id) =>
+                       this.saveVisitForPlaceWithoutEstablishingTransaction(id, now)))
+
+               // If the transaction committed, keep the URL -> ID mapping in memory.
+               .then((id) => this.savePlaceIDMapping(url, id));
   }
 
   // Ordered by last visit, descending.
