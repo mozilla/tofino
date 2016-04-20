@@ -143,8 +143,6 @@ function createWindow(tabInfo) {
 
     if (tabInfo) {
       browser.webContents.send('tab-attach', tabInfo);
-    } else {
-      browser.webContents.send('new-tab');
     }
 
     // TODO: Don't achieve this with a hammer.
