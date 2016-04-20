@@ -14,6 +14,8 @@ specific language governing permissions and limitations under the License.
 // Must go before any require statements.
 const browserStartTime = Date.now();
 
+/* eslint no-console: 0 */
+
 process.on('uncaughtException', (err) => {
   console.log(err.stack);
   process.exit(1);
