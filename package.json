@@ -67,5 +67,11 @@
   },
   "engines": {
     "node": ">=5.8.0"
+  },
+  "nyc": {
+    "all": true,
+    "require": "babel-register",
+    "include": ["app/**"],
+    "extension": [".jsx"]
   }
 }

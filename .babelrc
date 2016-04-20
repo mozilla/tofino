@@ -1,3 +1,4 @@
 {
-  "presets": [ "es2015-node5", "stage-2", "react" ]
+  "presets": [ "es2015-node5", "stage-2", "react" ],
+  "sourceMaps": "inline"
 }
