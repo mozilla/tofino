@@ -180,10 +180,37 @@ export class ProfileStorage {
                .then((id) => this.savePlaceIDMapping(url, id));
   }
 
+  collectURLs(rows) {
+    const out = [];
+    for (const row of rows) {
+      out.push(row.url);
+    }
+    return out;
+  }
+
+  async visitedMatches(substring, since = 0, limit = 10) {
+    // Fetch all places visited, with the latest timestamp for each.
+    // We can't limit here, because we don't know matching URLs.
+    // TODO: inverting this query might work better if `since` is long ago.
+    const sub = `SELECT place, MAX(ts) AS latest
+    FROM visitEvents WHERE ts >= ?
+    GROUP BY place`;
+
+    const like = `%${substring}%`;
+
+    // Grab URLs, too.
+    const withURLs = `SELECT p.url AS url, v.latest AS latest
+    FROM placeEvents AS p JOIN (${sub}) AS v
+    ON p.id = v.place
+    WHERE url LIKE ?
+    ORDER BY latest DESC
+    LIMIT ?`;
+
+    return this.collectURLs(await this.db.all(withURLs, [since, like, limit]));
+  }
+
   // Ordered by last visit, descending.
   async visited(since = 0, limit = 10) {
-    const out = [];
-
     // Fetch all places visited, with the latest timestamp for each.
     const sub = `SELECT place, MAX(ts) AS latest
     FROM visitEvents WHERE ts >= ?
@@ -196,12 +223,7 @@ export class ProfileStorage {
     ON p.id = v.place
     ORDER BY latest DESC`;
 
-    const rows = await this.db.all(withURLs, [since, limit]);
-
-    for (const row of rows) {
-      out.push(row.url);
-    }
-    return out;
+    return this.collectURLs(await this.db.all(withURLs, [since, limit]));
   }
 
   userVersion() {

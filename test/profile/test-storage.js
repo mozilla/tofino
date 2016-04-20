@@ -152,4 +152,30 @@ describe('open', () => {
       done();
     }());
   });
+
+  it('Can query by URL match.', (done) => {
+    (async function () {
+      const tempDir = tmp.dirSync({}).name;
+      const storage = await ProfileStorage.open(tempDir);
+
+      await storage.visit('http://example.com/foo/noo');
+      await storage.visit('http://example.com/barbaz/noo');
+      await storage.visit('http://example.com/barbar');
+
+      const results = await storage.visitedMatches('bar');
+      expect(results.length === 2);
+      expect(results[0] === 'http://example.com/barbar');
+      expect(results[1] === 'http://example.com/barbaz/noo');
+
+      await storage.close();
+
+      console.log('Cleaning up.');
+
+      // This should be the only file after we close.
+      fs.unlinkSync(path.join(tempDir, 'browser.db'));
+      fs.rmdirSync(tempDir);
+
+      done();
+    }());
+  });
 });
