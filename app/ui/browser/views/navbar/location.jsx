@@ -19,13 +19,13 @@ import { fixURL, getCurrentWebView } from '../../browser-util';
 
 const LOCATION_BAR_STYLE = Style.registerStyle({
   flex: 1,
-  alignSelf: 'stretch',
   alignItems: 'center',
   overflow: 'hidden',
-  margin: '5px 50px',
+  margin: '12px 8vw',
+  padding: '0 10px',
   backgroundColor: '#fff',
-  border: '1px solid #eee',
-  borderRadius: '0 4px',
+  border: '1px solid #e5e5e5',
+  borderRadius: '2px',
 });
 
 const LOCATION_BAR_BUTTONS_STYLE = Style.registerStyle({

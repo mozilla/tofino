@@ -13,14 +13,15 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes } from 'react';
 
 import Style from '../../browser-style';
+import VerticalSeparator from './vertical-separator';
 import Btn from './btn';
 import Location from './location';
 
 const NAVBAR_STYLE = Style.registerStyle({
-  alignItems: 'center',
-  minHeight: '35px',
+  alignItems: 'stretch',
+  minHeight: '57px',
   background: '#fcfcfc',
-  padding: '0 5px',
+  padding: '0 10px',
   fontSize: '80%',
 
   // Makes electron app draggable.
@@ -32,20 +33,60 @@ const NAVBAR_STYLE = Style.registerStyle({
   },
 });
 
-const NAVBAR_BUTTON_STYLE = Style.registerStyle({
+const NAVBAR_SIDE_SECTIONS_STYLE = Style.registerStyle({
+  minWidth: '260px',
+  alignItems: 'center',
+  overflow: 'hidden',
+});
+
+const NAVBAR_LEFT_SECTION_STYLE = Style.registerStyle({
+  justifyContent: 'flex-start',
+});
+
+const NAVBAR_RIGHT_SECTION_STYLE = Style.registerStyle({
+  justifyContent: 'flex-end',
+});
+
+const NAVBAR_APP_MENU_BUTTON_STYLE = Style.registerStyle({
   margin: '0 6px',
+});
+
+const NAVBAR_PAGES_BUTTON_STYLE = Style.registerStyle({
+  margin: '0',
+});
+
+const NAVBAR_NAVIGATION_BUTTONS_STYLE = Style.registerStyle({
+  margin: '0 12px',
+});
+
+const NAVBAR_NAVIGATION_BACK_BUTTON_STYLE = Style.registerStyle({
+  width: '47px',
+  height: '47px',
+  borderRadius: '100px',
+  border: '1px solid #4c4c4c;',
+  backgroundColor: '#fff',
+  marginLeft: '0',
+  marginRight: '4px',
+});
+
+const NAVBAR_WINDOW_CONTROL_BUTTONS_STYLE = Style.registerStyle({
+  margin: '0 7px',
 });
 
 const NAVBAR_PAGES_COUNT_STYLE = Style.registerStyle({
   alignItems: 'center',
   justifyContent: 'center',
-  width: '16px',
-  height: '14px',
-  backgroundColor: '#555',
+  minWidth: '15px',
+  minHeight: '15px',
+  backgroundColor: '#4c4c4c',
   color: '#fff',
   fontSize: '80%',
   borderRadius: '3px',
   marginRight: '6px',
+});
+
+const NAVBAR_PAGES_LABEL_STYLE = Style.registerStyle({
+  fontSize: '110%',
 });
 
 const NavBar = (props) => {
@@ -59,60 +100,71 @@ const NavBar = (props) => {
   return (
     <div id="browser-navbar"
       className={NAVBAR_STYLE}>
-      <Btn id="browser-navbar-menu"
-        className={NAVBAR_BUTTON_STYLE}
-        title="Menu"
-        image="glyph-menu-16.svg"
-        clickHandler={props.openMenu} />
-      <Btn id="pages-button"
-        className={NAVBAR_BUTTON_STYLE}
-        title="Pages"
-        clickHandler={() => props.setPageAreaVisibility(!props.pageAreaVisible)}>
-        <div id="browser-navbar-pages-count"
-          className={NAVBAR_PAGES_COUNT_STYLE}>
-          {props.pages.size}
-        </div>
-        <span>
-          {"Pages"}
-        </span>
-      </Btn>
-      <Btn id="browser-navbar-back"
-        className={NAVBAR_BUTTON_STYLE}
-        title="Back"
-        image="glyph-arrow-nav-back-16.svg"
-        clickHandler={props.navBack}
-        disabled={!props.page.canGoBack} />
-      <Btn id="browser-navbar-forward"
-        className={NAVBAR_BUTTON_STYLE}
-        title="Forward"
-        image="glyph-arrow-nav-forward-16.svg"
-        clickHandler={props.navForward}
-        disabled={!props.page.canGoForward} />
-      <Btn id="browser-navbar-refresh"
-        className={NAVBAR_BUTTON_STYLE}
-        title="Refresh"
-        image="glyph-arrow-reload-16.svg"
-        clickHandler={props.navRefresh}
-        disabled={!props.page.canRefresh} />
+      <div className={`${NAVBAR_SIDE_SECTIONS_STYLE} ${NAVBAR_LEFT_SECTION_STYLE}`}>
+        <Btn id="browser-navbar-menu"
+          className={NAVBAR_APP_MENU_BUTTON_STYLE}
+          title="Menu"
+          image="glyph-menu-16.svg"
+          clickHandler={props.openMenu} />
+        <VerticalSeparator />
+        <Btn id="pages-button"
+          className={NAVBAR_PAGES_BUTTON_STYLE}
+          title="Pages"
+          clickHandler={() => props.setPageAreaVisibility(!props.pageAreaVisible)}>
+          <div id="browser-navbar-pages-count"
+            className={NAVBAR_PAGES_COUNT_STYLE}>
+            {props.pages.size}
+          </div>
+          <span id="browser-navbar-pages-label"
+            className={NAVBAR_PAGES_LABEL_STYLE}>
+            {"Pages"}
+          </span>
+        </Btn>
+        <VerticalSeparator />
+        <Btn id="browser-navbar-back"
+          className={`${NAVBAR_NAVIGATION_BACK_BUTTON_STYLE} ${NAVBAR_NAVIGATION_BUTTONS_STYLE}`}
+          title="Back"
+          image="glyph-arrow-nav-back-16.svg"
+          imgWidth="16px"
+          imgHeight="16px"
+          imgPosition="center"
+          clickHandler={props.navBack}
+          disabled={!props.page.canGoBack} />
+        <Btn id="browser-navbar-forward"
+          className={NAVBAR_NAVIGATION_BUTTONS_STYLE}
+          title="Forward"
+          image="glyph-arrow-nav-forward-16.svg"
+          clickHandler={props.navForward}
+          disabled={!props.page.canGoForward} />
+        <Btn id="browser-navbar-refresh"
+          className={NAVBAR_NAVIGATION_BUTTONS_STYLE}
+          title="Refresh"
+          image="glyph-arrow-reload-16.svg"
+          clickHandler={props.navRefresh}
+          disabled={!props.page.canRefresh} />
+      </div>
       <Location { ...props } />
-      <Btn id="browser-navbar-minimize"
-        className={NAVBAR_BUTTON_STYLE}
-        title="Minimize"
-        image="glyph-window-minimize-16.svg"
-        clickHandler={props.minimize} />
-      <Btn id="browser-navbar-maximize"
-        className={NAVBAR_BUTTON_STYLE}
-        title="Maximize"
-        image="glyph-window-maximize-16.svg"
-        clickHandler={props.maximize} />
-      <Btn id="browser-navbar-close"
-        className={NAVBAR_BUTTON_STYLE}
-        title="Close"
-        image="glyph-window-close-16.svg"
-        clickHandler={props.close} />
+      <div className={`${NAVBAR_SIDE_SECTIONS_STYLE} ${NAVBAR_RIGHT_SECTION_STYLE}`}>
+        <VerticalSeparator />
+        <Btn id="browser-navbar-minimize"
+          className={NAVBAR_WINDOW_CONTROL_BUTTONS_STYLE}
+          title="Minimize"
+          image="glyph-window-minimize-16.svg"
+          clickHandler={props.minimize} />
+        <Btn id="browser-navbar-maximize"
+          className={NAVBAR_WINDOW_CONTROL_BUTTONS_STYLE}
+          title="Maximize"
+          image="glyph-window-maximize-16.svg"
+          clickHandler={props.maximize} />
+        <Btn id="browser-navbar-close"
+          className={NAVBAR_WINDOW_CONTROL_BUTTONS_STYLE}
+          title="Close"
+          image="glyph-window-close-16.svg"
+          clickHandler={props.close} />
+      </div>
     </div>
   );
-}
+};
 
 NavBar.propTypes = {
   page: PropTypes.object,
