@@ -58,6 +58,12 @@ export class ProfileStorage {
     return new ProfileStorage(db).init();
   }
 
+  close() {
+    this.places.clear();
+    this.nextPlace = 0;
+    return this.db.close();
+  }
+
   /**
    * Load the place map out of the DB.
    */
@@ -76,6 +82,20 @@ export class ProfileStorage {
 
     this.nextPlace = max + 1;
     return max;
+  }
+
+  async init() {
+    const schema = new ProfileStorageSchemaV1();
+    const v = await schema.createOrUpdate(this);
+
+    if (v !== schema.version) {
+      throw new Error(`Incorrect version ${v}; expected ${schema.version}.`);
+    }
+
+    const loaded = await this.loadPlaces();
+    console.log(`Loaded ${loaded} places.`);
+
+    return this;
   }
 
   async savePlace(url, now = microtime.now()) {
@@ -119,24 +139,6 @@ export class ProfileStorage {
       out.push(row.url);
     }
     return out;
-  }
-
-  async init() {
-    const schema = new ProfileStorageSchemaV1();
-    const v = await schema.createOrUpdate(this);
-
-    if (v !== schema.version) {
-      throw new Error(`Incorrect version ${v}; expected ${schema.version}.`);
-    }
-
-    const loaded = await this.loadPlaces();
-    console.log(`Loaded ${loaded} places.`);
-
-    return this;
-  }
-
-  close() {
-    return this.db.close();
   }
 
   userVersion() {
