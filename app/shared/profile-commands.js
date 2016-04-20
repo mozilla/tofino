@@ -16,20 +16,27 @@ import * as profileCommandTypes from './constants/profile-command-types';
  * The command for the '✫' bookmark button.
  */
 export function bookmark(url, title) {
-  return { type: profileCommandTypes.SET_BOOKMARK_STATE,
-    payload: { url, isBookmarked: true, title } };
+  return {
+    type: profileCommandTypes.DID_BOOKMARK_LOCATION,
+    payload: { url, title },
+  };
 }
 
 /**
  * The command for undoing the '✫' bookmark button.
  */
 export function unbookmark(url) {
-  return { type: profileCommandTypes.SET_BOOKMARK_STATE,
-    payload: { url, isBookmarked: false } };
+  return {
+    type: profileCommandTypes.DID_UNBOOKMARK_LOCATION,
+    payload: { url },
+  };
 }
 
 export function visited(url) {
-  return { type: profileCommandTypes.VISITED, payload: { url } };
+  return {
+    type: profileCommandTypes.DID_VISIT_LOCATION,
+    payload: { url },
+  };
 }
 
 export function setUserTypedLocation(text) {
