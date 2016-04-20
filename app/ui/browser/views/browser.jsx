@@ -117,6 +117,7 @@ class BrowserWindow extends Component {
               pageAreaVisible,
               ipcRenderer,
               setPageAreaVisibility,
+              profile,
             }} />
           <TabBar {...this.props } />
         </div>
