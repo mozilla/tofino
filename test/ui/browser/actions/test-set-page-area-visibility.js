@@ -1,9 +1,6 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-import 'babel-polyfill';
-import 'babel-register';
-
 import expect from 'expect';
 import configureStore from '../../../../app/ui/browser/store/store';
 import * as actions from '../../../../app/ui/browser/actions/main-actions';

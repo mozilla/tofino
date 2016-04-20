@@ -3,9 +3,6 @@
 
 /* eslint no-console: 0 */
 
-import 'babel-polyfill';
-import 'babel-register';
-
 import expect from 'expect';
 
 import fs from 'fs';
