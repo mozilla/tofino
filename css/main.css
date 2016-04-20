@@ -1,63 +1,92 @@
 body {
-  background-image: url("../images/flickr-tofino-beach-imogenehuxham-9204776628.jpg");
-  background-position: center;
-  background-size: 1000px;
-  background-repeat: no-repeat;
-  background-color: #000;
+  background-color: #72e9ff;
   margin: 0;
   padding: 0;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-div {
-  font-family: courier, helvetica, sans-serif;
-}
-
-div#main {
-  height: 240px;
+#main {
   display: flex;
-  align-items: center;
+  background-color: #1f9ad2;
+  color: #fff;
   justify-content: center;
-  margin-top: px;
-  background-color: rgba(0,0,0,0.7);
-  opacity: 1;
-  color: #efefef;
+  align-items: center;
+  flex-direction: row;
 }
 
 a, a:visited, a:active {
-  color: #cdcdcd;
+  color: #fff;
+  text-decoration: none;
 }
 
-.left, .right {
-  width: 200px;
-/*   border: 1px solid red; */
-  opacity: 1.0;
+h1 {
+  height: 220px;
+  background: url(../images/mozilla-tofino.png) no-repeat;
+  background-size: 250px;
+  padding-left: 240px;
+  font-size: 3.3rem;
+  display: flex;
+  align-items: center;
+  line-height: 3.5rem;
+  font-weight: 200;
 }
 
-.left {
-  flex: initial;
-  width: 200px;
-  height: 200px;
-  padding: 0;
+ul {
   margin: 0;
+  padding: 0;
 }
 
-.left img {
-  width: 200px;
-  height: 200px;
-  opacity: 1.0;
-}
-
-.right {
-  padding-left: 20px;
+ul li a {
+  padding: 15px 20px;
+  display: block;
+  font-weight: 300;
 }
 
 ul li {
   list-style: none;
-  margin-left: -38px;
+  font-size: 2rem;
+  color: #fff;
 }
 
-div.attribution {
-  margin-top: 530px;
-  color: #efefef;
-  text-align: center;
+ul li:hover {
+  background-color: #21f5c1;
+}
+
+ul li:hover a {
+  color: #111;
+}
+
+li:first-child {
+  background-color: #0677b2;
+}
+
+li:nth-child(2) {
+  background-color: #1681b3;
+}
+
+li:nth-child(3) {
+  background-color: #1c9ec3;
+}
+
+li:nth-child(4) {
+  background-color: #33b5da;
+}
+
+li:nth-child(5) {
+  background-color: #4ac8ec;
+}
+
+@media (max-width: 555px) {
+  h1 {
+    height: 150px;
+    background-size: 180px;
+    font-size: 2.5rem;
+    line-height: 2.8rem;
+    padding-left: 170px;
+    width: 200px;
+  }
+
+  li {
+    font-size: 1.8rem;
+  }
 }
