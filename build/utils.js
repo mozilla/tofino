@@ -3,7 +3,7 @@
 
 /**
  * Disable eslint "import" rules, since it cannot handle importing directly
- * from .json files, which we do in fact support through webpack.
+ * from .json files, which we do in fact support through node.
  */
 /* eslint-disable import/namespace, import/default, import/no-named-as-default */
 
