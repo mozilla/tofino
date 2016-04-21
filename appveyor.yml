@@ -1,5 +1,6 @@
 platform: x64
 image: Visual Studio 2013
+os: unstable
 
 environment:
   nodejs_version: "5.10"
@@ -25,5 +26,5 @@ install:
 build: off
 
 test_script:
-  - npm test
   - npm run package
+  - npm test

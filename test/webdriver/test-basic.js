@@ -5,13 +5,20 @@ import expect from 'expect';
 import { Application } from 'spectron';
 import * as BuildUtils from '../../build/utils';
 import { quickTest } from '../../build-config';
+import os from "os";
 
 // import ChromeDriver from './chrome-driver';
 import DevNull from 'dev-null';
 import * as WebDriver from 'webdriverio';
 
 const root = path.join(__dirname, '..', '..');
-const command = BuildUtils.getElectronPath();
+const dist = path.resolve(path.join(root, "dist", "tofino-" + os.platform() + "-x64"));
+let command = dist;
+if (os.platform() == "win32") {
+  command = path.join(command, "tofino.exe");
+} else {
+  command = path.join(command, "tofino");
+}
 
 describe('application launch', function() {
   if (quickTest) {
@@ -27,9 +34,8 @@ describe('application launch', function() {
       new-cap: 0, lines-around-comment: 0 */
       this.app = new Application({
         path: command,
-        args: [root],
         env: process.env,
-        cwd: root,
+        cwd: dist,
       });
 
       this.app.exists().then(() => {

@@ -17,6 +17,8 @@ def main():
     if platform == "osx":
         run(["brew", "update"])
         run(["brew", "install", "nvm"])
+    elif platform == "linux":
+        run(["sh", "-e", "/etc/init.d/xvfb", "start"])
 
 def run(args = []):
     sys.stderr.write("Running %s\n" % (" ".join(args)))
