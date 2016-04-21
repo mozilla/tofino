@@ -14,7 +14,7 @@ import {
   createTab, setUserTypedLocation, duplicateTab, closeTab, navigatePageTo,
 } from './main-actions';
 import { getCurrentWebView, fixURL } from '../browser-util';
-import { remote, clipboard, ipcRenderer } from 'electron';
+import { remote, clipboard, ipcRenderer } from '../../../shared/electron';
 
 const { Menu, MenuItem } = remote;
 
