@@ -12,7 +12,15 @@ specific language governing permissions and limitations under the License.
 
 import * as types from '../constants/action-types';
 import * as profileCommands from '../../../shared/profile-commands';
-import { ipcRenderer } from '../../../shared/electron';
+
+// Stub out ipcRenderer when electron cannot be found (unit tests)
+const ipcRenderer = (function() {
+  try {
+    return require('electron').ipcRenderer;
+  } catch (e) {
+    return { send() {} };
+  }
+}());
 
 export function createTab(location) {
   return { type: types.CREATE_TAB, location, instrument: true };

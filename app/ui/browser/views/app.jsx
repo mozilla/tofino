@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { ipcRenderer } from '../../../shared/electron';
+import { ipcRenderer } from 'electron';
 
 import Style from '../browser-style';
 import BrowserWindow from './browser';

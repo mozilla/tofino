@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { ipcRenderer } from '../../shared/electron';
+import { ipcRenderer } from 'electron';
 import App from './views/app';
 import configureStore from './store/store';
 
