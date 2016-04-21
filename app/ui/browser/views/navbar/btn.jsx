@@ -28,7 +28,9 @@ const BUTTON_STYLE = Style.registerStyle({
   padding: '0',
   border: '0',
   background: 'transparent',
+
   WebkitUserSelect: 'none',
+  WebkitAppRegion: 'no-drag',
 });
 
 /**
