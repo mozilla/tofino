@@ -22,9 +22,17 @@ export default function locationReducer(state, command) {
   const payload = command.payload;
   switch (command.type) {
     case profileCommandTypes.SET_USER_TYPED_LOCATION:
+      if (!state.get(payload.text)) {
+        return state.set(payload.text, Immutable.List([
+          `${payload.text} fake completion 1`,
+          `${payload.text} fake completion 2`,
+          `${payload.text} fake completion 3`,
+        ]));
+      }
+
       return state.set(payload.text, (
-        state.get(payload.text) || Immutable.List()
-      ).push(`${payload.text} fake completion`));
+        state.get(payload.text)
+      ).push(`${payload.text} fake completion extra`));
     default:
       return state;
   }
