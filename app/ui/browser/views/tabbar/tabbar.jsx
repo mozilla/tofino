@@ -15,8 +15,6 @@ import React, { PropTypes } from 'react';
 import Style from '../../browser-style';
 import Tab from './tab';
 import Btn from '../navbar/btn';
-import { menuTabContext } from '../../actions/external';
-import { createTab, closeTab, setCurrentTab } from '../../actions/main-actions';
 
 // TODO Fix up dragDrop
 // import { TabBarDragDrop, TabDragDrop } from './dragdrop';
@@ -34,7 +32,10 @@ const NEW_TAB_BUTTON_STYLE = Style.registerStyle({
   color: '#555',
 });
 
-const TabBar = ({ pages, currentPageIndex, dispatch, pageAreaVisible }) => {
+const TabBar = ({
+  pages, currentPageIndex, pageAreaVisible,
+  handleTabContextMenu, handleNewTabClick, handleTabClick, handleTabClose,
+}) => {
   const barDragDrop = { handlers: {} }; // new TabBarDragDrop(pages, dispatch);
 
   // This is the 'pages' section, which can be collapsed
@@ -57,20 +58,16 @@ const TabBar = ({ pages, currentPageIndex, dispatch, pageAreaVisible }) => {
             className={`browser-tab-${i}`}
             isActive={currentPageIndex === i}
             page={page}
-            onClick={e => dispatch(e.button === 1 ? closeTab(i) : setCurrentTab(i))}
-            onContextMenu={() => menuTabContext(i, dispatch)}
-            onClose={e => {
-              e.preventDefault();
-              e.stopPropagation();
-              dispatch(closeTab(i));
-            }}
+            onClick={handleTabClick(page.id)}
+            onContextMenu={handleTabContextMenu(page.id)}
+            onClose={handleTabClose(page.id)}
             {...dragDrop.handlers} />
         );
       })}
 
       <Btn className={NEW_TAB_BUTTON_STYLE}
         title="Add new tab"
-        clickHandler={() => dispatch(createTab())}>
+        clickHandler={handleNewTabClick}>
         <i className="fa fa-plus" />
       </Btn>
     </div>
@@ -82,7 +79,10 @@ TabBar.displayName = 'TabBar';
 TabBar.propTypes = {
   pages: PropTypes.object.isRequired,
   currentPageIndex: PropTypes.number.isRequired,
-  dispatch: PropTypes.func.isRequired,
+  handleTabClick: PropTypes.func.isRequired,
+  handleTabClose: PropTypes.func.isRequired,
+  handleNewTabClick: PropTypes.func.isRequired,
+  handleTabContextMenu: PropTypes.func.isRequired,
   pageAreaVisible: PropTypes.bool.isRequired,
 };
 

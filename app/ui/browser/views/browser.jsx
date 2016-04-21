@@ -18,7 +18,7 @@ import NavBar from './navbar/navbar';
 import Page from './page/page';
 
 import {
-  menuLocationContext, menuBrowser, maximize, minimize, close,
+  menuTabContext, menuLocationContext, menuBrowser, maximize, minimize, close,
 } from '../actions/external';
 
 import * as actions from '../actions/main-actions';
@@ -92,6 +92,20 @@ class BrowserWindow extends Component {
     const setPageAreaVisibility = visible => dispatch(actions.setPageAreaVisibility(visible));
     const navigateTo = loc => dispatch(actions.navigatePageTo(currentPageId, loc));
 
+
+    /**
+     * TabBar functions
+     */
+    const handleTabContextMenu = pageId => () => menuTabContext(pageId, dispatch);
+    const handleNewTabClick = () => dispatch(actions.createTab());
+    const handleTabClick = pageId => e =>
+      dispatch(e.button === 1 ? actions.closeTab(pageId) : actions.setCurrentTab(pageId));
+    const handleTabClose = pageId => e => {
+      e.preventDefault();
+      e.stopPropagation();
+      dispatch(actions.closeTab(pageId));
+    };
+
     return (
       <div className={BROWSER_WINDOW_STYLE}>
         <div className={CHROME_AREA_STYLE}>
@@ -117,7 +131,11 @@ class BrowserWindow extends Component {
               setPageAreaVisibility,
               profile,
             }} />
-          <TabBar {...this.props } />
+          <TabBar handleTabClick={handleTabClick}
+            handleTabClose={handleTabClose}
+            handleTabContextMenu={handleTabContextMenu}
+            handleNewTabClick={handleNewTabClick}
+            {...this.props } />
         </div>
         <div className={CONTENT_AREA_STYLE}>
           {pages.map((page, pageIndex) => (
