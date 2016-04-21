@@ -49,7 +49,6 @@ export const Page = Immutable.Record({
   canGoBack: false,
   canGoForward: false,
   canRefresh: false,
-  scrollX: 0,
-  scrollY: 0,
+  chromeMode: 'expanded',
   commands: Immutable.List(),
 });

@@ -177,13 +177,12 @@ function addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer) 
       case 'show-bookmarks':
         console.warn('@TODO: ipc-message:show-bookmarks');
         break;
-      case 'scroll':
-        dispatch(setPageDetails({
-          pageIndex,
-          scrollX: e.args[0].x,
-          scrollY: e.args[0].y,
-        }));
+      case 'scroll': {
+        const { y: scrollY } = e.args[0];
+        const chromeMode = scrollY ? 'collapsed' : 'expanded';
+        dispatch(setPageDetails({ pageIndex, chromeMode }));
         break;
+      }
       default:
         console.warn(`@TODO: Unknown ipc-message:${e.channel}`);
         break;
