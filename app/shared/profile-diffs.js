@@ -16,6 +16,6 @@ export function bookmarks(newBookmarks) {
   return { type: profileDiffTypes.BOOKMARKS, payload: newBookmarks };
 }
 
-export function completions(list) {
-  return { type: profileDiffTypes.COMPLETIONS, payload: list };
+export function completions(completionMap) {
+  return { type: profileDiffTypes.COMPLETIONS, payload: completionMap };
 }
