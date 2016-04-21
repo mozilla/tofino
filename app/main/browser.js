@@ -99,6 +99,8 @@ function createWindow(tabInfo) {
     center: false,
     width: 1366,
     height: 768,
+    minWidth: 512,
+    minHeight: 128,
     frame: false,
     show: false,
   });
