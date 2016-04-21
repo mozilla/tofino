@@ -43,6 +43,10 @@ const NAVBAR_SIDE_SECTIONS_STYLE = Style.registerStyle({
   minWidth: '260px',
   alignItems: 'center',
   overflow: 'hidden',
+
+  '@media (max-width: 1024px)': {
+    minWidth: 'initial',
+  },
 });
 
 const NAVBAR_SIDE_SECTION_LEFT_STYLE = Style.registerStyle({
