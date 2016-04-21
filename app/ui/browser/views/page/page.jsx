@@ -24,6 +24,10 @@ import { closeTab, setPageDetails, setUserTypedLocation } from '../../actions/ma
 import * as profileCommands from '../../../../shared/profile-commands';
 
 const PAGE_STYLE = Style.registerStyle({
+  // Hide the overflow for pages because when applying a `translateY` to the webview element,
+  // a scrollbar appears for the browser window, due to shifting everything vertically.
+  overflow: 'hidden',
+
   // Mark this as the relative anchor for floating children (e.g. search bar).
   position: 'relative',
   flex: 1,
