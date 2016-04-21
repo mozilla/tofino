@@ -12,7 +12,9 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes, Component } from 'react';
 
+import * as UIConstants from '../../constants/ui';
 import Style from '../../browser-style';
+
 import Status from './status';
 import Search from './search';
 
@@ -22,18 +24,35 @@ import { closeTab, setPageDetails, setUserTypedLocation } from '../../actions/ma
 import * as profileCommands from '../../../../shared/profile-commands';
 
 const PAGE_STYLE = Style.registerStyle({
+  // Hide the overflow for pages because when applying a `translateY` to the webview element,
+  // a scrollbar appears for the browser window, due to shifting everything vertically.
+  overflow: 'hidden',
+
   // Mark this as the relative anchor for floating children (e.g. search bar).
   position: 'relative',
   flex: 1,
 });
 
-const WEB_VIEW_INLINE_STYLE = {
+const WEB_VIEW_WRAPPER_STYLE = {
+  display: 'flex',
+  flex: 1,
+  transition: 'transform 0.3s ease-in-out',
+};
+
+const WEB_VIEW_WRAPPER_CHROME_EXPANDED_STYLE = {
+  transform: `translateY(${UIConstants.NAVBAR_EXPANDED_HEIGHT}px)`,
+};
+
+const WEB_VIEW_WRAPPER_CHROME_COLLAPSED_STYLE = {
+  transform: 'none',
+};
+
+const WEB_VIEW_INNER_STYLE = {
   display: 'flex',
   flex: 1,
 };
 
 class Page extends Component {
-
   componentDidMount() {
     const { page, pageIndex, dispatch, ipcRenderer } = this.props;
     const { webview } = this.refs.webviewWrapper;
@@ -94,7 +113,11 @@ class Page extends Component {
         <webview-wrapper ref="webviewWrapper"
           preload={'../../content/preload/content.js'}
           class={`webview-${this.props.pageIndex}`}
-          style={WEB_VIEW_INLINE_STYLE}
+          webviewinnerstyle={JSON.stringify(WEB_VIEW_INNER_STYLE)}
+          webviewwrapperstyle={JSON.stringify(Object.assign({}, WEB_VIEW_WRAPPER_STYLE,
+            this.props.page.chromeMode === 'expanded'
+              ? WEB_VIEW_WRAPPER_CHROME_EXPANDED_STYLE
+              : WEB_VIEW_WRAPPER_CHROME_COLLAPSED_STYLE))}
           guestInstanceId={this.props.page.guestInstanceId}
           onContextMenu={() => this.props.dispatch(contextMenu())} />
         <Status page={this.props.page} />
@@ -171,13 +194,12 @@ function addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer) 
       case 'show-bookmarks':
         console.warn('@TODO: ipc-message:show-bookmarks');
         break;
-      case 'scroll':
-        dispatch(setPageDetails({
-          pageIndex,
-          scrollX: e.args[0].x,
-          scrollY: e.args[0].y,
-        }));
+      case 'scroll': {
+        const { y: scrollY } = e.args[0];
+        const chromeMode = scrollY ? 'collapsed' : 'expanded';
+        dispatch(setPageDetails({ pageIndex, chromeMode }));
         break;
+      }
       default:
         console.warn(`@TODO: Unknown ipc-message:${e.channel}`);
         break;

@@ -21,10 +21,10 @@ const TAB_STYLE = Style.registerStyle({
   overflow: 'hidden',
   width: '20vw',
   fontSize: '75%',
-  background: '#ccc',
+  background: '#eee',
   color: '#777',
   '&.active': {
-    background: '#eee',
+    background: '#fff',
     color: '#555',
   },
   '&.dragging': {

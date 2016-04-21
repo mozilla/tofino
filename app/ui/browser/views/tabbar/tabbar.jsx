@@ -24,8 +24,9 @@ import { createTab, closeTab, setCurrentTab } from '../../actions/main-actions';
 const TABBAR_STYLE = Style.registerStyle({
   alignItems: 'center',
   minHeight: '25px',
-  background: '#ddd',
+  background: '#fff',
   borderBottom: '1px solid #fff',
+  opacity: 0.9,
   WebkitUserSelect: 'none',
 
   // Makes electron app draggable.

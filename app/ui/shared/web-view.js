@@ -10,6 +10,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
+import 'babel-polyfill';
+
 /**
  * React doesn't support non-HTML attributes unless the element is a custom
  * element which must have a hyphen in the tag name. This means React can't
@@ -20,18 +22,32 @@ class WebViewWrapper extends HTMLElement {
     this.webview = document.createElement('webview');
 
     for (const { name, value } of Array.from(this.attributes)) {
-      this.webview.setAttribute(name, value);
+      applyAttribute(name, value, this);
     }
 
     const shadow = this.createShadowRoot();
     shadow.appendChild(this.webview);
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (newValue) {
-      this.webview.setAttribute(name, newValue);
+  attributeChangedCallback(name, _, newValue) {
+    applyAttribute(name, newValue, this);
+  }
+}
+
+function applyAttribute(name, value, wrapper) {
+  if (name === 'webviewwrapperstyle') {
+    for (const [cssProp, cssVal] of Object.entries(JSON.parse(value))) {
+      wrapper.style[cssProp] = cssVal;
+    }
+  } else if (name === 'webviewinnerstyle') {
+    for (const [cssProp, cssVal] of Object.entries(JSON.parse(value))) {
+      wrapper.webview.style[cssProp] = cssVal;
+    }
+  } else {
+    if (value) {
+      wrapper.webview.setAttribute(name, value);
     } else {
-      this.webview.removeAttribute(name);
+      wrapper.webview.removeAttribute(name);
     }
   }
 }
