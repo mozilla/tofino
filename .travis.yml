@@ -13,7 +13,7 @@ cache:
 before_install: scripts/bootstrap.py
 install:
   - nvm --version
-  - nvm install 5.9
+  - nvm install 4.2.1
   - node --version
   - npm --version
   - npm install --progress false --depth 0
