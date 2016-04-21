@@ -32,10 +32,10 @@ export function unbookmark(url) {
   };
 }
 
-export function visited(url) {
+export function visited(url, title = undefined) {
   return {
     type: profileCommandTypes.DID_VISIT_LOCATION,
-    payload: { url },
+    payload: { url, title },
   };
 }
 

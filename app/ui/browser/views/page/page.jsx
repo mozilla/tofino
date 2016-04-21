@@ -171,7 +171,8 @@ function addListenersToWebView(webview, page, dispatch, ipcRenderer) {
       text: null,
     }));
 
-    ipcRenderer.send('profile-command', profileCommands.visited(url));
+    const title = webview.getTitle();
+    ipcRenderer.send('profile-command', profileCommands.visited(url, title));
   });
 
   webview.addEventListener('ipc-message', e => {
