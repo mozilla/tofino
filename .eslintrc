@@ -57,6 +57,7 @@
     }],
     "flow-vars/define-flow-type": 1,
     "flow-vars/use-flow-type": 1,
+    "react/display-name": ["error", { "ignoreTranspilerName": true }],
     "react/jsx-closing-bracket-location": ["error", "after-props"],
     "react/jsx-indent": ["error", 2],
     "react/jsx-indent-props": ["error", 2],
