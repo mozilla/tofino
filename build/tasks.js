@@ -50,6 +50,12 @@ export default {
     await require('./task-test').default(args);
   },
 
+  async quickTest(args = []) {
+    await this.config({ development: false, test: true, quickTest: true });
+    await this.build();
+    await require('./task-test').default(args);
+  },
+
   async clean() {
     await require('./task-clean-package').default();
   },
