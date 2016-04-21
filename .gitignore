@@ -8,3 +8,4 @@ build-config.json
 .DS_Store
 .nyc_output/
 *~
+/browser.db
