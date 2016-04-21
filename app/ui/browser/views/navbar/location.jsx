@@ -21,11 +21,22 @@ const LOCATION_BAR_STYLE = Style.registerStyle({
   flex: 1,
   alignItems: 'center',
   overflow: 'hidden',
-  margin: '12px 8vw',
   padding: '0 10px',
   backgroundColor: '#fff',
-  border: '1px solid #e5e5e5',
   borderRadius: '2px',
+  border: '1px solid',
+  transition: `margin 0.3s ease-in-out,
+               border-color 0.3s ease-in-out`,
+});
+
+const LOCATION_BAR_EXPANDED_STYLE = Style.registerStyle({
+  margin: '12px 8vw',
+  borderColor: '#e5e5e5',
+});
+
+const LOCATION_BAR_COLLAPSED_STYLE = Style.registerStyle({
+  margin: '0 8vw',
+  borderColor: 'transparent',
 });
 
 const LOCATION_BAR_BUTTONS_STYLE = Style.registerStyle({
@@ -134,33 +145,33 @@ class Location extends Component {
   }
 
   render() {
-    const { page } = this.props;
-    const urlValue = page.userTyped !== null ? page.userTyped : page.location;
-    const { showURLBar } = this.state;
-
     return (
       <div id="browser-location-bar"
-        className={LOCATION_BAR_STYLE}>
+        className={`${LOCATION_BAR_STYLE} ${this.props.page.chromeMode === 'expanded'
+          ? LOCATION_BAR_EXPANDED_STYLE
+          : LOCATION_BAR_COLLAPSED_STYLE}`}>
         <Btn title="Info"
           className={LOCATION_BAR_BUTTONS_STYLE}
           image=""
           clickHandler={() => {}} />
         <div id="browser-location-title-bar"
           className={TITLE_BAR_STYLE}
-          hidden={showURLBar}
+          hidden={this.state.showURLBar}
           tabIndex={0}
           onClick={this.handleTitleClick}
           onFocus={this.handleTitleFocus}>
           <span>
-            {page.title}
+            {this.props.page.title}
           </span>
         </div>
         <input id="urlbar-input"
           className={INPUT_BAR_STYLE}
-          hidden={!showURLBar}
+          hidden={!this.state.showURLBar}
           type="text"
           ref="input"
-          defaultValue={urlValue}
+          defaultValue={this.props.page.userTyped !== null
+            ? this.props.page.userTyped
+            : this.props.page.location}
           onFocus={this.handleURLBarFocus}
           onBlur={this.handleURLBarBlur}
           onChange={this.props.onLocationChange}
@@ -169,7 +180,7 @@ class Location extends Component {
         <Btn title="Bookmark"
           className={LOCATION_BAR_BUTTONS_STYLE}
           image={this.getBookmarkIcon()}
-          disabled={page.isLoading}
+          disabled={this.props.page.isLoading}
           clickHandler={this.toggleBookmark} />
       </div>
     );

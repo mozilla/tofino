@@ -25,9 +25,15 @@ import * as actions from '../actions/main-actions';
 import '../../shared/web-view';
 
 const BROWSER_WINDOW_STYLE = Style.registerStyle({
-  width: '100%',
-  height: '100%',
+  flex: 1,
+});
+
+const CHROME_AREA_STYLE = Style.registerStyle({
   flexDirection: 'column',
+  position: 'absolute',
+  left: '0',
+  right: '0',
+  zIndex: '1',
 });
 
 const CONTENT_AREA_STYLE = Style.registerStyle({
@@ -42,7 +48,6 @@ class BrowserWindow extends Component {
 
   componentDidMount() {
     document.body.addEventListener('keydown', this.handleKeyDown);
-
     attachIPCRendererListeners(this.props);
   }
 
@@ -57,9 +62,9 @@ class BrowserWindow extends Component {
   }
 
   render() {
-    const {
-      ipcRenderer, dispatch, profile, pages, currentPageIndex, pageAreaVisible,
-    } = this.props;
+    const { ipcRenderer, dispatch, profile, pages, currentPageIndex, pageAreaVisible } = this.props;
+    const currentPage = pages.get(currentPageIndex);
+
     const navBack = () => dispatch(actions.navigatePageBack(-1));
     const navForward = () => dispatch(actions.navigatePageForward(-1));
     const navRefresh = () => dispatch(actions.navigatePageRefresh(-1));
@@ -90,29 +95,31 @@ class BrowserWindow extends Component {
     const navigateTo = loc => dispatch(actions.navigatePageTo(-1, loc));
 
     return (
-      <div className={BROWSER_WINDOW_STYLE} >
-        <NavBar page={pages.get(currentPageIndex)}
-          {...{
-            navBack,
-            navForward,
-            navRefresh,
-            navigateTo,
-            minimize,
-            maximize,
-            close,
-            pages,
-            openMenu,
-            onLocationChange,
-            onLocationContextMenu,
-            onLocationReset,
-            isBookmarked,
-            bookmark,
-            unbookmark,
-            pageAreaVisible,
-            ipcRenderer,
-            setPageAreaVisibility,
-          }} />
-        <TabBar {...this.props } />
+      <div className={BROWSER_WINDOW_STYLE}>
+        <div className={CHROME_AREA_STYLE}>
+          <NavBar page={currentPage}
+            {...{
+              navBack,
+              navForward,
+              navRefresh,
+              navigateTo,
+              minimize,
+              maximize,
+              close,
+              pages,
+              openMenu,
+              onLocationChange,
+              onLocationContextMenu,
+              onLocationReset,
+              isBookmarked,
+              bookmark,
+              unbookmark,
+              pageAreaVisible,
+              ipcRenderer,
+              setPageAreaVisibility,
+            }} />
+          <TabBar {...this.props } />
+        </div>
         <div className={CONTENT_AREA_STYLE}>
           {pages.map((page, pageIndex) => (
             <Page key={`page-${pageIndex}`}

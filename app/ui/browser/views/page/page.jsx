@@ -12,7 +12,9 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes, Component } from 'react';
 
+import * as UIConstants from '../../constants/ui';
 import Style from '../../browser-style';
+
 import Status from './status';
 import Search from './search';
 
@@ -30,6 +32,15 @@ const PAGE_STYLE = Style.registerStyle({
 const WEB_VIEW_WRAPPER_STYLE = {
   display: 'flex',
   flex: 1,
+  transition: 'transform 0.3s ease-in-out',
+};
+
+const WEB_VIEW_WRAPPER_CHROME_EXPANDED_STYLE = {
+  transform: `translateY(${UIConstants.NAVBAR_EXPANDED_HEIGHT}px)`,
+};
+
+const WEB_VIEW_WRAPPER_CHROME_COLLAPSED_STYLE = {
+  transform: 'none',
 };
 
 const WEB_VIEW_INNER_STYLE = {
@@ -38,7 +49,6 @@ const WEB_VIEW_INNER_STYLE = {
 };
 
 class Page extends Component {
-
   componentDidMount() {
     const { page, pageIndex, dispatch, ipcRenderer } = this.props;
     const { webview } = this.refs.webviewWrapper;
@@ -99,8 +109,11 @@ class Page extends Component {
         <webview-wrapper ref="webviewWrapper"
           preload={'../../content/preload/content.js'}
           class={`webview-${this.props.pageIndex}`}
-          webviewwrapperstyle={JSON.stringify(WEB_VIEW_WRAPPER_STYLE)}
           webviewinnerstyle={JSON.stringify(WEB_VIEW_INNER_STYLE)}
+          webviewwrapperstyle={JSON.stringify(Object.assign({}, WEB_VIEW_WRAPPER_STYLE,
+            this.props.page.chromeMode === 'expanded'
+              ? WEB_VIEW_WRAPPER_CHROME_EXPANDED_STYLE
+              : WEB_VIEW_WRAPPER_CHROME_COLLAPSED_STYLE))}
           guestInstanceId={this.props.page.guestInstanceId}
           onContextMenu={() => this.props.dispatch(contextMenu())} />
         <Status page={this.props.page} />
