@@ -31,6 +31,11 @@ export const VisitType = {
   unknown: 0,
 };
 
+export const StarOp = {
+  unstar: -1,
+  star: 1,
+};
+
 /**
  * Public API:
  *
@@ -193,7 +198,7 @@ export class ProfileStorage {
 
   // Chains through place ID.
   starPage(url, session, action, now = microtime.now()) {
-    if (action !== -1 && action !== 1) {
+    if (action !== StarOp.star && action !== StarOp.unstar) {
       return Promise.reject(new Error(`Unknown action ${action}.`));
     }
 
@@ -227,7 +232,7 @@ export class ProfileStorage {
       const place = this.places.get(url);
 
       if (title === undefined) {
-        // Don't bother establishing a title if we're not going to write one.
+        // Don't bother establishing a transaction if we're not going to write a title.
         return this.saveVisitForPlaceWithoutEstablishingTransaction(place, session, now);
       }
 
