@@ -33,4 +33,6 @@ if (~process.argv.indexOf('--run')) {
   Tasks.package().then(null, handleTaskFailed);
 } else if (~process.argv.indexOf('--test')) {
   Tasks.test().then(null, handleTaskFailed);
+} else if (~process.argv.indexOf('--quicktest')) {
+  Tasks.quickTest().then(null, handleTaskFailed);
 }

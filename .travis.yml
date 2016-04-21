@@ -18,6 +18,11 @@ install:
   - npm --version
   - npm install --progress false --depth 0
 
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
+
 script:
   - npm test
 

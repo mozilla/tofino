@@ -4,3 +4,4 @@
 --check-leaks
 --full-trace
 --timeout 3000
+--globals '@@any-promise/REGISTRATION'
