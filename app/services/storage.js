@@ -27,13 +27,18 @@ import { DB, verbose } from './sqlite';
 
 const mkdirp = thenify(cbmkdirp);
 
+export const VisitType = {
+  unknown: 0,
+};
+
 /**
  * Public API:
  *
- *   ProfileStorage.open(dir)
- *   storage.visit(url, microseconds)
- *   storage.visited(since, limit)
- *   storage.close()
+ *   let storage = await ProfileStorage.open(dir);
+ *   let session = await storage.startSession(scope, ancestor);
+ *   await storage.visit(url, session, microseconds);
+ *   let visitedURLs = await storage.visited(since, limit);
+ *   await storage.close();
  */
 export class ProfileStorage {
   constructor(db) {
@@ -85,7 +90,9 @@ export class ProfileStorage {
   }
 
   async init() {
-    const schema = new ProfileStorageSchemaV1();
+    await this.db.exec('PRAGMA foreign_keys = ON');
+
+    const schema = new ProfileStorageSchemaV2();
     const v = await schema.createOrUpdate(this);
 
     if (v !== schema.version) {
@@ -129,10 +136,6 @@ export class ProfileStorage {
    * @returns {*} the place ID.
    */
   async savePlaceWithoutEstablishingTransaction(url, now) {
-    if (this.places.has(url)) {
-      return this.places.get(url);
-    }
-
     // We don't use INSERT OR IGNORE -- we want to fail if our write-through cache breaks.
     // We also aggressively increment, so any race here is less likely to cause problems.
     const id = this.nextPlace++;
@@ -142,16 +145,21 @@ export class ProfileStorage {
   }
 
   savePlace(url, now = microtime.now()) {
-    return this.inTransaction(() => this.savePlaceWithoutEstablishingTransaction(url, now))
+    if (this.places.has(url)) {
+      return Promise.resolve(this.places.get(url));
+    }
+
+    return this.savePlaceWithoutEstablishingTransaction(url, now)
                .then((id) => this.savePlaceIDMapping(url, id));
   }
 
   /**
    * Store a visit for a given place ID. Chains through the place ID.
    */
-  saveVisitForPlaceWithoutEstablishingTransaction(place, now = microtime.now()) {
+  saveVisitForPlaceWithoutEstablishingTransaction(place, session, now = microtime.now()) {
     return this.db
-               .run('INSERT INTO visitEvents (place, ts) VALUES (?, ?)', [place, now])
+               .run('INSERT INTO visitEvents (place, session, ts, type) VALUES (?, ?, ?, ?)',
+                    [place, session, now, VisitType.unknown])
                .then(() => Promise.resolve(place));
   }
 
@@ -160,21 +168,29 @@ export class ProfileStorage {
     return Promise.resolve(id);
   }
 
+  async startSession(scope, ancestor, now = microtime.now()) {
+    const result = await this.db
+                             .run('INSERT INTO sessionStarts (scope, ancestor, ts) VALUES (?, ?, ?)',
+                                  [scope, ancestor, now]);
+    return result.lastID;
+  }
+
   /**
    * Record a visit to a URL.
    * @param url the visited URL.
    * @param now (optional) microsecond timestamp.
    * @returns {*} the place ID.
    */
-  visit(url, now = microtime.now()) {
+  visit(url, session, now = microtime.now()) {
     if (this.places.has(url)) {
-      return this.saveVisitForPlaceWithoutEstablishingTransaction(this.places.get(url), now);
+      return this.saveVisitForPlaceWithoutEstablishingTransaction(this.places.get(url),
+                                                                  session, now);
     }
 
     return this.inTransaction(() =>
                  this.savePlaceWithoutEstablishingTransaction(url, now)
                      .then((id) =>
-                       this.saveVisitForPlaceWithoutEstablishingTransaction(id, now)))
+                       this.saveVisitForPlaceWithoutEstablishingTransaction(id, session, now)))
 
                // If the transaction committed, keep the URL -> ID mapping in memory.
                .then((id) => this.savePlaceIDMapping(url, id));
@@ -233,13 +249,53 @@ export class ProfileStorage {
   }
 }
 
-class ProfileStorageSchemaV1 {
+
+// Associate URLs with persistent IDs.
+// Note the use of AUTOINCREMENT to ensure that IDs are never reused after deletion.
+const tablePlacesV2 = `CREATE TABLE placeEvents (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  url TEXT UNIQUE NOT NULL,
+  ts INTEGER NOT NULL
+)`;
+
+// Associate titles with places.
+const tableTitlesV2 = `CREATE TABLE titleEvents (
+  place INTEGER NOT NULL REFERENCES placeEvents(id),
+  ts INTEGER NOT NULL,
+  title TEXT NOT NULL
+)`;
+
+// Associate visits with places.
+const tableVisitsV2 = `CREATE TABLE visitEvents (
+  place INTEGER NOT NULL REFERENCES placeEvents(id),
+  ts INTEGER NOT NULL,
+  session INTEGER NOT NULL REFERENCES sessionStarts(id),
+  type INTEGER NOT NULL
+)`;
+
+// Track the start of a session. Note that each session has a unique identifier, can
+// be born of another (the ancestor), and can be within a scope (e.g., a window ID).
+const tableSessionStartsV2 = `CREATE TABLE sessionStarts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  scope INTEGER,
+  ancestor INTEGER REFERENCES sessionStarts(id),
+  ts INTEGER NOT NULL
+)`;
+
+// Track the end of a session. Note that sessions must be started before they are
+// ended.
+const tableSessionEndsV2 = `CREATE TABLE sessionEnds (
+  id INTEGER PRIMARY KEY REFERENCES sessionStarts(id),
+  ts INTEGER NOT NULL
+)`;
+
+class ProfileStorageSchemaV2 {
   constructor() {
-    this.version = 1;
+    this.version = 2;
   }
 
   /**
-   * Take a newly opened ProfileStorage and make sure it reaches v1.
+   * Take a newly opened ProfileStorage and make sure it reaches v2.
    * @param storage an open storage instance.
    */
   async createOrUpdate(storage) {
@@ -250,33 +306,46 @@ class ProfileStorageSchemaV1 {
       return v;
     }
 
-    switch (v) {
-      case 0:
-        console.log(`Creating storage at version ${this.version}.`);
-        return this.create(storage);
-      default:
-        throw new Error(`Target version ${this.version} lower than DB version ${v}!`);
+    if (v === 0) {
+      console.log(`Creating storage at version ${this.version}.`);
+      return this.create(storage);
     }
+
+    if (v < this.version) {
+      console.log(`Updating storage from ${v} to ${this.version}.`);
+      return this.update(storage, v);
+    }
+
+    throw new Error(`Target version ${this.version} lower than DB version ${v}!`);
+  }
+
+  async update(storage, from) {
+    // Precondition: from < this.version.
+    // Precondition: from > 0 (else we'd call `create`).
+    if (from !== 1) {
+      throw new Error('Can\'t upgrade from anything other than v1.');
+    }
+
+    await storage.db.run(tableTitlesV2);
+    await storage.db.run(tableSessionStartsV2);
+    await storage.db.run(tableSessionEndsV2);
+
+    // Change the schema for visits. Lose existing ones.
+    await storage.db.run('DROP TABLE visitEvents');
+    await storage.db.run(tableVisitsV2);
+
+    await storage.db.run('PRAGMA user_version = 2');
+
+    return storage.userVersion();
   }
 
   async create(storage) {
-    // Associate URLs with persistent IDs.
-    // Note the use of AUTOINCREMENT to ensure that IDs are never reused after deletion.
-    const tablePlaces = `CREATE TABLE placeEvents (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    url TEXT UNIQUE NOT NULL,
-    ts INTEGER NOT NULL
-    )`;
-
-    // Associate visits with places.
-    const tableVisits = `CREATE TABLE visitEvents (
-    place INTEGER NOT NULL REFERENCES placeEvents(id),
-    ts INTEGER NOT NULL
-    )`;
-
-    await storage.db.run(tablePlaces);
-    await storage.db.run(tableVisits);
-    await storage.db.run('PRAGMA user_version = 1');
+    await storage.db.run(tablePlacesV2);
+    await storage.db.run(tableTitlesV2);
+    await storage.db.run(tableVisitsV2);
+    await storage.db.run(tableSessionStartsV2);
+    await storage.db.run(tableSessionEndsV2);
+    await storage.db.run('PRAGMA user_version = 2');
 
     return storage.userVersion();
   }
