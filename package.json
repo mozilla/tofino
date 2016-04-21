@@ -8,7 +8,8 @@
     "start": "node build/main.js --run",
     "dev": "node build/main.js --run-dev",
     "package": "node build/main.js --package",
-    "test": "nyc node build/main.js --test",
+    "test": "nyc -s node build/main.js --test",
+    "report": "nyc report",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "postinstall": "electron-rebuild -f"
   },
