@@ -35,6 +35,11 @@ import * as instrument from '../services/instrument';
 import * as BUILD_CONFIG from '../../build-config';
 import * as profileDiffs from '../shared/profile-diffs';
 import configureStore from './store/store';
+import { ProfileStorage } from '../services/storage';
+import profileCommandReducer from './reducers/profile-command-reducers';
+const profileStoragePromise = ProfileStorage.open(path.join(__dirname, '..', '..'));
+import * as profileActions from './actions/profile-actions';
+import Immutable from 'immutable';
 
 const BrowserWindow = electron.BrowserWindow;  // create native browser window.
 const app = electron.app; // control application life.
@@ -57,25 +62,23 @@ function sendToAllWindows(event, args) {
 const store = configureStore();
 let currentState;
 
-function sendDiffsToWindows(force = false) {
+function sendDiffsToWindows() {
   const previousState = currentState;
   currentState = store.getState();
-  if (force || !previousState || currentState.bookmarks !== previousState.bookmarks) {
-    const bookmarkSet = currentState.bookmarks
-      .valueSeq()
-      .map(bookmark => bookmark.location)
-      .toSet();
-    sendToAllWindows('profile-diff', profileDiffs.bookmarks(bookmarkSet.toJS()));
+  if (!previousState || currentState.bookmarks !== previousState.bookmarks) {
+    sendToAllWindows('profile-diff', profileDiffs.bookmarks(currentState.bookmarks.toJS()));
   }
 
-  if (force || !previousState || currentState.bookmarks !== previousState.bookmarks) {
+  if (!previousState || currentState.bookmarks !== previousState.bookmarks) {
+    // TODO: maintain this list in storage.
     const recentBookmarks = currentState.bookmarks
       .valueSeq()
       .sortBy(bookmark => bookmark.createdAt)
       .take(5);
     BrowserMenu.build({ bookmarks: recentBookmarks });
   }
-  if (force || !previousState || currentState.locations !== previousState.locations) {
+
+  if (!previousState || currentState.locations !== previousState.locations) {
     sendToAllWindows('profile-diff', profileDiffs.completions(currentState.locations.toJS()));
   }
 }
@@ -93,7 +96,10 @@ function fileUrl(str) {
   return encodeURI(`file://${pathName}`);
 }
 
-function createWindow(tabInfo) {
+async function createWindow(tabInfo) {
+  const profileStorage = await profileStoragePromise;
+  const sessionId = await profileStorage.startSession(); // TODO: scope, ancestor.
+
   // Create the browser window.
   const browser = new BrowserWindow({
     center: false,
@@ -104,6 +110,7 @@ function createWindow(tabInfo) {
     frame: false,
     show: false,
   });
+  browser.sessionId = sessionId;
   mainWindows.push(browser);
 
   browser.loadURL(fileUrl(path.join(uiDir, 'browser', 'browser.html')));
@@ -148,11 +155,16 @@ instrument.event('app', 'STARTUP');
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-app.on('ready', () => {
+app.on('ready', async function() {
   const appReadyTime = Date.now();
   instrument.event('app', 'READY', 'ms', appReadyTime - appStartupTime);
 
-  createWindow();
+  // Extract the initial state from the profile storage.
+  const profileStorage = await profileStoragePromise;
+  const starredLocations = await profileStorage.starred();
+  store.dispatch(profileActions.bookmarkSet(new Immutable.Set(starredLocations)));
+
+  await createWindow();
 });
 
 // Unregister all shortcuts.
@@ -170,11 +182,11 @@ app.on('window-all-closed', () => {
   BrowserMenu.default();
 });
 
-app.on('activate', () => {
+app.on('activate', async function() {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindows.length === 0) {
-    createWindow();
+    await createWindow();
   }
 });
 
@@ -183,14 +195,13 @@ ipc.on('instrument-event', (event, args) => {
   instrument.event(args.name, args.method, args.label, args.value);
 });
 
-ipc.on('new-window', () => createWindow());
+ipc.on('new-window', async function() {
+  await createWindow();
+});
 
 ipc.on('window-loaded', (event) => {
   console.log(`windowGuid ${BrowserWindow.fromWebContents(event.sender).id}`);
-  const bookmarkSet = store.getState().bookmarks
-    .valueSeq()
-    .map(bookmark => bookmark.location)
-    .toSet();
+  const bookmarkSet = store.getState().bookmarks;
   event.returnValue = {
     bookmarks: bookmarkSet.toJS(),
   };
@@ -200,8 +211,12 @@ ipc.on('window-ready', event => {
   BrowserWindow.fromWebContents(event.sender).show();
 });
 
-ipc.on('tab-detach', (event, tabInfo) => createWindow(tabInfo));
+ipc.on('tab-detach', async function(event, tabInfo) {
+  await createWindow(tabInfo);
+});
 
-ipc.on('profile-command', (event, args) => {
-  store.dispatch(args);
+ipc.on('profile-command', async function(event, command) {
+  const mainWindow = BrowserWindow.fromWebContents(event.sender);
+  const profileStorage = await profileStoragePromise;
+  await profileCommandReducer(profileStorage, store.dispatch, mainWindow.sessionId, command);
 });

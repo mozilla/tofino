@@ -10,31 +10,15 @@
  specific language governing permissions and limitations under the License.
  */
 
-import * as profileCommandTypes from '../../shared/constants/profile-command-types';
+import * as profileActionTypes from '../constants/profile-action-types';
 
 import Immutable from 'immutable';
 
-import { Bookmark } from '../model';
-
-export default function bookmarksReducer(bookmarks = new Immutable.Map(), command) {
-  const payload = command.payload;
-  const guid = `guid-${Date.now()}`;
-
-  switch (command.type) {
-    case profileCommandTypes.DID_BOOKMARK_LOCATION:
-      if (bookmarks.some((bookmark) => bookmark.location === payload.url)) {
-        return bookmarks;
-      }
-      return bookmarks.set(guid, new Bookmark({
-        guid,
-        title: payload.title,
-        location: payload.url,
-        createdAt: Date.now(),
-        visitedAt: Date.now(), // TODO.
-      }));
-
-    case profileCommandTypes.DID_UNBOOKMARK_LOCATION:
-      return bookmarks.filterNot(bookmark => bookmark.location === payload.url);
+export default function bookmarksReducer(bookmarks = new Immutable.Set(), action) {
+  const payload = action.payload;
+  switch (action.type) {
+    case profileActionTypes.DID_SET_BOOKMARKED_SET:
+      return payload;
 
     default:
       return bookmarks;

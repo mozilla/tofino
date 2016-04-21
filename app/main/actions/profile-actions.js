@@ -10,40 +10,34 @@
  specific language governing permissions and limitations under the License.
  */
 
-import * as profileCommandTypes from './constants/profile-command-types';
+import * as profileActionTypes from './../constants/profile-action-types';
 
 /**
- * The command for the '✫' bookmark button.
+ * The set of bookmarks is different.
  */
-export function bookmark(url, title) {
+export function bookmarkSet(bookmarks) {
   return {
-    type: profileCommandTypes.DID_BOOKMARK_LOCATION,
-    payload: { url, title },
+    type: profileActionTypes.DID_SET_BOOKMARKED_SET,
+    payload: bookmarks,
   };
 }
 
 /**
- * The command for undoing the '✫' bookmark button.
+ * The list of Top Sites is different.
  */
-export function unbookmark(url) {
+export function topSites(topSitesList) {
   return {
-    type: profileCommandTypes.DID_UNBOOKMARK_LOCATION,
-    payload: { url },
+    type: profileActionTypes.DID_SET_TOP_SITES_LIST,
+    payload: topSitesList,
   };
 }
 
-export function visited(url, title = undefined) {
+export function completionsFor(text, completionList) {
   return {
-    type: profileCommandTypes.DID_VISIT_LOCATION,
-    payload: { url, title },
-  };
-}
-
-export function setUserTypedLocation(text) {
-  return {
-    type: profileCommandTypes.DID_SET_USER_TYPED_LOCATION,
+    type: profileActionTypes.DID_SET_COMPLETION_LIST_FOR,
     payload: {
       text,
+      completionList,
     },
   };
 }
