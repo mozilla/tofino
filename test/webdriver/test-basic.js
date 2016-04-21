@@ -13,6 +13,14 @@ import * as WebDriver from 'webdriverio';
 const root = path.join(__dirname, '..', '..');
 const command = BuildUtils.getElectronPath();
 
+
+function getElectronPath1() {
+  const electronPath1 = path.join(__dirname, '..', '..', 'node_modules', '.bin', 'electron');
+  if (process.platform === 'win32') electronPath1 += '.cmd';
+  return electronPath1;
+}
+
+
 describe('application launch', function() {
   if (quickTest) {
     it.skip('all tests');
@@ -23,10 +31,12 @@ describe('application launch', function() {
 
   beforeEach(function(done) {
     try {
+      console.log("foo: " + getElectronPath1());
+      console.log("test" + command);
       /* eslint no-console: 0, prefer-template: 0, arrow-body-style: 0,
       new-cap: 0, lines-around-comment: 0 */
       this.app = new Application({
-        path: command,
+        path: getElectronPath1(),
         args: [root],
         env: process.env,
         cwd: root,
