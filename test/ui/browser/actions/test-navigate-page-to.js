@@ -16,31 +16,23 @@ describe('Action - NAVIGATE_PAGE_TO', () => {
     dispatch(actions.createTab('http://moz1.org'));
     dispatch(actions.createTab('http://moz2.org'));
     dispatch(actions.createTab('http://moz3.org'));
-    dispatch(actions.closeTab(0));
+    dispatch(actions.closeTab(this.getState().pages.get(0).id));
   });
 
   it('Should execute navigate commands in page', function() {
     const { dispatch, getState } = this;
+    const id = getState().pages.get(1).id;
 
-    dispatch(actions.navigatePageTo(1, RUST_URL));
+    dispatch(actions.navigatePageTo(id, RUST_URL));
 
     expect(getState().pages.get(1).commands.size).toEqual(1);
     expect(getState().pages.get(1).commands.get(0).command).toEqual('navigate-to');
     expect(getState().pages.get(1).commands.get(0).location).toEqual(RUST_URL);
 
-    dispatch(actions.navigatePageTo(1, `${RUST_URL}/documentation.html`));
+    dispatch(actions.navigatePageTo(id, `${RUST_URL}/documentation.html`));
     expect(getState().pages.get(1).commands.size).toEqual(2);
     expect(getState().pages.get(1).commands.get(1).command).toEqual('navigate-to');
     expect(getState().pages.get(1).commands.get(1).location).toEqual(
       `${RUST_URL}/documentation.html`);
-  });
-
-  it('Should execute navigate commands in current page if -1 specified', function() {
-    const { dispatch, getState } = this;
-
-    dispatch(actions.navigatePageTo(-1, RUST_URL));
-    expect(getState().currentPageIndex).toEqual(2);
-    expect(getState().pages.get(2).commands.get(0).command).toEqual('navigate-to');
-    expect(getState().pages.get(2).commands.get(0).location).toEqual(RUST_URL);
   });
 });

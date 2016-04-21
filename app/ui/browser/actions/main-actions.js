@@ -26,37 +26,37 @@ export function createTab(location) {
   return { type: types.CREATE_TAB, location, instrument: true };
 }
 
-export function duplicateTab(pageIndex) {
-  return { type: types.DUPLICATE_TAB, pageIndex, instrument: true };
+export function duplicateTab(pageId) {
+  return { type: types.DUPLICATE_TAB, pageId, instrument: true };
 }
 export function attachTab(page) {
   return { type: types.ATTACH_TAB, page, instrument: true };
 }
 
-export function closeTab(pageIndex) {
-  return { type: types.CLOSE_TAB, pageIndex, instrument: true };
+export function closeTab(pageId) {
+  return { type: types.CLOSE_TAB, pageId, instrument: true };
 }
 
-export function setPageDetails(payload) {
-  return { type: types.SET_PAGE_DETAILS, payload, instrument: false };
+export function setPageDetails(pageId, payload) {
+  return { type: types.SET_PAGE_DETAILS, pageId, payload, instrument: false };
 }
 
-export function setCurrentTab(pageIndex) {
-  return { type: types.SET_CURRENT_TAB, pageIndex, instrument: true };
+export function setCurrentTab(pageId) {
+  return { type: types.SET_CURRENT_TAB, pageId, instrument: true };
 }
 
-export function setPageOrder(pageIndex, updatedIndex) {
-  return { type: types.SET_PAGE_ORDER, pageIndex, updatedIndex, instrument: true };
+export function setPageOrder(pageId, updatedIndex) {
+  return { type: types.SET_PAGE_ORDER, pageId, updatedIndex, instrument: true };
 }
 
 export function setPageAreaVisibility(visible) {
   return { type: types.SET_PAGE_AREA_VISIBILITY, visible };
 }
 
-export function setUserTypedLocation(payload) {
+export function setUserTypedLocation(pageId, payload) {
   return dispatch => {
     // Update this window's state before telling the profile service.
-    dispatch({ type: types.SET_USER_TYPED_LOCATION, payload, instrument: false });
+    dispatch({ type: types.SET_USER_TYPED_LOCATION, pageId, payload, instrument: false });
 
     // Only send request to profile service if there's a non-empty input.
     // Empty input could happen if a page finishes loading and the userTyped
@@ -85,18 +85,18 @@ export function unbookmark(url) {
   };
 }
 
-export function navigatePageTo(pageIndex, location) {
-  return { type: types.NAVIGATE_PAGE_TO, pageIndex, location };
+export function navigatePageTo(pageId, location) {
+  return { type: types.NAVIGATE_PAGE_TO, pageId, location };
 }
 
-export function navigatePageBack(pageIndex) {
-  return { type: types.NAVIGATE_PAGE_BACK, pageIndex };
+export function navigatePageBack(pageId) {
+  return { type: types.NAVIGATE_PAGE_BACK, pageId };
 }
 
-export function navigatePageForward(pageIndex) {
-  return { type: types.NAVIGATE_PAGE_FORWARD, pageIndex };
+export function navigatePageForward(pageId) {
+  return { type: types.NAVIGATE_PAGE_FORWARD, pageId };
 }
 
-export function navigatePageRefresh(pageIndex) {
-  return { type: types.NAVIGATE_PAGE_REFRESH, pageIndex };
+export function navigatePageRefresh(pageId) {
+  return { type: types.NAVIGATE_PAGE_REFRESH, pageId };
 }

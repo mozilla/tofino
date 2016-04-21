@@ -30,16 +30,22 @@ describe('Action - SET_PAGE_ORDER', () => {
     dispatch(actions.createTab('http://moz3.org'));
     dispatch(actions.createTab('http://moz4.org'));
     dispatch(actions.createTab('http://moz5.org'));
-    dispatch(actions.closeTab(0));
+
+    const ids = this.ids = getState().pages.reduce((o, p, i) => {
+      o[`moz${i}`] = p.id;
+      return o;
+    }, {});
+
+    dispatch(actions.closeTab(ids.moz0));
     expect(getState().pages.size).toEqual(5);
-    dispatch(actions.setCurrentTab(0));
+    dispatch(actions.setCurrentTab(ids.moz1));
     expect(getState().currentPageIndex).toEqual(0);
   });
 
   it('Should update page order when moving a tab to the left', function() {
-    const { dispatch, getState } = this;
+    const { dispatch, getState, ids } = this;
 
-    dispatch(actions.setPageOrder(4, 2));
+    dispatch(actions.setPageOrder(ids.moz5, 2));
     expect(getState().pages.size).toEqual(5);
     expect(serialize(getState().pages)).toEqual([
       '1', '2', '5', '3', '4',
@@ -49,9 +55,9 @@ describe('Action - SET_PAGE_ORDER', () => {
   });
 
   it('Should update page order when moving a tab to the right', function() {
-    const { dispatch, getState } = this;
+    const { dispatch, getState, ids } = this;
 
-    dispatch(actions.setPageOrder(3, 0));
+    dispatch(actions.setPageOrder(ids.moz4, 0));
     expect(getState().pages.size).toEqual(5);
     expect(serialize(getState().pages)).toEqual([
       '4', '1', '2', '3', '5',
@@ -61,10 +67,10 @@ describe('Action - SET_PAGE_ORDER', () => {
   });
 
   it('Should still reference currently selected page when moving current page', function() {
-    const { dispatch, getState } = this;
+    const { dispatch, getState, ids } = this;
 
-    dispatch(actions.setCurrentTab(2));
-    dispatch(actions.setPageOrder(2, 0));
+    dispatch(actions.setCurrentTab(ids.moz3));
+    dispatch(actions.setPageOrder(ids.moz3, 0));
     expect(serialize(getState().pages)).toEqual([
       '3', '1', '2', '4', '5',
     ].toString());
@@ -73,10 +79,10 @@ describe('Action - SET_PAGE_ORDER', () => {
   });
 
   it('Should still reference currently selected page when moving page after', function() {
-    const { dispatch, getState } = this;
+    const { dispatch, getState, ids } = this;
 
-    dispatch(actions.setCurrentTab(2));
-    dispatch(actions.setPageOrder(0, 4));
+    dispatch(actions.setCurrentTab(ids.moz3));
+    dispatch(actions.setPageOrder(ids.moz1, 4));
     expect(serialize(getState().pages)).toEqual([
       '2', '3', '4', '5', '1',
     ].toString());
@@ -85,10 +91,10 @@ describe('Action - SET_PAGE_ORDER', () => {
   });
 
   it('Should still reference currently selected page when moving page before', function() {
-    const { dispatch, getState } = this;
+    const { dispatch, getState, ids } = this;
 
-    dispatch(actions.setCurrentTab(2));
-    dispatch(actions.setPageOrder(4, 0));
+    dispatch(actions.setCurrentTab(ids.moz3));
+    dispatch(actions.setPageOrder(ids.moz5, 0));
     expect(serialize(getState().pages)).toEqual([
       '5', '1', '2', '3', '4',
     ].toString());
