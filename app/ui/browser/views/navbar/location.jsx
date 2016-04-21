@@ -32,13 +32,21 @@ const LOCATION_BAR_STYLE = Style.registerStyle({
 });
 
 const LOCATION_BAR_EXPANDED_STYLE = Style.registerStyle({
-  margin: '12px 8vw',
+  margin: '12px 4vw',
   borderColor: '#e5e5e5',
+
+  '@media (max-width: 1024px)': {
+    margin: '12px 0',
+  },
 });
 
 const LOCATION_BAR_COLLAPSED_STYLE = Style.registerStyle({
-  margin: '0 8vw',
+  margin: '0 4vw',
   borderColor: 'transparent',
+
+  '@media (max-width: 1024px)': {
+    margin: '12px 0',
+  },
 });
 
 const LOCATION_BAR_BUTTONS_STYLE = Style.registerStyle({
