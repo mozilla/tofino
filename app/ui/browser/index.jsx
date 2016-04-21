@@ -14,15 +14,19 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { ipcRenderer } from 'electron';
+
 import App from './views/app';
 import configureStore from './store/store';
 
 const store = configureStore();
 
-const container = document.getElementById('browser-container');
+const chrome = (
+  <Provider store={store}>
+    <App />
+  </Provider>
+);
 
-const app = React.createElement(App);
-const chrome = React.createElement(Provider, { store }, app);
+const container = document.getElementById('browser-container');
 
 const onRender = () => ipcRenderer.send('window-ready');
 
