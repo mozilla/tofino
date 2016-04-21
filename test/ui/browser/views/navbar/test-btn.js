@@ -11,24 +11,28 @@ describe('Btn', () => {
   it('sets `id` if given', () => {
     const wrapper = shallow(
       <Btn id={'my-btn'}
+        clickHandler={() => {}}
         title={'my title'} />);
     expect(wrapper.prop('id')).toEqual('my-btn');
   });
   it('has `disabled` prop if given', () => {
     const wrapper = shallow(
       <Btn disabled
+        clickHandler={() => {}}
         title={'my title'} />);
     expect(wrapper.prop('disabled')).toEqual(true);
   });
   it('does not have `disabled` if not given', () => {
     const wrapper = shallow(
-      <Btn title={'my title'} />
+      <Btn title={'my title'}
+        clickHandler={() => {}} />
     );
     expect(wrapper.prop('disabled')).toEqual(void 0);
   });
   it('sets `title`', () => {
     const wrapper = shallow(
-      <Btn title={'my title'} />
+      <Btn title={'my title'}
+        clickHandler={() => {}} />
     );
     expect(wrapper.prop('title')).toEqual('my title');
   });
@@ -56,6 +60,7 @@ describe('Btn', () => {
   it('sets `image` if given', () => {
     const wrapper = shallow(
       <Btn image={'some-file.svg'}
+        clickHandler={() => {}}
         title={'my title'} />
     );
     expect(JSON.stringify(wrapper.prop('style'))).toContain('some-file.svg');
