@@ -27,15 +27,6 @@ const TABBAR_STYLE = Style.registerStyle({
   background: '#fff',
   borderBottom: '1px solid #fff',
   opacity: 0.9,
-  WebkitUserSelect: 'none',
-
-  // Makes electron app draggable.
-  WebkitAppRegion: 'drag',
-
-  // Prevent dragging when clicking on children.
-  '*': {
-    WebkitAppRegion: 'no-drag',
-  },
 });
 
 const NEW_TAB_BUTTON_STYLE = Style.registerStyle({

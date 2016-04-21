@@ -27,6 +27,8 @@ const LOCATION_BAR_STYLE = Style.registerStyle({
   border: '1px solid',
   transition: `margin 0.3s ease-in-out,
                border-color 0.3s ease-in-out`,
+
+  WebkitAppRegion: 'no-drag',
 });
 
 const LOCATION_BAR_EXPANDED_STYLE = Style.registerStyle({

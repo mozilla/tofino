@@ -26,13 +26,7 @@ const NAVBAR_STYLE = Style.registerStyle({
   transition: `min-height 0.3s ease-in-out,
                opacity 0.3s ease-in-out`,
 
-  // Makes electron app draggable.
   WebkitAppRegion: 'drag',
-
-  // Prevent dragging when clicking on children.
-  '*': {
-    WebkitAppRegion: 'no-drag',
-  },
 });
 
 const NAVBAR_EXPANDED_STYLE = Style.registerStyle({
