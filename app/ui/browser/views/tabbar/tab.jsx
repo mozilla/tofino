@@ -100,6 +100,8 @@ class Tab extends Component {
   }
 }
 
+Tab.displayName = 'Tab';
+
 Tab.propTypes = {
   page: PropTypes.object.isRequired,
   isActive: PropTypes.bool.isRequired,

@@ -66,6 +66,8 @@ const Btn = (props) => {
   );
 };
 
+Btn.displayName = 'Btn';
+
 Btn.propTypes = {
   title: PropTypes.string.isRequired,
   disabled: PropTypes.bool,

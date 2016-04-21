@@ -166,6 +166,8 @@ const NavBar = (props) => {
   );
 };
 
+NavBar.displayName = 'NavBar';
+
 NavBar.propTypes = {
   page: PropTypes.object,
   pages: PropTypes.object.isRequired,
