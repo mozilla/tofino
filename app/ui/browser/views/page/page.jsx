@@ -174,6 +174,7 @@ function addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer) 
       case 'scroll':
         dispatch(setPageDetails({
           pageIndex,
+          scrollX: e.args[0].x,
           scrollY: e.args[0].y,
         }));
         break;
