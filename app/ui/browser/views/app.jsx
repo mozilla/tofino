@@ -30,6 +30,7 @@ const App = function({ state, dispatch }) {
         profile={state.browserWindow.profile}
         pages={state.browserWindow.pages}
         currentPageIndex={state.browserWindow.currentPageIndex}
+        currentPage={state.browserWindow.pages.get(state.browserWindow.currentPageIndex)}
         pageAreaVisible={state.browserWindow.pageAreaVisible} />
       <Style.Element />
     </div>

@@ -15,41 +15,26 @@ describe('Action - SET_USER_TYPED_LOCATION', () => {
     dispatch(actions.createTab('http://moz1.org'));
     dispatch(actions.createTab('http://moz2.org'));
     dispatch(actions.createTab('http://moz3.org'));
-    dispatch(actions.closeTab(0));
-    dispatch(actions.setPageDetails({
-      pageIndex: 0,
+    dispatch(actions.closeTab(this.getState().pages.get(0).id));
+
+    dispatch(actions.setPageDetails(this.getState().pages.get(0).id, {
       title: 'moz1',
     }));
-    dispatch(actions.setPageDetails({
-      pageIndex: 1,
+    dispatch(actions.setPageDetails(this.getState().pages.get(1).id, {
       title: 'moz2',
     }));
-    dispatch(actions.setPageDetails({
-      pageIndex: 2,
+    dispatch(actions.setPageDetails(this.getState().pages.get(2).id, {
       title: 'moz3',
     }));
-    dispatch(actions.setCurrentTab(0));
+    dispatch(actions.setCurrentTab(this.getState().pages.get(0).id));
   });
 
   it('Should update page values', function() {
     const { dispatch, getState } = this;
 
-    dispatch(actions.setUserTypedLocation({
-      pageIndex: 1,
+    dispatch(actions.setUserTypedLocation(getState().pages.get(1).id, {
       text: 'Foo',
     }));
     expect(getState().pages.get(1).userTyped).toEqual('Foo');
-  });
-
-  it('Should do nothing if page does not exist', function() {
-    const { dispatch, getState } = this;
-
-    dispatch(actions.setUserTypedLocation({
-      pageIndex: 10,
-      title: 'Bar',
-    }));
-    expect(getState().pages.get(0).userTyped).toEqual(null);
-    expect(getState().pages.get(1).userTyped).toEqual(null);
-    expect(getState().pages.get(2).userTyped).toEqual(null);
   });
 });

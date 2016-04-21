@@ -11,6 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import Immutable from 'immutable';
+import uuid from 'uuid';
 
 /**
  * The browser window's view of its profile.
@@ -40,7 +41,8 @@ export const State = Immutable.Record({
 /**
  * The data that we store alongside a single web page
  */
-export const Page = Immutable.Record({
+export class Page extends Immutable.Record({
+  id: null,
   location: undefined,
   title: 'New Tab',
   statusText: false,
@@ -52,4 +54,8 @@ export const Page = Immutable.Record({
   canRefresh: false,
   chromeMode: 'expanded',
   commands: Immutable.List(),
-});
+}) {
+  constructor(data) {
+    super(Object.assign({ id: uuid.v4() }, data));
+  }
+}

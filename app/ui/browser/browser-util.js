@@ -54,6 +54,11 @@ export function getBestDropItem(dataTransfer) {
   return uriitem || textitem;
 }
 
+const UUID_REGEX = /[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}/;
+export function isUUID(uuidString) {
+  return UUID_REGEX.test(uuidString);
+}
+
 /**
  *
  */
@@ -70,14 +75,4 @@ export function getWebView(document, pageIndex) {
     throw new Error(`No webview for pageIndex=${pageIndex}`);
   }
   return element.webview;
-}
-
-/**
- * Takes an object and attaches a unique `id` to it.
- *
- * @TODO Should we start using UUIDs?
- */
-let ATTACH_UNIQUE_ID = 0;
-export function attachUnique(obj) {
-  return Object.assign(obj, { id: ATTACH_UNIQUE_ID++ });
 }

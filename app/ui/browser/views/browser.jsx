@@ -52,22 +52,25 @@ class BrowserWindow extends Component {
   }
 
   handleKeyDown({ metaKey, keyCode }) {
-    const { dispatch, currentPageIndex } = this.props;
+    const { dispatch, currentPage } = this.props;
 
     if (metaKey && keyCode === 70) { // cmd+f
-      dispatch(actions.setPageDetails({ pageIndex: currentPageIndex, isSearching: true }));
+      dispatch(actions.setPageDetails(currentPage.id, { isSearching: true }));
     } else if (keyCode === 27) { // esc
-      dispatch(actions.setPageDetails({ pageIndex: currentPageIndex, isSearching: false }));
+      dispatch(actions.setPageDetails(currentPage.id, { isSearching: false }));
     }
   }
 
   render() {
-    const { ipcRenderer, dispatch, profile, pages, currentPageIndex, pageAreaVisible } = this.props;
-    const currentPage = pages.get(currentPageIndex);
+    const {
+      currentPage, ipcRenderer, dispatch, profile, pages, currentPageIndex, pageAreaVisible,
+    } = this.props;
 
-    const navBack = () => dispatch(actions.navigatePageBack(-1));
-    const navForward = () => dispatch(actions.navigatePageForward(-1));
-    const navRefresh = () => dispatch(actions.navigatePageRefresh(-1));
+    const currentPageId = currentPage.id;
+
+    const navBack = () => dispatch(actions.navigatePageBack(currentPageId));
+    const navForward = () => dispatch(actions.navigatePageForward(currentPageId));
+    const navRefresh = () => dispatch(actions.navigatePageRefresh(currentPageId));
     const openMenu = () => menuBrowser(dispatch);
     const isBookmarked = (url) => profile.bookmarks.has(url);
     const bookmark = (title, url) => {
@@ -78,21 +81,16 @@ class BrowserWindow extends Component {
     };
     const onLocationChange = e => {
       const text = e.target.value;
-      dispatch(actions.setUserTypedLocation({
-        pageIndex: -1,
+      dispatch(actions.setUserTypedLocation(currentPageId, {
         text,
       }));
     };
     const onLocationContextMenu = e => menuLocationContext(e.target, dispatch);
     const onLocationReset = () => {
-      const text = void 0;
-      dispatch(actions.setUserTypedLocation({
-        pageIndex: -1,
-        text,
-      }));
+      dispatch(actions.setUserTypedLocation(currentPageId, { text: void 0 }));
     };
     const setPageAreaVisibility = visible => dispatch(actions.setPageAreaVisibility(visible));
-    const navigateTo = loc => dispatch(actions.navigatePageTo(-1, loc));
+    const navigateTo = loc => dispatch(actions.navigatePageTo(currentPageId, loc));
 
     return (
       <div className={BROWSER_WINDOW_STYLE}>
@@ -126,7 +124,6 @@ class BrowserWindow extends Component {
             <Page key={`page-${pageIndex}`}
               isActive={pageIndex === currentPageIndex}
               page={page}
-              pageIndex={pageIndex}
               {...this.props} />
           ))}
         </div>
@@ -137,6 +134,7 @@ class BrowserWindow extends Component {
 
 BrowserWindow.propTypes = {
   pages: PropTypes.object.isRequired,
+  currentPage: PropTypes.object.isRequired,
   currentPageIndex: PropTypes.number.isRequired,
   dispatch: PropTypes.func.isRequired,
   ipcRenderer: PropTypes.object.isRequired,
@@ -146,7 +144,7 @@ BrowserWindow.propTypes = {
 
 export default BrowserWindow;
 
-function attachIPCRendererListeners({ dispatch, currentPageIndex, ipcRenderer }) {
+function attachIPCRendererListeners({ dispatch, currentPage, ipcRenderer }) {
   ipcRenderer.on('profile-diff', (event, args) => {
     dispatch(args);
   });
@@ -172,11 +170,15 @@ function attachIPCRendererListeners({ dispatch, currentPageIndex, ipcRenderer })
     dispatch(actions.attachTab(page));
   });
 
+  // @TODO main process should be sending an id to close a tab
+  // most likely, not just whatever tab is currently open
   ipcRenderer.on('close-tab', () => {
-    dispatch(actions.closeTab(currentPageIndex));
+    dispatch(actions.closeTab(currentPage.id));
   });
 
+  // @TODO main process should be sending an id to refresh a tab
+  // most likely, not just whatever tab is currently open
   ipcRenderer.on('page-reload', () => {
-    dispatch(actions.navigatePageRefresh(-1));
+    dispatch(actions.navigatePageRefresh(currentPage.id));
   });
 }

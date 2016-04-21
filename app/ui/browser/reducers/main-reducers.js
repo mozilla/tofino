@@ -17,7 +17,7 @@ import Immutable from 'immutable';
 import * as types from '../constants/action-types';
 import { State, Page } from '../model';
 import * as profileDiffTypes from '../../../shared/constants/profile-diff-types';
-import { attachUnique } from '../browser-util';
+import { isUUID } from '../browser-util';
 
 /**
  * Fairly sure we should hard code this
@@ -30,46 +30,50 @@ const initialState = new State({
   pageAreaVisible: false,
 });
 
+function getPageIndexById(state, id) {
+  return state.pages.findIndex(page => page.id === id);
+}
+
 export default function basic(state = initialState, action) {
   switch (action.type) {
     case types.CREATE_TAB:
       return createTab(state, action.location);
 
     case types.DUPLICATE_TAB:
-      return duplicateTab(state, action.pageIndex);
+      return duplicateTab(state, action.pageId);
 
     case types.ATTACH_TAB:
       return attachTab(state, action.page);
 
     case types.CLOSE_TAB:
-      return closeTab(state, action.pageIndex);
+      return closeTab(state, action.pageId);
 
     case types.NAVIGATE_PAGE_BACK:
-      return navigatePageBack(state, action.pageIndex);
+      return navigatePageBack(state, action.pageId);
 
     case types.NAVIGATE_PAGE_FORWARD:
-      return navigatePageForward(state, action.pageIndex);
+      return navigatePageForward(state, action.pageId);
 
     case types.NAVIGATE_PAGE_REFRESH:
-      return navigatePageRefresh(state, action.pageIndex);
+      return navigatePageRefresh(state, action.pageId);
 
     case types.NAVIGATE_PAGE_TO:
-      return navigatePageTo(state, action.pageIndex, action.location);
+      return navigatePageTo(state, action.pageId, action.location);
 
     case types.SET_PAGE_DETAILS:
-      return setPageDetails(state, action);
+      return setPageDetails(state, action.pageId, action.payload);
 
     case types.SET_CURRENT_TAB:
-      return setCurrentTab(state, action.pageIndex);
+      return setCurrentTab(state, action.pageId);
 
     case types.SET_PAGE_ORDER:
-      return setPageOrder(state, action.pageIndex, action.updatedIndex);
+      return setPageOrder(state, action.pageId, action.updatedIndex);
 
     case types.SET_PAGE_AREA_VISIBILITY:
       return setPageAreaVisibility(state, action.visible);
 
     case types.SET_USER_TYPED_LOCATION:
-      return setUserTypedLocation(state, action);
+      return setUserTypedLocation(state, action.pageId, action.payload);
 
     case types.SET_BOOKMARK_STATE:
       return setBookmarkState(state, action.url, action.isBookmarked);
@@ -95,12 +99,16 @@ function createTab(state, location = HOME_PAGE) {
   });
 }
 
-function duplicateTab(state, pageIndex) {
-  const location = state.pages.get(pageIndex).location;
+function duplicateTab(state, pageId) {
+  assert(isUUID(pageId), 'DUPLICATE_TAB requires a page id.');
+
+  const location = state.pages.get(getPageIndexById(state, pageId)).location;
   return createTab(state, location);
 }
 
 function attachTab(state, page) {
+  assert(isUUID(page.id), 'ATTACH_TAB requires a page with valid id.');
+
   return state.withMutations(mut => {
     const newPage = new Page(page);
     mut.set('pages', Immutable.List.of(newPage));
@@ -108,7 +116,11 @@ function attachTab(state, page) {
   });
 }
 
-function closeTab(state, pageIndex) {
+function closeTab(state, pageId) {
+  assert(isUUID(pageId), 'CLOSE_TAB requires a page id.');
+  const pageIndex = getPageIndexById(state, pageId);
+  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
+
   const pageCount = state.pages.size;
 
   // If this is the last tab, do a full reset.
@@ -131,74 +143,63 @@ function closeTab(state, pageIndex) {
   });
 }
 
-function navigatePageBack(state, pageIndex) {
-  assert(typeof pageIndex === 'number', '`pageIndex` must be a number.');
-
-  if (pageIndex === -1) {
-    pageIndex = state.currentPageIndex;
-  }
+function navigatePageBack(state, pageId) {
+  assert(isUUID(pageId), 'NAVIGATE_PAGE_BACK requires a page id.');
+  const pageIndex = getPageIndexById(state, pageId);
+  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
 
   assert(state.pages.get(pageIndex).canGoBack, 'Page cannot go back.');
 
-  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push(attachUnique({
+  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push({
     command: 'back',
-  })));
+  }));
 }
 
-function navigatePageForward(state, pageIndex) {
-  assert(typeof pageIndex === 'number', '`pageIndex` must be a number.');
-
-  if (pageIndex === -1) {
-    pageIndex = state.currentPageIndex;
-  }
+function navigatePageForward(state, pageId) {
+  assert(isUUID(pageId), 'NAVIGATE_PAGE_FORWARD requires a page id.');
+  const pageIndex = getPageIndexById(state, pageId);
+  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
 
   assert(state.pages.get(pageIndex).canGoForward, 'Page cannot go forward.');
 
-  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push(attachUnique({
+  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push({
     command: 'forward',
-  })));
+  }));
 }
 
-function navigatePageRefresh(state, pageIndex) {
-  assert(typeof pageIndex === 'number', '`pageIndex` must be a number.');
-
-  if (pageIndex === -1) {
-    pageIndex = state.currentPageIndex;
-  }
+function navigatePageRefresh(state, pageId) {
+  assert(isUUID(pageId), 'NAVIGATE_PAGE_REFRESH requires a page id.');
+  const pageIndex = getPageIndexById(state, pageId);
+  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
 
   assert(state.pages.get(pageIndex).canRefresh, 'Page cannot refresh.');
 
-  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push(attachUnique({
+  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push({
     command: 'refresh',
-  })));
+  }));
 }
 
-function navigatePageTo(state, pageIndex, location) {
-  assert(typeof pageIndex === 'number', '`pageIndex` must be a number.');
+function navigatePageTo(state, pageId, location) {
   assert(typeof location === 'string', '`location` must be a string.');
+  assert(isUUID(pageId), 'NAVIGATE_PAGE_TO requires a page id.');
+  const pageIndex = getPageIndexById(state, pageId);
+  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
 
-  if (pageIndex === -1) {
-    pageIndex = state.currentPageIndex;
-  }
-
-  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push(attachUnique({
+  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push({
     location,
     command: 'navigate-to',
-  })));
+  }));
 }
 
-function setPageDetails(state, { payload }) {
-  let pageIndex = payload.pageIndex;
-
-  assert(typeof pageIndex === 'number', '`pageIndex` must be a number.');
-
-  if (pageIndex === -1) {
-    pageIndex = state.currentPageIndex;
-  }
+function setPageDetails(state, pageId, payload) {
+  assert(isUUID(pageId), 'SET_PAGE_DETAILS requires a page id.');
+  const pageIndex = getPageIndexById(state, pageId);
+  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
 
   return state.withMutations(mut => {
     for (const [key, value] of Object.entries(payload)) {
-      if (key === 'pageIndex') {
+      if (key === 'id') {
+        console.warn('Skipping setting of `id` on page.');
         continue;
       }
       assert(key !== 'userTyped', '`userTyped` must be set in setUserTypedLocation.');
@@ -207,21 +208,25 @@ function setPageDetails(state, { payload }) {
   });
 }
 
-function setUserTypedLocation(state, { payload: { pageIndex, text } }) {
-  assert(typeof pageIndex === 'number', '`pageIndex` must be a number.');
-
-  if (pageIndex === -1) {
-    pageIndex = state.currentPageIndex;
-  }
+function setUserTypedLocation(state, pageId, { text }) {
+  assert(isUUID(pageId), 'SET_USER_TYPED_LOCATION requires a page id.');
+  const pageIndex = getPageIndexById(state, pageId);
+  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
 
   return state.setIn(['pages', pageIndex, 'userTyped'], text);
 }
 
-function setCurrentTab(state, pageIndex) {
+function setCurrentTab(state, pageId) {
+  assert(isUUID(pageId), 'SET_CURRENT_TAB requires a page id.');
+  const pageIndex = getPageIndexById(state, pageId);
+  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
   return state.set('currentPageIndex', pageIndex);
 }
 
-function setPageOrder(state, pageIndex, updatedIndex) {
+function setPageOrder(state, pageId, updatedIndex) {
+  assert(isUUID(pageId), 'SET_PAGE_ORDER requires a page id.');
+  const pageIndex = getPageIndexById(state, pageId);
+  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
   let currentPageIndex = state.currentPageIndex;
 
   // If we're moving our current page, or moving a page 'over'

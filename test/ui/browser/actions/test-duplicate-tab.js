@@ -20,7 +20,7 @@ describe('Action - DUPLICATE_TAB', () => {
     dispatch(actions.createTab('https://moz.org/2'));
     dispatch(actions.createTab('https://moz.org/3'));
 
-    dispatch(actions.duplicateTab(1));
+    dispatch(actions.duplicateTab(getState().pages.get(1).id));
     expect(getState().pages.size).toEqual(5);
     expect(getState().pages.get(4).location).toEqual('https://moz.org/1',
       'DUPLICATE_TAB creates an appends a new tab with source\'s location');

@@ -17,11 +17,12 @@ describe('Action - SET_CURRENT_TAB', () => {
 
     dispatch(actions.createTab('http://moz.com'));
     expect(getState().pages.size).toEqual(2);
+    const ids = getState().pages.map(p => p.id);
 
     expect(getState().currentPageIndex).toEqual(1);
-    dispatch(actions.setCurrentTab(0));
+    dispatch(actions.setCurrentTab(ids.get(0)));
     expect(getState().currentPageIndex).toEqual(0);
-    dispatch(actions.setCurrentTab(1));
+    dispatch(actions.setCurrentTab(ids.get(1)));
     expect(getState().currentPageIndex).toEqual(1);
   });
 });

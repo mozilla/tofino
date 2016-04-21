@@ -54,10 +54,10 @@ const WEB_VIEW_INNER_STYLE = {
 
 class Page extends Component {
   componentDidMount() {
-    const { page, pageIndex, dispatch, ipcRenderer } = this.props;
+    const { page, dispatch, ipcRenderer } = this.props;
     const { webview } = this.refs.webviewWrapper;
 
-    addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer);
+    addListenersToWebView(webview, page, dispatch, ipcRenderer);
 
     if (!page.guestInstanceId && page.location) {
       webview.setAttribute('src', fixURL(page.location));
@@ -112,7 +112,7 @@ class Page extends Component {
            * which doesn't have access to <style> sheets in this document. */ }
         <webview-wrapper ref="webviewWrapper"
           preload={'../../content/preload/content.js'}
-          class={`webview-${this.props.pageIndex}`}
+          class={`webview-${this.props.page.id}`}
           webviewinnerstyle={JSON.stringify(WEB_VIEW_INNER_STYLE)}
           webviewwrapperstyle={JSON.stringify(Object.assign({}, WEB_VIEW_WRAPPER_STYLE,
             this.props.page.chromeMode === 'expanded'
@@ -128,7 +128,6 @@ class Page extends Component {
 
 Page.propTypes = {
   page: PropTypes.object.isRequired,
-  pageIndex: PropTypes.number.isRequired,
   isActive: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
   ipcRenderer: PropTypes.object.isRequired,
@@ -136,18 +135,16 @@ Page.propTypes = {
 
 export default Page;
 
-function addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer) {
+function addListenersToWebView(webview, page, dispatch, ipcRenderer) {
   webview.addEventListener('did-start-loading', () => {
-    dispatch(setPageDetails({
-      pageIndex,
+    dispatch(setPageDetails(page.id, {
       isLoading: true,
       title: false,
     }));
   });
 
   webview.addEventListener('dom-ready', () => {
-    dispatch(setPageDetails({
-      pageIndex,
+    dispatch(setPageDetails(page.id, {
       canGoBack: webview.canGoBack(),
       canGoForward: webview.canGoForward(),
       canRefresh: true,
@@ -155,8 +152,7 @@ function addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer) 
   });
 
   webview.addEventListener('page-title-set', e => {
-    dispatch(setPageDetails({
-      pageIndex,
+    dispatch(setPageDetails(page.id, {
       title: e.title,
       location: webview.getURL(),
     }));
@@ -164,16 +160,14 @@ function addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer) 
 
   webview.addEventListener('did-stop-loading', () => {
     const url = webview.getURL();
-    dispatch(setPageDetails({
-      pageIndex,
+    dispatch(setPageDetails(page.id, {
       statusText: false,
       location: url,
       canGoBack: webview.canGoBack(),
       canGoForward: webview.canGoForward(),
       isLoading: false,
     }));
-    dispatch(setUserTypedLocation({
-      pageIndex,
+    dispatch(setUserTypedLocation(page.id, {
       text: null,
     }));
 
@@ -183,8 +177,7 @@ function addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer) 
   webview.addEventListener('ipc-message', e => {
     switch (e.channel) {
       case 'status':
-        dispatch(setPageDetails({
-          pageIndex,
+        dispatch(setPageDetails(page.id, {
           statusText: e.args[0],
         }));
         break;
@@ -197,7 +190,7 @@ function addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer) 
       case 'scroll': {
         const { y: scrollY } = e.args[0];
         const chromeMode = scrollY ? 'collapsed' : 'expanded';
-        dispatch(setPageDetails({ pageIndex, chromeMode }));
+        dispatch(setPageDetails(page.id, { chromeMode }));
         break;
       }
       default:
@@ -207,6 +200,6 @@ function addListenersToWebView(webview, page, pageIndex, dispatch, ipcRenderer) 
   });
 
   webview.addEventListener('destroyed', () => {
-    dispatch(closeTab(pageIndex));
+    dispatch(closeTab(page.id));
   });
 }
