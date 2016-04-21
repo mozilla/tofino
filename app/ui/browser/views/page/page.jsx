@@ -27,7 +27,12 @@ const PAGE_STYLE = Style.registerStyle({
   flex: 1,
 });
 
-const WEB_VIEW_INLINE_STYLE = {
+const WEB_VIEW_WRAPPER_STYLE = {
+  display: 'flex',
+  flex: 1,
+};
+
+const WEB_VIEW_INNER_STYLE = {
   display: 'flex',
   flex: 1,
 };
@@ -94,7 +99,8 @@ class Page extends Component {
         <webview-wrapper ref="webviewWrapper"
           preload={'../../content/preload/content.js'}
           class={`webview-${this.props.pageIndex}`}
-          style={WEB_VIEW_INLINE_STYLE}
+          webviewwrapperstyle={JSON.stringify(WEB_VIEW_WRAPPER_STYLE)}
+          webviewinnerstyle={JSON.stringify(WEB_VIEW_INNER_STYLE)}
           guestInstanceId={this.props.page.guestInstanceId}
           onContextMenu={() => this.props.dispatch(contextMenu())} />
         <Status page={this.props.page} />
