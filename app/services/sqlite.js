@@ -16,10 +16,13 @@
  * @module SQLite
  */
 
+/* eslint no-console: 0 */
+
 import sqlite3 from 'sqlite3';
 import thenifyAll from 'thenify-all';
 
 const Promise = global.Promise;
+const debug = true;
 
 export function verbose() {
   sqlite3.verbose();
@@ -43,7 +46,37 @@ function thenifyMethods(source, dest, methods) {
 export class DB {
   constructor(db) {
     this.db = db;
-    thenifyMethods(db, this, ['close', 'run', 'get', 'all', 'each', 'exec', 'prepare']);
+    thenifyMethods(db, this, ['close', 'get', 'all', 'each', 'exec']);
+  }
+
+  prepare(sql, params) {
+    return new Promise((resolve, reject) => {
+      let statement;
+      statement = this.db.prepare(sql, params, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(statement);
+        }
+      });
+    });
+  }
+
+  run(sql, params) {
+    return new Promise((resolve, reject) => {
+      this.db.run(sql, params, function(err) {
+        if (debug) {
+          console.log(`Running: ${sql}, ${JSON.stringify(params)}`);
+        }
+
+        if (err) {
+          console.log(`SQL error: ${err} in ${sql}.`);
+          reject(err);
+        } else {
+          resolve({ lastID: this.lastID, changes: this.changes });
+        }
+      });
+    });
   }
 
   /**
