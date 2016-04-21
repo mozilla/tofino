@@ -24,4 +24,6 @@ const VERTICAL_SEPARATOR_STYLE = Style.registerStyle({
 const VerticalSeparator = () =>
   <div className={VERTICAL_SEPARATOR_STYLE} />;
 
+VerticalSeparator.displayName = 'VerticalSeparator';
+
 export default VerticalSeparator;

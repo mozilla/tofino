@@ -47,6 +47,8 @@ const Status = ({ page }) => {
   );
 };
 
+Status.displayName = 'Status';
+
 Status.propTypes = {
   page: PropTypes.object.isRequired,
 };

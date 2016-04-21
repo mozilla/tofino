@@ -36,6 +36,8 @@ const App = function({ state, dispatch }) {
   );
 };
 
+App.displayName = 'App';
+
 App.propTypes = {
   state: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,

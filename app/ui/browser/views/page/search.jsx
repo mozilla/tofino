@@ -42,6 +42,8 @@ const Search = ({ hidden }) => (
   </div>
 );
 
+Search.displayName = 'Search';
+
 Search.propTypes = {
   hidden: PropTypes.bool.isRequired,
 };

@@ -85,6 +85,8 @@ const TabBar = ({ pages, currentPageIndex, dispatch, pageAreaVisible }) => {
   );
 };
 
+TabBar.displayName = 'TabBar';
+
 TabBar.propTypes = {
   pages: PropTypes.object.isRequired,
   currentPageIndex: PropTypes.number.isRequired,
