@@ -18,14 +18,7 @@ specific language governing permissions and limitations under the License.
  * @module instrument
  */
 
-// Stub out ipcRenderer when electron cannot be found (unit tests)
-const ipcRenderer = (function() {
-  try {
-    return require('electron').ipcRenderer;
-  } catch (e) {
-    return { send() {} };
-  }
-}());
+import { ipcRenderer } from '../../shared/electron';
 
 /**
  * Send an instrumentation event to Google Analytics.

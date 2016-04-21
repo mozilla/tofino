@@ -4,6 +4,8 @@
 import expect from 'expect';
 import configureStore from '../../../../app/ui/browser/store/store';
 import * as actions from '../../../../app/ui/browser/actions/main-actions';
+import * as profileConstants from '../../../../app/shared/constants/profile-command-types';
+import { ipcMain as ipcMainMock } from '../../../../app/shared/electron';
 
 describe('Action - SET_USER_TYPED_LOCATION', () => {
   beforeEach(function() {
@@ -36,5 +38,28 @@ describe('Action - SET_USER_TYPED_LOCATION', () => {
       text: 'Foo',
     }));
     expect(getState().pages.get(1).userTyped).toEqual('Foo');
+  });
+
+  it('Should send a message to the main process', function(done) {
+    const { dispatch, getState } = this;
+
+    ipcMainMock.on('profile-command', handleIpc);
+
+    dispatch(actions.setUserTypedLocation(getState().pages.get(1).id, {
+      text: 'Bar',
+    }));
+
+    function handleIpc(e, ...args) {
+      // Filter out any mock ipc calls that are not yet guaranteed to have
+      // completed
+      if (args[0].type !== profileConstants.SET_USER_TYPED_LOCATION ||
+          args[0].payload.text !== 'Bar') {
+        return;
+      }
+      expect(args[0].type).toEqual(profileConstants.SET_USER_TYPED_LOCATION);
+      expect(args[0].payload.text).toEqual('Bar');
+      ipcMainMock.removeListener('profile-command', handleIpc);
+      done();
+    }
   });
 });
