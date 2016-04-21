@@ -230,9 +230,13 @@ NavBar.propTypes = {
   navigateTo: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => ({
-  // @TODO get this from the restructured reducer
-  numPages: state.browserWindow.pages.size,
-});
+const mapStateToProps = (state) => {
+  const browserWindow = state.browserWindow;
+  return {
+    // @TODO get this from the restructured reducer
+    numPages: browserWindow.pages.size,
+    page: browserWindow.pages.get(browserWindow.currentPageIndex),
+  };
+};
 
 export default connect(mapStateToProps)(NavBar);

@@ -54,21 +54,19 @@ class BrowserWindow extends Component {
   }
 
   handleKeyDown({ metaKey, keyCode }) {
-    const { dispatch, currentPage } = this.props;
+    const { dispatch, currentPageId } = this.props;
 
     if (metaKey && keyCode === 70) { // cmd+f
-      dispatch(actions.setPageDetails(currentPage.id, { isSearching: true }));
+      dispatch(actions.setPageDetails(currentPageId, { isSearching: true }));
     } else if (keyCode === 27) { // esc
-      dispatch(actions.setPageDetails(currentPage.id, { isSearching: false }));
+      dispatch(actions.setPageDetails(currentPageId, { isSearching: false }));
     }
   }
 
   render() {
     const {
-      currentPage, ipcRenderer, dispatch, profile, currentPageIndex, pageAreaVisible, pageIds,
+      currentPageId, ipcRenderer, dispatch, profile, currentPageIndex, pageAreaVisible, pageIds,
     } = this.props;
-
-    const currentPageId = currentPage.id;
 
     const navBack = () => dispatch(actions.navigatePageBack(currentPageId));
     const navForward = () => dispatch(actions.navigatePageForward(currentPageId));
@@ -111,7 +109,7 @@ class BrowserWindow extends Component {
     return (
       <div className={BROWSER_WINDOW_STYLE}>
         <div className={CHROME_AREA_STYLE}>
-          <NavBar page={currentPage}
+          <NavBar
             {...{
               navBack,
               navForward,
@@ -154,7 +152,7 @@ class BrowserWindow extends Component {
 
 BrowserWindow.propTypes = {
   pageIds: PropTypes.arrayOf(PropTypes.string).isRequired,
-  currentPage: PropTypes.object.isRequired,
+  currentPageId: PropTypes.number.isRequired,
   currentPageIndex: PropTypes.number.isRequired,
   dispatch: PropTypes.func.isRequired,
   ipcRenderer: PropTypes.object.isRequired,
@@ -162,9 +160,14 @@ BrowserWindow.propTypes = {
   pageAreaVisible: PropTypes.bool.isRequired,
 };
 
-const mapStateToProps = (state) => ({
-  pageIds: state.browserWindow.pageIds,
-});
+const mapStateToProps = (state) => {
+  const browserWindow = state.browserWindow;
+  const currentPage = browserWindow.pages.get(browserWindow.currentPageIndex);
+  return {
+    pageIds: browserWindow.pageIds,
+    currentPageId: currentPage.id,
+  };
+};
 
 export default connect(mapStateToProps)(BrowserWindow);
 

@@ -22,14 +22,13 @@ const APP_STYLE = Style.registerStyle({
   height: '100%',
 });
 
-const App = function({ profile, currentPageIndex, currentPage, pageAreaVisible, dispatch }) {
+const App = function({ profile, currentPageIndex, pageAreaVisible, dispatch }) {
   return (
     <div className={APP_STYLE}>
       <BrowserWindow ipcRenderer={ipcRenderer}
         dispatch={dispatch}
         profile={profile}
         currentPageIndex={currentPageIndex}
-        currentPage={currentPage}
         pageAreaVisible={pageAreaVisible} />
       <Style.Element />
     </div>
@@ -51,7 +50,6 @@ function mapStateToProps(state) {
   return {
     profile: browserWindow.profile,
     currentPageIndex: browserWindow.currentPageIndex,
-    currentPage: browserWindow.pages.get(browserWindow.currentPageIndex),
     pageAreaVisible: browserWindow.pageAreaVisible,
   };
 }
