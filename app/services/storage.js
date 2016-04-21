@@ -169,9 +169,10 @@ export class ProfileStorage {
   }
 
   async startSession(scope, ancestor, now = microtime.now()) {
-    const result = await this.db
-                             .run('INSERT INTO sessionStarts (scope, ancestor, ts) VALUES (?, ?, ?)',
-                                  [scope, ancestor, now]);
+    const result =
+      await this.db
+                .run('INSERT INTO sessionStarts (scope, ancestor, ts) VALUES (?, ?, ?)',
+                     [scope, ancestor, now]);
     return result.lastID;
   }
 

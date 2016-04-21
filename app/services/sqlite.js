@@ -22,7 +22,7 @@ import sqlite3 from 'sqlite3';
 import thenifyAll from 'thenify-all';
 
 const Promise = global.Promise;
-const debug = true;
+const debug = false;
 
 export function verbose() {
   sqlite3.verbose();
