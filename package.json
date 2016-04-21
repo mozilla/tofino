@@ -39,6 +39,7 @@
     "babel-preset-react": "6.5.0",
     "babel-preset-stage-2": "6.5.0",
     "babel-register": "6.7.2",
+    "check-dependencies": "0.12.0",
     "chokidar": "1.4.3",
     "coveralls": "2.11.9",
     "electron-ipc-mock": "0.0.1",

@@ -8,30 +8,38 @@
  */
 /* eslint-disable strict */
 /* eslint-disable import/no-commonjs */
+/* eslint-disable no-console */
 
 'use strict';
 
 require('babel-polyfill');
 require('babel-register')();
 
-const handleTaskFailed = e => {
-  /* eslint no-console: 0 */
-  console.error('Build failed.');
-  console.error(e);
-  process.exit(1);
-};
+require('check-dependencies')((result) => {
+  if (!result.depsWereOk) {
+    console.error('Dependency checks failed.');
+    result.error.forEach(err => console.error(err));
+    process.exit(1);
+  }
 
-const Tasks = require('./tasks').default;
+  const handleTaskFailed = e => {
+    console.error('Build failed.');
+    console.error(e);
+    process.exit(1);
+  };
 
-if (~process.argv.indexOf('--run')) {
-  const taskArgs = process.argv.slice(1 + process.argv.indexOf('--run'));
-  Tasks.run(taskArgs).then(null, handleTaskFailed);
-} else if (~process.argv.indexOf('--run-dev')) {
-  const taskArgs = process.argv.slice(1 + process.argv.indexOf('--run-dev'));
-  Tasks.runDev(taskArgs).then(null, handleTaskFailed);
-} else if (~process.argv.indexOf('--package')) {
-  Tasks.package().then(null, handleTaskFailed);
-} else if (~process.argv.indexOf('--test')) {
-  const taskArgs = process.argv.slice(1 + process.argv.indexOf('--test'));
-  Tasks.test(taskArgs).then(null, handleTaskFailed);
-}
+  const Tasks = require('./tasks').default;
+
+  if (~process.argv.indexOf('--run')) {
+    const taskArgs = process.argv.slice(1 + process.argv.indexOf('--run'));
+    Tasks.run(taskArgs).then(null, handleTaskFailed);
+  } else if (~process.argv.indexOf('--run-dev')) {
+    const taskArgs = process.argv.slice(1 + process.argv.indexOf('--run-dev'));
+    Tasks.runDev(taskArgs).then(null, handleTaskFailed);
+  } else if (~process.argv.indexOf('--package')) {
+    Tasks.package().then(null, handleTaskFailed);
+  } else if (~process.argv.indexOf('--test')) {
+    const taskArgs = process.argv.slice(1 + process.argv.indexOf('--test'));
+    Tasks.test(taskArgs).then(null, handleTaskFailed);
+  }
+});
