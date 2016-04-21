@@ -10,19 +10,16 @@
  specific language governing permissions and limitations under the License.
  */
 
-import * as profileCommandTypes from '../../shared/constants/profile-command-types';
-
 import Immutable from 'immutable';
 
-export default function visitsReducer(state, command) {
-  if (typeof state === 'undefined') {
-    return Immutable.List();
-  }
+import * as profileActionTypes from '../constants/profile-action-types';
 
-  const payload = command.payload;
-  switch (command.type) {
-    case profileCommandTypes.DID_VISIT_LOCATION:
-      return state.push(payload.url);
+export default function visitsReducer(state = new Immutable.List(), action) {
+  const payload = action.payload;
+  switch (action.type) {
+    case profileActionTypes.DID_SET_TOP_SITES_LIST:
+      return payload;
+
     default:
       return state;
   }

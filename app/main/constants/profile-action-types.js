@@ -10,17 +10,6 @@
  specific language governing permissions and limitations under the License.
  */
 
-import * as profileActionTypes from '../constants/profile-action-types';
-
-import Immutable from 'immutable';
-
-export default function locationReducer(state = new Immutable.Map(), action) {
-  const payload = action.payload;
-  switch (action.type) {
-    case profileActionTypes.DID_SET_COMPLETION_LIST_FOR:
-      return state.set(payload.text, payload.completionList);
-
-    default:
-      return state;
-  }
-}
+export const DID_SET_BOOKMARKED_SET = 'PROFILE_ACTION_DID_SET_BOOKMARKED_SET';
+export const DID_SET_TOP_SITES_LIST = 'PROFILE_ACTION_DID_SET_TOP_SITES_LIST';
+export const DID_SET_COMPLETION_LIST_FOR = 'PROFILE_ACTION_DID_SET_COMPLETION_LIST_FOR';

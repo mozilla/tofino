@@ -17,8 +17,15 @@ import { ipcRenderer } from '../../shared/electron';
 
 import App from './views/app';
 import configureStore from './store/store';
+import rootReducer from './reducers';
+import Immutable from 'immutable';
 
-const store = configureStore();
+const initialProfileState = ipcRenderer.sendSync('window-loaded');
+
+const initialState = rootReducer(undefined, { type: null });
+initialState.browserWindow = initialState.browserWindow
+  .setIn(['profile', 'bookmarks'], new Immutable.Set(initialProfileState.bookmarks));
+const store = configureStore(initialState);
 
 const chrome = (
   <Provider store={store}>
