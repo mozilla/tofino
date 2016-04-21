@@ -213,7 +213,7 @@ class Location extends Component {
           <input id="urlbar-input"
             className={INPUT_BAR_STYLE}
             hidden={!this.state.showURLBar}
-            type="text"
+            type="url"
             ref="input"
             defaultValue={this.props.page.userTyped !== null
               ? this.props.page.userTyped
