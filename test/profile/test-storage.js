@@ -191,12 +191,44 @@ describe('ProfileStorage data access', () => {
         const storage = await ProfileStorage.open(tempDir);
 
         const session = await storage.startSession(null, null);
-        const idFoo = await storage.visit('http://example.com/foo', session);
-        const idBar = await storage.visit('http://example.com/bar', session);
+        const idFoo = await storage.visit('http://example.com/foo', session, undefined);
+        const idBar = await storage.visit('http://example.com/bar', session, 'Some title');
         const again = await storage.visit('http://example.com/foo', session);
 
         expect(idFoo === again);
         expect((idBar - idFoo) === 1);
+
+        // We only record non-undefined titles.
+        expect((await storage.db
+                             .all('SELECT title FROM titleEvents'))
+          .map((row) => row.title))
+          .toEqual(['Some title']);
+
+        await storage.close();
+
+        done();
+      } catch (e) {
+        done(e);
+      }
+    }());
+  });
+
+  it('Stars pages.', (done) => {
+    (async function () {
+      try {
+        const storage = await ProfileStorage.open(tempDir);
+
+        const session = await storage.startSession(null, null);
+        const place = await storage.starPage('http://example.com/foo/noo', session, 1);
+        const again = await storage.starPage('http://example.com/foo/noo', session, -1);
+        const yet = await storage.starPage('http://example.com/foo/noo', session, 1);
+
+        expect(place === again);
+        expect(place === yet);
+
+        const visited = await storage.visit('http://example.com/foo/noo', session);
+
+        expect(place === visited);
 
         await storage.close();
 
@@ -261,6 +293,35 @@ describe('Schema upgrades', () => {
       }
     }());
   });
+
+  it('Can upgrade from v2 to v3.', (done) => {
+    (async function () {
+      try {
+        const tempPath = tmp.tmpNameSync();
+        const db = await DB.open(tempPath);
+
+        expect(db instanceof DB);
+        expect((await db.get('PRAGMA user_version')).user_version === 0);
+
+        // Make a v2 DB.
+        const storage = new ProfileStorage(db);
+        await new ProfileStorageSchemaV2().createOrUpdate(storage);
+        expect((await db.get('PRAGMA user_version')).user_version === 2);
+
+        // Upgrade it.
+        await storage.init();
+        expect((await db.get('PRAGMA user_version')).user_version === 3);
+
+        await storage.close();
+        console.log('Cleaning up.');
+        fs.unlinkSync(tempPath);   // Clean up.
+
+        done();
+      } catch (e) {
+        done(e);
+      }
+    }());
+  });
 });
 
 
@@ -310,6 +371,108 @@ class ProfileStorageSchemaV1 {
     await storage.db.run(tablePlaces);
     await storage.db.run(tableVisits);
     await storage.db.run('PRAGMA user_version = 1');
+
+    return storage.userVersion();
+  }
+}
+
+
+// Associate URLs with persistent IDs.
+// Note the use of AUTOINCREMENT to ensure that IDs are never reused after deletion.
+const tablePlacesV2 = `CREATE TABLE placeEvents (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  url TEXT UNIQUE NOT NULL,
+  ts INTEGER NOT NULL
+)`;
+
+// Associate titles with places.
+const tableTitlesV2 = `CREATE TABLE titleEvents (
+  place INTEGER NOT NULL REFERENCES placeEvents(id),
+  ts INTEGER NOT NULL,
+  title TEXT NOT NULL
+)`;
+
+// Associate visits with places.
+const tableVisitsV2 = `CREATE TABLE visitEvents (
+  place INTEGER NOT NULL REFERENCES placeEvents(id),
+  ts INTEGER NOT NULL,
+  session INTEGER NOT NULL REFERENCES sessionStarts(id),
+  type INTEGER NOT NULL
+)`;
+
+// Track the start of a session. Note that each session has a unique identifier, can
+// be born of another (the ancestor), and can be within a scope (e.g., a window ID).
+const tableSessionStartsV2 = `CREATE TABLE sessionStarts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  scope INTEGER,
+  ancestor INTEGER REFERENCES sessionStarts(id),
+  ts INTEGER NOT NULL
+)`;
+
+// Track the end of a session. Note that sessions must be started before they are
+// ended.
+const tableSessionEndsV2 = `CREATE TABLE sessionEnds (
+  id INTEGER PRIMARY KEY REFERENCES sessionStarts(id),
+  ts INTEGER NOT NULL
+)`;
+
+class ProfileStorageSchemaV2 {
+  constructor() {
+    this.version = 2;
+  }
+
+  /**
+   * Take a newly opened ProfileStorage and make sure it reaches v2.
+   * @param storage an open storage instance.
+   */
+  async createOrUpdate(storage) {
+    const v = await storage.userVersion();
+
+    if (v === this.version) {
+      console.log(`Storage already at version ${v}.`);
+      return v;
+    }
+
+    if (v === 0) {
+      console.log(`Creating storage at version ${this.version}.`);
+      return this.create(storage);
+    }
+
+    if (v < this.version) {
+      console.log(`Updating storage from ${v} to ${this.version}.`);
+      return this.update(storage, v);
+    }
+
+    throw new Error(`Target version ${this.version} lower than DB version ${v}!`);
+  }
+
+  async update(storage, from) {
+    // Precondition: from < this.version.
+    // Precondition: from > 0 (else we'd call `create`).
+    if (from !== 1) {
+      throw new Error('Can\'t upgrade from anything other than v1.');
+    }
+
+    await storage.db.run(tableTitlesV2);
+    await storage.db.run(tableSessionStartsV2);
+    await storage.db.run(tableSessionEndsV2);
+
+    // Change the schema for visits. Lose existing ones.
+    await storage.db.run('DROP TABLE visitEvents');
+    await storage.db.run(tableVisitsV2);
+
+    await storage.db.run('PRAGMA user_version = 2');
+
+    return storage.userVersion();
+  }
+
+  async create(storage) {
+    await storage.db.run(tablePlacesV2);
+    await storage.db.run(tableTitlesV2);
+    await storage.db.run(tableVisitsV2);
+    await storage.db.run(tableSessionStartsV2);
+    await storage.db.run(tableSessionEndsV2);
+    await storage.db.run('PRAGMA user_version = 2');
 
     return storage.userVersion();
   }
