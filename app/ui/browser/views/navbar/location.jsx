@@ -17,6 +17,15 @@ import Btn from './btn';
 
 import { fixURL, getCurrentWebView } from '../../browser-util';
 
+// Pref off completions for now since the view doesn't do anything besides
+// show them.
+const SHOW_COMPLETIONS = false;
+
+const LOCATION_BAR_CONTAINER_STYLE = Style.registerStyle({
+  flex: 1,
+  position: 'relative',
+});
+
 const LOCATION_BAR_STYLE = Style.registerStyle({
   flex: 1,
   alignItems: 'center',
@@ -26,6 +35,18 @@ const LOCATION_BAR_STYLE = Style.registerStyle({
   backgroundColor: '#fff',
   border: '1px solid #e5e5e5',
   borderRadius: '2px',
+});
+
+const LOCATION_BAR_AUTOCOMPLETE_STYLE = Style.registerStyle({
+  position: 'absolute',
+  background: 'rgba(255, 255, 255, .8)',
+  margin: '0 8vw',
+  marginTop: -12,
+  padding: 10,
+  left: 0,
+  right: 0,
+  top: '100%',
+  zIndex: 2,
 });
 
 const LOCATION_BAR_BUTTONS_STYLE = Style.registerStyle({
@@ -118,10 +139,12 @@ class Location extends Component {
 
   handleURLBarFocus() {
     this.refs.input.select();
+    this.setState({ focusedURLBar: true });
   }
 
   handleURLBarBlur() {
     this.setState({ showURLBar: false });
+    this.setState({ focusedURLBar: false });
   }
 
   handleURLBarKeyDown(ev) {
@@ -134,43 +157,54 @@ class Location extends Component {
   }
 
   render() {
-    const { page } = this.props;
+    const { page, profile } = this.props;
     const urlValue = page.userTyped !== null ? page.userTyped : page.location;
-    const { showURLBar } = this.state;
+    const { showURLBar, focusedURLBar } = this.state;
+
+    let completions = null;
+    if (SHOW_COMPLETIONS && profile.completions.get(urlValue) && focusedURLBar) {
+      const results = profile.completions.get(urlValue).map((completion) =>
+        <div>{completion}</div>
+      );
+      completions = <div className={LOCATION_BAR_AUTOCOMPLETE_STYLE}>{results}</div>;
+    }
 
     return (
-      <div id="browser-location-bar"
-        className={LOCATION_BAR_STYLE}>
-        <Btn title="Info"
-          className={LOCATION_BAR_BUTTONS_STYLE}
-          image=""
-          clickHandler={() => {}} />
-        <div id="browser-location-title-bar"
-          className={TITLE_BAR_STYLE}
-          hidden={showURLBar}
-          tabIndex={0}
-          onClick={this.handleTitleClick}
-          onFocus={this.handleTitleFocus}>
-          <span>
-            {page.title}
-          </span>
+      <div className={LOCATION_BAR_CONTAINER_STYLE}>
+        <div id="browser-location-bar"
+          className={LOCATION_BAR_STYLE}>
+          <Btn title="Info"
+            className={LOCATION_BAR_BUTTONS_STYLE}
+            image=""
+            clickHandler={() => {}} />
+          <div id="browser-location-title-bar"
+            className={TITLE_BAR_STYLE}
+            hidden={showURLBar}
+            tabIndex={0}
+            onClick={this.handleTitleClick}
+            onFocus={this.handleTitleFocus}>
+            <span>
+              {page.title}
+            </span>
+          </div>
+          <input id="urlbar-input"
+            className={INPUT_BAR_STYLE}
+            hidden={!showURLBar}
+            type="text"
+            ref="input"
+            defaultValue={urlValue}
+            onFocus={this.handleURLBarFocus}
+            onBlur={this.handleURLBarBlur}
+            onChange={this.props.onLocationChange}
+            onKeyDown={this.handleURLBarKeyDown}
+            onContextMenu={this.props.onLocationContextMenu} />
+          <Btn title="Bookmark"
+            className={LOCATION_BAR_BUTTONS_STYLE}
+            image={this.getBookmarkIcon()}
+            disabled={page.isLoading}
+            clickHandler={this.toggleBookmark} />
         </div>
-        <input id="urlbar-input"
-          className={INPUT_BAR_STYLE}
-          hidden={!showURLBar}
-          type="text"
-          ref="input"
-          defaultValue={urlValue}
-          onFocus={this.handleURLBarFocus}
-          onBlur={this.handleURLBarBlur}
-          onChange={this.props.onLocationChange}
-          onKeyDown={this.handleURLBarKeyDown}
-          onContextMenu={this.props.onLocationContextMenu} />
-        <Btn title="Bookmark"
-          className={LOCATION_BAR_BUTTONS_STYLE}
-          image={this.getBookmarkIcon()}
-          disabled={page.isLoading}
-          clickHandler={this.toggleBookmark} />
+        {completions}
       </div>
     );
   }
@@ -178,6 +212,7 @@ class Location extends Component {
 
 Location.propTypes = {
   page: PropTypes.object.isRequired,
+  profile: PropTypes.object.isRequired,
   onLocationChange: PropTypes.func.isRequired,
   onLocationContextMenu: PropTypes.func.isRequired,
   onLocationReset: PropTypes.func.isRequired,

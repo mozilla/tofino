@@ -17,6 +17,7 @@ import Immutable from 'immutable';
  */
 export const Profile = Immutable.Record({
   bookmarks: Immutable.Set(),
+  completions: Immutable.Map(),
 });
 
 /**

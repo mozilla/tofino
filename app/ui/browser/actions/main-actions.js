@@ -58,7 +58,12 @@ export function setUserTypedLocation(payload) {
     // Update this window's state before telling the profile service.
     dispatch({ type: types.SET_USER_TYPED_LOCATION, payload, instrument: false });
 
-    ipcRenderer.send('profile-command', profileCommands.setUserTypedLocation(payload.text));
+    // Only send request to profile service if there's a non-empty input.
+    // Empty input could happen if a page finishes loading and the userTyped
+    // state is going to be reset.
+    if (payload.text) {
+      ipcRenderer.send('profile-command', profileCommands.setUserTypedLocation(payload.text));
+    }
   };
 }
 

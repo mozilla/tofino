@@ -78,6 +78,10 @@ export default function basic(state = initialState, action) {
       return setBookmarks(state, Immutable.Set(action.payload));
     }
 
+    case profileDiffTypes.COMPLETIONS: {
+      return state.setIn(['profile', 'completions'], Immutable.Map(action.payload));
+    }
+
     default:
       return state;
   }
