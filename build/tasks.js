@@ -17,8 +17,8 @@ export default {
     await require('./task-build-deps').default();
   },
 
-  async build() {
-    await this.config({ development: false });
+  async build(config = {}) {
+    await this.config(config);
     await require('./task-build').default();
   },
 
@@ -50,13 +50,12 @@ export default {
   },
 
   async test(args = []) {
-    await this.config({ development: false, test: true });
+    await this.build({ development: false, test: true });
     await require('./task-test').default(args);
   },
 
   async quickTest(args = []) {
-    await this.build();
-    await this.config({ development: false, test: true, quickTest: true });
+    await this.build({ development: false, test: true, quickTest: true });
     await require('./task-test').default(args);
   },
 

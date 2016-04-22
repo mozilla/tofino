@@ -3,7 +3,7 @@
 import expect from 'expect';
 import { Application } from 'spectron';
 import { quickTest } from '../../build-config';
-import { getBuiltExecutable } from '../../build/utils';
+import { getRoot, getElectronPath } from '../../build/utils';
 
 describe('application launch', function() {
   if (quickTest) {
@@ -12,12 +12,12 @@ describe('application launch', function() {
   }
 
   this.timeout(30000);
-  const executable = getBuiltExecutable();
+  const executable = getElectronPath();
 
   beforeEach(function() {
     this.app = new Application({
-      path: executable.fullPath,
-      cwd: executable.cwd,
+      path: executable,
+      args: [getRoot()],
       env: process.env,
     });
     return this.app.start();

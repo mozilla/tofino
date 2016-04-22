@@ -30,7 +30,9 @@ require('check-dependencies')((result) => {
 
   const Tasks = require('./tasks').default;
 
-  if (~process.argv.indexOf('--run')) {
+  if (~process.argv.indexOf('--build')) {
+    Tasks.build().then(null, handleTaskFailed);
+  } else if (~process.argv.indexOf('--run')) {
     const taskArgs = process.argv.slice(1 + process.argv.indexOf('--run'));
     Tasks.run(taskArgs).then(null, handleTaskFailed);
   } else if (~process.argv.indexOf('--run-dev')) {

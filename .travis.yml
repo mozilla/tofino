@@ -23,10 +23,10 @@ install:
   - npm install --progress false --depth 0
 
 script:
-  - npm run package
   - npm test
 
 after_success:
+  - npm run package
   - npm run coverage
 
 branches:
