@@ -12,7 +12,7 @@
     "quicktest": "nyc node build/main.js --quicktest",
     "report": "nyc report",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "postinstall": "electron-rebuild -f"
+    "postinstall": "node build/main.js --build-deps"
   },
   "license": "Apache-2.0",
   "dependencies": {

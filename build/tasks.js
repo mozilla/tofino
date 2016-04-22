@@ -13,6 +13,10 @@ export default {
     await require('./task-config-builder').default(options);
   },
 
+  async buildDeps() {
+    await require('./task-build-deps').default();
+  },
+
   async build() {
     await this.config({ development: false });
     await require('./task-build').default();

@@ -12,6 +12,8 @@ import fs from 'fs-promise';
 
 import * as BuildUtils from './utils';
 
+export const BUILD_CONFIG_JSON = path.join(__dirname, '..', 'build-config.json');
+
 const BASE_CONFIG = {
   // System information
   platform: os.platform(),
@@ -49,8 +51,9 @@ const BASE_CONFIG = {
 };
 
 export default async function(config) {
-  const configToWrite = Object.assign({}, BASE_CONFIG, config);
+  const currentConfig = await fs.readJson(BUILD_CONFIG_JSON);
 
-  await fs.writeFile(path.join(__dirname, '..', 'build-config.json'),
-                     JSON.stringify(configToWrite));
+  const configToWrite = Object.assign({}, currentConfig, BASE_CONFIG, config);
+
+  await fs.writeJson(BUILD_CONFIG_JSON, configToWrite, { spaces: 2 });
 }

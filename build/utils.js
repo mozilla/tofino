@@ -11,6 +11,8 @@ import os from 'os';
 import path from 'path';
 import manifest from '../package.json';
 import electronPath from 'electron-prebuilt';
+import fs from 'fs-promise';
+import mz from 'mz';
 
 export const IS_TRAVIS = process.env.TRAVIS === 'true';
 export const IS_APPVEYOR = process.env.APPVETOR === 'True';
@@ -42,3 +44,31 @@ export const getBuiltExecutable = () => {
   const fullPath = path.join(cwd, ...platformPath[os.platform()]);
   return { cwd, fullPath };
 };
+
+export async function spawn(command, args, options = {}) {
+  if (os.type() === 'Windows_NT') {
+    try {
+      // Prefer a cmd version if available
+      const testCommand = `${command}.cmd`;
+      const stats = await fs.stat(testCommand);
+      if (stats.isFile()) {
+        command = testCommand;
+      }
+    } catch (e) {
+      // Ignore missing files.
+    }
+  }
+
+  return new Promise((resolve, reject) => {
+    const child = mz.child_process.spawn(command, args, options);
+
+    child.on('error', reject);
+    child.on('exit', (code) => {
+      if (code !== 0) {
+        reject(new Error(`Exited with exit code ${code}`));
+      } else {
+        resolve();
+      }
+    });
+  });
+}
