@@ -325,6 +325,8 @@ export class Location extends Component {
   }
 }
 
+Location.displayName = 'Location';
+
 Location.propTypes = {
   page: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired,
