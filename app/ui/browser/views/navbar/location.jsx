@@ -19,7 +19,7 @@ import { fixURL, getCurrentWebView } from '../../browser-util';
 
 // Pref off completions for now since the view doesn't do anything besides
 // show them.
-const SHOW_COMPLETIONS = false;
+const SHOW_COMPLETIONS = true;
 
 const LOCATION_BAR_CONTAINER_STYLE = Style.registerStyle({
   flex: 1,
