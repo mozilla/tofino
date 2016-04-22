@@ -199,10 +199,15 @@ class Location extends Component {
     if (SHOW_COMPLETIONS && completionsForURL && this.state.focusedURLBar) {
       const results = completionsForURL.map((completion, i) => {
         if (this.state.focusedResultIndex === i) {
-          return <div style={{ background: 'red' }}>{completion}</div>;
+          return (
+            <div style={{ background: 'red' }}
+              key={completion}>
+              {completion}
+            </div>
+          );
         }
 
-        return <div>{completion}</div>;
+        return <div key={completion}>{completion}</div>;
       });
       completions = <div className={LOCATION_BAR_AUTOCOMPLETE_STYLE}>{results}</div>;
     }
