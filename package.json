@@ -8,8 +8,9 @@
     "start": "node build/main.js --run",
     "dev": "node build/main.js --run-dev",
     "package": "node build/main.js --package",
-    "test": "nyc -s node build/main.js --test",
     "report": "nyc report",
+    "test": "nyc -s node build/main.js --test test/webdriver",
+    "quicktest": "nyc node build/main.js --quicktest",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "postinstall": "electron-rebuild -f"
   },
@@ -62,12 +63,14 @@
     "react-addons-test-utils": "0.14.7",
     "redux-devtools": "3.1.1",
     "rimraf": "2.5.2",
+    "spectron": "1.37.0",
     "through2": "2.0.1",
     "tmp": "0.0.28",
     "uuid": "2.0.2",
     "vinyl-file": "2.0.0",
     "vinyl-fs": "2.4.2",
-    "vinyl-named": "1.1.0"
+    "vinyl-named": "1.1.0",
+    "webdriverio": "^4.0.4"
   },
   "engines": {
     "node": ">=5.8.0"
