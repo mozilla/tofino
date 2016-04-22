@@ -51,8 +51,8 @@ export default {
   },
 
   async quickTest(args = []) {
-    await this.config({ development: false, test: true, quickTest: true });
     await this.build();
+    await this.config({ development: false, test: true, quickTest: true });
     await require('./task-test').default(args);
   },
 
