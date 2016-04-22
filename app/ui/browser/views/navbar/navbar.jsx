@@ -23,18 +23,23 @@ const NAVBAR_STYLE = Style.registerStyle({
   background: '#fcfcfc',
   padding: '0 10px',
   fontSize: '80%',
-  transition: `min-height 0.3s ease-in-out,
-               opacity 0.3s ease-in-out`,
 
   WebkitAppRegion: 'drag',
 });
 
 const NAVBAR_EXPANDED_STYLE = Style.registerStyle({
+  // Need to apply custom transition rules for the expanded vs. collapsed modes. We'll have to
+  // transition the opacity quicker when switching into expanded mode, to avoid noticing content
+  // translating back into position from behind the navbar.
+  transition: `min-height 0.3s ease-in-out,
+               opacity 0.1s ease-in-out`,
   minHeight: `${UIConstants.NAVBAR_EXPANDED_HEIGHT}px`,
   opacity: 1,
 });
 
 const NAVBAR_COLLAPSED_STYLE = Style.registerStyle({
+  transition: `min-height 0.3s ease-in-out,
+               opacity 0.3s ease-in-out`,
   minHeight: `${UIConstants.NAVBAR_COLLAPSED_HEIGHT}px`,
   opacity: '0.9',
 });
