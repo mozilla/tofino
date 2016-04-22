@@ -14,6 +14,7 @@ import React, { PropTypes, Component } from 'react';
 
 import Style from '../browser-style';
 import TabBar from './tabbar/tabbar';
+import DeveloperBar from './developerbar';
 import NavBar from './navbar/navbar';
 import Page from './page/page';
 
@@ -145,6 +146,7 @@ class BrowserWindow extends Component {
               {...this.props} />
           ))}
         </div>
+        <DeveloperBar />
       </div>
     );
   }
