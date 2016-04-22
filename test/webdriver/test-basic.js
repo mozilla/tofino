@@ -11,7 +11,7 @@ describe('application launch', function() {
     return;
   }
 
-  this.timeout(10000);
+  this.timeout(20000);
   const executable = getBuiltExecutable();
 
   beforeEach(function() {
