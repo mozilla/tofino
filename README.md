@@ -8,22 +8,22 @@
 Project Tofino is a browser interaction experiment.
 
 The kinds of things we use browsers for on PCs and mobile devices are
-different than they were when the current “tabs across the top” browsers were
+different than they were when the current "tabs across the top" browsers were
 designed.  We believe we can do a lot better by focusing on the tasks and
 activities users engage browsers for. Project Tofino is one of our
 explorations.
 
 This project is extremely immature.  It's currently at the "OK, lets throw
 some stuff together to see what happens" stage. Please adjust your
-expectations accordingly.  The tools we’re using are not a statement on
-the set of technologies we’ll use to build a final product if these ideas
-pan out.  We’re looking for the quickest way to build the experiments we
+expectations accordingly.  The tools we're using are not a statement on
+the set of technologies we'll use to build a final product if these ideas
+pan out.  We're looking for the quickest way to build the experiments we
 want, not a long-term technical strategy.
 
 If you like a wild ride and you've got another browser for real work, we'd
 love to have your comments on what works and what doesn't.  But right now
-the “what works” list is a lot shorter than the “what doesn’t” list, so maybe
-check back in a few weeks when there’s more to look at.
+the "what works" list is a lot shorter than the "what doesn't" list, so maybe
+check back in a few weeks when there's more to look at.
 
 We blog here: https://medium.com/project-tofino
 
