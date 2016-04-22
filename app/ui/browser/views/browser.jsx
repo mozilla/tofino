@@ -52,12 +52,12 @@ class BrowserWindow extends Component {
     attachIPCRendererListeners(this);
   }
 
-  handleKeyDown({ metaKey, keyCode }) {
+  handleKeyDown(ev) {
     const { dispatch, currentPage } = this.props;
 
-    if (metaKey && keyCode === 70) { // cmd+f
+    if (ev.metaKey && ev.key === 'KeyF') { // cmd+f
       dispatch(actions.setPageDetails(currentPage.id, { isSearching: true }));
-    } else if (keyCode === 27) { // esc
+    } else if (ev.key === 'Escape') { // esc
       dispatch(actions.setPageDetails(currentPage.id, { isSearching: false }));
     }
   }

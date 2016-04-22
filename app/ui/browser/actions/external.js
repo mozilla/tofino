@@ -227,7 +227,7 @@ export function close() {
  * Perform the search if the user just pressed return
  */
 export function inPageSearch(ev) {
-  if (ev.keyCode === 13) {
+  if (ev.key === 'Enter') {
     ev.preventDefault();
     const webview = getCurrentWebView(ev.target.ownerDocument);
     const script = `window.find('${ev.target.value}', 0, 0, 1)`;
