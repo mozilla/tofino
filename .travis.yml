@@ -24,6 +24,7 @@ install:
 
 script:
   - npm run package
+  - npm run typecheck
   - npm test
 
 after_success:
