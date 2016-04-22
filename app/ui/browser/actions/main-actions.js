@@ -64,7 +64,7 @@ export function bookmark(url, title) {
     // Update this window's state before telling the profile service.
     dispatch({ type: types.SET_BOOKMARK_STATE, url, isBookmarked: true, title });
 
-    ipcRenderer.send('profile-command', profileCommands.bookmark(url));
+    ipcRenderer.send('profile-command', profileCommands.bookmark(url, title));
   };
 }
 
