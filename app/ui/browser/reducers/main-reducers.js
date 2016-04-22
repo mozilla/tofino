@@ -96,6 +96,7 @@ function createTab(state, location = HOME_PAGE) {
     const page = new Page({ location });
     mut.update('pages', pages => pages.push(page));
     mut.set('currentPageIndex', state.pages.size);
+    mut.set('pageAreaVisible', true);
   });
 }
 
