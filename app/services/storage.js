@@ -97,7 +97,7 @@ export class ProfileStorage {
   async init() {
     await this.db.exec('PRAGMA foreign_keys = ON');
 
-    const schema = new ProfileStorageSchemaV3();
+    const schema = new ProfileStorageSchemaV4();
     const v = await schema.createOrUpdate(this);
 
     if (v !== schema.version) {
@@ -136,11 +136,17 @@ export class ProfileStorage {
    * Does not update `this.places`! Callers should do that once the entire
    * transaction completes.
    *
+   * If the URL is already known, returns the place ID immediately.
+   *
    * @param url the URL to store.
    * @param now the current timestamp.
    * @returns {*} the place ID.
    */
   async savePlaceWithoutEstablishingTransaction(url, now) {
+    if (this.places.has(url)) {
+      return this.places.get(url);
+    }
+
     // We don't use INSERT OR IGNORE -- we want to fail if our write-through cache breaks.
     // We also aggressively increment, so any race here is less likely to cause problems.
     const id = this.nextPlace++;
@@ -196,6 +202,46 @@ export class ProfileStorage {
     return result.lastID;
   }
 
+  async materializeStars() {
+    await this.db.run('DELETE FROM mStarred');
+    await this.db.run('INSERT INTO mStarred SELECT place, ts, url FROM vStarred');
+  }
+
+  async materializeHistory() {
+    await this.db.run('DELETE FROM mHistory');
+    await this.db.run(`INSERT INTO mHistory
+      SELECT place, url, lastTitle, lastVisited, visitCount
+      FROM vHistory
+    `);
+  }
+
+  async rematerialize() {
+    await this.materializeHistory();
+    await this.materializeStars();
+  }
+
+  /**
+   * Update the contents of the `mStarred` materialized view in response to a starring change.
+   * This implementation depends on the ordering of star/unstar events being strictly:
+   *
+   *   1, -1, 1, -1, 1, -1, …
+   *
+   * Any other order will result in inconsistency. An alternative implementation is to do a partial
+   * rebuild -- exactly the normal materialization query, but with a `WHERE place = ?` clause added.
+   */
+  updateMaterializedStars(url, place, session, action, now = microtime.now()) {
+    switch (action) {
+      case StarOp.star:
+        return this.db.run('INSERT OR REPLACE INTO mStarred (place, ts, url) VALUES (?, ?, ?)',
+                           [place, now, url]);
+      case StarOp.unstar:
+        return this.db.run('DELETE FROM mStarred WHERE place = ?', [place]);
+
+      default:
+        return Promise.reject(new Error(`Unknown action ${action}.`));
+    }
+  }
+
   // Chains through place ID.
   starPage(url, session, action, now = microtime.now()) {
     if (action !== StarOp.star && action !== StarOp.unstar) {
@@ -206,6 +252,9 @@ export class ProfileStorage {
       this.db
           .run('INSERT INTO starEvents (place, session, action, ts) VALUES (?, ?, ?, ?)',
                [place, session, action, now])
+
+          // Update materialized views.
+          .then(() => this.updateMaterializedStars(url, place, session, action, now))
           .then(() => Promise.resolve(place));
 
     if (this.places.has(url)) {
@@ -220,6 +269,32 @@ export class ProfileStorage {
                .then((id) => this.savePlaceIDMapping(url, id));
   }
 
+  async recordVisitWithoutEstablishingTransaction(url, session, title, now = microtime.now()) {
+    const place = await this.savePlaceWithoutEstablishingTransaction(url, now);
+    await this.saveVisitForPlaceWithoutEstablishingTransaction(place, session, now);
+    await this.saveTitleForPlaceWithoutEstablishingTransaction(place, title, now);
+
+    // Update the materialized view.
+    // This assumes uniqueness of events, which is true so long as we're conflating these
+    // API calls and the generation of events themselves.
+    // We can't just use UPDATE here because we can't trust that `this.places` implies
+    // presence in `mHistory` -- we also use it for bookmarks -- so UPDATE OR INSERT.
+    const result = await this.db.run(`
+      UPDATE mHistory
+      SET lastVisited = ?, visitCount = visitCount + 1, lastTitle = ?
+      WHERE place = ?`,
+      [now, title, place]);
+
+    if (result.changes === 0) {
+      await this.db.run(`INSERT INTO mHistory
+        (place, lastTitle, url, lastVisited, visitCount)
+        VALUES (?, ?, ?, ?, ?)`,
+        [place, title, url, now, 1]);
+    }
+
+    return place;
+  }
+
   /**
    * Record a visit to a URL.
    * @param url the visited URL.
@@ -228,28 +303,11 @@ export class ProfileStorage {
    * @returns {Promise} a promise that resolves to the place ID.
    */
   visit(url, session, title, now = microtime.now()) {
-    if (this.places.has(url)) {
-      const place = this.places.get(url);
-
-      if (title === undefined) {
-        // Don't bother establishing a transaction if we're not going to write a title.
-        return this.saveVisitForPlaceWithoutEstablishingTransaction(place, session, now);
-      }
-
-      return this.inTransaction(() =>
-        this.saveVisitForPlaceWithoutEstablishingTransaction(place, session, now)
-            .then(() => this.saveTitleForPlaceWithoutEstablishingTransaction(place, title, now)));
-    }
-
     return this.inTransaction(() =>
-                 this.savePlaceWithoutEstablishingTransaction(url, now)
-                     .then((id) =>
-                       this.saveVisitForPlaceWithoutEstablishingTransaction(id, session, now))
-                     .then((id) =>
-                       this.saveTitleForPlaceWithoutEstablishingTransaction(id, title, now)))
+      this.recordVisitWithoutEstablishingTransaction(url, session, title, now)
 
-               // If the transaction committed, keep the URL -> ID mapping in memory.
-               .then((id) => this.savePlaceIDMapping(url, id));
+          // If the transaction committed, keep the URL -> ID mapping in memory.
+          .then((place) => this.savePlaceIDMapping(url, place)));
   }
 
   collectURLs(rows) {
@@ -260,61 +318,38 @@ export class ProfileStorage {
     return out;
   }
 
-  // TODO: check titles, too.
-  // TODO: include titles.
   async visitedMatches(substring, since = 0, limit = 10) {
-    // Fetch all places visited, with the latest timestamp for each.
-    // We can't limit here, because we don't know matching URLs.
-    // TODO: inverting this query might work better if `since` is long ago.
-    const sub = `SELECT place, MAX(ts) AS latest
-    FROM visitEvents WHERE ts >= ?
-    GROUP BY place`;
-
     const like = `%${substring}%`;
 
-    // Grab URLs, too.
-    const withURLs = `SELECT p.url AS url, v.latest AS latest
-    FROM placeEvents AS p JOIN (${sub}) AS v
-    ON p.id = v.place
-    WHERE url LIKE ?
-    ORDER BY latest DESC
-    LIMIT ?`;
+    // Fetch all places visited, with the latest timestamp for each.
+    // TODO: search historical titles?
+    const query = `SELECT * FROM mHistory
+      WHERE lastVisited > ? AND (
+        lastTitle LIKE ? OR url LIKE ?
+      )
+      ORDER BY lastVisited DESC
+      LIMIT ?
+    `;
 
-    return this.collectURLs(await this.db.all(withURLs, [since, like, limit]));
+    return this.collectURLs(await this.db.all(query, [since, like, like, limit]));
   }
 
-  // TODO: include titles.
   // Ordered by last visit, descending.
   async visited(since = 0, limit = 10) {
     // Fetch all places visited, with the latest timestamp for each.
-    const sub = `SELECT place, MAX(ts) AS latest
-    FROM visitEvents WHERE ts >= ?
-    GROUP BY place ORDER BY latest DESC
-    LIMIT ?`;
+    const query = `SELECT * FROM mHistory
+      WHERE lastVisited > ?
+      ORDER BY lastVisited DESC
+      LIMIT ?
+    `;
 
-    // Grab URLs, too.
-    const withURLs = `SELECT p.url AS url, v.latest AS latest
-    FROM placeEvents AS p JOIN (${sub}) AS v
-    ON p.id = v.place
-    ORDER BY latest DESC`;
-
-    return this.collectURLs(await this.db.all(withURLs, [since, limit]));
+    return this.collectURLs(await this.db.all(query, [since, limit]));
   }
 
   async starred() {
     // Fetch all places visited, with the latest timestamp for each.
-    const sub = `SELECT place FROM (
-      SELECT place, SUM(action) AS stars
-      FROM starEvents
-      GROUP BY place)
-    WHERE stars > 0`;
-
-    // Grab URLs, too.
-    const withURLs = `SELECT p.url AS url
-    FROM placeEvents AS p JOIN (${sub}) AS v
-    ON p.id = v.place`;
-
-    return this.collectURLs(await this.db.all(withURLs));
+    const fromMaterialized = 'SELECT place, ts, url FROM mStarred';
+    return this.collectURLs(await this.db.all(fromMaterialized));
   }
 
   userVersion() {
@@ -327,14 +362,14 @@ export class ProfileStorage {
 
 // Associate URLs with persistent IDs.
 // Note the use of AUTOINCREMENT to ensure that IDs are never reused after deletion.
-const tablePlacesV3 = `CREATE TABLE placeEvents (
+const tablePlacesV4 = `CREATE TABLE placeEvents (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   url TEXT UNIQUE NOT NULL,
   ts INTEGER NOT NULL
 )`;
 
 // Associate titles with places.
-const tableTitlesV3 = `CREATE TABLE titleEvents (
+const tableTitlesV4 = `CREATE TABLE titleEvents (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   place INTEGER NOT NULL REFERENCES placeEvents(id),
   ts INTEGER NOT NULL,
@@ -342,7 +377,7 @@ const tableTitlesV3 = `CREATE TABLE titleEvents (
 )`;
 
 // Associate visits with places.
-const tableVisitsV3 = `CREATE TABLE visitEvents (
+const tableVisitsV4 = `CREATE TABLE visitEvents (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   place INTEGER NOT NULL REFERENCES placeEvents(id),
   ts INTEGER NOT NULL,
@@ -352,7 +387,7 @@ const tableVisitsV3 = `CREATE TABLE visitEvents (
 
 // Track the start of a session. Note that each session has a unique identifier, can
 // be born of another (the ancestor), and can be within a scope (e.g., a window ID).
-const tableSessionStartsV3 = `CREATE TABLE sessionStarts (
+const tableSessionStartsV4 = `CREATE TABLE sessionStarts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   scope INTEGER,
   ancestor INTEGER REFERENCES sessionStarts(id),
@@ -361,12 +396,12 @@ const tableSessionStartsV3 = `CREATE TABLE sessionStarts (
 
 // Track the end of a session. Note that sessions must be started before they are
 // ended.
-const tableSessionEndsV3 = `CREATE TABLE sessionEnds (
+const tableSessionEndsV4 = `CREATE TABLE sessionEnds (
   id INTEGER PRIMARY KEY REFERENCES sessionStarts(id),
   ts INTEGER NOT NULL
 )`;
 
-const tableStarsV3 = `CREATE TABLE starEvents (
+const tableStarsV4 = `CREATE TABLE starEvents (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   place INTEGER NOT NULL REFERENCES placeEvents(id),
   session INTEGER NOT NULL REFERENCES sessionStarts(id),
@@ -374,13 +409,65 @@ const tableStarsV3 = `CREATE TABLE starEvents (
   ts INTEGER NOT NULL
 )`;
 
-class ProfileStorageSchemaV3 {
+const viewStarsV4 = `CREATE VIEW vStarred AS
+SELECT place,
+       MAX(starEvents.ts) AS ts,
+       url FROM starEvents
+JOIN placeEvents ON placeEvents.id = place
+WHERE place IN (
+  SELECT place FROM (
+    SELECT place, ts, SUM(action) AS stars
+    FROM starEvents
+    GROUP BY place
+  ) WHERE stars > 0
+) AND action = 1
+GROUP BY place
+`;
+
+const materializedStarsV4 = `CREATE TABLE mStarred (
+  place INTEGER NOT NULL REFERENCES placeEvents(id),
+  ts INTEGER NOT NULL,
+  url TEXT NOT NULL
+)`;
+
+// We maximize on timestamp, not ID, but we can change our mind later.
+const viewTitlesV4 = `CREATE VIEW vTitles AS
+SELECT id AS titleID, MAX(ts) AS titleTS, place, title FROM titleEvents GROUP BY place
+`;
+
+const viewVisitsV4 = `CREATE VIEW vVisits AS
+SELECT id AS visitID, MAX(ts) AS lastVisited, COUNT(id) AS visitCount, place
+FROM visitEvents GROUP BY place
+`;
+
+const viewHistoryV4 = `CREATE VIEW vHistory AS
+SELECT
+  p.id AS place, p.url AS url,
+  t.title AS lastTitle,
+  v.lastVisited AS lastVisited, v.visitCount AS visitCount
+FROM
+vVisits AS v, vTitles AS t, placeEvents AS p
+WHERE
+ p.id = v.place AND
+ p.id = t.place
+ORDER BY lastVisited DESC
+`;
+
+const materializedHistoryV4 = `CREATE TABLE mHistory (
+  place INTEGER NOT NULL REFERENCES placeEvents(id),
+  url TEXT NOT NULL,
+  lastTitle TEXT,
+  lastVisited INTEGER NOT NULL,
+  visitCount INTEGER NOT NULL
+)`;
+
+class ProfileStorageSchemaV4 {
   constructor() {
-    this.version = 3;
+    this.version = 4;
   }
 
   /**
-   * Take a newly opened ProfileStorage and make sure it reaches v3.
+   * Take a newly opened ProfileStorage and make sure it reaches v4.
    * @param storage an open storage instance.
    */
   async createOrUpdate(storage) {
@@ -409,26 +496,59 @@ class ProfileStorageSchemaV3 {
     // Precondition: from > 0 (else we'd call `create`).
     switch (from) {
       case 1:
-        await storage.db.run(tableTitlesV3);
-        await storage.db.run(tableSessionStartsV3);
-        await storage.db.run(tableSessionEndsV3);
-        await storage.db.run(tableStarsV3);
+        await storage.db.run(tableTitlesV4);
+        await storage.db.run(tableSessionStartsV4);
+        await storage.db.run(tableSessionEndsV4);
+        await storage.db.run(tableStarsV4);
 
         // Change the schema for visits. Lose existing ones.
         await storage.db.run('DROP TABLE visitEvents');
-        await storage.db.run(tableVisitsV3);
+        await storage.db.run(tableVisitsV4);
 
         await storage.db.run(`PRAGMA user_version = ${this.version}`);
         break;
 
       case 2:
-        await storage.db.run(tableStarsV3);
+
+        // Tables.
+        await storage.db.run(tableStarsV4);
 
         // We gave titles and visits IDs.
         await storage.db.run('DROP TABLE visitEvents');
         await storage.db.run('DROP TABLE titleEvents');
-        await storage.db.run(tableVisitsV3);
-        await storage.db.run(tableTitlesV3);
+        await storage.db.run(tableVisitsV4);
+        await storage.db.run(tableTitlesV4);
+
+        // Views.
+        await storage.db.run(viewStarsV4);
+        await storage.db.run(viewVisitsV4);
+        await storage.db.run(viewTitlesV4);
+        await storage.db.run(viewHistoryV4);
+
+        // Materialized views.
+        await storage.db.run(materializedStarsV4);
+        await storage.db.run(materializedHistoryV4);
+        await storage.materializeStars();
+        await storage.materializeHistory();
+
+        await storage.db.run(`PRAGMA user_version = ${this.version}`);
+        break;
+
+      case 3:
+
+        // No tables change in v3 -> v4: it's just adding a materialized view.
+        // Views.
+        await storage.db.run(viewStarsV4);
+        await storage.db.run(viewVisitsV4);
+        await storage.db.run(viewTitlesV4);
+        await storage.db.run(viewHistoryV4);
+
+        // Materialized views.
+        await storage.db.run(materializedStarsV4);
+        await storage.db.run(materializedHistoryV4);
+        await storage.materializeStars();
+        await storage.materializeHistory();
+
         await storage.db.run(`PRAGMA user_version = ${this.version}`);
         break;
 
@@ -440,12 +560,26 @@ class ProfileStorageSchemaV3 {
   }
 
   async create(storage) {
-    await storage.db.run(tablePlacesV3);
-    await storage.db.run(tableTitlesV3);
-    await storage.db.run(tableVisitsV3);
-    await storage.db.run(tableStarsV3);
-    await storage.db.run(tableSessionStartsV3);
-    await storage.db.run(tableSessionEndsV3);
+    // Tables.
+    await storage.db.run(tablePlacesV4);
+    await storage.db.run(tableTitlesV4);
+    await storage.db.run(tableVisitsV4);
+    await storage.db.run(tableStarsV4);
+    await storage.db.run(tableSessionStartsV4);
+    await storage.db.run(tableSessionEndsV4);
+
+    // Views.
+    await storage.db.run(viewStarsV4);
+    await storage.db.run(viewVisitsV4);
+    await storage.db.run(viewTitlesV4);
+    await storage.db.run(viewHistoryV4);
+
+    // Materialized views.
+    await storage.db.run(materializedStarsV4);
+    await storage.db.run(materializedHistoryV4);
+    await storage.materializeStars();
+    await storage.materializeHistory();
+
     await storage.db.run(`PRAGMA user_version = ${this.version}`);
 
     return storage.userVersion();

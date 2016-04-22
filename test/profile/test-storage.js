@@ -129,7 +129,8 @@ describe('ProfileStorage data access', () => {
         expect(idFoo === again);
         expect((idBar - idFoo) === 1);
 
-        const fetched = await storageA.db.get('SELECT id FROM placeEvents WHERE url = ?', ['http://example.com/foo']);
+        const fetched = await storageA.db.get('SELECT id FROM placeEvents WHERE url = ?',
+                                              ['http://example.com/foo']);
         expect(fetched.id === idFoo);
 
         await storageA.close();
@@ -141,10 +142,23 @@ describe('ProfileStorage data access', () => {
         // The ID is the same.
         expect(idBarB === idBar);
 
+        // None of these places have actually been visited yet!
+        expect((await storageB.visited(0))).toEqual([]);
+
+        // Visit them.
+        const session = await storageB.startSession();
+        await storageB.visit('http://example.com/bar', session, 'Bar');
+        await storageB.visit('http://example.com/baz', session, 'Baz');
+
         const urlsA = await storageB.visited(0, 1);
-        expect(urlsA.length === 1);
+        expect(urlsA).toEqual(['http://example.com/baz']);
         const urlsB = await storageB.visited(0, 3);
-        expect(urlsB.length === 2);
+        expect(urlsB).toEqual(['http://example.com/baz', 'http://example.com/bar']);
+
+        // Check that we get the same results for from-scratch materialization.
+        await storageB.rematerialize();
+        expect((await storageB.visited(0, 3)))
+          .toEqual(['http://example.com/baz', 'http://example.com/bar']);
 
         await storageB.close();
 
@@ -258,6 +272,11 @@ describe('ProfileStorage data access', () => {
         starred = await storage.starred();
         expect(starred).toEqual(['http://example.com/foo/baz']);
 
+        // Check that we get the same results for from-scratch materialization.
+        await storage.rematerialize();
+        starred = await storage.starred();
+        expect(starred).toEqual(['http://example.com/foo/baz']);
+
         await storage.close();
 
         done();
@@ -322,7 +341,7 @@ describe('Schema upgrades', () => {
     }());
   });
 
-  it('Can upgrade from v2 to v3.', (done) => {
+  it('Can upgrade from v2 to v4.', (done) => {
     (async function () {
       try {
         const tempPath = tmp.tmpNameSync();
@@ -338,7 +357,7 @@ describe('Schema upgrades', () => {
 
         // Upgrade it.
         await storage.init();
-        expect((await db.get('PRAGMA user_version')).user_version === 3);
+        expect((await db.get('PRAGMA user_version')).user_version === 4);
 
         await storage.close();
         console.log('Cleaning up.');
