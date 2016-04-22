@@ -59,6 +59,9 @@ describe('packages', () => {
     const matches = await regexFiles(sources, REQUIRES_REGEX, IMPORTS_REGEX);
     const expected = Array.from(new Set([...matches, ...ignored]));
 
-    expect(difference(modules, expected)).toEqual([]);
+    expect(difference(modules, expected)).toEqual([
+      // These packages are allowed to be orphaned.
+      'flow-bin',
+    ]);
   }));
 });

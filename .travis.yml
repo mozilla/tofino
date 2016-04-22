@@ -37,6 +37,7 @@ install:
   - npm install --progress false --depth 0
 
 script:
+  - npm run typecheck
   - npm test
 
 after_success:
