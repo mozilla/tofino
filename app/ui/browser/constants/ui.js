@@ -12,3 +12,6 @@ specific language governing permissions and limitations under the License.
 
 export const NAVBAR_EXPANDED_HEIGHT = 57; // px
 export const NAVBAR_COLLAPSED_HEIGHT = 27; // px
+
+// Show autocompletions when typing in location bar
+export const SHOW_COMPLETIONS = true;
