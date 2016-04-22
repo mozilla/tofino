@@ -1,3 +1,5 @@
+/* @flow */
+
 /*
  Copyright 2016 Mozilla
 
@@ -16,8 +18,12 @@ import Immutable from 'immutable';
 
 import * as profileCommandTypes from '../../shared/constants/profile-command-types';
 import * as profileActions from '../actions/profile-actions';
+import { ProfileStorage } from '../../services/storage';
 
-export default async function reducer(storage, dispatch, sessionId, command) {
+export default async function commandHandler(storage: ProfileStorage,
+                                             dispatch: any,
+                                             sessionId: number,
+                                             command: profileActions.ProfileAction): Promise<void> {
   console.log(`${sessionId}: Reducing ${JSON.stringify(command)}`);
 
   const payload = command.payload;

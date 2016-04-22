@@ -36,7 +36,7 @@ import * as BUILD_CONFIG from '../../build-config';
 import * as profileDiffs from '../shared/profile-diffs';
 import configureStore from './store/store';
 import { ProfileStorage } from '../services/storage';
-import profileCommandReducer from './reducers/profile-command-reducers';
+import profileCommandHandler from './reducers/profile-command-reducers';
 const profileStoragePromise = ProfileStorage.open(path.join(__dirname, '..', '..'));
 import * as profileActions from './actions/profile-actions';
 import Immutable from 'immutable';
@@ -228,5 +228,5 @@ ipc.on('tab-detach', async function(event, tabInfo) {
 ipc.on('profile-command', async function(event, command) {
   const mainWindow = BrowserWindow.fromWebContents(event.sender);
   const profileStorage = await profileStoragePromise;
-  await profileCommandReducer(profileStorage, store.dispatch, mainWindow.sessionId, command);
+  await profileCommandHandler(profileStorage, store.dispatch, mainWindow.sessionId, command);
 });

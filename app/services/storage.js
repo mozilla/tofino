@@ -1,3 +1,5 @@
+/* @flow */
+
 /*
  Copyright 2016 Mozilla
 
@@ -46,7 +48,11 @@ export const StarOp = {
  *   await storage.close();
  */
 export class ProfileStorage {
-  constructor(db) {
+  db: Object;
+  places: Map<string, number>;
+  nextPlace: number;
+
+  constructor(db: Object) {
     this.db = db;
     this.places = new Map();
     this.nextPlace = 0;
@@ -57,7 +63,7 @@ export class ProfileStorage {
    * @param dir the containing directory.
    * @returns {Promise}
    */
-  static async open(dir) {
+  static async open(dir: string): Promise<ProfileStorage> {
     verbose();
 
     const filePath = path.join(dir, 'browser.db');
@@ -68,7 +74,7 @@ export class ProfileStorage {
     return new ProfileStorage(db).init();
   }
 
-  close() {
+  close(): Promise<void> {
     this.places.clear();
     this.nextPlace = 0;
     return this.db.close();
@@ -77,7 +83,7 @@ export class ProfileStorage {
   /**
    * Load the place map out of the DB.
    */
-  async loadPlaces() {
+  async loadPlaces(): Promise<number> {
     this.places.clear();
 
     const rows = await this.db.all('SELECT url, id FROM placeEvents');
@@ -94,7 +100,7 @@ export class ProfileStorage {
     return max;
   }
 
-  async init() {
+  async init(): Promise<ProfileStorage> {
     await this.db.exec('PRAGMA foreign_keys = ON');
 
     const schema = new ProfileStorageSchemaV4();
@@ -118,7 +124,7 @@ export class ProfileStorage {
    * @param f the function to call within a transaction.
    * @returns {*} the result or rejection of `f`.
    */
-  inTransaction(f) {
+  inTransaction<T>(f: () => Promise<T>): Promise<T> {
     return this.db
                .run('BEGIN TRANSACTION')
                .then(f)
@@ -142,7 +148,7 @@ export class ProfileStorage {
    * @param now the current timestamp.
    * @returns {*} the place ID.
    */
-  async savePlaceWithoutEstablishingTransaction(url, now) {
+  async savePlaceWithoutEstablishingTransaction(url: string, now: number): Promise<number> {
     if (this.places.has(url)) {
       return this.places.get(url);
     }
@@ -155,9 +161,10 @@ export class ProfileStorage {
     return id;
   }
 
-  savePlace(url, now = microtime.now()) {
-    if (this.places.has(url)) {
-      return Promise.resolve(this.places.get(url));
+  savePlace(url: string, now: number = microtime.now()): Promise<number> {
+    const place = this.places.get(url);
+    if (place) {
+      return Promise.resolve(place);
     }
 
     return this.savePlaceWithoutEstablishingTransaction(url, now)
@@ -167,7 +174,9 @@ export class ProfileStorage {
   /**
    * Store a visit for a given place ID. Chains through the place ID.
    */
-  saveVisitForPlaceWithoutEstablishingTransaction(place, session, now = microtime.now()) {
+  saveVisitForPlaceWithoutEstablishingTransaction(place: number,
+                                                  session: number,
+                                                  now: number = microtime.now()): Promise<number> {
     return this.db
                .run('INSERT INTO visitEvents (place, session, ts, type) VALUES (?, ?, ?, ?)',
                     [place, session, now, VisitType.unknown])
@@ -178,7 +187,9 @@ export class ProfileStorage {
    * Store a title for a given place ID. Chains through the place ID. Writes nothing if the
    * title is undefined.
    */
-  saveTitleForPlaceWithoutEstablishingTransaction(place, title, now = microtime.now()) {
+  saveTitleForPlaceWithoutEstablishingTransaction(place: number,
+                                                  title: ?string,
+                                                  now: number = microtime.now()): Promise<number> {
     if (title === undefined) {
       return Promise.resolve(place);
     }
@@ -189,12 +200,14 @@ export class ProfileStorage {
                .then(() => Promise.resolve(place));
   }
 
-  savePlaceIDMapping(url, id) {
+  savePlaceIDMapping(url: string, id: number): Promise<number> {
     this.places.set(url, id);
     return Promise.resolve(id);
   }
 
-  async startSession(scope, ancestor, now = microtime.now()) {
+  async startSession(scope: number,
+                     ancestor: number,
+                     now: number = microtime.now()): Promise<number> {
     const result =
       await this.db
                 .run('INSERT INTO sessionStarts (scope, ancestor, ts) VALUES (?, ?, ?)',
@@ -229,7 +242,11 @@ export class ProfileStorage {
    * Any other order will result in inconsistency. An alternative implementation is to do a partial
    * rebuild -- exactly the normal materialization query, but with a `WHERE place = ?` clause added.
    */
-  updateMaterializedStars(url, place, session, action, now = microtime.now()) {
+  updateMaterializedStars(url: string,
+                          place: number,
+                          session: number,
+                          action: number,
+                          now: number = microtime.now()) {
     switch (action) {
       case StarOp.star:
         return this.db.run('INSERT OR REPLACE INTO mStarred (place, ts, url) VALUES (?, ?, ?)',
@@ -243,12 +260,15 @@ export class ProfileStorage {
   }
 
   // Chains through place ID.
-  starPage(url, session, action, now = microtime.now()) {
+  starPage(url: string,
+           session: number,
+           action: number,
+           now: number = microtime.now()): Promise<number> {
     if (action !== StarOp.star && action !== StarOp.unstar) {
       return Promise.reject(new Error(`Unknown action ${action}.`));
     }
 
-    const star = (place) =>
+    const star = (place: number): Promise<number> =>
       this.db
           .run('INSERT INTO starEvents (place, session, action, ts) VALUES (?, ?, ?, ?)',
                [place, session, action, now])
@@ -257,8 +277,9 @@ export class ProfileStorage {
           .then(() => this.updateMaterializedStars(url, place, session, action, now))
           .then(() => Promise.resolve(place));
 
-    if (this.places.has(url)) {
-      return star(this.places.get(url));
+    const place = this.places.get(url);
+    if (place) {
+      return star(place);
     }
 
     return this.inTransaction(() =>
@@ -269,7 +290,10 @@ export class ProfileStorage {
                .then((id) => this.savePlaceIDMapping(url, id));
   }
 
-  async recordVisitWithoutEstablishingTransaction(url, session, title, now = microtime.now()) {
+  async recordVisitWithoutEstablishingTransaction(url: string,
+                                                  session: number,
+                                                  title: ?string,
+                                                  now: number = microtime.now()): Promise<number> {
     const place = await this.savePlaceWithoutEstablishingTransaction(url, now);
     await this.saveVisitForPlaceWithoutEstablishingTransaction(place, session, now);
     await this.saveTitleForPlaceWithoutEstablishingTransaction(place, title, now);
@@ -302,7 +326,10 @@ export class ProfileStorage {
    * @param now (optional) microsecond timestamp.
    * @returns {Promise} a promise that resolves to the place ID.
    */
-  visit(url, session, title, now = microtime.now()) {
+  visit(url: string,
+        session: number,
+        title: ?string,
+        now: number = microtime.now()): Promise<number> {
     return this.inTransaction(() =>
       this.recordVisitWithoutEstablishingTransaction(url, session, title, now)
 
@@ -310,7 +337,7 @@ export class ProfileStorage {
           .then((place) => this.savePlaceIDMapping(url, place)));
   }
 
-  collectURLs(rows) {
+  collectURLs(rows: [Object]): [string] {
     const out = [];
     for (const row of rows) {
       out.push(row.url);
@@ -318,7 +345,9 @@ export class ProfileStorage {
     return out;
   }
 
-  async visitedMatches(substring, since = 0, limit = 10) {
+  async visitedMatches(substring: string,
+                       since: number = 0,
+                       limit: number = 10): Promise<[string]> {
     const like = `%${substring}%`;
 
     // Fetch all places visited, with the latest timestamp for each.
@@ -335,7 +364,7 @@ export class ProfileStorage {
   }
 
   // Ordered by last visit, descending.
-  async visited(since = 0, limit = 10) {
+  async visited(since: number = 0, limit: number = 10): Promise<[string]> {
     // Fetch all places visited, with the latest timestamp for each.
     const query = `SELECT * FROM mHistory
       WHERE lastVisited > ?
@@ -346,13 +375,13 @@ export class ProfileStorage {
     return this.collectURLs(await this.db.all(query, [since, limit]));
   }
 
-  async starred() {
+  async starred(): Promise<[string]> {
     // Fetch all places visited, with the latest timestamp for each.
     const fromMaterialized = 'SELECT place, ts, url FROM mStarred';
     return this.collectURLs(await this.db.all(fromMaterialized));
   }
 
-  userVersion() {
+  userVersion(): Promise<number> {
     return this.db
                .get('PRAGMA user_version')
                .then((row) => Promise.resolve(row.user_version));
@@ -462,6 +491,8 @@ const materializedHistoryV4 = `CREATE TABLE mHistory (
 )`;
 
 class ProfileStorageSchemaV4 {
+  version: number;
+
   constructor() {
     this.version = 4;
   }
@@ -470,7 +501,7 @@ class ProfileStorageSchemaV4 {
    * Take a newly opened ProfileStorage and make sure it reaches v4.
    * @param storage an open storage instance.
    */
-  async createOrUpdate(storage) {
+  async createOrUpdate(storage): Promise<number> {
     const v = await storage.userVersion();
 
     if (v === this.version) {
@@ -491,7 +522,7 @@ class ProfileStorageSchemaV4 {
     throw new Error(`Target version ${this.version} lower than DB version ${v}!`);
   }
 
-  async update(storage, from) {
+  async update(storage: ProfileStorage, from: number): Promise<number> {
     // Precondition: from < this.version.
     // Precondition: from > 0 (else we'd call `create`).
     switch (from) {
@@ -559,7 +590,7 @@ class ProfileStorageSchemaV4 {
     return storage.userVersion();
   }
 
-  async create(storage) {
+  async create(storage: ProfileStorage): Promise<number> {
     // Tables.
     await storage.db.run(tablePlacesV4);
     await storage.db.run(tableTitlesV4);

@@ -1,3 +1,5 @@
+/* @flow */
+
 /*
  Copyright 2016 Mozilla
 

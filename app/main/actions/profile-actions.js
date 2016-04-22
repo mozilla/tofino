@@ -1,3 +1,5 @@
+/* @flow */
+
 /*
  Copyright 2016 Mozilla
 
@@ -10,12 +12,16 @@
  specific language governing permissions and limitations under the License.
  */
 
+import Immutable from 'immutable';
+
 import * as profileActionTypes from './../constants/profile-action-types';
+
+export type ProfileAction = { type: string, payload: Object };
 
 /**
  * The set of bookmarks is different.
  */
-export function bookmarkSet(bookmarks) {
+export function bookmarkSet(bookmarks: Immutable.Set<string>): ProfileAction {
   return {
     type: profileActionTypes.DID_CHANGE_BOOKMARKS,
     payload: bookmarks,
@@ -25,14 +31,15 @@ export function bookmarkSet(bookmarks) {
 /**
  * The list of Top Sites is different.
  */
-export function topSites(topSitesList) {
+export function topSites(topSitesList: Immutable.List<string>): ProfileAction {
   return {
     type: profileActionTypes.DID_SET_TOP_SITES_LIST,
     payload: topSitesList,
   };
 }
 
-export function completionsFor(text, completionList) {
+export function completionsFor(text: string,
+                               completionList: Immutable.List<string>): ProfileAction {
   return {
     type: profileActionTypes.DID_SET_COMPLETION_LIST_FOR,
     payload: {
