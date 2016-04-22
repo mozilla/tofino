@@ -48,7 +48,7 @@ class BrowserWindow extends Component {
 
   componentDidMount() {
     document.body.addEventListener('keydown', this.handleKeyDown);
-    attachIPCRendererListeners(this.props);
+    attachIPCRendererListeners(this);
   }
 
   handleKeyDown({ metaKey, keyCode }) {
@@ -162,7 +162,9 @@ BrowserWindow.propTypes = {
 
 export default BrowserWindow;
 
-function attachIPCRendererListeners({ dispatch, currentPage, ipcRenderer }) {
+function attachIPCRendererListeners(browserView) {
+  const { dispatch, ipcRenderer } = browserView.props;
+
   ipcRenderer.on('profile-diff', (event, args) => {
     dispatch(args);
   });
@@ -191,12 +193,12 @@ function attachIPCRendererListeners({ dispatch, currentPage, ipcRenderer }) {
   // @TODO main process should be sending an id to close a tab
   // most likely, not just whatever tab is currently open
   ipcRenderer.on('close-tab', () => {
-    dispatch(actions.closeTab(currentPage.id));
+    dispatch(actions.closeTab(browserView.props.currentPage.id));
   });
 
   // @TODO main process should be sending an id to refresh a tab
   // most likely, not just whatever tab is currently open
   ipcRenderer.on('page-reload', () => {
-    dispatch(actions.navigatePageRefresh(currentPage.id));
+    dispatch(actions.navigatePageRefresh(browserView.props.currentPage.id));
   });
 }
