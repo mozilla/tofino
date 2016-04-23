@@ -135,7 +135,7 @@ Page.propTypes = {
 };
 
 const makeMapStateToProps = (initialState, initialProps) => {
-  const id = initialProps.page.get('id');
+  const id = initialProps.pageId;
   const mapStateToProps = (state) => {
     const pages = state.browserWindow.get('pages');
     const page = pages.find(p => p.id === id);

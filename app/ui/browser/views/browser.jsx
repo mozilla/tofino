@@ -11,6 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 
 import Style from '../browser-style';
 import TabBar from './tabbar/tabbar';
@@ -64,7 +65,7 @@ class BrowserWindow extends Component {
 
   render() {
     const {
-      currentPage, ipcRenderer, dispatch, profile, pages, currentPageIndex, pageAreaVisible,
+      currentPage, ipcRenderer, dispatch, profile, currentPageIndex, pageAreaVisible, pageIds
     } = this.props;
 
     const currentPageId = currentPage.id;
@@ -139,10 +140,10 @@ class BrowserWindow extends Component {
             {...this.props } />
         </div>
         <div className={CONTENT_AREA_STYLE}>
-          {pages.map((page, pageIndex) => (
+          {pageIds.map((pageId, pageIndex) => (
             <Page key={`page-${pageIndex}`}
               isActive={pageIndex === currentPageIndex}
-              page={page}
+              pageId={pageId}
               {...this.props} />
           ))}
         </div>
@@ -153,7 +154,7 @@ class BrowserWindow extends Component {
 }
 
 BrowserWindow.propTypes = {
-  pages: PropTypes.object.isRequired,
+  pageIds: PropTypes.arrayOf(React.PropTypes.string).isRequired,
   currentPage: PropTypes.object.isRequired,
   currentPageIndex: PropTypes.number.isRequired,
   dispatch: PropTypes.func.isRequired,
@@ -162,7 +163,13 @@ BrowserWindow.propTypes = {
   pageAreaVisible: PropTypes.bool.isRequired,
 };
 
-export default BrowserWindow;
+const mapStateToProps = (state) => ({
+  // @TODO restructure the state so this list is automatically created as new todos
+  // are added instead of generated on each update pass
+  pageIds: state.browserWindow.pages.toArray().map(page => page.id),
+});
+
+export default connect(mapStateToProps)(BrowserWindow);
 
 function attachIPCRendererListeners(browserView) {
   const { dispatch, ipcRenderer } = browserView.props;
