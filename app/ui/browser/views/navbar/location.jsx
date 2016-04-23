@@ -16,10 +16,7 @@ import Style from '../../browser-style';
 import Btn from './btn';
 
 import { fixURL, getCurrentWebView } from '../../browser-util';
-
-// Pref off completions for now since the view doesn't do anything besides
-// show them.
-const SHOW_COMPLETIONS = true;
+import { SHOW_COMPLETIONS } from '../../constants/ui';
 
 const LOCATION_BAR_CONTAINER_STYLE = Style.registerStyle({
   flex: 1,
