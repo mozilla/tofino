@@ -120,7 +120,6 @@ class BrowserWindow extends Component {
               minimize,
               maximize,
               close,
-              pages,
               openMenu,
               onLocationChange,
               onLocationContextMenu,
