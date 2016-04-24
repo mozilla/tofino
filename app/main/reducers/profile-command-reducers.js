@@ -14,6 +14,7 @@
 
 /* eslint no-console: 0 */
 
+import electron from 'electron';
 import Immutable from 'immutable';
 
 import * as profileCommandTypes from '../../shared/constants/profile-command-types';
@@ -22,15 +23,15 @@ import { ProfileStorage } from '../../services/storage';
 
 export default async function commandHandler(storage: ProfileStorage,
                                              dispatch: any,
-                                             sessionId: number,
+                                             browserWindow: electron.BrowserWindow,
                                              command: profileActions.ProfileAction): Promise<void> {
-  console.log(`${sessionId}: Reducing ${JSON.stringify(command)}`);
+  console.log(`profile-command-reducers.js: Reducing ${JSON.stringify(command)}`);
 
   const payload = command.payload;
   switch (command.type) {
     case profileCommandTypes.DID_VISIT_LOCATION:
       try {
-        await storage.visit(payload.url, sessionId, payload.title);
+        await storage.visit(payload.url, browserWindow.sessionId, payload.title);
         dispatch(profileActions.topSites(new Immutable.List()));
       } catch (e) {
         // TODO: do more than ignore failure to persist visit.
@@ -39,7 +40,7 @@ export default async function commandHandler(storage: ProfileStorage,
 
     case profileCommandTypes.DID_BOOKMARK_LOCATION:
       try {
-        await storage.starPage(payload.url, sessionId, +1);
+        await storage.starPage(payload.url, browserWindow.sessionId, +1);
         const bookmarkSet = await storage.starred();
         dispatch(profileActions.bookmarkSet(new Immutable.Set(bookmarkSet)));
       } catch (e) {
@@ -49,7 +50,7 @@ export default async function commandHandler(storage: ProfileStorage,
 
     case profileCommandTypes.DID_UNBOOKMARK_LOCATION:
       try {
-        await storage.starPage(payload.url, sessionId, -1);
+        await storage.starPage(payload.url, browserWindow.sessionId, -1);
         const bookmarkSet = await storage.starred();
         dispatch(profileActions.bookmarkSet(new Immutable.Set(bookmarkSet)));
       } catch (e) {
@@ -64,6 +65,10 @@ export default async function commandHandler(storage: ProfileStorage,
       } catch (e) {
         console.log(e); // TODO: do more than ignore failure.
       }
+      break;
+
+    case profileCommandTypes.DID_CLOSE_BROWSER_WINDOW:
+      dispatch(profileActions.closeBrowserWindow(browserWindow));
       break;
 
     default:

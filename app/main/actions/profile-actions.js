@@ -14,6 +14,8 @@
 
 import Immutable from 'immutable';
 
+import electron from 'electron';
+
 import * as profileActionTypes from './../constants/profile-action-types';
 
 export type ProfileAction = { type: string, payload: Object };
@@ -45,6 +47,24 @@ export function completionsFor(text: string,
     payload: {
       text,
       completionList,
+    },
+  };
+}
+
+export function createBrowserWindow(browserWindow: electron.BrowserWindow): ProfileAction {
+  return {
+    type: profileActionTypes.DID_CREATE_BROWSER_WINDOW,
+    payload: {
+      browserWindow,
+    },
+  };
+}
+
+export function closeBrowserWindow(browserWindow: electron.BrowserWindow): ProfileAction {
+  return {
+    type: profileActionTypes.DID_CLOSE_BROWSER_WINDOW,
+    payload: {
+      browserWindow,
     },
   };
 }

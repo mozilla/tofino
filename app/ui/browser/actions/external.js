@@ -15,6 +15,7 @@ import {
 } from './main-actions';
 import { getCurrentWebView, fixURL } from '../browser-util';
 import { remote, clipboard, ipcRenderer } from '../../../shared/electron';
+import * as profileCommands from '../../../shared/profile-commands';
 
 const { Menu, MenuItem } = remote;
 
@@ -212,7 +213,7 @@ export function minimize() {
  * Close window
  */
 export function close() {
-  remote.getCurrentWindow().close();
+  ipcRenderer.send('profile-command', profileCommands.closeBrowserWindow());
 }
 
 /**

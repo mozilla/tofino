@@ -1,6 +1,8 @@
 [include]
 
 [ignore]
+<PROJECT_ROOT>/dist/.*
+
 <PROJECT_ROOT>/node_modules/Base64/.*
 <PROJECT_ROOT>/node_modules/abab/.*
 <PROJECT_ROOT>/node_modules/abbrev/.*
@@ -694,6 +696,7 @@
 <PROJECT_ROOT>/node_modules/yazl/.*
 
 [libs]
+./pkg/github-electron-interfaces/
 
 [options]
 suppress_comment=.*\\$FlowFixMe.*

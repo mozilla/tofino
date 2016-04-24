@@ -12,6 +12,7 @@
 
 import { combineReducers } from 'redux';
 import bookmarks from './bookmarks-reducers';
+import browserWindows from './browserWindows-reducers';
 import visits from './visits-reducers';
 import locations from './location-reducers';
 
@@ -19,5 +20,6 @@ const rootReducer = combineReducers({
   bookmarks,
   visits,
   locations,
+  browserWindows,
 });
 export default rootReducer;

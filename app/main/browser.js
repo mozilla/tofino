@@ -22,7 +22,7 @@ process.on('uncaughtException', (err) => {
 });
 
 process.on('unhandledRejection', (reason, p) => {
-  console.log(`Unhandled Rejection at: Promise ${p}, reason: ${reason}`);
+  console.log(`Unhandled Rejection at: Promise ${JSON.stringify(p)}, reason: ${reason.stack}`);
   process.exit(2);
 });
 
@@ -32,7 +32,6 @@ import electronLocalshortcut from 'electron-localshortcut';
 
 import BrowserMenu from './browser-menu';
 import * as instrument from '../services/instrument';
-import * as BUILD_CONFIG from '../../build-config';
 import * as profileDiffs from '../shared/profile-diffs';
 import configureStore from './store/store';
 import { ProfileStorage } from '../services/storage';
@@ -48,23 +47,42 @@ const globalShortcut = electron.globalShortcut;
 
 const uiDir = path.join(__dirname, '..', 'ui');
 
-// Keep a global references of the window objects, if you don't, the windows will
-// be closed automatically when the JavaScript object is garbage collected.
-const mainWindows = [];
-
-function sendToAllWindows(event, args) {
-  console.log(`diff ${JSON.stringify(args)}`);
-  for (const mainWindow of mainWindows) {
-    mainWindow.webContents.send(event, args);
-  }
-}
-
 const store = configureStore();
 let currentState;
 
-function sendDiffsToWindows() {
+function sendToAllWindows(event: string, args: Object): void {
+  console.log(`browser.js: sendToAllWindows ${JSON.stringify(args)}`);
+  store.getState().browserWindows.forEach((id) => {
+    const bw = BrowserWindow.fromId(id);
+    bw.webContents.send(event, args);
+  });
+}
+
+async function sendDiffsToWindows(): void {
   const previousState = currentState;
   currentState = store.getState();
+
+  // TODO: handle empty state.
+  if (previousState && !Immutable.is(currentState.browserWindows,
+                                     previousState.browserWindows)) {
+    // Show new windows, taking care to use key IDs rather than possibly deleted ID members.
+    currentState.browserWindows.forEach((id) => {
+      if (previousState.browserWindows.has(id)) {
+        return;
+      }
+      const bw = BrowserWindow.fromId(id);
+      bw.didFinishLoadPromise.then(() => bw.show());
+    });
+
+    // Close old windows, taking care to use key IDs rather than possibly deleted ID members.
+    previousState.browserWindows.forEach((id) => {
+      if (currentState.browserWindows.has(id)) {
+        return;
+      }
+      const bw = BrowserWindow.fromId(id);
+      bw.didFinishLoadPromise.then(() => bw.close());
+    });
+  }
 
   const bookmarksChanged =
     !previousState ||
@@ -94,7 +112,7 @@ function sendDiffsToWindows() {
 
 store.subscribe(sendDiffsToWindows);
 
-function fileUrl(str) {
+function fileUrl(str: string): string {
   let pathName = path.resolve(str).replace(/\\/g, '/');
 
   // Windows drive letter must be prefixed with a slash
@@ -105,7 +123,7 @@ function fileUrl(str) {
   return encodeURI(`file://${pathName}`);
 }
 
-async function createWindow(tabInfo) {
+async function makeBrowserWindow(tabInfo: Object): Promise<electron.BrowserWindow> {
   const profileStorage = await profileStoragePromise;
   const sessionId = await profileStorage.startSession(); // TODO: scope, ancestor.
 
@@ -120,24 +138,22 @@ async function createWindow(tabInfo) {
     show: false,
   });
   browser.sessionId = sessionId;
-  mainWindows.push(browser);
 
-  browser.loadURL(fileUrl(path.join(uiDir, 'browser', 'browser.html')));
+  browser.didFinishLoadPromise = new Promise((resolve, _reject) => {
+    browser.webContents.once('did-finish-load', () => {
+      const browserDidFinishLoadTime = Date.now();
+      instrument.event('browser', 'READY', 'ms', browserDidFinishLoadTime - browserStartTime);
 
-  if (BUILD_CONFIG.development) {
-    browser.openDevTools({ detach: true });
-  }
+      if (tabInfo) {
+        browser.webContents.send('tab-attach', tabInfo);
+      }
 
-  // Emitted when the window is closed.
-  browser.on('closed', () => {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    const index = mainWindows.indexOf(browser);
-    if (index > -1) {
-      mainWindows.splice(index, 1);
-    }
+      resolve();
+    });
   });
+
+  // Start loading browser chrome.
+  browser.loadURL(fileUrl(path.join(uiDir, 'browser', 'browser.html')));
 
   electronLocalshortcut.register(browser, 'CmdOrCtrl+L', () => {
     browser.webContents.send('focus-urlbar');
@@ -147,16 +163,7 @@ async function createWindow(tabInfo) {
     browser.webContents.send('page-reload');
   });
 
-  browser.webContents.once('did-finish-load', () => {
-    const browserDidFinishLoadTime = Date.now();
-    instrument.event('browser', 'READY', 'ms', browserDidFinishLoadTime - browserStartTime);
-
-    browser.show();
-
-    if (tabInfo) {
-      browser.webContents.send('tab-attach', tabInfo);
-    }
-  });
+  return browser;
 }
 
 const appStartupTime = Date.now();
@@ -173,7 +180,8 @@ app.on('ready', async function() {
   const starredLocations = await profileStorage.starred();
   store.dispatch(profileActions.bookmarkSet(new Immutable.Set(starredLocations)));
 
-  await createWindow();
+  const browserWindow = await makeBrowserWindow();
+  store.dispatch(profileActions.createBrowserWindow(browserWindow));
 });
 
 // Unregister all shortcuts.
@@ -194,8 +202,9 @@ app.on('window-all-closed', () => {
 app.on('activate', async function() {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindows.length === 0) {
-    await createWindow();
+  if (store.getState().browserWindows.isEmpty()) {
+    const browserWindow = await makeBrowserWindow();
+    store.dispatch(profileActions.createBrowserWindow(browserWindow));
   }
 });
 
@@ -204,13 +213,12 @@ ipc.on('instrument-event', (event, args) => {
   instrument.event(args.name, args.method, args.label, args.value);
 });
 
-// createWindow takes an argument, which will be an event if we don't bind or wrap here.
 ipc.on('new-window', async function() {
-  await createWindow();
+  const browserWindow = await makeBrowserWindow();
+  store.dispatch(profileActions.createBrowserWindow(browserWindow));
 });
 
 ipc.on('window-loaded', (event) => {
-  console.log(`windowGuid ${BrowserWindow.fromWebContents(event.sender).id}`);
   const bookmarkSet = store.getState().bookmarks;
   event.returnValue = {
     bookmarks: bookmarkSet.toJS(),
@@ -222,11 +230,12 @@ ipc.on('window-ready', event => {
 });
 
 ipc.on('tab-detach', async function(event, tabInfo) {
-  await createWindow(tabInfo);
+  const browserWindow = await makeBrowserWindow(tabInfo);
+  store.dispatch(profileActions.createBrowserWindow(browserWindow));
 });
 
 ipc.on('profile-command', async function(event, command) {
   const mainWindow = BrowserWindow.fromWebContents(event.sender);
   const profileStorage = await profileStoragePromise;
-  await profileCommandHandler(profileStorage, store.dispatch, mainWindow.sessionId, command);
+  await profileCommandHandler(profileStorage, store.dispatch, mainWindow, command);
 });

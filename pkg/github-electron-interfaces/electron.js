@@ -10,8 +10,9 @@
  specific language governing permissions and limitations under the License.
  */
 
-export const DID_BOOKMARK_LOCATION = 'PROFILE_COMMAND_DID_BOOKMARK_LOCATION';
-export const DID_UNBOOKMARK_LOCATION = 'PROFILE_COMMAND_DID_UNBOOKMARK_LOCATION';
-export const DID_VISIT_LOCATION = 'PROFILE_COMMAND_DID_VISIT_LOCATION';
-export const DID_SET_USER_TYPED_LOCATION = 'PROFILE_COMMAND_DID_SET_USER_TYPED_LOCATION';
-export const DID_CLOSE_BROWSER_WINDOW = 'PROFILE_COMMAND_DID_CLOSE_BROWSER_WINDOW';
+declare module 'electron' {
+  declare class BrowserWindow {
+    sessionId: number; // This is Tofino specific.
+    didFinishLoadPromise: Promise<void>; // This is Tofino specific.
+  }
+}
