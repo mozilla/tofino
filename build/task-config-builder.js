@@ -51,7 +51,7 @@ const BASE_CONFIG = {
 };
 
 export default async function(config) {
-  const currentConfig = {};
+  let currentConfig = {};
 
   try {
     currentConfig = await fs.readJson(BUILD_CONFIG_JSON);
