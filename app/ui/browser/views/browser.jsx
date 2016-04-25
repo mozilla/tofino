@@ -65,7 +65,7 @@ class BrowserWindow extends Component {
 
   render() {
     const {
-      currentPage, ipcRenderer, dispatch, profile, currentPageIndex, pageAreaVisible, pageIds
+      currentPage, ipcRenderer, dispatch, profile, currentPageIndex, pageAreaVisible, pageIds,
     } = this.props;
 
     const currentPageId = currentPage.id;
@@ -153,7 +153,7 @@ class BrowserWindow extends Component {
 }
 
 BrowserWindow.propTypes = {
-  pageIds: PropTypes.arrayOf(React.PropTypes.string).isRequired,
+  pageIds: PropTypes.arrayOf(PropTypes.string).isRequired,
   currentPage: PropTypes.object.isRequired,
   currentPageIndex: PropTypes.number.isRequired,
   dispatch: PropTypes.func.isRequired,
