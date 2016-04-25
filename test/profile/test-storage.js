@@ -6,12 +6,20 @@
 import expect from 'expect';
 
 import fs from 'fs';
+import Immutable from 'immutable';
 import microtime from 'microtime-fast';
 import path from 'path';
 import tmp from 'tmp';
 
 import { DB } from '../../app/services/sqlite';
 import { ProfileStorage, VisitType } from '../../app/services/storage';
+
+describe('Utility tests', () => {
+  it('Compares sets correctly.', (done) => {
+    expect(Immutable.Set(['a', 'b']).equals(Immutable.Set(['b', 'a'])));
+    done();
+  });
+});
 
 describe('DB.open', () => {
   it('Should create the DB file.', (done) => {
@@ -258,24 +266,42 @@ describe('ProfileStorage data access', () => {
       try {
         const storage = await ProfileStorage.open(tempDir);
 
+        const bar = 'http://example.com/foo/bar';
+        const baz = 'http://example.com/foo/baz';
+        const both = Immutable.Set([bar, baz]);
+
         let starred;
         const session = await storage.startSession(null, null);
-        await storage.starPage('http://example.com/foo/bar', session, 1);
+        await storage.starPage(bar, session, 1);
         starred = await storage.starred();
-        expect(starred).toEqual(['http://example.com/foo/bar']);
+        expect(starred).toEqual([bar]);
 
-        await storage.starPage('http://example.com/foo/bar', session, -1);
+        await storage.starPage(bar, session, -1);
         starred = await storage.starred();
         expect(starred).toEqual([]);
 
-        await storage.starPage('http://example.com/foo/baz', session, 1);
+        await storage.starPage(baz, session, 1);
         starred = await storage.starred();
-        expect(starred).toEqual(['http://example.com/foo/baz']);
+        expect(starred).toEqual([baz]);
+
+        starred = await storage.recentlyStarred(2);
+        expect(starred).toEqual([baz]);
+
+        await storage.starPage('http://example.com/foo/bar', session, 1);
+
+        starred = await storage.starred();
+        expect(Immutable.Set(starred).equals(both));
+
+        starred = await storage.recentlyStarred(2);
+        expect(starred).toEqual([bar, baz]);
+
+        starred = await storage.recentlyStarred(1);
+        expect(starred).toEqual([bar]);
 
         // Check that we get the same results for from-scratch materialization.
         await storage.rematerialize();
         starred = await storage.starred();
-        expect(starred).toEqual(['http://example.com/foo/baz']);
+        expect(Immutable.Set(starred).equals(both));
 
         await storage.close();
 

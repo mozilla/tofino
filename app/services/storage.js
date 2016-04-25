@@ -375,10 +375,32 @@ export class ProfileStorage {
     return this.collectURLs(await this.db.all(query, [since, limit]));
   }
 
-  async starred(): Promise<[string]> {
+  async getStarredWithOrderByAndLimit(orderClause: string, limit: ?number): Promise<[string]> {
+    let limitClause: string;
+    let args: [any];
+    if (limit) {
+      limitClause = 'LIMIT ?';
+      args = [limit];
+    } else {
+      limitClause = '';
+      args = [];
+    }
+
+    const fromMaterialized = `
+    SELECT s.place AS place, t.title AS title, s.ts AS ts, s.url AS url
+    FROM mStarred AS s LEFT JOIN vTitles AS t ON s.place = t.place
+    ${orderClause} ${limitClause}
+    `;
+    return this.collectURLs(await this.db.all(fromMaterialized, args));
+  }
+
+  async starred(limit: ?number = undefined): Promise<[string]> {
     // Fetch all places visited, with the latest timestamp for each.
-    const fromMaterialized = 'SELECT place, ts, url FROM mStarred';
-    return this.collectURLs(await this.db.all(fromMaterialized));
+    return this.getStarredWithOrderByAndLimit('', limit);
+  }
+
+  async recentlyStarred(limit: number = 5): Promise<[string]> {
+    return this.getStarredWithOrderByAndLimit('ORDER BY s.ts DESC', limit);
   }
 
   userVersion(): Promise<number> {
