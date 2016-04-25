@@ -15,7 +15,7 @@ import rootReducer from '../reducers';
 import thunk from '../../shared/thunk';
 import BUILD_CONFIG from '../../../build-config';
 
-const logger = store => next => action => { // eslint-disable-line no-unused-vars
+const logger = _store => next => action => {
   if (typeof action !== 'function') {
     console.log(`command ${JSON.stringify(action)}`);
   }
