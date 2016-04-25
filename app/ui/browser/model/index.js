@@ -34,6 +34,8 @@ export const State = Immutable.Record({
   // This is a list of Page objects (see below)
   pages: Immutable.List(),
 
+  pageIds: Immutable.Set(),
+
   // The currently displayed tab
   currentPageIndex: -1,
 

@@ -19,8 +19,10 @@ import { State, Page } from '../model';
 import * as profileDiffTypes from '../../../shared/constants/profile-diff-types';
 import { isUUID } from '../browser-util';
 
+const initialPage = new Page();
 const initialState = new State({
-  pages: Immutable.List.of(new Page()),
+  pages: Immutable.List.of(initialPage),
+  pageIds: Immutable.Set.of(initialPage.id),
   currentPageIndex: 0,
   pageAreaVisible: false,
 });
@@ -91,6 +93,8 @@ function createTab(state, page) {
     mut.update('pages', pages => pages.push(page));
     mut.set('currentPageIndex', state.pages.size);
     mut.set('pageAreaVisible', true);
+
+    mut.update('pageIds', pageIds => pageIds.add(page.id));
   });
 }
 
@@ -109,6 +113,8 @@ function attachTab(state, page) {
   return state.withMutations(mut => {
     mut.set('pages', Immutable.List.of(page));
     mut.set('currentPageIndex', 0);
+
+    mut.update('pageIds', pageIds => pageIds.add(page.id));
   });
 }
 
@@ -129,6 +135,8 @@ function closeTab(state, pageId) {
 
   return state.withMutations(mut => {
     mut.update('pages', pages => pages.delete(pageIndex));
+
+    mut.update('pageIds', pageIds => pageIds.delete(pageId));
 
     // If tab closed comes before our current tab, or if this is the right-most
     // tab and it's selected, decrement the current page index.

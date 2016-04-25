@@ -139,7 +139,7 @@ class BrowserWindow extends Component {
             {...this.props } />
         </div>
         <div className={CONTENT_AREA_STYLE}>
-          {pageIds.map((pageId, pageIndex) => (
+          {pageIds.toArray().map((pageId, pageIndex) => (
             <Page key={`page-${pageIndex}`}
               isActive={pageIndex === currentPageIndex}
               pageId={pageId}
@@ -163,9 +163,7 @@ BrowserWindow.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  // @TODO restructure the state so this list is automatically created as new todos
-  // are added instead of generated on each update pass
-  pageIds: state.browserWindow.pages.toArray().map(page => page.id),
+  pageIds: state.browserWindow.pageIds,
 });
 
 export default connect(mapStateToProps)(BrowserWindow);
