@@ -51,7 +51,13 @@ const BASE_CONFIG = {
 };
 
 export default async function(config) {
-  const currentConfig = await fs.readJson(BUILD_CONFIG_JSON);
+  const currentConfig = {};
+
+  try {
+    currentConfig = await fs.readJson(BUILD_CONFIG_JSON);
+  } catch (e) {
+    // Ignore missing file errors.
+  }
 
   const configToWrite = Object.assign({}, currentConfig, BASE_CONFIG, config);
 
