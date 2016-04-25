@@ -17,7 +17,7 @@ import thunk from '../../../shared/thunk';
 import * as instrument from '../../shared/instrument';
 import BUILD_CONFIG from '../../../../build-config';
 
-const instrumenter = store => next => action => { // eslint-disable-line no-unused-vars
+const instrumenter = _store => next => action => {
   if (action.instrument) {
     instrument.event('event', action.type);
   }

@@ -39,6 +39,9 @@
     "space-before-function-paren": ["error", "never"],
     "no-param-reassign": ["off"],
     "no-return-assign": ["off"],
+    "no-unused-vars": ["error", {
+      "argsIgnorePattern": "^_"
+    }],
     "no-use-before-define": ["off"],
     "eqeqeq": ["error", "allow-null"],
     "lines-around-comment": ["error", {

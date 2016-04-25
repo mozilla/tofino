@@ -30,7 +30,7 @@ function send(payload) {
     request.post(
       'https://www.google-analytics.com/collect',
       { form: payload },
-      (error, response, body) => { // eslint-disable-line no-unused-vars
+      (error, response, _body) => {
         if (!error && response.statusCode === 200) {
           resolve();
         }
