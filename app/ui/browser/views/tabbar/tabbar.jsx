@@ -33,7 +33,7 @@ const NEW_TAB_BUTTON_STYLE = Style.registerStyle({
 });
 
 const TabBar = ({
-  pages, currentPageIndex, pageAreaVisible,
+  pageIds, currentPageIndex, pageAreaVisible,
   handleTabContextMenu, handleNewTabClick, handleTabClick, handleTabClose,
 }) => {
   const barDragDrop = { handlers: {} }; // new TabBarDragDrop(pages, dispatch);
@@ -49,7 +49,7 @@ const TabBar = ({
       dragzone="copy string:test/uri-list"
       {...barDragDrop.handlers}>
 
-      {pages.map((page, i) => {
+      {pageIds.map((pageId, i) => {
         // TODO Fix up dragDrop
         const dragDrop = { handlers: {} }; // new TabDragDrop(page, pages, i);
 
@@ -57,10 +57,10 @@ const TabBar = ({
           <Tab key={`browser-tab-${i}`}
             className={`browser-tab-${i}`}
             isActive={currentPageIndex === i}
-            page={page}
-            onClick={handleTabClick(page.id)}
-            onContextMenu={handleTabContextMenu(page.id)}
-            onClose={handleTabClose(page.id)}
+            pageId={pageId}
+            onClick={handleTabClick(pageId)}
+            onContextMenu={handleTabContextMenu(pageId)}
+            onClose={handleTabClose(pageId)}
             {...dragDrop.handlers} />
         );
       })}
@@ -77,7 +77,7 @@ const TabBar = ({
 TabBar.displayName = 'TabBar';
 
 TabBar.propTypes = {
-  pages: PropTypes.object.isRequired,
+  pageIds: PropTypes.arrayOf(PropTypes.string).isRequired,
   currentPageIndex: PropTypes.number.isRequired,
   handleTabClick: PropTypes.func.isRequired,
   handleTabClose: PropTypes.func.isRequired,
