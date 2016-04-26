@@ -20,7 +20,7 @@ ipc.on('get-contextmenu-data', (event, pos) => {
   const data = {
     x: pos.x,
     y: pos.y,
-    hasSelection: !!window.getSelection.toString(),
+    hasSelection: !!window.getSelection().toString(),
     href: false,
     img: false,
     video: false,

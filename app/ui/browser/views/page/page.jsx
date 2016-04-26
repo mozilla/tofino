@@ -19,7 +19,7 @@ import Status from './status';
 import Search from './search';
 
 import { fixURL } from '../../browser-util';
-import { contextMenu, menuWebViewContext } from '../../actions/external';
+import { menuWebViewContext } from '../../actions/external';
 import { closeTab, setPageDetails, setUserTypedLocation } from '../../actions/main-actions';
 import * as profileCommands from '../../../../shared/profile-commands';
 
@@ -101,6 +101,11 @@ class Page extends Component {
   }
 
   render() {
+    const requestContextData = (event) => {
+      const { offsetX: x, offsetY: y } = event.nativeEvent;
+      this.refs.webviewWrapper.webview.send('get-contextmenu-data', { x, y });
+    };
+
     return (
       <div className={`${PAGE_STYLE} ${this.props.isActive ? 'active-browser-page' : ''}`}
         hidden={!this.props.isActive}>
@@ -119,7 +124,7 @@ class Page extends Component {
               ? WEB_VIEW_WRAPPER_CHROME_EXPANDED_STYLE
               : WEB_VIEW_WRAPPER_CHROME_COLLAPSED_STYLE))}
           guestInstanceId={this.props.page.guestInstanceId}
-          onContextMenu={() => this.props.dispatch(contextMenu())} />
+          onContextMenu={requestContextData} />
         <Status page={this.props.page} />
       </div>
     );
@@ -183,7 +188,7 @@ function addListenersToWebView(webview, page, dispatch, ipcRenderer) {
         }));
         break;
       case 'contextmenu-data':
-        menuWebViewContext(e.args[0], dispatch);
+        menuWebViewContext(webview, e.args[0], dispatch);
         break;
       case 'show-bookmarks':
         console.warn('@TODO: ipc-message:show-bookmarks');

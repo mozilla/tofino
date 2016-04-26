@@ -136,7 +136,7 @@ export function menuTabContext(pageIndex, dispatch) {
 /**
  * Right click on the page itself
  */
-export function menuWebViewContext(e, dispatch) {
+export function menuWebViewContext(webview, e, dispatch) {
   const menu = new Menu();
 
   if (e.href) {
@@ -171,31 +171,23 @@ export function menuWebViewContext(e, dispatch) {
   if (e.hasSelection) {
     menu.append(new MenuItem({
       label: 'Copy',
-      click: ev => getCurrentWebView(ev.target.ownerDocument).copy(),
+      click: () => webview.copy(),
     }));
   }
 
   menu.append(new MenuItem({
     label: 'Select All',
-    click: ev => getCurrentWebView(ev.target.ownerDocument).selectAll(),
+    click: () => webview.selectAll(),
   }));
 
   menu.append(new MenuItem({ type: 'separator' }));
 
   menu.append(new MenuItem({
     label: 'Inspect Element',
-    click: ev => getCurrentWebView(ev.target.ownerDocument).inspectElement(e.x, e.y),
+    click: () => webview.inspectElement(e.x, e.y),
   }));
 
   menu.popup(remote.getCurrentWindow());
-}
-
-/**
- * Right click somewhere in a web page
- */
-export function contextMenu(e) {
-  const { offsetX: x, offsetY: y } = e.nativeEvent;
-  e.target.send('get-contextmenu-data', { x, y });
 }
 
 /**
