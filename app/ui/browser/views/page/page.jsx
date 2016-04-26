@@ -11,6 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 
 import * as UIConstants from '../../constants/ui';
 import Style from '../../browser-style';
@@ -133,7 +134,19 @@ Page.propTypes = {
   ipcRenderer: PropTypes.object.isRequired,
 };
 
-export default Page;
+const makeMapStateToProps = (initialState, initialProps) => {
+  const id = initialProps.pageId;
+  const mapStateToProps = (state) => {
+    const pages = state.browserWindow.get('pages');
+    const page = pages.find(p => p.id === id);
+    return {
+      page,
+    };
+  };
+  return mapStateToProps;
+};
+
+export default connect(makeMapStateToProps)(Page);
 
 function addListenersToWebView(webview, page, dispatch, ipcRenderer) {
   webview.addEventListener('did-start-loading', () => {

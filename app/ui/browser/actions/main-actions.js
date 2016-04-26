@@ -11,17 +11,20 @@ specific language governing permissions and limitations under the License.
 */
 
 import * as types from '../constants/action-types';
+import { Page } from '../model';
 import * as profileCommands from '../../../shared/profile-commands';
 import { ipcRenderer } from '../../../shared/electron';
 
 export function createTab(location) {
-  return { type: types.CREATE_TAB, location, instrument: true };
+  const page = location ? new Page({ location }) : new Page();
+  return { type: types.CREATE_TAB, page, instrument: true };
 }
 
 export function duplicateTab(pageId) {
   return { type: types.DUPLICATE_TAB, pageId, instrument: true };
 }
 export function attachTab(page) {
+  page = new Page(page);
   return { type: types.ATTACH_TAB, page, instrument: true };
 }
 

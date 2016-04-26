@@ -19,13 +19,10 @@ import { State, Page } from '../model';
 import * as profileDiffTypes from '../../../shared/constants/profile-diff-types';
 import { isUUID } from '../browser-util';
 
-/**
- * Fairly sure we should hard code this
- */
-const HOME_PAGE = 'https://www.mozilla.org/';
-
+const initialPage = new Page();
 const initialState = new State({
-  pages: Immutable.List.of(new Page({ location: HOME_PAGE })),
+  pages: Immutable.List.of(initialPage),
+  pageIds: Immutable.Set.of(initialPage.id),
   currentPageIndex: 0,
   pageAreaVisible: false,
 });
@@ -37,7 +34,7 @@ function getPageIndexById(state, id) {
 export default function basic(state = initialState, action) {
   switch (action.type) {
     case types.CREATE_TAB:
-      return createTab(state, action.location);
+      return createTab(state, action.page);
 
     case types.DUPLICATE_TAB:
       return duplicateTab(state, action.pageId);
@@ -91,29 +88,33 @@ export default function basic(state = initialState, action) {
   }
 }
 
-function createTab(state, location = HOME_PAGE) {
+function createTab(state, page) {
   return state.withMutations(mut => {
-    const page = new Page({ location });
     mut.update('pages', pages => pages.push(page));
     mut.set('currentPageIndex', state.pages.size);
     mut.set('pageAreaVisible', true);
+
+    mut.update('pageIds', pageIds => pageIds.add(page.id));
   });
 }
 
 function duplicateTab(state, pageId) {
   assert(isUUID(pageId), 'DUPLICATE_TAB requires a page id.');
 
-  const location = state.pages.get(getPageIndexById(state, pageId)).location;
-  return createTab(state, location);
+  const page = new Page({
+    location: state.pages.get(getPageIndexById(state, pageId)).location,
+  });
+  return createTab(state, page);
 }
 
 function attachTab(state, page) {
   assert(isUUID(page.id), 'ATTACH_TAB requires a page with valid id.');
 
   return state.withMutations(mut => {
-    const newPage = new Page(page);
-    mut.set('pages', Immutable.List.of(newPage));
+    mut.set('pages', Immutable.List.of(page));
     mut.set('currentPageIndex', 0);
+
+    mut.update('pageIds', pageIds => pageIds.add(page.id));
   });
 }
 
@@ -134,6 +135,8 @@ function closeTab(state, pageId) {
 
   return state.withMutations(mut => {
     mut.update('pages', pages => pages.delete(pageIndex));
+
+    mut.update('pageIds', pageIds => pageIds.delete(pageId));
 
     // If tab closed comes before our current tab, or if this is the right-most
     // tab and it's selected, decrement the current page index.

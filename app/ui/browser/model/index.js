@@ -14,6 +14,11 @@ import Immutable from 'immutable';
 import uuid from 'uuid';
 
 /**
+ * Fairly sure we should hard code this
+ */
+const HOME_PAGE = 'https://www.mozilla.org/';
+
+/**
  * The browser window's view of its profile.
  */
 export const Profile = Immutable.Record({
@@ -29,6 +34,8 @@ export const State = Immutable.Record({
   // This is a list of Page objects (see below)
   pages: Immutable.List(),
 
+  pageIds: Immutable.Set(),
+
   // The currently displayed tab
   currentPageIndex: -1,
 
@@ -43,7 +50,7 @@ export const State = Immutable.Record({
  */
 export class Page extends Immutable.Record({
   id: null,
-  location: undefined,
+  location: HOME_PAGE,
   title: 'New Tab',
   statusText: false,
   userTyped: null,

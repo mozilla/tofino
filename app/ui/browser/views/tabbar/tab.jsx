@@ -11,6 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 
 import Style from '../../browser-style';
 import Btn from '../navbar/btn';
@@ -104,6 +105,7 @@ Tab.displayName = 'Tab';
 
 Tab.propTypes = {
   page: PropTypes.object.isRequired,
+  pageId: PropTypes.string.isRequired,
   isActive: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onDragStart: PropTypes.func.isRequired,
@@ -114,4 +116,9 @@ Tab.propTypes = {
   onContextMenu: PropTypes.func.isRequired,
 };
 
-export default Tab;
+const mapStateToProps = (state, ownProps) => ({
+  // @TODO create a selector on the reducer to get this.
+  page: state.browserWindow.get('pages').find(p => p.id === ownProps.pageId),
+});
+
+export default connect(mapStateToProps)(Tab);

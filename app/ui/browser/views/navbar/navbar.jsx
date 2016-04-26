@@ -11,6 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 import * as UIConstants from '../../constants/ui';
 import Style from '../../browser-style';
@@ -148,7 +149,7 @@ const NavBar = (props) => {
           clickHandler={() => props.setPageAreaVisibility(!props.pageAreaVisible)}>
           <div id="browser-navbar-pages-count"
             className={NAVBAR_PAGES_COUNT_STYLE}>
-            {props.pages.size}
+            {props.numPages}
           </div>
           <span id="browser-navbar-pages-label"
             className={NAVBAR_PAGES_LABEL_STYLE}>
@@ -207,7 +208,7 @@ NavBar.displayName = 'NavBar';
 
 NavBar.propTypes = {
   page: PropTypes.object,
-  pages: PropTypes.object.isRequired,
+  numPages: PropTypes.number.isRequired,
   pageAreaVisible: PropTypes.bool.isRequired,
   ipcRenderer: PropTypes.object.isRequired,
   navBack: PropTypes.func.isRequired,
@@ -229,4 +230,13 @@ NavBar.propTypes = {
   navigateTo: PropTypes.func.isRequired,
 };
 
-export default NavBar;
+const mapStateToProps = (state) => {
+  const browserWindow = state.browserWindow;
+  return {
+    // @TODO get this from the restructured reducer
+    numPages: browserWindow.pages.size,
+    page: browserWindow.pages.get(browserWindow.currentPageIndex),
+  };
+};
+
+export default connect(mapStateToProps)(NavBar);

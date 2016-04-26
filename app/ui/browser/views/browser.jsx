@@ -11,6 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 
 import Style from '../browser-style';
 import TabBar from './tabbar/tabbar';
@@ -53,21 +54,19 @@ class BrowserWindow extends Component {
   }
 
   handleKeyDown({ metaKey, keyCode }) {
-    const { dispatch, currentPage } = this.props;
+    const { dispatch, currentPageId } = this.props;
 
     if (metaKey && keyCode === 70) { // cmd+f
-      dispatch(actions.setPageDetails(currentPage.id, { isSearching: true }));
+      dispatch(actions.setPageDetails(currentPageId, { isSearching: true }));
     } else if (keyCode === 27) { // esc
-      dispatch(actions.setPageDetails(currentPage.id, { isSearching: false }));
+      dispatch(actions.setPageDetails(currentPageId, { isSearching: false }));
     }
   }
 
   render() {
     const {
-      currentPage, ipcRenderer, dispatch, profile, pages, currentPageIndex, pageAreaVisible,
+      currentPageId, ipcRenderer, dispatch, profile, currentPageIndex, pageAreaVisible, pageIds,
     } = this.props;
-
-    const currentPageId = currentPage.id;
 
     const navBack = () => dispatch(actions.navigatePageBack(currentPageId));
     const navForward = () => dispatch(actions.navigatePageForward(currentPageId));
@@ -110,7 +109,7 @@ class BrowserWindow extends Component {
     return (
       <div className={BROWSER_WINDOW_STYLE}>
         <div className={CHROME_AREA_STYLE}>
-          <NavBar page={currentPage}
+          <NavBar
             {...{
               navBack,
               navForward,
@@ -119,7 +118,6 @@ class BrowserWindow extends Component {
               minimize,
               maximize,
               close,
-              pages,
               openMenu,
               onLocationChange,
               onLocationContextMenu,
@@ -139,10 +137,10 @@ class BrowserWindow extends Component {
             {...this.props } />
         </div>
         <div className={CONTENT_AREA_STYLE}>
-          {pages.map((page, pageIndex) => (
+          {pageIds.toArray().map((pageId, pageIndex) => (
             <Page key={`page-${pageIndex}`}
               isActive={pageIndex === currentPageIndex}
-              page={page}
+              pageId={pageId}
               {...this.props} />
           ))}
         </div>
@@ -153,8 +151,8 @@ class BrowserWindow extends Component {
 }
 
 BrowserWindow.propTypes = {
-  pages: PropTypes.object.isRequired,
-  currentPage: PropTypes.object.isRequired,
+  pageIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+  currentPageId: PropTypes.number.isRequired,
   currentPageIndex: PropTypes.number.isRequired,
   dispatch: PropTypes.func.isRequired,
   ipcRenderer: PropTypes.object.isRequired,
@@ -162,7 +160,16 @@ BrowserWindow.propTypes = {
   pageAreaVisible: PropTypes.bool.isRequired,
 };
 
-export default BrowserWindow;
+const mapStateToProps = (state) => {
+  const browserWindow = state.browserWindow;
+  const currentPage = browserWindow.pages.get(browserWindow.currentPageIndex);
+  return {
+    pageIds: browserWindow.pageIds,
+    currentPageId: currentPage.id,
+  };
+};
+
+export default connect(mapStateToProps)(BrowserWindow);
 
 function attachIPCRendererListeners(browserView) {
   const { dispatch, ipcRenderer } = browserView.props;
