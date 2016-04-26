@@ -37,12 +37,23 @@ function getPageIndexById(state, id) {
 export default function basic(state = initialState, action) {
   switch (action.type) {
     case types.CREATE_TAB:
+    case types.IPC_COMMAND_CREATE_TAB:
       return createTab(state, action.location);
+
+    case types.IPC_COMMAND_OPEN_BOOKMARK:
+      return createTab(state, action.bookmark.url);
+
+    case types.IPC_COMMAND_SHOW_BOOKMARKS:
+      return createTab(state, 'atom://bookmarks');
+
+    case types.IPC_COMMAND_FOCUS_URL_BAR:
+      return state;
 
     case types.ATTACH_TAB:
       return attachTab(state, action.page);
 
     case types.CLOSE_TAB:
+    case types.IPC_COMMAND_CLOSE_TAB:
       return closeTab(state, action.pageId);
 
     case types.NAVIGATE_PAGE_BACK:
@@ -52,6 +63,7 @@ export default function basic(state = initialState, action) {
       return navigatePageForward(state, action.pageId);
 
     case types.NAVIGATE_PAGE_REFRESH:
+    case types.IPC_COMMAND_PAGE_REFRESH:
       return navigatePageRefresh(state, action.pageId);
 
     case types.NAVIGATE_PAGE_TO:
@@ -75,13 +87,11 @@ export default function basic(state = initialState, action) {
     case types.SET_BOOKMARK_STATE:
       return setBookmarkState(state, action.url, action.isBookmarked);
 
-    case profileDiffTypes.BOOKMARKS: {
+    case profileDiffTypes.BOOKMARKS:
       return setBookmarks(state, Immutable.Set(action.payload));
-    }
 
-    case profileDiffTypes.COMPLETIONS: {
+    case profileDiffTypes.COMPLETIONS:
       return state.setIn(['profile', 'completions'], Immutable.Map(action.payload));
-    }
 
     default:
       return state;

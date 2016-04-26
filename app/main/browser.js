@@ -170,11 +170,11 @@ async function makeBrowserWindow(tabInfo: ?Object): Promise<electron.BrowserWind
   browser.loadURL(fileUrl(path.join(uiDir, 'browser', 'browser.html')));
 
   electronLocalshortcut.register(browser, 'CmdOrCtrl+L', () => {
-    browser.webContents.send('focus-urlbar');
+    browser.webContents.send('focus-url-bar');
   });
 
   electronLocalshortcut.register(browser, 'CmdOrCtrl+R', () => {
-    browser.webContents.send('page-reload');
+    browser.webContents.send('page-refresh');
   });
 
   return browser;
@@ -237,6 +237,7 @@ ipc.on('instrument-event', (event, args) => {
 
 // Inject initial state into the window. Eventually this will behave like session restore.
 // Whenever you add something to the app state, make sure to also add it here.
+
 ipc.on('window-loaded', (event) => {
   const bookmarkSet = store.getState().bookmarks || Immutable.Set();
   const recentBookmarks = store.getState().recentBookmarks || Immutable.List();

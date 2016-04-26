@@ -23,6 +23,7 @@ import {
 } from '../actions/external';
 
 import * as actions from '../actions/main-actions';
+import * as ipcActions from '../actions/ipc';
 
 const BROWSER_WINDOW_STYLE = Style.registerStyle({
   flex: 1,
@@ -166,35 +167,22 @@ export default BrowserWindow;
 function attachIPCRendererListeners(browserView) {
   const { dispatch, ipcRenderer } = browserView.props;
 
-  ipcRenderer.on('profile-diff', (event, args) => {
-    dispatch(args);
-  });
-
-  ipcRenderer.on('new-tab', () => dispatch(actions.createTab()));
-
-  ipcRenderer.on('show-bookmarks', () => {
-    dispatch(actions.createTab('atom://bookmarks'));
-  });
-
-  ipcRenderer.on('open-bookmark', (e, bookmark) => {
-    dispatch(actions.navigatePageTo(browserView.props.currentPage.id, bookmark.location));
-  });
-
-  ipcRenderer.on('tab-attach', (e, tabInfo) => {
-    const page = tabInfo.page;
-    page.guestInstanceId = tabInfo.guestInstanceId;
-    dispatch(actions.attachTab(page));
-  });
+  ipcRenderer.on('profile-diff', (_, args) => dispatch(args));
+  ipcRenderer.on('focus-url-bar', () => dispatch(ipcActions.focusURLBar()));
+  ipcRenderer.on('new-tab', () => dispatch(ipcActions.createTab()));
 
   // @TODO main process should be sending an id to close a tab
-  // most likely, not just whatever tab is currently open
-  ipcRenderer.on('close-tab', () => {
-    dispatch(actions.closeTab(browserView.props.currentPage.id));
-  });
+  // most likely, not just whatever tab is currently open, or we should
+  // handle key shortcuts in this process
+  ipcRenderer.on('close-tab', () =>
+    dispatch(ipcActions.closeTab(browserView.props.currentPage.id)));
 
   // @TODO main process should be sending an id to refresh a tab
   // most likely, not just whatever tab is currently open
-  ipcRenderer.on('page-reload', () => {
-    dispatch(actions.navigatePageRefresh(browserView.props.currentPage.id));
-  });
+  ipcRenderer.on('page-refresh', () =>
+    dispatch(ipcActions.refreshPage(browserView.props.currentPage.id)));
+
+  // @TODO Not yet implemented
+  ipcRenderer.on('show-bookmarks', () => dispatch(ipcActions.showBookmarks()));
+  ipcRenderer.on('open-bookmark', bookmark => dispatch(ipcActions.openBookmark(bookmark)));
 }
