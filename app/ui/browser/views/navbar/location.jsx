@@ -169,17 +169,17 @@ class Location extends Component {
   }
 
   handleURLBarKeyDown(ev, maxCompletions) {
-    if (ev.keyCode === 13) { // enter
+    if (ev.key === 'Enter') {
       this.props.navigateTo(fixURL(ev.target.value));
-    } else if (ev.keyCode === 27) { // esc
+    } else if (ev.key === 'Escape') {
       this.props.onLocationReset();
       ev.target.select();
-    } else if (ev.keyCode === 40 && maxCompletions > 0) { // down
+    } else if (ev.key === 'ArrowDown' && maxCompletions > 0) {
       const focusedResultIndex =
         this.state.focusedResultIndex >= maxCompletions - 1 ? 0 : this.state.focusedResultIndex + 1;
       this.setState({ focusedResultIndex });
       ev.preventDefault();
-    } else if (ev.keyCode === 38 && maxCompletions > 0) { // up
+    } else if (ev.key === 'ArrowUp' && maxCompletions > 0) {
       const focusedResultIndex =
         this.state.focusedResultIndex <= 0 ? maxCompletions - 1 : this.state.focusedResultIndex - 1;
       this.setState({ focusedResultIndex });
