@@ -33,29 +33,24 @@ const PAGE_STYLE = Style.registerStyle({
   flex: 1,
 });
 
-const WEB_VIEW_WRAPPER_STYLE = {
+const WEB_VIEW_STYLE = Style.registerStyle({
   display: 'flex',
   flex: 1,
   transition: 'transform 0.3s ease-in-out',
-};
+});
 
-const WEB_VIEW_WRAPPER_CHROME_EXPANDED_STYLE = {
+const WEB_VIEW_CHROME_EXPANDED_STYLE = Style.registerStyle({
   transform: `translateY(${UIConstants.NAVBAR_EXPANDED_HEIGHT}px)`,
-};
+});
 
-const WEB_VIEW_WRAPPER_CHROME_COLLAPSED_STYLE = {
+const WEB_VIEW_CHROME_COLLAPSED_STYLE = Style.registerStyle({
   transform: 'none',
-};
-
-const WEB_VIEW_INNER_STYLE = {
-  display: 'flex',
-  flex: 1,
-};
+});
 
 class Page extends Component {
   componentDidMount() {
     const { page, dispatch, ipcRenderer } = this.props;
-    const { webview } = this.refs.webviewWrapper;
+    const webview = this.refs.webview;
 
     addListenersToWebView(webview, page, dispatch, ipcRenderer);
 
@@ -81,7 +76,7 @@ class Page extends Component {
   }
 
   executeCommand(command) {
-    const { webview } = this.refs.webviewWrapper;
+    const webview = this.refs.webview;
     switch (command.command) {
       case 'back':
         webview.goBack();
@@ -110,19 +105,13 @@ class Page extends Component {
       <div className={`${PAGE_STYLE} ${this.props.isActive ? 'active-browser-page' : ''}`}
         hidden={!this.props.isActive}>
         <Search hidden={!this.props.page.isSearching} />
-        { /* Need to use `class` here instead of `className` since `WebViewWrapper`
-           * is not a React component, therefore it expects real attributes.
-           * Furthermore, actual styling needs to be applied inline and not via
-           * selectors, because we want them to propagate onto the webview,
-           * which doesn't have access to <style> sheets in this document. */ }
-        <webview-wrapper ref="webviewWrapper"
+        <webview is="webview"
+          ref="webview"
+          class={`webview-${this.props.page.id} ${WEB_VIEW_STYLE}
+            ${this.props.page.chromeMode === 'expanded'
+              ? WEB_VIEW_CHROME_EXPANDED_STYLE
+              : WEB_VIEW_CHROME_COLLAPSED_STYLE}`}
           preload={'../../content/preload/content.js'}
-          class={`webview-${this.props.page.id}`}
-          webviewinnerstyle={JSON.stringify(WEB_VIEW_INNER_STYLE)}
-          webviewwrapperstyle={JSON.stringify(Object.assign({}, WEB_VIEW_WRAPPER_STYLE,
-            this.props.page.chromeMode === 'expanded'
-              ? WEB_VIEW_WRAPPER_CHROME_EXPANDED_STYLE
-              : WEB_VIEW_WRAPPER_CHROME_COLLAPSED_STYLE))}
           guestInstanceId={this.props.page.guestInstanceId}
           onContextMenu={requestContextData} />
         <Status page={this.props.page} />

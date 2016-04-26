@@ -23,7 +23,6 @@ import {
 } from '../actions/external';
 
 import * as actions from '../actions/main-actions';
-import '../../shared/web-view';
 
 const BROWSER_WINDOW_STYLE = Style.registerStyle({
   flex: 1,

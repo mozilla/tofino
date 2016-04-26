@@ -63,7 +63,7 @@ export function isUUID(uuidString) {
  *
  */
 export function getCurrentWebView(document) {
-  return document.querySelector('.active-browser-page > webview-wrapper').webview;
+  return document.querySelector('.active-browser-page > webview');
 }
 
 /**
@@ -72,7 +72,7 @@ export function getCurrentWebView(document) {
 export function getWebView(document, pageIndex) {
   const element = document.querySelector(`.webview-${pageIndex}`);
   if (element == null) {
-    throw new Error(`No webview for pageIndex=${pageIndex}`);
+    throw new Error(`No webview for page at index ${pageIndex}`);
   }
   return element.webview;
 }
