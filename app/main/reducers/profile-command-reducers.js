@@ -21,16 +21,21 @@ import * as profileCommandTypes from '../../shared/constants/profile-command-typ
 import * as profileActions from '../actions/profile-actions';
 import { ProfileStorage } from '../../services/storage';
 
-export default async function commandHandler(storage: ProfileStorage,
-                                             dispatch: any,
-                                             browserWindow: electron.BrowserWindow,
-                                             command: profileActions.ProfileAction): Promise<void> {
+export default async function commandHandler(
+    storage: ProfileStorage,
+    dispatch: any,
+    browserWindow: ?electron.BrowserWindow,
+    makeBrowserWindow: () => Promise<electron.BrowserWindow>,
+    command: profileActions.ProfileAction): Promise<void> {
   console.log(`profile-command-reducers.js: Reducing ${JSON.stringify(command)}`);
 
   const payload = command.payload;
   switch (command.type) {
     case profileCommandTypes.DID_VISIT_LOCATION:
       try {
+        if (!browserWindow || !browserWindow.sessionId) {
+          break;
+        }
         await storage.visit(payload.url, browserWindow.sessionId, payload.title);
         dispatch(profileActions.topSites(new Immutable.List()));
       } catch (e) {
@@ -40,6 +45,9 @@ export default async function commandHandler(storage: ProfileStorage,
 
     case profileCommandTypes.DID_BOOKMARK_LOCATION:
       try {
+        if (!browserWindow || !browserWindow.sessionId) {
+          break;
+        }
         await storage.starPage(payload.url, browserWindow.sessionId, +1);
         const bookmarkSet = await storage.starred();
         dispatch(profileActions.bookmarkSet(new Immutable.Set(bookmarkSet)));
@@ -50,6 +58,9 @@ export default async function commandHandler(storage: ProfileStorage,
 
     case profileCommandTypes.DID_UNBOOKMARK_LOCATION:
       try {
+        if (!browserWindow || !browserWindow.sessionId) {
+          break;
+        }
         await storage.starPage(payload.url, browserWindow.sessionId, -1);
         const bookmarkSet = await storage.starred();
         dispatch(profileActions.bookmarkSet(new Immutable.Set(bookmarkSet)));
@@ -68,7 +79,14 @@ export default async function commandHandler(storage: ProfileStorage,
       break;
 
     case profileCommandTypes.DID_CLOSE_BROWSER_WINDOW:
+      if (!browserWindow) {
+        break;
+      }
       dispatch(profileActions.closeBrowserWindow(browserWindow));
+      break;
+
+    case profileCommandTypes.DID_OPEN_NEW_BROWSER_WINDOW:
+      dispatch(profileActions.createBrowserWindow(await makeBrowserWindow()));
       break;
 
     default:

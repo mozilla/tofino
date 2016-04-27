@@ -49,7 +49,7 @@ export function menuBrowser(dispatch) {
 
   menu.append(new MenuItem({
     label: 'New Window',
-    click: () => ipcRenderer.send('new-window'),
+    click: () => newBrowserWindow(),
   }));
 
   menu.popup(remote.getCurrentWindow());
@@ -210,10 +210,17 @@ export function minimize() {
 }
 
 /**
- * Close window
+ * Close window.
  */
 export function close() {
   ipcRenderer.send('profile-command', profileCommands.closeBrowserWindow());
+}
+
+/**
+ * Open New Window.
+ */
+export function newBrowserWindow() {
+  ipcRenderer.send('profile-command', profileCommands.newBrowserWindow());
 }
 
 /**

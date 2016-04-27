@@ -1,3 +1,5 @@
+/* @flow */
+
 /*
  Copyright 2016 Mozilla
 
@@ -12,10 +14,12 @@
 
 import * as profileCommandTypes from './constants/profile-command-types';
 
+export type ProfileCommand = { type: string };
+
 /**
  * The command for the '✫' bookmark button.
  */
-export function bookmark(url, title) {
+export function bookmark(url: string, title: ?string = undefined): ProfileCommand {
   return {
     type: profileCommandTypes.DID_BOOKMARK_LOCATION,
     payload: { url, title },
@@ -25,21 +29,21 @@ export function bookmark(url, title) {
 /**
  * The command for undoing the '✫' bookmark button.
  */
-export function unbookmark(url) {
+export function unbookmark(url: string): ProfileCommand {
   return {
     type: profileCommandTypes.DID_UNBOOKMARK_LOCATION,
     payload: { url },
   };
 }
 
-export function visited(url, title = undefined) {
+export function visited(url: string, title: ?string = undefined): ProfileCommand {
   return {
     type: profileCommandTypes.DID_VISIT_LOCATION,
     payload: { url, title },
   };
 }
 
-export function setUserTypedLocation(text) {
+export function setUserTypedLocation(text: string): ProfileCommand {
   return {
     type: profileCommandTypes.DID_SET_USER_TYPED_LOCATION,
     payload: {
@@ -48,8 +52,14 @@ export function setUserTypedLocation(text) {
   };
 }
 
-export function closeBrowserWindow() {
+export function closeBrowserWindow(): ProfileCommand {
   return {
     type: profileCommandTypes.DID_CLOSE_BROWSER_WINDOW,
+  };
+}
+
+export function newBrowserWindow(): ProfileCommand {
+  return {
+    type: profileCommandTypes.DID_OPEN_NEW_BROWSER_WINDOW,
   };
 }

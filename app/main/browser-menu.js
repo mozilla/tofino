@@ -12,6 +12,8 @@ specific language governing permissions and limitations under the License.
 
 import electron from 'electron';
 
+import * as profileCommands from '../shared/profile-commands';
+
 const Menu = electron.Menu;
 
 const BrowserMenu = {
@@ -30,10 +32,13 @@ const BrowserMenu = {
       {
         label: 'New Window',
         accelerator: 'CmdOrCtrl+N',
-        click: (item, focusedWindow) => {
-          if (focusedWindow) {
-            focusedWindow.webContents.send('new-window');
-          }
+        click: () => {
+          // This setImmediate avoids an interaction between the main process and child
+          // rendering process event loops that results in the window only being shown after IO
+          // events have happened, which can be quite delayed.
+          setImmediate(() => {
+            electron.ipcMain.emit('profile-command', {}, profileCommands.newBrowserWindow());
+          });
         },
       },
     ],

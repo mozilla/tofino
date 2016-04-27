@@ -205,8 +205,8 @@ export class ProfileStorage {
     return Promise.resolve(id);
   }
 
-  async startSession(scope: number,
-                     ancestor: number,
+  async startSession(scope: ?number,
+                     ancestor: ?number,
                      now: number = microtime.now()): Promise<number> {
     const result =
       await this.db

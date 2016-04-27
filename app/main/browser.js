@@ -1,3 +1,5 @@
+/* @flow */
+
 /*
 Copyright 2016 Mozilla
 
@@ -32,6 +34,7 @@ import electronLocalshortcut from 'electron-localshortcut';
 
 import BrowserMenu from './browser-menu';
 import * as instrument from '../services/instrument';
+import * as profileCommands from '../shared/profile-commands';
 import * as profileDiffs from '../shared/profile-diffs';
 import configureStore from './store/store';
 import { ProfileStorage } from '../services/storage';
@@ -54,11 +57,13 @@ function sendToAllWindows(event: string, args: Object): void {
   console.log(`browser.js: sendToAllWindows ${JSON.stringify(args)}`);
   store.getState().browserWindows.forEach((id) => {
     const bw = BrowserWindow.fromId(id);
-    bw.webContents.send(event, args);
+    if (bw) {
+      bw.webContents.send(event, args);
+    }
   });
 }
 
-async function sendDiffsToWindows(): void {
+function sendDiffsToWindows(): void {
   const previousState = currentState;
   currentState = store.getState();
 
@@ -71,7 +76,9 @@ async function sendDiffsToWindows(): void {
         return;
       }
       const bw = BrowserWindow.fromId(id);
-      bw.didFinishLoadPromise.then(() => bw.show());
+      if (bw) {
+        bw.didFinishLoadPromise.then(() => bw.show());
+      }
     });
 
     // Close old windows, taking care to use key IDs rather than possibly deleted ID members.
@@ -80,7 +87,9 @@ async function sendDiffsToWindows(): void {
         return;
       }
       const bw = BrowserWindow.fromId(id);
-      bw.didFinishLoadPromise.then(() => bw.close());
+      if (bw) {
+        bw.didFinishLoadPromise.then(() => bw.close());
+      }
     });
   }
 
@@ -123,7 +132,7 @@ function fileUrl(str: string): string {
   return encodeURI(`file://${pathName}`);
 }
 
-async function makeBrowserWindow(tabInfo: Object): Promise<electron.BrowserWindow> {
+async function makeBrowserWindow(tabInfo: ?Object): Promise<electron.BrowserWindow> {
   const profileStorage = await profileStoragePromise;
   const sessionId = await profileStorage.startSession(); // TODO: scope, ancestor.
 
@@ -166,6 +175,14 @@ async function makeBrowserWindow(tabInfo: Object): Promise<electron.BrowserWindo
   return browser;
 }
 
+async function dispatchProfileCommand(
+    command: Object,
+    browserWindow: ?electron.BrowserWindow = null): Promise<void> {
+  const profileStorage = await profileStoragePromise;
+  await profileCommandHandler(profileStorage, store.dispatch, browserWindow,
+                              makeBrowserWindow, command);
+}
+
 const appStartupTime = Date.now();
 instrument.event('app', 'STARTUP');
 
@@ -180,8 +197,7 @@ app.on('ready', async function() {
   const starredLocations = await profileStorage.starred();
   store.dispatch(profileActions.bookmarkSet(new Immutable.Set(starredLocations)));
 
-  const browserWindow = await makeBrowserWindow();
-  store.dispatch(profileActions.createBrowserWindow(browserWindow));
+  dispatchProfileCommand(profileCommands.newBrowserWindow());
 });
 
 // Unregister all shortcuts.
@@ -203,19 +219,13 @@ app.on('activate', async function() {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (store.getState().browserWindows.isEmpty()) {
-    const browserWindow = await makeBrowserWindow();
-    store.dispatch(profileActions.createBrowserWindow(browserWindow));
+    dispatchProfileCommand(profileCommands.newBrowserWindow());
   }
 });
 
 ipc.on('instrument-event', (event, args) => {
   // Until we transpile app/, we can't destructure in the argument list or inline here.
   instrument.event(args.name, args.method, args.label, args.value);
-});
-
-ipc.on('new-window', async function() {
-  const browserWindow = await makeBrowserWindow();
-  store.dispatch(profileActions.createBrowserWindow(browserWindow));
 });
 
 ipc.on('window-loaded', (event) => {
@@ -226,7 +236,10 @@ ipc.on('window-loaded', (event) => {
 });
 
 ipc.on('window-ready', event => {
-  BrowserWindow.fromWebContents(event.sender).show();
+  const bw = BrowserWindow.fromWebContents(event.sender);
+  if (bw) {
+    bw.show();
+  }
 });
 
 ipc.on('tab-detach', async function(event, tabInfo) {
@@ -235,7 +248,9 @@ ipc.on('tab-detach', async function(event, tabInfo) {
 });
 
 ipc.on('profile-command', async function(event, command) {
-  const mainWindow = BrowserWindow.fromWebContents(event.sender);
-  const profileStorage = await profileStoragePromise;
-  await profileCommandHandler(profileStorage, store.dispatch, mainWindow, command);
+  // Not all events come from a window.  Some come from the main process.
+  const browserWindow = (event && event.sender)
+      ? BrowserWindow.fromWebContents(event.sender)
+      : null;
+  await dispatchProfileCommand(command, browserWindow);
 });

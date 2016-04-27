@@ -172,11 +172,6 @@ function attachIPCRendererListeners(browserView) {
 
   ipcRenderer.on('new-tab', () => dispatch(actions.createTab()));
 
-  // TODO: Avoid this re-dispatch back to the main process
-  ipcRenderer.on('new-window', () => {
-    ipcRenderer.send('new-window');
-  });
-
   ipcRenderer.on('show-bookmarks', () => {
     dispatch(actions.createTab('atom://bookmarks'));
   });
