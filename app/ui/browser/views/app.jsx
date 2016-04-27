@@ -22,16 +22,16 @@ const APP_STYLE = Style.registerStyle({
   height: '100%',
 });
 
-const App = function({ state, dispatch }) {
+const App = function({ pages, profile, currentPageIndex, currentPage, pageAreaVisible, dispatch }) {
   return (
     <div className={APP_STYLE}>
       <BrowserWindow ipcRenderer={ipcRenderer}
         dispatch={dispatch}
-        profile={state.browserWindow.profile}
-        pages={state.browserWindow.pages}
-        currentPageIndex={state.browserWindow.currentPageIndex}
-        currentPage={state.browserWindow.pages.get(state.browserWindow.currentPageIndex)}
-        pageAreaVisible={state.browserWindow.pageAreaVisible} />
+        pages={pages}
+        profile={profile}
+        currentPageIndex={currentPageIndex}
+        currentPage={currentPage}
+        pageAreaVisible={pageAreaVisible} />
       <Style.Element />
     </div>
   );
@@ -40,12 +40,23 @@ const App = function({ state, dispatch }) {
 App.displayName = 'App';
 
 App.propTypes = {
-  state: PropTypes.object.isRequired,
+  pages: PropTypes.object.isRequired,
+  profile: PropTypes.object.isRequired,
+  currentPageIndex: PropTypes.number.isRequired,
+  currentPage: PropTypes.object.isRequired,
+  pageAreaVisible: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state) {
-  return { state };
+  const browserWindow = state.browserWindow;
+  return {
+    pages: browserWindow.pages,
+    profile: browserWindow.profile,
+    currentPageIndex: browserWindow.currentPageIndex,
+    currentPage: browserWindow.pages.get(browserWindow.currentPageIndex),
+    pageAreaVisible: browserWindow.pageAreaVisible,
+  };
 }
 
 export default connect(mapStateToProps)(Style.component(App));
