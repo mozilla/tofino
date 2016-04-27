@@ -10,9 +10,31 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
+import assert from 'assert';
 import * as types from '../constants/action-types';
 import * as profileCommands from '../../../shared/profile-commands';
 import { ipcRenderer } from '../../../shared/electron';
+import { getWebViewById, fixURL, getPageIndexById, isUUID } from '../browser-util';
+
+/**
+ * Takes a function and action name. Calls the function/action-creator in
+ * a try block to stop progression of an action creator upon error,
+ * as well as rethrow the error with the related action type.
+ *
+ * @param {Function} fn
+ * @param {String} action
+ * @return {Function}
+ */
+function tagErrors(fn, action) {
+  return function(...args) {
+    try {
+      fn(...args);
+    } catch (e) {
+      e.message = `${action}: ${e.message}`;
+      throw e;
+    }
+  };
+}
 
 export function createTab(location) {
   return { type: types.CREATE_TAB, location, instrument: true };
@@ -77,18 +99,54 @@ export function unbookmark(url) {
   };
 }
 
-export function navigatePageTo(pageId, location) {
-  return { type: types.NAVIGATE_PAGE_TO, pageId, location };
+// @TODO Linting https://github.com/eslint/eslint/issues/3587
+export function navigatePageTo(pageId, location, doc=document) { // eslint-disable-line
+  return tagErrors((dispatch, getState) => {
+    assert(typeof location === 'string', '`location` must be a string.');
+    assert(isUUID(pageId), `Invalid page id: ${pageId}`);
+    assert(getPageIndexById(getState(), pageId) >= 0,
+      `Page ${pageId} not found in current state.`);
+
+    dispatch({ type: types.NAVIGATE_PAGE_TO, pageId, location });
+    getWebViewById(doc, pageId).setAttribute('src', fixURL(location));
+  }, types.NAVIGATE_PAGE_TO);
 }
 
-export function navigatePageBack(pageId) {
-  return { type: types.NAVIGATE_PAGE_BACK, pageId };
+// @TODO Linting https://github.com/eslint/eslint/issues/3587
+export function navigatePageBack(pageId, doc=document) { // eslint-disable-line
+  return tagErrors((dispatch, getState) => {
+    assert(isUUID(pageId), `Invalid page id: ${pageId}`);
+    const pageIndex = getPageIndexById(getState(), pageId);
+    assert(pageIndex >= 0, `Page ${pageId} not found in current state.`);
+    assert(getState().browserWindow.pages.get(pageIndex).canGoBack, 'Page cannot go back.');
+
+    dispatch({ type: types.NAVIGATE_PAGE_BACK, pageId });
+    getWebViewById(doc, pageId).goBack();
+  }, types.NAVIGATE_PAGE_BACK);
 }
 
-export function navigatePageForward(pageId) {
-  return { type: types.NAVIGATE_PAGE_FORWARD, pageId };
+// @TODO Linting https://github.com/eslint/eslint/issues/3587
+export function navigatePageForward(pageId, doc=document) { // eslint-disable-line
+  return tagErrors((dispatch, getState) => {
+    assert(isUUID(pageId), `Invalid page id: ${pageId}`);
+    const pageIndex = getPageIndexById(getState(), pageId);
+    assert(pageIndex >= 0, `Page ${pageId} not found in current state.`);
+    assert(getState().browserWindow.pages.get(pageIndex).canGoForward, 'Page cannot go forward.');
+
+    dispatch({ type: types.NAVIGATE_PAGE_FORWARD, pageId });
+    getWebViewById(doc, pageId).goForward();
+  }, types.NAVIGATE_PAGE_FORWARD);
 }
 
-export function navigatePageRefresh(pageId) {
-  return { type: types.NAVIGATE_PAGE_REFRESH, pageId };
+// @TODO Linting https://github.com/eslint/eslint/issues/3587
+export function navigatePageRefresh(pageId, doc=document) { // eslint-disable-line
+  return tagErrors((dispatch, getState) => {
+    assert(isUUID(pageId), `Invalid page id: ${pageId}`);
+    const pageIndex = getPageIndexById(getState(), pageId);
+    assert(pageIndex >= 0, `Page ${pageId} not found in current state.`);
+    assert(getState().browserWindow.pages.get(pageIndex).canRefresh, 'Page cannot refresh.');
+
+    dispatch({ type: types.NAVIGATE_PAGE_REFRESH, pageId });
+    getWebViewById(doc, pageId).reload();
+  }, types.NAVIGATE_PAGE_REFRESH);
 }

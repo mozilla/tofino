@@ -4,6 +4,7 @@
 import expect from 'expect';
 import configureStore from '../../../../app/ui/browser/store/store';
 import * as actions from '../../../../app/ui/browser/actions/main-actions';
+import { createWebViewMocks } from '../utils';
 
 describe('Action - NAVIGATE_PAGE_BACK', () => {
   beforeEach(function() {
@@ -15,39 +16,48 @@ describe('Action - NAVIGATE_PAGE_BACK', () => {
     dispatch(actions.createTab('http://moz2.org'));
     dispatch(actions.createTab('http://moz3.org'));
     dispatch(actions.closeTab(this.getState().pages.get(0).id));
+
+    return createWebViewMocks(
+      this.getState().pages.map(p => ({ id: `webview-${p.id}` }))
+    ).then(win => this.win = win);
+  });
+
+  afterEach(function() {
+    this.win.close();
   });
 
   it('Should execute navigate back commands in page', function() {
-    const { dispatch, getState } = this;
+    const { win, dispatch, getState } = this;
     const ids = getState().pages.map(p => p.id);
 
     // Ensure page can go back
     dispatch(actions.setPageDetails(ids.get(1), { canGoBack: true }));
 
-    dispatch(actions.navigatePageBack(ids.get(1)));
-    expect(getState().pages.get(1).commands.size).toEqual(1);
-    expect(getState().pages.get(1).commands.get(0).command).toEqual('back');
+    dispatch(actions.navigatePageBack(ids.get(1), win.document));
+    expect(win.document.querySelector(`#webview-${ids.get(1)}`).getAttribute('back-count'))
+      .toEqual('1');
 
-    dispatch(actions.navigatePageBack(ids.get(1)));
-    expect(getState().pages.get(1).commands.size).toEqual(2);
-    expect(getState().pages.get(1).commands.get(1).command).toEqual('back');
+    dispatch(actions.navigatePageBack(ids.get(1), win.document));
+    expect(win.document.querySelector(`#webview-${ids.get(1)}`).getAttribute('back-count'))
+      .toEqual('2');
   });
 
   it('Should throw if page cannot go back', function() {
-    const { dispatch, getState } = this;
+    const { win, dispatch, getState } = this;
     const ids = getState().pages.map(p => p.id);
 
     // Ensure page cannot go back
     dispatch(actions.setPageDetails(ids.get(1), { canGoBack: false }));
 
     try {
-      dispatch(actions.navigatePageBack(ids.get(1)));
+      dispatch(actions.navigatePageBack(ids.get(1), win.document));
       expect(false).toEqual(true,
         'Expected NAVIGATE_PAGE_BACK to throw when page cannot go back.');
     } catch (e) {
       expect(true).toEqual(true,
         'Expected NAVIGATE_PAGE_BACK to throw when page cannot go back.');
     }
-    expect(getState().pages.get(2).commands.size).toEqual(0);
+    expect(win.document.querySelector(`#webview-${ids.get(1)}`).getAttribute('back-count'))
+      .toEqual(null);
   });
 });

@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import { createTab, setPageOrder } from '../../actions/main-actions';
-import { getBestDropItem, getWebView } from '../../browser-util';
+import { getBestDropItem, getWebViewById } from '../../browser-util';
 
 /* This is a dirty hack around Blink not supporting relatedTarget in dragleave
    events (https://bugs.chromium.org/p/chromium/issues/detail?id=159534).
@@ -53,10 +53,10 @@ export class TabDragDrop {
   }
 
   onDragEnd(e) {
-    const { page, pageIndex } = this;
+    const { page } = this;
 
     if (e.dataTransfer.dropEffect === 'none') {
-      const webview = getWebView(e.target.ownerDocument, pageIndex);
+      const webview = getWebViewById(e.target.ownerDocument, page.id);
       const guestInstanceId = webview.guestInstanceId;
       this.ipcRenderer.send('tab-detach', { page, guestInstanceId });
     }
@@ -71,7 +71,7 @@ export class TabDragDrop {
   }
 
   onDrop(e) {
-    const { pageIndex } = this;
+    const { page } = this;
 
     const item = getBestDropItem(e.dataTransfer);
     if (item.type === 'text/uri-list' || item.type === 'text/plain') {
@@ -80,7 +80,7 @@ export class TabDragDrop {
       // TODO this whole component needs to be fixed up, and
       // when navigate to a page, must use NAVIGATE_PAGE_TO action
       // via `dispatch`.
-      const webview = getWebView(e.target.ownerDocument, pageIndex);
+      const webview = getWebViewById(e.target.ownerDocument, page.id);
       webview.setAttribute('src', url);
 
       e.dataTransfer.dropEffect = 'copy';
