@@ -47,3 +47,9 @@ export function setUserTypedLocation(text) {
     },
   };
 }
+
+export function closeBrowserWindow() {
+  return {
+    type: profileCommandTypes.DID_CLOSE_BROWSER_WINDOW,
+  };
+}
