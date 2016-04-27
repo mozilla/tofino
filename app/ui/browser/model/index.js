@@ -18,6 +18,7 @@ import uuid from 'uuid';
  */
 export const Profile = Immutable.Record({
   bookmarks: Immutable.Set(),
+  recentBookmarks: Immutable.List(),
   completions: Immutable.Map(),
 });
 

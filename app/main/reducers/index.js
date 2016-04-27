@@ -11,15 +11,16 @@
  */
 
 import { combineReducers } from 'redux';
-import bookmarks from './bookmarks-reducers';
-import browserWindows from './browserWindows-reducers';
-import visits from './visits-reducers';
-import locations from './location-reducers';
+import { recentBookmarksReducer, bookmarksReducer } from './bookmarks-reducers';
+import browserWindowsReducer from './browserWindows-reducers';
+import visitsReducer from './visits-reducers';
+import locationsReducer from './location-reducers';
 
 const rootReducer = combineReducers({
-  bookmarks,
-  visits,
-  locations,
-  browserWindows,
+  bookmarks: bookmarksReducer,
+  recentBookmarks: recentBookmarksReducer,
+  visits: visitsReducer,
+  locations: locationsReducer,
+  browserWindows: browserWindowsReducer,
 });
 export default rootReducer;

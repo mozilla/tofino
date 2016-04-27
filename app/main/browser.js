@@ -55,7 +55,13 @@ let currentState;
 
 function sendToAllWindows(event: string, args: Object): void {
   console.log(`browser.js: sendToAllWindows ${JSON.stringify(args)}`);
-  store.getState().browserWindows.forEach((id) => {
+  const windows = store.getState().browserWindows;
+
+  if (!windows) {
+    return;
+  }
+
+  windows.forEach((id) => {
     const bw = BrowserWindow.fromId(id);
     if (bw) {
       bw.webContents.send(event, args);
@@ -93,21 +99,20 @@ function sendDiffsToWindows(): void {
     });
   }
 
+  const recentBookmarksChanged =
+    !previousState ||
+    !Immutable.is(currentState.recentBookmarks, previousState.recentBookmarks);
+
+  if (recentBookmarksChanged) {
+    BrowserMenu.build({ recentBookmarks: currentState.recentBookmarks });
+  }
+
   const bookmarksChanged =
     !previousState ||
     !Immutable.is(currentState.bookmarks, previousState.bookmarks);
 
   if (bookmarksChanged) {
     sendToAllWindows('profile-diff', profileDiffs.bookmarks(currentState.bookmarks.toJS()));
-  }
-
-  if (bookmarksChanged) {
-    // TODO: maintain this list in storage.
-    const recentBookmarks = currentState.bookmarks
-      .valueSeq()
-      .sortBy(bookmark => bookmark.createdAt)
-      .take(5);
-    BrowserMenu.build({ bookmarks: recentBookmarks });
   }
 
   const locationsChanged =
@@ -195,7 +200,9 @@ app.on('ready', async function() {
   // Extract the initial state from the profile storage.
   const profileStorage = await profileStoragePromise;
   const starredLocations = await profileStorage.starred();
+  const recentlyStarredLocations = await profileStorage.recentlyStarred();
   store.dispatch(profileActions.bookmarkSet(new Immutable.Set(starredLocations)));
+  store.dispatch(profileActions.recentBookmarks(new Immutable.List(recentlyStarredLocations)));
 
   dispatchProfileCommand(profileCommands.newBrowserWindow());
 });
@@ -228,10 +235,14 @@ ipc.on('instrument-event', (event, args) => {
   instrument.event(args.name, args.method, args.label, args.value);
 });
 
+// Inject initial state into the window. Eventually this will behave like session restore.
+// Whenever you add something to the app state, make sure to also add it here.
 ipc.on('window-loaded', (event) => {
-  const bookmarkSet = store.getState().bookmarks;
+  const bookmarkSet = store.getState().bookmarks || Immutable.Set();
+  const recentBookmarks = store.getState().recentBookmarks || Immutable.List();
   event.returnValue = {
     bookmarks: bookmarkSet.toJS(),
+    recentBookmarks: recentBookmarks.toJS(),
   };
 });
 

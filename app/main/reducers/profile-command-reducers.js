@@ -29,6 +29,17 @@ export default async function commandHandler(
     command: profileActions.ProfileAction): Promise<void> {
   console.log(`profile-command-reducers.js: Reducing ${JSON.stringify(command)}`);
 
+  async function dispatchActionsForChangedStarred(
+    url: string     // eslint-disable-line no-unused-vars
+  ) {
+    // TODO: only send add/remove starredness for `url`, rather than grabbing the whole set.
+    const bookmarkSet = await storage.starred();
+    dispatch(profileActions.bookmarkSet(new Immutable.Set(bookmarkSet)));
+
+    const recentList = await storage.recentlyStarred();
+    dispatch(profileActions.recentBookmarks(new Immutable.List(recentList)));
+  }
+
   const payload = command.payload;
   switch (command.type) {
     case profileCommandTypes.DID_VISIT_LOCATION:
@@ -36,7 +47,11 @@ export default async function commandHandler(
         if (!browserWindow || !browserWindow.sessionId) {
           break;
         }
+
+        // TODO: include visit types.
         await storage.visit(payload.url, browserWindow.sessionId, payload.title);
+
+        // TODO: actually fetch top sites.
         dispatch(profileActions.topSites(new Immutable.List()));
       } catch (e) {
         // TODO: do more than ignore failure to persist visit.
@@ -49,8 +64,7 @@ export default async function commandHandler(
           break;
         }
         await storage.starPage(payload.url, browserWindow.sessionId, +1);
-        const bookmarkSet = await storage.starred();
-        dispatch(profileActions.bookmarkSet(new Immutable.Set(bookmarkSet)));
+        await dispatchActionsForChangedStarred(payload.url);
       } catch (e) {
         console.log(e); // TODO: do more than ignore failure.
       }
@@ -62,8 +76,7 @@ export default async function commandHandler(
           break;
         }
         await storage.starPage(payload.url, browserWindow.sessionId, -1);
-        const bookmarkSet = await storage.starred();
-        dispatch(profileActions.bookmarkSet(new Immutable.Set(bookmarkSet)));
+        await dispatchActionsForChangedStarred(payload.url);
       } catch (e) {
         console.log(e); // TODO: do more than ignore failure.
       }

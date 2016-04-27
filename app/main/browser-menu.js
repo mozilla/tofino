@@ -111,7 +111,7 @@ const BrowserMenu = {
       },
     ],
   },
-  bookmarks: (bookmarks) => {
+  recentBookmarks: (recentBookmarks) => {
     const items = {
       label: 'Bookmarks',
       submenu: [
@@ -129,13 +129,14 @@ const BrowserMenu = {
       ],
     };
 
-    if (bookmarks) {
-      bookmarks.forEach(bookmark => {
+    if (recentBookmarks) {
+      recentBookmarks.forEach(bookmark => {
         items.submenu.push({
           label: bookmark.title || bookmark.location,
           click(item, focusedWindow) {
             if (focusedWindow) {
-              focusedWindow.webContents.send('open-bookmark', bookmark);
+              console.log(`Opening bookmark ${bookmark.location}`);
+              focusedWindow.webContents.send('open-bookmark', bookmark.toJS());
             }
           },
         });
@@ -265,7 +266,7 @@ const BrowserMenu = {
     template.push(this.edit);
     template.push(this.view);
     template.push(this.history);
-    template.push(this.bookmarks(data.bookmarks));
+    template.push(this.recentBookmarks(data.recentBookmarks));
     template.push(this.tools);
     template.push(this.window);
     template.push(this.help);

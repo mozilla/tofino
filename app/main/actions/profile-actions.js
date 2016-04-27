@@ -30,6 +30,13 @@ export function bookmarkSet(bookmarks: Immutable.Set<string>): ProfileAction {
   };
 }
 
+export function recentBookmarks(recent: Immutable.List<string>): ProfileAction {
+  return {
+    type: profileActionTypes.DID_CHANGE_RECENT_BOOKMARKS,
+    payload: recent,
+  };
+}
+
 /**
  * The list of Top Sites is different.
  */

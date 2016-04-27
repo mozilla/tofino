@@ -177,7 +177,7 @@ function attachIPCRendererListeners(browserView) {
   });
 
   ipcRenderer.on('open-bookmark', (e, bookmark) => {
-    dispatch(actions.createTab(bookmark.url));
+    dispatch(actions.navigatePageTo(browserView.props.currentPage.id, bookmark.location));
   });
 
   ipcRenderer.on('tab-attach', (e, tabInfo) => {

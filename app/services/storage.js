@@ -24,6 +24,7 @@ import cbmkdirp from 'less-mkdirp';
 import microtime from 'microtime-fast';
 import path from 'path';
 import thenify from 'thenify';
+import { Bookmark } from '../model/index';
 
 import { DB, verbose } from './sqlite';
 
@@ -375,7 +376,8 @@ export class ProfileStorage {
     return this.collectURLs(await this.db.all(query, [since, limit]));
   }
 
-  async getStarredWithOrderByAndLimit(orderClause: string, limit: ?number): Promise<[string]> {
+  async getStarredWithOrderByAndLimit(newestFirst: boolean, limit: ?number): Promise<[string]> {
+    const orderClause = newestFirst ? 'ORDER BY s.ts DESC' : '';
     let limitClause: string;
     let args: [any];
     if (limit) {
@@ -391,16 +393,21 @@ export class ProfileStorage {
     FROM mStarred AS s LEFT JOIN vTitles AS t ON s.place = t.place
     ${orderClause} ${limitClause}
     `;
-    return this.collectURLs(await this.db.all(fromMaterialized, args));
+
+    const rows = await this.db.all(fromMaterialized, args);
+    return rows.map(row =>
+      new Bookmark({
+        title: row.title, location: row.url, visitedAt: row.ts,
+      }));
   }
 
   async starred(limit: ?number = undefined): Promise<[string]> {
     // Fetch all places visited, with the latest timestamp for each.
-    return this.getStarredWithOrderByAndLimit('', limit);
+    return this.getStarredWithOrderByAndLimit(false, limit);
   }
 
   async recentlyStarred(limit: number = 5): Promise<[string]> {
-    return this.getStarredWithOrderByAndLimit('ORDER BY s.ts DESC', limit);
+    return this.getStarredWithOrderByAndLimit(true, limit);
   }
 
   userVersion(): Promise<number> {
@@ -476,7 +483,7 @@ GROUP BY place
 `;
 
 const materializedStarsV4 = `CREATE TABLE mStarred (
-  place INTEGER NOT NULL REFERENCES placeEvents(id),
+  place INTEGER NOT NULL UNIQUE REFERENCES placeEvents(id),
   ts INTEGER NOT NULL,
   url TEXT NOT NULL
 )`;

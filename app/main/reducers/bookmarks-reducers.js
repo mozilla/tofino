@@ -14,7 +14,18 @@ import * as profileActionTypes from '../constants/profile-action-types';
 
 import Immutable from 'immutable';
 
-export default function bookmarksReducer(bookmarks = new Immutable.Set(), action) {
+export function recentBookmarksReducer(recentBookmarks = new Immutable.List(), action) {
+  const payload = action.payload;
+  switch (action.type) {
+    case profileActionTypes.DID_CHANGE_RECENT_BOOKMARKS:
+      return payload;
+
+    default:
+      return recentBookmarks;
+  }
+}
+
+export function bookmarksReducer(bookmarks = new Immutable.Set(), action) {
   const payload = action.payload;
   switch (action.type) {
     case profileActionTypes.DID_CHANGE_BOOKMARKS:

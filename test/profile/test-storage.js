@@ -274,7 +274,7 @@ describe('ProfileStorage data access', () => {
         const session = await storage.startSession(null, null);
         await storage.starPage(bar, session, 1);
         starred = await storage.starred();
-        expect(starred).toEqual([bar]);
+        expect(starred.map(record => record.location)).toEqual([bar]);
 
         await storage.starPage(bar, session, -1);
         starred = await storage.starred();
@@ -282,26 +282,26 @@ describe('ProfileStorage data access', () => {
 
         await storage.starPage(baz, session, 1);
         starred = await storage.starred();
-        expect(starred).toEqual([baz]);
+        expect(starred.map(record => record.location)).toEqual([baz]);
 
         starred = await storage.recentlyStarred(2);
-        expect(starred).toEqual([baz]);
+        expect(starred.map(record => record.location)).toEqual([baz]);
 
         await storage.starPage('http://example.com/foo/bar', session, 1);
 
         starred = await storage.starred();
-        expect(Immutable.Set(starred).equals(both));
+        expect(Immutable.Set(starred.map(record => record.location)).equals(both));
 
         starred = await storage.recentlyStarred(2);
-        expect(starred).toEqual([bar, baz]);
+        expect(starred.map(record => record.location)).toEqual([bar, baz]);
 
         starred = await storage.recentlyStarred(1);
-        expect(starred).toEqual([bar]);
+        expect(starred.map(record => record.location)).toEqual([bar]);
 
         // Check that we get the same results for from-scratch materialization.
         await storage.rematerialize();
         starred = await storage.starred();
-        expect(Immutable.Set(starred).equals(both));
+        expect(Immutable.Set(starred.map(record => record.location)).equals(both));
 
         await storage.close();
 
