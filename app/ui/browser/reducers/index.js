@@ -12,9 +12,15 @@ specific language governing permissions and limitations under the License.
 
 import { combineReducers } from 'redux';
 import browserWindow from './main-reducers';
+import profile from './profile';
 
 const rootReducer = combineReducers({
   browserWindow,
+  profile,
 });
 
 export default rootReducer;
+
+export function getProfile(state) {
+  return state.profile;
+}

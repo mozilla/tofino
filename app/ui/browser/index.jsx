@@ -23,9 +23,9 @@ import Immutable from 'immutable';
 const initialProfileState = ipcRenderer.sendSync('window-loaded');
 
 const initialState = rootReducer(undefined, { type: null });
-initialState.browserWindow = initialState.browserWindow.withMutations(mut => {
-  mut.setIn(['profile', 'recentBookmarks'], new Immutable.List(initialProfileState.recentBookmarks))
-     .setIn(['profile', 'bookmarks'], new Immutable.Set(initialProfileState.bookmarks));
+initialState.profile = initialState.profile.withMutations(mut => {
+  mut.set('recentBookmarks', new Immutable.List(initialProfileState.recentBookmarks))
+     .set('bookmarks', new Immutable.Set(initialProfileState.bookmarks));
 });
 
 const store = configureStore(initialState);

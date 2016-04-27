@@ -15,11 +15,11 @@ import { connect } from 'react-redux';
 import { ipcRenderer } from '../../../shared/electron';
 import {
   getPages,
-  getProfile,
   getCurrentPage,
   getCurrentPageIndex,
   getPageAreaVisible,
 } from '../reducers/main-reducers';
+import { getProfile } from '../reducers';
 
 import Style from '../browser-style';
 import BrowserWindow from './browser';

@@ -16,7 +16,6 @@ import 'babel-polyfill';
 import Immutable from 'immutable';
 import * as types from '../constants/action-types';
 import { State, Page } from '../model';
-import * as profileDiffTypes from '../../../shared/constants/profile-diff-types';
 import { isUUID } from '../browser-util';
 
 /**
@@ -84,15 +83,6 @@ export default function basic(state = initialState, action) {
     case types.SET_USER_TYPED_LOCATION:
       return setUserTypedLocation(state, action.pageId, action.payload);
 
-    case types.SET_BOOKMARK_STATE:
-      return setBookmarkState(state, action.url, action.isBookmarked);
-
-    case profileDiffTypes.BOOKMARKS:
-      return setBookmarks(state, Immutable.Set(action.payload));
-
-    case profileDiffTypes.COMPLETIONS:
-      return state.setIn(['profile', 'completions'], Immutable.Map(action.payload));
-
     default:
       return state;
   }
@@ -100,10 +90,6 @@ export default function basic(state = initialState, action) {
 
 export function getPages(state) {
   return state.browserWindow.pages;
-}
-
-export function getProfile(state) {
-  return state.browserWindow.profile;
 }
 
 export function getCurrentPage(state) {
@@ -280,14 +266,4 @@ function setPageOrder(state, pageId, updatedIndex) {
 
 function setPageAreaVisibility(state, visible) {
   return state.set('pageAreaVisible', visible);
-}
-
-function setBookmarkState(state, url, isBookmarked) {
-  return state.setIn(['profile', 'bookmarks'], isBookmarked
-    ? state.profile.bookmarks.add(url)
-    : state.profile.bookmarks.delete(url));
-}
-
-function setBookmarks(state, bookmarks) {
-  return state.setIn(['profile', 'bookmarks'], bookmarks);
 }
