@@ -139,7 +139,7 @@ class BrowserWindow extends Component {
         </div>
         <div className={CONTENT_AREA_STYLE}>
           {pages.map((page, pageIndex) => (
-            <Page key={`page-${pageIndex}`}
+            <Page key={`page-${page.id}`}
               isActive={pageIndex === currentPageIndex}
               page={page}
               {...this.props} />
