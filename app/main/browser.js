@@ -37,24 +37,24 @@ import * as instrument from '../services/instrument';
 import * as profileCommands from '../shared/profile-commands';
 import * as profileDiffs from '../shared/profile-diffs';
 import configureStore from './store/store';
+import registerAboutPages from './about-pages';
 import { ProfileStorage } from '../services/storage';
 import profileCommandHandler from './reducers/profile-command-reducers';
 const profileStoragePromise = ProfileStorage.open(path.join(__dirname, '..', '..'));
 import * as profileActions from './actions/profile-actions';
 import Immutable from 'immutable';
+import { UI_DIR, fileUrl } from './util';
 
 const BrowserWindow = electron.BrowserWindow;  // create native browser window.
 const app = electron.app; // control application life.
 const ipc = electron.ipcMain;
 const globalShortcut = electron.globalShortcut;
 
-const uiDir = path.join(__dirname, '..', 'ui');
 
 const store = configureStore();
 let currentState;
 
 function sendToAllWindows(event: string, args: Object): void {
-  console.log(`browser.js: sendToAllWindows ${JSON.stringify(args)}`);
   const windows = store.getState().browserWindows;
 
   if (!windows) {
@@ -126,17 +126,6 @@ function sendDiffsToWindows(): void {
 
 store.subscribe(sendDiffsToWindows);
 
-function fileUrl(str: string): string {
-  let pathName = path.resolve(str).replace(/\\/g, '/');
-
-  // Windows drive letter must be prefixed with a slash
-  if (pathName[0] !== '/') {
-    pathName = `/${pathName}`;
-  }
-
-  return encodeURI(`file://${pathName}`);
-}
-
 async function makeBrowserWindow(tabInfo: ?Object): Promise<electron.BrowserWindow> {
   const profileStorage = await profileStoragePromise;
   const sessionId = await profileStorage.startSession(); // TODO: scope, ancestor.
@@ -167,7 +156,7 @@ async function makeBrowserWindow(tabInfo: ?Object): Promise<electron.BrowserWind
   });
 
   // Start loading browser chrome.
-  browser.loadURL(fileUrl(path.join(uiDir, 'browser', 'browser.html')));
+  browser.loadURL(fileUrl(path.join(UI_DIR, 'browser', 'browser.html')));
 
   electronLocalshortcut.register(browser, 'CmdOrCtrl+L', () => {
     browser.webContents.send('focus-urlbar');
@@ -196,6 +185,9 @@ instrument.event('app', 'STARTUP');
 app.on('ready', async function() {
   const appReadyTime = Date.now();
   instrument.event('app', 'READY', 'ms', appReadyTime - appStartupTime);
+
+  // Register `about:*` protocols after app's 'ready' event
+  registerAboutPages();
 
   // Extract the initial state from the profile storage.
   const profileStorage = await profileStoragePromise;
