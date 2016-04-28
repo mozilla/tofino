@@ -131,7 +131,6 @@ const BrowserMenu = {
           label: bookmark.title || bookmark.location,
           click(item, focusedWindow) {
             if (focusedWindow) {
-              console.log(`Opening bookmark ${bookmark.location}`);
               focusedWindow.webContents.send('open-bookmark', bookmark.toJS());
             }
           },

@@ -29,6 +29,7 @@ import { Bookmark } from '../model/index';
 
 import { DB, verbose } from './sqlite';
 
+const debug = false;
 const mkdirp = thenify(cbmkdirp);
 
 export const VisitType = {
@@ -69,7 +70,6 @@ export class ProfileStorage {
     verbose();
 
     const filePath = path.join(dir, 'browser.db');
-    console.log(`Database path is ${filePath}.`);
 
     await mkdirp(dir);
     const db = await DB.open(filePath);
@@ -112,8 +112,7 @@ export class ProfileStorage {
       throw new Error(`Incorrect version ${v}; expected ${schema.version}.`);
     }
 
-    const loaded = await this.loadPlaces();
-    console.log(`Loaded ${loaded} places.`);
+    await this.loadPlaces();
 
     return this;
   }
@@ -537,17 +536,23 @@ class ProfileStorageSchemaV4 {
     const v = await storage.userVersion();
 
     if (v === this.version) {
-      console.log(`Storage already at version ${v}.`);
+      if (debug) {
+        console.log(`Storage already at version ${v}.`);
+      }
       return v;
     }
 
     if (v === 0) {
-      console.log(`Creating storage at version ${this.version}.`);
+      if (debug) {
+        console.log(`Creating storage at version ${this.version}.`);
+      }
       return this.create(storage);
     }
 
     if (v < this.version) {
-      console.log(`Updating storage from ${v} to ${this.version}.`);
+      if (debug) {
+        console.log(`Updating storage from ${v} to ${this.version}.`);
+      }
       return this.update(storage, v);
     }
 
