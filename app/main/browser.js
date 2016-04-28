@@ -39,12 +39,12 @@ import BrowserMenu from './browser-menu';
 import * as instrument from '../services/instrument';
 import * as profileCommands from '../shared/profile-commands';
 import * as profileDiffs from '../shared/profile-diffs';
+import * as model from '../model/index';
 import configureStore from './store/store';
 import registerAboutPages from './about-pages';
 import { ProfileStorage } from '../services/storage';
 import profileCommandHandler from './profile-command-handler';
 const profileStoragePromise = ProfileStorage.open(path.join(__dirname, '..', '..'));
-import * as profileActions from './actions/profile-actions';
 import Immutable from 'immutable';
 import { UI_DIR, fileUrl } from './util';
 
@@ -54,8 +54,8 @@ const ipc = electron.ipcMain;
 const globalShortcut = electron.globalShortcut;
 
 
-const store = configureStore();
-let currentState;
+let currentState = new model.UserAgent();
+const store = configureStore(currentState);
 
 function sendToAllWindows(event: string, args: Object): void {
   const windows = store.getState().browserWindows;
@@ -176,8 +176,10 @@ async function dispatchProfileCommand(
     command: Object,
     browserWindow: ?electron.BrowserWindow = null): Promise<void> {
   const profileStorage = await profileStoragePromise;
-  await profileCommandHandler(profileStorage, store.dispatch, browserWindow,
-                              makeBrowserWindow, command);
+  const newState = await profileCommandHandler(store.getState(),
+    profileStorage, browserWindow,
+    makeBrowserWindow, command);
+  store.dispatch({ type: 'REPLACE', payload: newState });
 }
 
 const appStartupTime = Date.now();
@@ -199,8 +201,10 @@ app.on('ready', async function() {
   const profileStorage = await profileStoragePromise;
   const starredLocations = await profileStorage.starredURLs();
   const recentlyStarredLocations = await profileStorage.recentlyStarred();
-  store.dispatch(profileActions.bookmarkSet(starredLocations));
-  store.dispatch(profileActions.recentBookmarks(new Immutable.List(recentlyStarredLocations)));
+  const userAgent = store.getState()
+    .set('bookmarks', starredLocations)
+    .set('recentBookmarks', new Immutable.List(recentlyStarredLocations));
+  store.dispatch({ type: 'REPLACE', payload: userAgent });
 
   dispatchProfileCommand(profileCommands.newBrowserWindow());
 });

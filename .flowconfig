@@ -593,7 +593,7 @@
 <PROJECT_ROOT>/node_modules/sntp/.*
 <PROJECT_ROOT>/node_modules/source-list-map/.*
 <PROJECT_ROOT>/node_modules/source-map/.*
-<PROJECT_ROOT>/node_modules/source-map-support/.*
+# <PROJECT_ROOT>/node_modules/source-map-support/.*
 <PROJECT_ROOT>/node_modules/sparkles/.*
 <PROJECT_ROOT>/node_modules/spdx-correct/.*
 <PROJECT_ROOT>/node_modules/spdx-exceptions/.*

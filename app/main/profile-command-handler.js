@@ -17,27 +17,28 @@
 import electron from 'electron';
 import Immutable from 'immutable';
 
+import * as model from '../model';
+import * as profileCommands from '../shared/profile-commands';
 import * as profileCommandTypes from '../shared/constants/profile-command-types';
-import * as profileActions from './actions/profile-actions';
 import { ProfileStorage } from '../services/storage';
 
 export default async function commandHandler(
-    storage: ProfileStorage,
-    dispatch: any,
-    browserWindow: ?electron.BrowserWindow,
-    makeBrowserWindow: () => Promise<electron.BrowserWindow>,
-    command: profileActions.ProfileAction): Promise<void> {
-  console.log(`profile-command-reducers.js: Reducing ${JSON.stringify(command)}`);
+  userAgent: model.UserAgent,
+  storage: ProfileStorage,
+  browserWindow: ?electron.BrowserWindow,
+  makeBrowserWindow: () => Promise<electron.BrowserWindow>,
+  command: profileCommands.ProfileCommand): Promise<model.UserAgent> {
 
   async function dispatchActionsForChangedStarred(
     url: string     // eslint-disable-line no-unused-vars
-  ) {
+  ): Promise<model.UserAgent> {
     // TODO: only send add/remove starredness for `url`, rather than grabbing the whole set.
-    const bookmarkSet = await storage.starredURLs();
-    dispatch(profileActions.bookmarkSet(bookmarkSet));
+    const bookmarks = await storage.starredURLs();
+    const recentBookmarks = await storage.recentlyStarred();
 
-    const recentList = await storage.recentlyStarred();
-    dispatch(profileActions.recentBookmarks(new Immutable.List(recentList)));
+    return userAgent
+      .set('bookmarks', bookmarks)
+      .set('recentBookmarks', new Immutable.List(recentBookmarks));
   }
 
   const payload = command.payload;
@@ -52,7 +53,7 @@ export default async function commandHandler(
         await storage.visit(payload.url, browserWindow.sessionId, payload.title);
 
         // TODO: actually fetch top sites.
-        dispatch(profileActions.topSites(new Immutable.List()));
+        return userAgent.set('visits', new Immutable.List());
       } catch (e) {
         // TODO: do more than ignore failure to persist visit.
       }
@@ -64,7 +65,7 @@ export default async function commandHandler(
           break;
         }
         await storage.starPage(payload.url, browserWindow.sessionId, +1);
-        await dispatchActionsForChangedStarred(payload.url);
+        return await dispatchActionsForChangedStarred(payload.url);
       } catch (e) {
         console.log(e); // TODO: do more than ignore failure.
       }
@@ -76,7 +77,7 @@ export default async function commandHandler(
           break;
         }
         await storage.starPage(payload.url, browserWindow.sessionId, -1);
-        await dispatchActionsForChangedStarred(payload.url);
+        return await dispatchActionsForChangedStarred(payload.url);
       } catch (e) {
         console.log(e); // TODO: do more than ignore failure.
       }
@@ -85,7 +86,8 @@ export default async function commandHandler(
     case profileCommandTypes.DID_SET_USER_TYPED_LOCATION:
       try {
         const completions = await storage.visitedMatches(payload.text);
-        dispatch(profileActions.completionsFor(payload.text, new Immutable.List(completions)));
+        return userAgent.set('locations',
+          userAgent.locations.set(payload.text, new Immutable.List(completions)));
       } catch (e) {
         console.log(e); // TODO: do more than ignore failure.
       }
@@ -95,14 +97,16 @@ export default async function commandHandler(
       if (!browserWindow) {
         break;
       }
-      dispatch(profileActions.closeBrowserWindow(browserWindow));
-      break;
+      return userAgent.set('browserWindows',
+        userAgent.browserWindows.delete(browserWindow.id));
 
     case profileCommandTypes.DID_OPEN_NEW_BROWSER_WINDOW:
-      dispatch(profileActions.createBrowserWindow(await makeBrowserWindow(payload.tabInfo)));
-      break;
+      return userAgent.set('browserWindows',
+        userAgent.browserWindows.add((await makeBrowserWindow(payload.tabInfo)).id));
 
     default:
       break;
   }
+
+  return userAgent;
 }

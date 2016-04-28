@@ -14,7 +14,7 @@
 
 import * as profileCommandTypes from './constants/profile-command-types';
 
-export type ProfileCommand = { type: string };
+export type ProfileCommand = { type: string, payload: Object };
 
 /**
  * The command for the '✫' bookmark button.
@@ -55,6 +55,8 @@ export function setUserTypedLocation(text: string): ProfileCommand {
 export function closeBrowserWindow(): ProfileCommand {
   return {
     type: profileCommandTypes.DID_CLOSE_BROWSER_WINDOW,
+    payload: {
+    },
   };
 }
 
