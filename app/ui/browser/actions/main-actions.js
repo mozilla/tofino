@@ -18,9 +18,6 @@ export function createTab(location) {
   return { type: types.CREATE_TAB, location, instrument: true };
 }
 
-export function duplicateTab(pageId) {
-  return { type: types.DUPLICATE_TAB, pageId, instrument: true };
-}
 export function attachTab(page) {
   return { type: types.ATTACH_TAB, page, instrument: true };
 }
