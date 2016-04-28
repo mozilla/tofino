@@ -42,7 +42,7 @@ import * as profileDiffs from '../shared/profile-diffs';
 import configureStore from './store/store';
 import registerAboutPages from './about-pages';
 import { ProfileStorage } from '../services/storage';
-import profileCommandHandler from './reducers/profile-command-reducers';
+import profileCommandHandler from './profile-command-handler';
 const profileStoragePromise = ProfileStorage.open(path.join(__dirname, '..', '..'));
 import * as profileActions from './actions/profile-actions';
 import Immutable from 'immutable';

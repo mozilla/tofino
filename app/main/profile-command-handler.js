@@ -17,9 +17,9 @@
 import electron from 'electron';
 import Immutable from 'immutable';
 
-import * as profileCommandTypes from '../../shared/constants/profile-command-types';
-import * as profileActions from '../actions/profile-actions';
-import { ProfileStorage } from '../../services/storage';
+import * as profileCommandTypes from '../shared/constants/profile-command-types';
+import * as profileActions from './actions/profile-actions';
+import { ProfileStorage } from '../services/storage';
 
 export default async function commandHandler(
     storage: ProfileStorage,
