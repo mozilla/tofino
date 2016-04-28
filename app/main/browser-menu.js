@@ -103,10 +103,6 @@ const BrowserMenu = {
         click: () => {},
       },
       {
-        label: 'Clear History',
-        click: () => {},
-      },
-      {
         type: 'separator',
       },
     ],
