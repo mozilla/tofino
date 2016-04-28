@@ -26,7 +26,6 @@ describe('DB.open', () => {
     (async function () {
       try {
         const tempPath = tmp.tmpNameSync();
-        console.log(`Temporary DB is ${tempPath}.`);
 
         const db = await DB.open(tempPath);
 
@@ -36,7 +35,6 @@ describe('DB.open', () => {
         const row = await db.get('PRAGMA user_version');
         expect(row.user_version === 0);
         await db.close();
-        console.log('Cleaning up.');
         fs.unlinkSync(tempPath);   // Clean up.
 
         done();
@@ -52,18 +50,14 @@ describe('ProfileStorage.open', () => {
     (async function () {
       try {
         const parent = tmp.dirSync({}).name;
-        console.log(`Temp root: ${parent}`);
 
         // Ensure that subdirectories will be created if necessary.
         const tempDir = path.join(parent, '/foo/bar/');
         const storage = await ProfileStorage.open(tempDir);
 
         expect(storage instanceof ProfileStorage);
-        const v = await storage.userVersion();
-        console.log(`Storage version: ${v}.`);
+        expect((await storage.userVersion()) === 4);
         await storage.close();
-
-        console.log('Cleaning up.');
 
         // This should be the only file after we close.
         fs.unlinkSync(path.join(tempDir, 'browser.db'));
@@ -85,8 +79,6 @@ describe('ProfileStorage data access', () => {
   });
 
   afterEach(() => {
-    console.log('Cleaning up.');
-
     // This should be the only file after we close.
     fs.unlinkSync(path.join(tempDir, 'browser.db'));
     fs.rmdirSync(tempDir);
@@ -357,7 +349,6 @@ describe('Schema upgrades', () => {
         expect((await db.get('PRAGMA user_version')).user_version === 2);
 
         await storage.close();
-        console.log('Cleaning up.');
         fs.unlinkSync(tempPath);   // Clean up.
 
         done();
@@ -386,7 +377,6 @@ describe('Schema upgrades', () => {
         expect((await db.get('PRAGMA user_version')).user_version === 4);
 
         await storage.close();
-        console.log('Cleaning up.');
         fs.unlinkSync(tempPath);   // Clean up.
 
         done();
@@ -413,13 +403,11 @@ class ProfileStorageSchemaV1 {
     const v = await storage.userVersion();
 
     if (v === this.version) {
-      console.log(`Storage already at version ${v}.`);
       return v;
     }
 
     switch (v) {
       case 0:
-        console.log(`Creating storage at version ${this.version}.`);
         return this.create(storage);
       default:
         throw new Error(`Target version ${this.version} lower than DB version ${v}!`);
@@ -502,17 +490,14 @@ class ProfileStorageSchemaV2 {
     const v = await storage.userVersion();
 
     if (v === this.version) {
-      console.log(`Storage already at version ${v}.`);
       return v;
     }
 
     if (v === 0) {
-      console.log(`Creating storage at version ${this.version}.`);
       return this.create(storage);
     }
 
     if (v < this.version) {
-      console.log(`Updating storage from ${v} to ${this.version}.`);
       return this.update(storage, v);
     }
 
