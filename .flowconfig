@@ -3,6 +3,7 @@
 [ignore]
 <PROJECT_ROOT>/dist/.*
 
+<PROJECT_ROOT>/node_modules/npm/test/fixtures/config/package.json
 <PROJECT_ROOT>/node_modules/Base64/.*
 <PROJECT_ROOT>/node_modules/abab/.*
 <PROJECT_ROOT>/node_modules/abbrev/.*
@@ -129,6 +130,7 @@
 <PROJECT_ROOT>/node_modules/commander/.*
 <PROJECT_ROOT>/node_modules/concat-map/.*
 <PROJECT_ROOT>/node_modules/concat-stream/.*
+<PROJECT_ROOT>/node_modules/config-chain/.*
 <PROJECT_ROOT>/node_modules/console-browserify/.*
 <PROJECT_ROOT>/node_modules/constants-browserify/.*
 <PROJECT_ROOT>/node_modules/content-disposition/.*
@@ -541,6 +543,7 @@
 <PROJECT_ROOT>/node_modules/react-free-style/.*
 <PROJECT_ROOT>/node_modules/react-redux/.*
 <PROJECT_ROOT>/node_modules/read-json-sync/.*
+<PROJECT_ROOT>/node_modules/read-package-tree/.*
 <PROJECT_ROOT>/node_modules/read-pkg/.*
 <PROJECT_ROOT>/node_modules/read-pkg-up/.*
 <PROJECT_ROOT>/node_modules/readable-stream/.*
