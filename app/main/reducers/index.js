@@ -1,3 +1,5 @@
+/* @flow */
+
 /*
  Copyright 2016 Mozilla
 
@@ -10,17 +12,35 @@
  specific language governing permissions and limitations under the License.
  */
 
-import { combineReducers } from 'redux';
-import { recentBookmarksReducer, bookmarksReducer } from './bookmarks-reducers';
-import browserWindowsReducer from './browserWindows-reducers';
-import visitsReducer from './visits-reducers';
-import locationsReducer from './location-reducers';
+import * as model from '../../model';
+import * as profileActionTypes from '../constants/profile-action-types';
 
-const rootReducer = combineReducers({
-  bookmarks: bookmarksReducer,
-  recentBookmarks: recentBookmarksReducer,
-  visits: visitsReducer,
-  locations: locationsReducer,
-  browserWindows: browserWindowsReducer,
-});
-export default rootReducer;
+export default function rootReducer(userAgent: model.UserAgent = new model.UserAgent(),
+  action: Object): model.UserAgent {
+  const payload = action.payload;
+  switch (action.type) {
+    case profileActionTypes.DID_CHANGE_BOOKMARKS:
+      return userAgent.set('bookmarks', payload);
+
+    case profileActionTypes.DID_CHANGE_RECENT_BOOKMARKS:
+      return userAgent.set('recentBookmarks', payload);
+
+    case profileActionTypes.DID_CREATE_BROWSER_WINDOW:
+      return userAgent.set('browserWindows',
+        userAgent.browserWindows.add(payload.browserWindow.id));
+
+    case profileActionTypes.DID_CLOSE_BROWSER_WINDOW:
+      return userAgent.set('browserWindows',
+        userAgent.browserWindows.delete(payload.browserWindow.id));
+
+    case profileActionTypes.DID_SET_TOP_SITES_LIST:
+      return userAgent.set('visits', payload);
+
+    case profileActionTypes.DID_SET_COMPLETION_LIST_FOR:
+      return userAgent.set('locations',
+        userAgent.locations.set(payload.text, payload.completionList));
+
+    default:
+      return userAgent;
+  }
+}
