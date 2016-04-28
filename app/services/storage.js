@@ -32,6 +32,8 @@ import { DB, verbose } from './sqlite';
 const debug = false;
 const mkdirp = thenify(cbmkdirp);
 
+type BookmarkRow = { place: number, title: ?string, ts: number, url: string };
+
 export const VisitType = {
   unknown: 0,
 };
@@ -377,7 +379,7 @@ export class ProfileStorage {
   }
 
   async getStarredWithOrderByAndLimit(newestFirst: boolean, limit: ?number):
-  Promise<[{place: number, title: ?string, ts: number, url: string}]> {
+  Promise<[BookmarkRow]> {
     const orderClause = newestFirst ? 'ORDER BY s.ts DESC' : '';
     let limitClause: string;
     let args: [any];
@@ -400,12 +402,12 @@ export class ProfileStorage {
 
   async starredURLs(limit: ?number = undefined): Promise<Immutable.Set<string>> {
     // Fetch all places visited, with the latest timestamp for each.
-    const rows = await this.getStarredWithOrderByAndLimit(false, limit);
+    const rows: [BookmarkRow] = await this.getStarredWithOrderByAndLimit(false, limit);
     return Immutable.Set(rows.map(row => row.url));
   }
 
   async recentlyStarred(limit: number = 5): Promise<[Bookmark]> {
-    const rows = await this.getStarredWithOrderByAndLimit(true, limit);
+    const rows: [BookmarkRow] = await this.getStarredWithOrderByAndLimit(true, limit);
     return rows.map(row =>
       new Bookmark({
         title: row.title, location: row.url, visitedAt: row.ts,
