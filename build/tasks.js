@@ -17,14 +17,14 @@ export default {
     await require('./task-build-deps').default();
   },
 
-  async build(config = {}) {
+  async build(config = {}, args = []) {
     await this.config(config);
-    await require('./task-build').default();
+    await require('./task-build').default(args);
   },
 
-  async buildDev() {
+  async buildDev(args = []) {
     await this.config({ development: true });
-    await require('./task-build').default();
+    await require('./task-build').default(args);
   },
 
   async run(args = []) {

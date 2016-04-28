@@ -32,16 +32,18 @@ const transpile = (filename, options = {}) => new Promise((resolve, reject) => {
   });
 });
 
-export async function buildFile(sourceFile, sourceStats) {
+export async function buildFile(sourceFile, sourceStats, force = false) {
   let targetFile = getTargetPath(sourceFile);
 
-  try {
-    const targetStats = await fs.stat(targetFile);
-    if (targetStats.mtime > sourceStats.mtime) {
-      return;
+  if (!force) {
+    try {
+      const targetStats = await fs.stat(targetFile);
+      if (targetStats.mtime > sourceStats.mtime) {
+        return;
+      }
+    } catch (e) {
+      // The target may not exist. For whatever reason just go and try to build it
     }
-  } catch (e) {
-    // The target may not exist. For whatever reason just go and try to build it
   }
 
   const extension = path.extname(sourceFile);
@@ -68,10 +70,21 @@ export async function buildFile(sourceFile, sourceStats) {
   }
 }
 
-async function babelBuild() {
-  const source = path.resolve(path.join(__dirname, '..', 'app'));
+async function babelBuild(args = []) {
+  const index = args.indexOf('--force');
+  const force = index > -1;
+  args.splice(index, 1);
 
-  const paths = await fs.walk(source);
+  let paths;
+  if (!args.length) {
+    const source = path.resolve(path.join(__dirname, '..', 'app'));
+    paths = await fs.walk(source);
+  } else {
+    paths = args.map((p) => {
+      const pathItem = path.resolve(path.join(__dirname, '..', p));
+      return { path: pathItem, stats: fs.lstatSync(pathItem) };
+    });
+  }
 
   // Find all the directories and sort by depth.
   const dirs = paths.filter(p => p.stats.isDirectory())
@@ -82,7 +95,7 @@ async function babelBuild() {
 
   // Build all the files
   const files = paths.filter(p => p.stats.isFile());
-  await Promise.all(files.map(p => buildFile(p.path, p.stats)));
+  await Promise.all(files.map(p => buildFile(p.path, p.stats, force)));
 }
 
-export default () => babelBuild();
+export default babelBuild;
