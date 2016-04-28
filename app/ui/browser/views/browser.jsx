@@ -184,5 +184,6 @@ function attachIPCRendererListeners(browserView) {
 
   // @TODO Not yet implemented
   ipcRenderer.on('show-bookmarks', () => dispatch(ipcActions.showBookmarks()));
-  ipcRenderer.on('open-bookmark', bookmark => dispatch(ipcActions.openBookmark(bookmark)));
+  ipcRenderer.on('open-bookmark',
+    (_event, bookmark) => dispatch(ipcActions.openBookmark(bookmark)));
 }

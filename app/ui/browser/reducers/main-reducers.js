@@ -41,7 +41,7 @@ export default function basic(state = initialState, action) {
       return createTab(state, action.location);
 
     case types.IPC_COMMAND_OPEN_BOOKMARK:
-      return createTab(state, action.bookmark.url);
+      return createTab(state, action.bookmark.location);
 
     case types.IPC_COMMAND_SHOW_BOOKMARKS:
       return createTab(state, 'atom://bookmarks');
