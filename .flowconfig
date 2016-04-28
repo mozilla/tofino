@@ -179,7 +179,7 @@
 <PROJECT_ROOT>/node_modules/ee-first/.*
 <PROJECT_ROOT>/node_modules/electron-download/.*
 <PROJECT_ROOT>/node_modules/electron-ipc-mock/.*
-<PROJECT_ROOT>/node_modules/electron-localshortcut/.*
+# <PROJECT_ROOT>/node_modules/electron-localshortcut/.*
 <PROJECT_ROOT>/node_modules/electron-osx-sign/.*
 <PROJECT_ROOT>/node_modules/electron-packager/.*
 <PROJECT_ROOT>/node_modules/electron-prebuilt/.*
