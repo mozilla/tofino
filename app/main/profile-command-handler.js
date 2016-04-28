@@ -99,7 +99,7 @@ export default async function commandHandler(
       break;
 
     case profileCommandTypes.DID_OPEN_NEW_BROWSER_WINDOW:
-      dispatch(profileActions.createBrowserWindow(await makeBrowserWindow()));
+      dispatch(profileActions.createBrowserWindow(await makeBrowserWindow(payload.tabInfo)));
       break;
 
     default:

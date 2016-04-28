@@ -253,8 +253,7 @@ ipc.on('window-ready', event => {
 });
 
 ipc.on('tab-detach', async function(event, tabInfo) {
-  const browserWindow = await makeBrowserWindow(tabInfo);
-  store.dispatch(profileActions.createBrowserWindow(browserWindow));
+  dispatchProfileCommand(profileCommands.newBrowserWindow(tabInfo));
 });
 
 ipc.on('profile-command', async function(event, command) {

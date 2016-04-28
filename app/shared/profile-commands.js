@@ -58,8 +58,11 @@ export function closeBrowserWindow(): ProfileCommand {
   };
 }
 
-export function newBrowserWindow(): ProfileCommand {
+export function newBrowserWindow(tabInfo: ?Object): ProfileCommand {
   return {
     type: profileCommandTypes.DID_OPEN_NEW_BROWSER_WINDOW,
+    payload: {
+      tabInfo,
+    },
   };
 }
