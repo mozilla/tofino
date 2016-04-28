@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import {
-  createTab, setUserTypedLocation, duplicateTab, closeTab, navigatePageTo,
+  createTab, setUserTypedLocation, closeTab, navigatePageTo,
 } from './main-actions';
 import { getCurrentWebView, fixURL } from '../browser-util';
 import { remote, clipboard, ipcRenderer } from '../../../shared/electron';
@@ -117,11 +117,6 @@ export function menuTabContext(pageIndex, dispatch) {
   menu.append(new MenuItem({
     label: 'New Tab',
     click: createTab,
-  }));
-
-  menu.append(new MenuItem({
-    label: 'Duplicate',
-    click: () => dispatch(duplicateTab()),
   }));
 
   menu.append(new MenuItem({ type: 'separator' }));

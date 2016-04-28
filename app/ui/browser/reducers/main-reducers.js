@@ -39,9 +39,6 @@ export default function basic(state = initialState, action) {
     case types.CREATE_TAB:
       return createTab(state, action.location);
 
-    case types.DUPLICATE_TAB:
-      return duplicateTab(state, action.pageId);
-
     case types.ATTACH_TAB:
       return attachTab(state, action.page);
 
@@ -98,13 +95,6 @@ function createTab(state, location = HOME_PAGE) {
     mut.set('currentPageIndex', state.pages.size);
     mut.set('pageAreaVisible', true);
   });
-}
-
-function duplicateTab(state, pageId) {
-  assert(isUUID(pageId), 'DUPLICATE_TAB requires a page id.');
-
-  const location = state.pages.get(getPageIndexById(state, pageId)).location;
-  return createTab(state, location);
 }
 
 function attachTab(state, page) {
