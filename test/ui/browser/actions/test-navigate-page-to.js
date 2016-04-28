@@ -4,6 +4,7 @@
 import expect from 'expect';
 import configureStore from '../../../../app/ui/browser/store/store';
 import * as actions from '../../../../app/ui/browser/actions/main-actions';
+import { createWebViewMocks } from '../utils';
 
 const RUST_URL = 'http://rust-lang.org';
 
@@ -17,22 +18,27 @@ describe('Action - NAVIGATE_PAGE_TO', () => {
     dispatch(actions.createTab('http://moz2.org'));
     dispatch(actions.createTab('http://moz3.org'));
     dispatch(actions.closeTab(this.getState().pages.get(0).id));
+
+    return createWebViewMocks(
+      this.getState().pages.map(p => ({ id: `webview-${p.id}` }))
+    ).then(win => this.win = win);
+  });
+
+  afterEach(function() {
+    this.win.close();
   });
 
   it('Should execute navigate commands in page', function() {
-    const { dispatch, getState } = this;
+    const { win, dispatch, getState } = this;
     const id = getState().pages.get(1).id;
 
-    dispatch(actions.navigatePageTo(id, RUST_URL));
+    dispatch(actions.navigatePageTo(id, RUST_URL, win.document));
 
-    expect(getState().pages.get(1).commands.size).toEqual(1);
-    expect(getState().pages.get(1).commands.get(0).command).toEqual('navigate-to');
-    expect(getState().pages.get(1).commands.get(0).location).toEqual(RUST_URL);
+    expect(win.document.querySelector(`#webview-${id}`).getAttribute('src'))
+      .toEqual(RUST_URL);
 
-    dispatch(actions.navigatePageTo(id, `${RUST_URL}/documentation.html`));
-    expect(getState().pages.get(1).commands.size).toEqual(2);
-    expect(getState().pages.get(1).commands.get(1).command).toEqual('navigate-to');
-    expect(getState().pages.get(1).commands.get(1).location).toEqual(
-      `${RUST_URL}/documentation.html`);
+    dispatch(actions.navigatePageTo(id, `${RUST_URL}/documentation.html`, win.document));
+    expect(win.document.querySelector(`#webview-${id}`).getAttribute('src'))
+      .toEqual(`${RUST_URL}/documentation.html`);
   });
 });

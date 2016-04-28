@@ -59,42 +59,6 @@ class Page extends Component {
     }
   }
 
-  /**
-   * After Page receives new properties, iterate over the new commands
-   * in the queue and execute them.
-   *
-   * @TODO This queue grows indefinitely. We should drain it somehow in a
-   * Reduxy way.
-   */
-  componentDidUpdate({ page }) {
-    const currentPage = this.props.page;
-    if (page.commands.size !== currentPage.commands.size) {
-      for (let i = page.commands.size; i < currentPage.commands.size; i++) {
-        this.executeCommand(currentPage.commands.get(i));
-      }
-    }
-  }
-
-  executeCommand(command) {
-    const webview = this.refs.webview;
-    switch (command.command) {
-      case 'back':
-        webview.goBack();
-        break;
-      case 'forward':
-        webview.goForward();
-        break;
-      case 'refresh':
-        webview.reload();
-        break;
-      case 'navigate-to':
-        webview.setAttribute('src', fixURL(command.location));
-        break;
-      default:
-        throw new Error(`Unknown command for WebView: ${command.command}`);
-    }
-  }
-
   render() {
     const requestContextData = (event) => {
       const { offsetX: x, offsetY: y } = event.nativeEvent;
@@ -107,7 +71,8 @@ class Page extends Component {
         <Search hidden={!this.props.page.isSearching} />
         <webview is="webview"
           ref="webview"
-          class={`webview-${this.props.page.id} ${WEB_VIEW_STYLE}
+          id={`webview-${this.props.page.id}`}
+          class={`${WEB_VIEW_STYLE}
             ${this.props.page.chromeMode === 'expanded'
               ? WEB_VIEW_CHROME_EXPANDED_STYLE
               : WEB_VIEW_CHROME_COLLAPSED_STYLE}`}

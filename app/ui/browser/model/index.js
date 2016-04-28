@@ -54,7 +54,6 @@ export class Page extends Immutable.Record({
   canGoForward: false,
   canRefresh: false,
   chromeMode: 'expanded',
-  commands: Immutable.List(),
 }) {
   constructor(data) {
     super(Object.assign({ id: uuid.v4() }, data));

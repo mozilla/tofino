@@ -66,13 +66,10 @@ export function getCurrentWebView(document) {
   return document.querySelector('.active-browser-page > webview');
 }
 
-/**
- *
- */
-export function getWebView(document, pageIndex) {
-  const element = document.querySelector(`.webview-${pageIndex}`);
-  if (element == null) {
-    throw new Error(`No webview for page at index ${pageIndex}`);
-  }
-  return element.webview;
+export function getWebViewById(document, id) {
+  return document.querySelector(`#webview-${id}`);
+}
+
+export function getPageIndexById(state, id) {
+  return (state.browserWindow || state).pages.findIndex(page => page.id === id);
 }
