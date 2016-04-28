@@ -20,6 +20,7 @@
  * @module ProfileStorage
  */
 
+import Immutable from 'immutable';
 import cbmkdirp from 'less-mkdirp';
 import microtime from 'microtime-fast';
 import path from 'path';
@@ -394,20 +395,21 @@ export class ProfileStorage {
     ${orderClause} ${limitClause}
     `;
 
-    const rows = await this.db.all(fromMaterialized, args);
+    return await this.db.all(fromMaterialized, args);
+  }
+
+  async starredURLs(limit: ?number = undefined): Promise<Immutable.Set<string>> {
+    // Fetch all places visited, with the latest timestamp for each.
+    const rows = await this.getStarredWithOrderByAndLimit(false, limit);
+    return Immutable.Set(rows.map(row => row.url));
+  }
+
+  async recentlyStarred(limit: number = 5): Promise<[Bookmark]> {
+    const rows = await this.getStarredWithOrderByAndLimit(true, limit);
     return rows.map(row =>
       new Bookmark({
         title: row.title, location: row.url, visitedAt: row.ts,
       }));
-  }
-
-  async starred(limit: ?number = undefined): Promise<[string]> {
-    // Fetch all places visited, with the latest timestamp for each.
-    return this.getStarredWithOrderByAndLimit(false, limit);
-  }
-
-  async recentlyStarred(limit: number = 5): Promise<[string]> {
-    return this.getStarredWithOrderByAndLimit(true, limit);
   }
 
   userVersion(): Promise<number> {

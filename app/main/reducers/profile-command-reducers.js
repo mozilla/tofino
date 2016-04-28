@@ -33,8 +33,8 @@ export default async function commandHandler(
     url: string     // eslint-disable-line no-unused-vars
   ) {
     // TODO: only send add/remove starredness for `url`, rather than grabbing the whole set.
-    const bookmarkSet = await storage.starred();
-    dispatch(profileActions.bookmarkSet(new Immutable.Set(bookmarkSet)));
+    const bookmarkSet = await storage.starredURLs();
+    dispatch(profileActions.bookmarkSet(bookmarkSet));
 
     const recentList = await storage.recentlyStarred();
     dispatch(profileActions.recentBookmarks(new Immutable.List(recentList)));

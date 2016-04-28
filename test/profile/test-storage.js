@@ -261,7 +261,7 @@ describe('ProfileStorage data access', () => {
     }());
   });
 
-  it('Can extract the set of starred pages.', (done) => {
+  it('Can extract the set of starredURLs pages.', (done) => {
     (async function () {
       try {
         const storage = await ProfileStorage.open(tempDir);
@@ -270,38 +270,38 @@ describe('ProfileStorage data access', () => {
         const baz = 'http://example.com/foo/baz';
         const both = Immutable.Set([bar, baz]);
 
-        let starred;
+        let starred: Immutable.Set<string>;
         const session = await storage.startSession(null, null);
         await storage.starPage(bar, session, 1);
-        starred = await storage.starred();
-        expect(starred.map(record => record.location)).toEqual([bar]);
+        starred = await storage.starredURLs();
+        expect(Immutable.Set([bar]).equals(starred));
 
         await storage.starPage(bar, session, -1);
-        starred = await storage.starred();
-        expect(starred).toEqual([]);
+        starred = await storage.starredURLs();
+        expect(starred.isEmpty());
 
         await storage.starPage(baz, session, 1);
-        starred = await storage.starred();
-        expect(starred.map(record => record.location)).toEqual([baz]);
+        starred = await storage.starredURLs();
+        expect(Immutable.Set([baz]).equals(starred));
 
-        starred = await storage.recentlyStarred(2);
-        expect(starred.map(record => record.location)).toEqual([baz]);
+        let recent = await storage.recentlyStarred(2);
+        expect(recent.map(record => record.location)).toEqual([baz]);
 
         await storage.starPage('http://example.com/foo/bar', session, 1);
 
-        starred = await storage.starred();
-        expect(Immutable.Set(starred.map(record => record.location)).equals(both));
+        starred = await storage.starredURLs();
+        expect(both.equals(starred));
 
-        starred = await storage.recentlyStarred(2);
-        expect(starred.map(record => record.location)).toEqual([bar, baz]);
+        recent = await storage.recentlyStarred(2);
+        expect(recent.map(record => record.location)).toEqual([bar, baz]);
 
-        starred = await storage.recentlyStarred(1);
-        expect(starred.map(record => record.location)).toEqual([bar]);
+        recent = await storage.recentlyStarred(1);
+        expect(recent.map(record => record.location)).toEqual([bar]);
 
         // Check that we get the same results for from-scratch materialization.
         await storage.rematerialize();
-        starred = await storage.starred();
-        expect(Immutable.Set(starred.map(record => record.location)).equals(both));
+        starred = await storage.starredURLs();
+        expect(both.equals(starred));
 
         await storage.close();
 

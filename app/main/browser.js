@@ -191,9 +191,9 @@ app.on('ready', async function() {
 
   // Extract the initial state from the profile storage.
   const profileStorage = await profileStoragePromise;
-  const starredLocations = await profileStorage.starred();
+  const starredLocations = await profileStorage.starredURLs();
   const recentlyStarredLocations = await profileStorage.recentlyStarred();
-  store.dispatch(profileActions.bookmarkSet(new Immutable.Set(starredLocations)));
+  store.dispatch(profileActions.bookmarkSet(starredLocations));
   store.dispatch(profileActions.recentBookmarks(new Immutable.List(recentlyStarredLocations)));
 
   dispatchProfileCommand(profileCommands.newBrowserWindow());
