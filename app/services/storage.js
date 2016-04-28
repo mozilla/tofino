@@ -217,12 +217,12 @@ export class ProfileStorage {
     return result.lastID;
   }
 
-  async materializeStars() {
+  async materializeStars(): Promise<any> {
     await this.db.run('DELETE FROM mStarred');
     await this.db.run('INSERT INTO mStarred SELECT place, ts, url FROM vStarred');
   }
 
-  async materializeHistory() {
+  async materializeHistory(): Promise<any> {
     await this.db.run('DELETE FROM mHistory');
     await this.db.run(`INSERT INTO mHistory
       SELECT place, url, lastTitle, lastVisited, visitCount
@@ -230,7 +230,7 @@ export class ProfileStorage {
     `);
   }
 
-  async rematerialize() {
+  async rematerialize(): Promise<any> {
     await this.materializeHistory();
     await this.materializeStars();
   }
@@ -248,7 +248,7 @@ export class ProfileStorage {
                           place: number,
                           session: number,
                           action: number,
-                          now: number = microtime.now()) {
+                          now: number = microtime.now()): Promise<any> {
     switch (action) {
       case StarOp.star:
         return this.db.run('INSERT OR REPLACE INTO mStarred (place, ts, url) VALUES (?, ?, ?)',
@@ -377,7 +377,8 @@ export class ProfileStorage {
     return this.collectURLs(await this.db.all(query, [since, limit]));
   }
 
-  async getStarredWithOrderByAndLimit(newestFirst: boolean, limit: ?number): Promise<[string]> {
+  async getStarredWithOrderByAndLimit(newestFirst: boolean, limit: ?number):
+  Promise<[{place: number, title: ?string, ts: number, url: string}]> {
     const orderClause = newestFirst ? 'ORDER BY s.ts DESC' : '';
     let limitClause: string;
     let args: [any];
