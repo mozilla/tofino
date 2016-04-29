@@ -28,7 +28,6 @@ export async function handler(
   browserWindow: ?BrowserWindow,
   makeBrowserWindow: () => Promise<BrowserWindow>,
   command: profileCommands.ProfileCommand): Promise<model.UserAgent> {
-
   async function dispatchActionsForChangedStarred(
     url: string     // eslint-disable-line no-unused-vars
   ): Promise<model.UserAgent> {
