@@ -186,6 +186,9 @@ app.on('ready', async function() {
   const appReadyTime = Date.now();
   instrument.event('app', 'READY', 'ms', appReadyTime - appStartupTime);
 
+  // Force the menu to be built at least once on startup
+  BrowserMenu.build();
+
   // Register `about:*` protocols after app's 'ready' event
   registerAboutPages();
 
