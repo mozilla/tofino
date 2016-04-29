@@ -16,9 +16,6 @@ import Style from '../../browser-style';
 import Tab from './tab';
 import Btn from '../navbar/btn';
 
-// TODO Fix up dragDrop
-// import { TabBarDragDrop, TabDragDrop } from './dragdrop';
-
 const TABBAR_STYLE = Style.registerStyle({
   alignItems: 'center',
   minHeight: '25px',
@@ -36,8 +33,6 @@ const TabBar = ({
   pages, currentPageIndex, pageAreaVisible,
   handleTabContextMenu, handleNewTabClick, handleTabClick, handleTabClose,
 }) => {
-  const barDragDrop = { handlers: {} }; // new TabBarDragDrop(pages, dispatch);
-
   // This is the 'pages' section, which can be collapsed
   if (!pageAreaVisible) {
     return null;
@@ -45,25 +40,18 @@ const TabBar = ({
 
   return (
     <div id="browser-tabbar"
-      className={TABBAR_STYLE}
-      dragzone="copy string:test/uri-list"
-      {...barDragDrop.handlers}>
+      className={TABBAR_STYLE}>
 
-      {pages.map((page, i) => {
-        // TODO Fix up dragDrop
-        const dragDrop = { handlers: {} }; // new TabDragDrop(page, pages, i);
-
-        return (
-          <Tab key={`browser-tab-${i}`}
-            className={`browser-tab-${i}`}
-            isActive={currentPageIndex === i}
-            page={page}
-            onClick={handleTabClick(page.id)}
-            onContextMenu={handleTabContextMenu(page.id)}
-            onClose={handleTabClose(page.id)}
-            {...dragDrop.handlers} />
-        );
-      })}
+      {pages.map((page, i) => (
+        <Tab key={`browser-tab-${i}`}
+          className={`browser-tab-${i}`}
+          isActive={currentPageIndex === i}
+          page={page}
+          onClick={handleTabClick(page.id)}
+          onContextMenu={handleTabContextMenu(page.id)}
+          onClose={handleTabClose(page.id)} />
+        )
+      )}
 
       <Btn className={NEW_TAB_BUTTON_STYLE}
         title="Add new tab"
