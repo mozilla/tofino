@@ -10,13 +10,23 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { combineReducers } from 'redux';
-import browserWindow from './main-reducers';
-import profile from './profile';
+export function getPages(state) {
+  return state.browserWindow.pages;
+}
 
-const rootReducer = combineReducers({
-  browserWindow,
-  profile,
-});
+export function getCurrentPage(state) {
+  const index = getCurrentPageIndex(state);
+  return state.browserWindow.pages.get(index);
+}
 
-export default rootReducer;
+export function getCurrentPageIndex(state) {
+  return state.browserWindow.currentPageIndex;
+}
+
+export function getPageAreaVisible(state) {
+  return state.browserWindow.pageAreaVisible;
+}
+
+export function getProfile(state) {
+  return state.profile;
+}
