@@ -13,6 +13,13 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { ipcRenderer } from '../../../shared/electron';
+import {
+  getPages,
+  getProfile,
+  getCurrentPage,
+  getCurrentPageIndex,
+  getPageAreaVisible,
+} from '../reducers/main-reducers';
 
 import Style from '../browser-style';
 import BrowserWindow from './browser';
@@ -22,16 +29,16 @@ const APP_STYLE = Style.registerStyle({
   height: '100%',
 });
 
-const App = function({ state, dispatch }) {
+const App = function({ pages, profile, currentPageIndex, currentPage, pageAreaVisible, dispatch }) {
   return (
     <div className={APP_STYLE}>
       <BrowserWindow ipcRenderer={ipcRenderer}
         dispatch={dispatch}
-        profile={state.browserWindow.profile}
-        pages={state.browserWindow.pages}
-        currentPageIndex={state.browserWindow.currentPageIndex}
-        currentPage={state.browserWindow.pages.get(state.browserWindow.currentPageIndex)}
-        pageAreaVisible={state.browserWindow.pageAreaVisible} />
+        pages={pages}
+        profile={profile}
+        currentPageIndex={currentPageIndex}
+        currentPage={currentPage}
+        pageAreaVisible={pageAreaVisible} />
       <Style.Element />
     </div>
   );
@@ -40,12 +47,22 @@ const App = function({ state, dispatch }) {
 App.displayName = 'App';
 
 App.propTypes = {
-  state: PropTypes.object.isRequired,
+  pages: PropTypes.object.isRequired,
+  profile: PropTypes.object.isRequired,
+  currentPageIndex: PropTypes.number.isRequired,
+  currentPage: PropTypes.object.isRequired,
+  pageAreaVisible: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state) {
-  return { state };
+  return {
+    pages: getPages(state),
+    profile: getProfile(state),
+    currentPageIndex: getCurrentPageIndex(state),
+    currentPage: getCurrentPage(state),
+    pageAreaVisible: getPageAreaVisible(state),
+  };
 }
 
 export default connect(mapStateToProps)(Style.component(App));
