@@ -24,13 +24,11 @@ export default function profile(state = initialState, action) {
     case types.SET_BOOKMARK_STATE:
       return setBookmarkState(state, action.url, action.isBookmarked);
 
-    case profileDiffTypes.BOOKMARKS: {
+    case profileDiffTypes.BOOKMARKS:
       return setBookmarks(state, Immutable.Set(action.payload));
-    }
 
-    case profileDiffTypes.COMPLETIONS: {
+    case profileDiffTypes.COMPLETIONS:
       return state.set('completions', Immutable.Map(action.payload));
-    }
 
     default:
       return state;
