@@ -10,16 +10,16 @@ import { ipcMain as ipcMainMock } from '../../../../app/shared/electron';
 describe('Action - bookmark', () => {
   beforeEach(function() {
     this.store = configureStore();
-    this.getState = () => this.store.getState().browserWindow;
+    this.getState = () => this.store.getState().profile;
     this.dispatch = this.store.dispatch;
   });
 
   it('Should add bookmarks to profile state', function() {
     const { dispatch, getState } = this;
 
-    expect(getState().profile.get('bookmarks').has('http://moz1.com')).toEqual(false);
+    expect(getState().get('bookmarks').has('http://moz1.com')).toEqual(false);
     dispatch(actions.bookmark('http://moz1.com', 'moz1'));
-    expect(getState().profile.get('bookmarks').has('http://moz1.com')).toEqual(true);
+    expect(getState().get('bookmarks').has('http://moz1.com')).toEqual(true);
   });
 
   it('Should send a message to the main process', function(done) {
