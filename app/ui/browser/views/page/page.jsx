@@ -14,6 +14,7 @@ import React, { PropTypes, Component } from 'react';
 
 import * as UIConstants from '../../constants/ui';
 import Style from '../../browser-style';
+import { Page as PageModel } from '../../model';
 
 import Status from './status';
 import Search from './search';
@@ -102,7 +103,8 @@ class Page extends Component {
     };
 
     return (
-      <div className={`${PAGE_STYLE} ${this.props.isActive ? 'active-browser-page' : ''}`}
+      <div className={`page ${PAGE_STYLE} ${this.props.isActive ? 'active-browser-page' : ''}`}
+        data-page-state={this.props.page.state}
         hidden={!this.props.isActive}>
         <Search hidden={!this.props.page.isSearching} />
         <webview is="webview"
@@ -132,7 +134,7 @@ export default Page;
 function addListenersToWebView(webview, page, dispatch, ipcRenderer) {
   webview.addEventListener('did-start-loading', () => {
     dispatch(setPageDetails(page.id, {
-      isLoading: true,
+      state: PageModel.PAGE_STATE_LOADING,
       title: false,
     }));
   });
@@ -152,6 +154,12 @@ function addListenersToWebView(webview, page, dispatch, ipcRenderer) {
     }));
   });
 
+  webview.addEventListener('did-fail-load', () => {
+    dispatch(setPageDetails(page.id, {
+      state: PageModel.PAGE_STATE_FAILED,
+    }));
+  });
+
   webview.addEventListener('did-stop-loading', () => {
     const url = webview.getURL();
     dispatch(setPageDetails(page.id, {
@@ -159,7 +167,7 @@ function addListenersToWebView(webview, page, dispatch, ipcRenderer) {
       location: url,
       canGoBack: webview.canGoBack(),
       canGoForward: webview.canGoForward(),
-      isLoading: false,
+      state: PageModel.PAGE_STATE_LOADED,
     }));
     dispatch(setUserTypedLocation(page.id, {
       text: null,

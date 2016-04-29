@@ -48,7 +48,7 @@ export class Page extends Immutable.Record({
   title: 'New Tab',
   statusText: false,
   userTyped: null,
-  isLoading: false,
+  state: false,
   isSearching: false,
   canGoBack: false,
   canGoForward: false,
@@ -60,3 +60,7 @@ export class Page extends Immutable.Record({
     super(Object.assign({ id: uuid.v4() }, data));
   }
 }
+
+Page.PAGE_STATE_LOADING = 'loading';
+Page.PAGE_STATE_LOADED = 'loaded';
+Page.PAGE_STATE_FAILED = 'failed';
