@@ -54,31 +54,34 @@ const Driver = {
   },
 
   waitForCurrentTabLoaded: async function() {
-    await this.app.client
+    return await this.app.client
       .waitForVisible('.active-browser-page[data-page-state="loaded"]');
   },
 
-  navigate: async function(loc) {
+  /**
+   * Clicks the `selector` via waiting for its existence, moving and finally
+   * left clicking.
+   */
+  click: async function(selector) {
     await this.app.client
-      .waitForVisible('#browser-location-title-bar')
-      .moveToObject('#browser-location-title-bar')
-      .leftClick('#browser-location-title-bar')
-      .waitForVisible('#urlbar-input')
+      .waitForVisible(selector)
+      .moveToObject(selector)
+      .leftClick(selector);
+    return this;
+  },
+
+  navigate: async function(loc) {
+    return await this.click('#browser-location-title-bar')
+      .app.client.waitForVisible('#urlbar-input')
       .setValue('#urlbar-input', `${loc}${RETURN}`);
   },
 
   navigateBack: async function() {
-    await this.app.client
-      .waitForVisible('#browser-navbar-back')
-      .moveToObject('#browser-navbar-back')
-      .leftClick('#browser-navbar-back');
+    return await this.click('#browser-navbar-back');
   },
 
   navigateForward: async function() {
-    await this.app.client
-      .waitForVisible('#browser-navbar-forward')
-      .moveToObject('#browser-navbar-forward')
-      .leftClick('#browser-navbar-forward');
+    return await this.click('#browser-navbar-forward');
   },
 
   /**
@@ -89,7 +92,7 @@ const Driver = {
     if (await this.app.client.isVisible('#urlbar-input')) {
       await this.app.client.setValue('#urlbar-input', TAB);
     }
-    await this.app.client
+    return await this.app.client
       .waitForVisible('#browser-location-title-bar');
   },
 };

@@ -55,7 +55,7 @@ describe('application launch', function() {
     await this.app.client.window(webviewHandle);
 
     ({ value: url } = await this.app.client.url());
-    expect(url.startsWith('https://')).toBe(true);
+    expect(url.startsWith('tofino://mozilla')).toBe(true);
   });
 
   afterEach(function() {
