@@ -5,7 +5,7 @@ import expect from 'expect';
 import configureStore from '../../../../app/ui/browser/store/store';
 import * as actions from '../../../../app/ui/browser/actions/main-actions';
 
-const HOME_PAGE = 'https://www.mozilla.org/';
+const HOME_PAGE = 'tofino://mozilla';
 
 describe('Action - CREATE_TAB', () => {
   beforeEach(function() {

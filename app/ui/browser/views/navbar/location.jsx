@@ -17,6 +17,7 @@ import Btn from './btn';
 
 import { fixURL, getCurrentWebView } from '../../browser-util';
 import { SHOW_COMPLETIONS } from '../../constants/ui';
+import { Page } from '../../model';
 
 const LOCATION_BAR_CONTAINER_STYLE = Style.registerStyle({
   flex: 1,
@@ -129,7 +130,7 @@ class Location extends Component {
 
   getBookmarkIcon() {
     const { page, isBookmarked } = this.props;
-    if (page.isLoading) {
+    if (page.state === Page.PAGE_STATE_LOADING) {
       return 'glyph-bookmark-unknown-16.svg';
     }
     if (isBookmarked(page.location)) {
@@ -247,7 +248,7 @@ class Location extends Component {
           <Btn title="Bookmark"
             className={LOCATION_BAR_BUTTONS_STYLE}
             image={this.getBookmarkIcon()}
-            disabled={this.props.page.isLoading}
+            disabled={this.props.page.state === Page.PAGE_STATE_LOADING}
             clickHandler={this.toggleBookmark} />
           {completions}
         </div>

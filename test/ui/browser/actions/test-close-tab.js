@@ -25,7 +25,7 @@ describe('Action - CLOSE_TAB', () => {
 
     dispatch(actions.closeTab(ids.get(1)));
     expect(getState().pages.size).toEqual(3);
-    expect(getState().pages.get(0).location).toEqual('https://www.mozilla.org/');
+    expect(getState().pages.get(0).location).toEqual('tofino://mozilla');
     expect(getState().pages.get(1).location).toEqual('https://moz.org/2');
     expect(getState().pages.get(2).location).toEqual('https://moz.org/3');
     expect(getState().currentPageIndex).toEqual(2,
@@ -81,6 +81,6 @@ describe('Action - CLOSE_TAB', () => {
     dispatch(actions.closeTab(ids.get(0)));
     expect(getState().currentPageIndex).toEqual(0);
     expect(getState().pages.size).toEqual(1);
-    expect(getState().pages.get(0).location).toEqual('https://www.mozilla.org/');
+    expect(getState().pages.get(0).location).toEqual('tofino://mozilla');
   });
 });

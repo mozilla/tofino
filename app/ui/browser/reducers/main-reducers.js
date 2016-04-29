@@ -22,7 +22,7 @@ import { isUUID } from '../browser-util';
 /**
  * Fairly sure we should hard code this
  */
-const HOME_PAGE = 'https://www.mozilla.org/';
+const HOME_PAGE = 'tofino://mozilla';
 
 const initialState = new State({
   pages: Immutable.List.of(new Page({ location: HOME_PAGE })),

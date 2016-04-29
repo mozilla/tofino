@@ -17,6 +17,6 @@ describe('Action - Default', () => {
     expect(state.pageAreaVisible).toEqual(false);
     expect(state.pages.size).toEqual(1);
     expect(typeof state.pages.get(0).id === 'string', 'page created with an id');
-    expect(state.pages.get(0).location).toEqual('https://www.mozilla.org/');
+    expect(state.pages.get(0).location).toEqual('tofino://mozilla');
   });
 });

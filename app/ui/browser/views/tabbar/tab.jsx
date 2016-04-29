@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes, Component } from 'react';
 
+import { Page } from '../../model';
 import Style from '../../browser-style';
 import Btn from '../navbar/btn';
 
@@ -88,7 +89,7 @@ class Tab extends Component {
           {page.title || 'Loading...'}
         </span>
         <span>
-          {page.isLoading ? <i className="fa fa-spinner fa-pulse" /> : null}
+          {page.state === Page.PAGE_STATE_LOADING ? <i className="fa fa-spinner fa-pulse" /> : null}
         </span>
         <Btn className={TAB_CLOSE_BUTTON_STYLE}
           title="Close tab"
