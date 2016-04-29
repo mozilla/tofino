@@ -224,7 +224,7 @@
 <PROJECT_ROOT>/node_modules/exit-hook/.*
 <PROJECT_ROOT>/node_modules/expand-brackets/.*
 <PROJECT_ROOT>/node_modules/expand-range/.*
-<PROJECT_ROOT>/node_modules/expect/.*
+# <PROJECT_ROOT>/node_modules/expect/.*
 <PROJECT_ROOT>/node_modules/express/.*
 <PROJECT_ROOT>/node_modules/extend/.*
 <PROJECT_ROOT>/node_modules/extend-shallow/.*
@@ -630,7 +630,7 @@
 <PROJECT_ROOT>/node_modules/tildify/.*
 <PROJECT_ROOT>/node_modules/time-stamp/.*
 <PROJECT_ROOT>/node_modules/timers-browserify/.*
-<PROJECT_ROOT>/node_modules/tmp/.*
+# <PROJECT_ROOT>/node_modules/tmp/.*
 <PROJECT_ROOT>/node_modules/to-absolute-glob/.*
 <PROJECT_ROOT>/node_modules/to-fast-properties/.*
 <PROJECT_ROOT>/node_modules/touch/.*

@@ -14,7 +14,7 @@
 
 /* eslint no-console: 0 */
 
-import electron from 'electron';
+import type { BrowserWindow } from 'electron';
 import Immutable from 'immutable';
 
 import * as model from '../model';
@@ -22,11 +22,11 @@ import * as profileCommands from '../shared/profile-commands';
 import * as profileCommandTypes from '../shared/constants/profile-command-types';
 import { ProfileStorage } from '../services/storage';
 
-export default async function commandHandler(
+export async function handler(
   userAgent: model.UserAgent,
   storage: ProfileStorage,
-  browserWindow: ?electron.BrowserWindow,
-  makeBrowserWindow: () => Promise<electron.BrowserWindow>,
+  browserWindow: ?BrowserWindow,
+  makeBrowserWindow: () => Promise<BrowserWindow>,
   command: profileCommands.ProfileCommand): Promise<model.UserAgent> {
 
   async function dispatchActionsForChangedStarred(

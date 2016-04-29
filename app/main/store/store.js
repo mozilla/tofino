@@ -22,7 +22,7 @@ const logger = _store => next => action => {
   return next(action);
 };
 
-export default function configureStore(initialState) {
+export function configureStore(initialState) {
   const middleware = [thunk];
   if (!BUILD_CONFIG.test) {
     middleware.unshift(logger);
