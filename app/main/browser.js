@@ -13,18 +13,21 @@ specific language governing permissions and limitations under the License.
 */
 
 /* eslint import/imports-first: "off" */
+/* eslint no-console: 0 */
+
 // Must go before any require statements.
 const browserStartTime = Date.now();
 
-/* eslint no-console: 0 */
+import 'source-map-support/register';
 
 process.on('uncaughtException', (err) => {
-  console.log(err.stack);
+  console.error(err.stack);
   process.exit(1);
 });
 
 process.on('unhandledRejection', (reason, p) => {
-  console.log(`Unhandled Rejection at: Promise ${JSON.stringify(p)}, reason: ${reason.stack}`);
+  console.error(`Unhandled Rejection at: Promise ${JSON.stringify(p)}`);
+  console.error(reason.stack);
   process.exit(2);
 });
 
