@@ -54,6 +54,7 @@
     "eslint-plugin-import": "1.4.0",
     "eslint-plugin-react": "4.2.3",
     "expect": "1.18.0",
+    "express": "^4.13.4",
     "fs-promise": "0.5.0",
     "glob": "7.0.3",
     "gulp-vinyl-zip": "1.2.2",
