@@ -1,9 +1,10 @@
+// Any copyright is dedicated to the Public Domain.
+// http://creativecommons.org/publicdomain/zero/1.0/
 /* eslint prefer-arrow-callback: 0 */
 
 import expect from 'expect';
-import { Application } from 'spectron';
 import { quickTest } from '../../build-config';
-import { getRoot, getElectronPath } from '../../build/utils';
+import Driver from '../utils/driver';
 
 describe('application launch', function() {
   if (quickTest) {
@@ -12,37 +13,30 @@ describe('application launch', function() {
   }
 
   this.timeout(30000);
-  const executable = getElectronPath();
 
   beforeEach(async function() {
-    this.app = new Application({
-      path: executable,
-      args: [getRoot()],
-      env: process.env,
-    });
-    await this.app.start();
-    expect(this.app.isRunning()).toBe(true);
-    await this.app.client.waitUntilWindowLoaded();
+    await Driver.start();
+  });
 
-    // Wait for both BrowserWindow and first tab webview to exist
-    await this.app.client.waitUntil(function() {
-      return this.getWindowCount().then((count) => count === 2);
-    });
+  afterEach(async function() {
+    await Driver.stop();
   });
 
   it('shows an initial window and tab', async function() {
+    const { app } = Driver;
+
     // The selected window appears to be the first BrowserWindow opened.
-    let { value: url } = await this.app.client.url();
+    let { value: url } = await app.client.url();
     expect(url.startsWith('file://')).toBe(true);
     expect(url.endsWith('browser.html')).toBe(true);
 
     // BrowserWindows and <webview>s are considered to be windows by spectron.
     // Since we always open an initial tab there should be two windows.
-    const count = await this.app.client.getWindowCount();
+    const count = await app.client.getWindowCount();
     expect(count).toEqual(2);
 
-    const { value: handle } = await this.app.client.windowHandle();
-    const { value: handles } = await this.app.client.windowHandles();
+    const { value: handle } = await app.client.windowHandle();
+    const { value: handles } = await app.client.windowHandles();
 
     expect(handles.length).toEqual(2);
     const pos = handles.indexOf(handle);
@@ -52,16 +46,9 @@ describe('application launch', function() {
     // just assume that the window that isn't the BrowserWindow is the first
     // <webview>
     const webviewHandle = handles[1 - pos];
-    await this.app.client.window(webviewHandle);
+    await app.client.window(webviewHandle);
 
-    ({ value: url } = await this.app.client.url());
+    ({ value: url } = await app.client.url());
     expect(url.startsWith('tofino://mozilla')).toBe(true);
-  });
-
-  afterEach(function() {
-    if (this.app && this.app.isRunning()) {
-      return this.app.stop();
-    }
-    return undefined;
   });
 });

@@ -71,8 +71,9 @@ const Driver = {
   },
 
   navigate: async function(loc) {
-    return await this.click('#browser-location-title-bar')
-      .app.client.waitForVisible('#urlbar-input')
+    await this.click('#browser-location-title-bar');
+    await this.app.client
+      .waitForVisible('#urlbar-input')
       .setValue('#urlbar-input', `${loc}${RETURN}`);
   },
 
