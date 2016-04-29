@@ -1,4 +1,7 @@
-platform: x64
+platform:
+  - x86
+  - x64
+
 image: Visual Studio 2013
 os: unstable
 
@@ -20,7 +23,7 @@ install:
   - ps: Install-Product node $env:nodejs_version $env:PLATFORM
   - node --version
   - npm --version
-  - set npm_config_arch=%PLATFORM%
+  - set npm_config_arch=%PLATFORM:x86=ia32%
   - npm install --progress false --depth 0
 
 build: off

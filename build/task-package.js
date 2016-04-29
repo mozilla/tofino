@@ -11,7 +11,7 @@ import zip from 'gulp-vinyl-zip';
 
 import * as BuildUtils from './utils';
 
-const ARCH = 'x64';
+const ARCH = process.arch;
 const PLATFORM = os.platform();
 
 const ROOT = path.resolve(path.join(__dirname, '..'));
