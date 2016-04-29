@@ -128,5 +128,7 @@ declare module 'electron' {
 		 * @returns Whether the window is in fullscreen mode.
 		 */
 		isFullScreen(): boolean;
+
+		on(event: string, listener: (event: any) => void): this;
   }
 }

@@ -148,20 +148,27 @@ async function makeBrowserWindow(tabInfo: ?Object): Promise<electron.BrowserWind
         browser.webContents.send('tab-attach', tabInfo);
       }
 
+      electronLocalshortcut.register(browser, 'CmdOrCtrl+L', () => {
+        browser.webContents.send('focus-url-bar');
+      });
+
+      electronLocalshortcut.register(browser, 'CmdOrCtrl+R', () => {
+        browser.webContents.send('page-refresh');
+      });
+
+      // Without this setImmediate, the event loop appears to wait for IO before dispatching.
+      electronLocalshortcut.register(browser, 'CmdOrCtrl+Shift+W', () => setImmediate(async function() {
+        await dispatchProfileCommand(profileCommands.closeBrowserWindow(), browser);
+      }));
+
       resolve();
     });
   });
 
+  browser.on('closed', () => electronLocalshortcut.unregisterAll(browser));
+
   // Start loading browser chrome.
   browser.loadURL(fileUrl(path.join(UI_DIR, 'browser', 'browser.html')));
-
-  electronLocalshortcut.register(browser, 'CmdOrCtrl+L', () => {
-    browser.webContents.send('focus-url-bar');
-  });
-
-  electronLocalshortcut.register(browser, 'CmdOrCtrl+R', () => {
-    browser.webContents.send('page-refresh');
-  });
 
   return browser;
 }
