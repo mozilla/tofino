@@ -13,13 +13,7 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { ipcRenderer } from '../../../shared/electron';
-import {
-  getPages,
-  getProfile,
-  getCurrentPage,
-  getCurrentPageIndex,
-  getPageAreaVisible,
-} from '../reducers/main-reducers';
+import * as selectors from '../selectors';
 
 import Style from '../browser-style';
 import BrowserWindow from './browser';
@@ -57,11 +51,11 @@ App.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    pages: getPages(state),
-    profile: getProfile(state),
-    currentPageIndex: getCurrentPageIndex(state),
-    currentPage: getCurrentPage(state),
-    pageAreaVisible: getPageAreaVisible(state),
+    pages: selectors.getPages(state),
+    profile: selectors.getProfile(state),
+    currentPageIndex: selectors.getCurrentPageIndex(state),
+    currentPage: selectors.getCurrentPage(state),
+    pageAreaVisible: selectors.getPageAreaVisible(state),
   };
 }
 

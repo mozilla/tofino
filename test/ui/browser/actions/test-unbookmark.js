@@ -10,18 +10,18 @@ import { ipcMain as ipcMainMock } from '../../../../app/shared/electron';
 describe('Action - unbookmark', () => {
   beforeEach(function() {
     this.store = configureStore();
-    this.getState = () => this.store.getState().browserWindow;
+    this.getState = () => this.store.getState().profile;
     this.dispatch = this.store.dispatch;
   });
 
   it('Should remove bookmarks from profile state', function() {
     const { dispatch, getState } = this;
 
-    expect(getState().getIn(['profile', 'bookmarks']).has('http://moz1.com')).toEqual(false);
+    expect(getState().get('bookmarks').has('http://moz1.com')).toEqual(false);
     dispatch(actions.bookmark('http://moz1.com', 'moz1'));
-    expect(getState().getIn(['profile', 'bookmarks']).has('http://moz1.com')).toEqual(true);
+    expect(getState().get('bookmarks').has('http://moz1.com')).toEqual(true);
     dispatch(actions.unbookmark('http://moz1.com'));
-    expect(getState().getIn(['profile', 'bookmarks']).has('http://moz1.com')).toEqual(false);
+    expect(getState().get('bookmarks').has('http://moz1.com')).toEqual(false);
   });
 
   it('Should send a message to the main process', function(done) {

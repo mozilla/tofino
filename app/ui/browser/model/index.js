@@ -25,6 +25,9 @@ export const Profile = Immutable.Record({
 /**
  * The top level definition of what a browser looks like.
  * (At least a new-born browser that can do little more than cry)
+ *
+ * @TODO This currently does not reflect the shape of the full state object.
+ * It is being restructured as part of #283.
  */
 export const State = Immutable.Record({
   // This is a list of Page objects (see below)
@@ -35,8 +38,6 @@ export const State = Immutable.Record({
 
   // Should page section be visible in UI
   pageAreaVisible: false,
-
-  profile: new Profile(),
 });
 
 /**
