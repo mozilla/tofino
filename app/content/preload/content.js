@@ -12,4 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import './hover-status';
 import './context-menu';
+import { readerify } from './reader';
 import './scroll';
+
+window._readerify = readerify;

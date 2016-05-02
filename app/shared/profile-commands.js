@@ -68,3 +68,13 @@ export function newBrowserWindow(tabInfo: ?Object): ProfileCommand {
     },
   };
 }
+
+export function savePage(location: string, contents: string): ProfileCommand {
+  return {
+    type: profileCommandTypes.DID_REQUEST_SAVE_PAGE,
+    payload: {
+      contents,
+      location,
+    },
+  };
+}
