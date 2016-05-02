@@ -86,7 +86,7 @@ class Tab extends Component {
         draggable="true"
         {...{ onDragEnter, onDrop, onClick, onContextMenu, onDragStart, onDragEnd }}>
         <span className={TAB_TITLE_STYLE}>
-          {page.title || 'Loading...'}
+          {page.state === Page.PAGE_STATE_LOADING ? 'Loading...' : page.title}
         </span>
         <span>
           {page.state === Page.PAGE_STATE_LOADING ? <i className="fa fa-spinner fa-pulse" /> : null}
