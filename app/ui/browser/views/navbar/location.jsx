@@ -139,6 +139,14 @@ class Location extends Component {
     return 'glyph-bookmark-hollow-16.svg';
   }
 
+  setInputValue(value) {
+    // Can't use input.value here, since it breaks undo in chrome - See
+    // http://stackoverflow.com/questions/16195644/in-chrome-undo-does-not-work-properly-for-input-element-after-contents-changed-p
+    this.refs.input.focus();
+    this.refs.input.select();
+    this.refs.input.ownerDocument.execCommand('insertText', false, value);
+  }
+
   toggleBookmark(e) {
     const { isBookmarked, bookmark, unbookmark } = this.props;
     const webview = getCurrentWebView(e.target.ownerDocument);
@@ -169,9 +177,17 @@ class Location extends Component {
     this.setState({ focusedURLBar: false });
   }
 
-  handleURLBarKeyDown(ev, maxCompletions) {
+  handleURLBarKeyDown(ev, completionsForURL) {
+    const maxCompletions = completionsForURL ? completionsForURL.length : -1;
+
     if (ev.key === 'Enter') {
-      this.props.navigateTo(fixURL(ev.target.value));
+      if (this.state.focusedResultIndex >= 0 &&
+          this.state.focusedResultIndex < maxCompletions) {
+        ev.preventDefault();
+        this.setInputValue(completionsForURL[this.state.focusedResultIndex]);
+      } else {
+        this.props.navigateTo(fixURL(ev.target.value));
+      }
     } else if (ev.key === 'Escape') {
       this.props.onLocationReset();
       ev.target.select();
@@ -195,19 +211,24 @@ class Location extends Component {
     let completions = null;
     const completionsForURL = profile.completions.get(urlValue);
     if (SHOW_COMPLETIONS && completionsForURL && this.state.focusedURLBar) {
-      const results = completionsForURL.map((completion, i) => {
-        if (this.state.focusedResultIndex === i) {
-          return (
-            <div style={{ background: 'red' }}
-              key={completion}>
-              {completion}
-            </div>
-          );
-        }
+      const results = completionsForURL.map((completion, i) => (<div
+        key={completion}
+        onMouseDown={(ev) => { ev.preventDefault(); }}
+        onMouseOver={() => { this.setState({ focusedResultIndex: i }); }}
+        onClick={() => {
+          this.setInputValue(completionsForURL[i]);
+        }}
+        style={this.state.focusedResultIndex === i ? { background: 'red' } : null}>
+        {completion}</div>
+      ));
 
-        return <div key={completion}>{completion}</div>;
-      });
       completions = <div className={LOCATION_BAR_AUTOCOMPLETE_STYLE}>{results}</div>;
+
+      // Don't show a completion if it matches the URL exactly and it's the only
+      // result.
+      if (completionsForURL.length === 1 && completionsForURL[0] === urlValue) {
+        completions = null;
+      }
     }
 
     return (
@@ -242,7 +263,7 @@ class Location extends Component {
             onBlur={this.handleURLBarBlur}
             onChange={this.props.onLocationChange}
             onKeyDown={(e) =>
-              this.handleURLBarKeyDown(e, completionsForURL && completionsForURL.length)
+              this.handleURLBarKeyDown(e, completionsForURL)
             }
             onContextMenu={this.props.onLocationContextMenu} />
           <Btn title="Bookmark"
