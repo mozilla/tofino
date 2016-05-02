@@ -99,7 +99,7 @@ class Page extends Component {
   render() {
     const requestContextData = (event) => {
       const { offsetX: x, offsetY: y } = event.nativeEvent;
-      this.refs.webviewWrapper.webview.send('get-contextmenu-data', { x, y });
+      this.refs.webview.send('get-contextmenu-data', { x, y });
     };
 
     return (
