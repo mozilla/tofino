@@ -14,9 +14,9 @@
 
 export function readerify(document) {
   const location = document.location;
-
+  const documentClone = document.cloneNode(true);
   const base = location.pathname.substr(0, location.pathname.lastIndexOf('/') + 1);
-  const uri = {   // eslint-disable-line no-unused-vars
+  const uri = {
     spec: location.href,
     host: location.host,
 
@@ -26,8 +26,12 @@ export function readerify(document) {
     pathBase: `${location.protocol}//${location.host}${base}`,
   };
 
-  // document.cloneNode() can cause the webview to break (bug 1128774).
-  // Serialize and then parse the document instead.
-  const docStr = new XMLSerializer().serializeToString(document);
-  return docStr;
+  const article = new window._Readability(uri, documentClone).parse();
+  return {
+    uri: location.toString(),
+    title: article.title,
+    content: article.content,
+    length: article.length,
+    excerpt: article.excerpt,
+  };
 }

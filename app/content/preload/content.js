@@ -13,6 +13,8 @@ specific language governing permissions and limitations under the License.
 import './hover-status';
 import './context-menu';
 import { readerify } from './reader';
+import Readability from './readability';
 import './scroll';
 
 window._readerify = readerify;
+window._Readability = Readability;
