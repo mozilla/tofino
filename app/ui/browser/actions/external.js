@@ -52,6 +52,20 @@ export function menuBrowser(dispatch) {
     click: () => newBrowserWindow(),
   }));
 
+  menu.append(new MenuItem({
+    label: 'Fetch page contents',
+    click: () => {
+      const webview = getCurrentWebView(document);
+      console.log(`Fetching at ${Date.now()}`);
+      const script = 'window._readerify(window.document)';
+      webview.executeJavaScript(script, false, (result) => {
+        const url = document.location.href;
+        console.log(`In flight at ${Date.now()}, location ${url}.`);
+        ipcRenderer.send('profile-command', profileCommands.savePage(url, result));
+      });
+    },
+  }));
+
   menu.popup(remote.getCurrentWindow());
 }
 
