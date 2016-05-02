@@ -74,9 +74,6 @@ export default function basic(state = initialState, action) {
     case types.SET_CURRENT_TAB:
       return setCurrentTab(state, action.pageId);
 
-    case types.SET_PAGE_ORDER:
-      return setPageOrder(state, action.pageId, action.updatedIndex);
-
     case types.SET_PAGE_AREA_VISIBILITY:
       return setPageAreaVisibility(state, action.visible);
 
@@ -229,39 +226,6 @@ function setCurrentTab(state, pageId) {
   const pageIndex = getPageIndexById(state, pageId);
   assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
   return state.set('currentPageIndex', pageIndex);
-}
-
-function setPageOrder(state, pageId, updatedIndex) {
-  assert(isUUID(pageId), 'SET_PAGE_ORDER requires a page id.');
-  const pageIndex = getPageIndexById(state, pageId);
-  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
-  let currentPageIndex = state.currentPageIndex;
-
-  // If we're moving our current page, or moving a page 'over'
-  // our selected tab, ensure the index is still referencing the same page
-  if (currentPageIndex === pageIndex) {
-    currentPageIndex = updatedIndex;
-  } else {
-    if (pageIndex < currentPageIndex) {
-      currentPageIndex--;
-    }
-    if (updatedIndex <= currentPageIndex) {
-      currentPageIndex++;
-    }
-  }
-
-  return state.withMutations(mut => {
-    const page = state.pages.get(pageIndex);
-
-    // Can't use `withMutations` on these `pages` operations because only `set`,
-    // `push`, `pop`, `shift`, `unshift` and `merge` may be used mutatively.
-    let pages = state.pages;
-    pages = pages.delete(pageIndex);
-    pages = pages.insert(updatedIndex, page);
-
-    mut.set('pages', pages);
-    mut.set('currentPageIndex', currentPageIndex);
-  });
 }
 
 function setPageAreaVisibility(state, visible) {
