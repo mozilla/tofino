@@ -85,23 +85,6 @@ export default function basic(state = initialState, action) {
   }
 }
 
-export function getPages(state) {
-  return state.browserWindow.pages;
-}
-
-export function getCurrentPage(state) {
-  const index = getCurrentPageIndex(state);
-  return state.browserWindow.pages.get(index);
-}
-
-export function getCurrentPageIndex(state) {
-  return state.browserWindow.currentPageIndex;
-}
-
-export function getPageAreaVisible(state) {
-  return state.browserWindow.pageAreaVisible;
-}
-
 function createTab(state, location = HOME_PAGE) {
   return state.withMutations(mut => {
     const page = new Page({ location });
