@@ -56,12 +56,12 @@ export function menuBrowser(dispatch) {
     label: 'Fetch page contents',
     click: () => {
       const webview = getCurrentWebView(document);
-      console.log(`Fetching at ${Date.now()}`);
+      const startTime = Date.now();
+      console.log(`Fetching page contents at ${startTime}`);
       const script = 'window._readerify(window.document)';
-      webview.executeJavaScript(script, false, (result) => {
-        const url = document.location.href;
-        console.log(`In flight at ${Date.now()}, location ${url}.`);
-        ipcRenderer.send('profile-command', profileCommands.savePage(url, result));
+      webview.executeJavaScript(script, false, ({excerpt, uri}) => {
+        console.log(`In flight at ${Date.now()} (took ${Date.now() - startTime}), location ${uri}, excerpt ${excerpt}`);
+        ipcRenderer.send('profile-command', profileCommands.savePage(uri, excerpt));
       });
     },
   }));
