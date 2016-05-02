@@ -4,11 +4,12 @@
 import expect from 'expect';
 import configureStore from '../../../../app/ui/browser/store/store';
 import * as actions from '../../../../app/ui/browser/actions/main-actions';
+import * as selectors from '../../../../app/ui/browser/selectors';
 
 describe('Action - SET_PAGE_DETAILS', () => {
   beforeEach(function() {
     this.store = configureStore();
-    this.getState = () => this.store.getState().browserWindow;
+    this.getPages = () => selectors.getPages(this.store.getState());
     this.dispatch = this.store.dispatch;
 
     const { dispatch } = this;
@@ -16,7 +17,7 @@ describe('Action - SET_PAGE_DETAILS', () => {
     dispatch(actions.createTab('http://moz2.org'));
     dispatch(actions.createTab('http://moz3.org'));
 
-    const ids = this.getState().pages.map(p => p.id);
+    const ids = this.getPages().map(p => p.id);
 
     dispatch(actions.closeTab(ids.get(0)));
     dispatch(actions.setPageDetails(ids.get(1), {
@@ -32,19 +33,19 @@ describe('Action - SET_PAGE_DETAILS', () => {
   });
 
   it('Should update page values', function() {
-    const { dispatch, getState } = this;
+    const { dispatch, getPages } = this;
 
-    dispatch(actions.setPageDetails(getState().pages.get(1).id, {
+    dispatch(actions.setPageDetails(getPages().get(1).id, {
       title: 'Mozzerella Firefox',
     }));
-    expect(getState().pages.get(1).title).toEqual('Mozzerella Firefox');
+    expect(getPages().get(1).title).toEqual('Mozzerella Firefox');
   });
 
   it('Cannot add new properties to a Page', function() {
-    const { dispatch, getState } = this;
+    const { dispatch, getPages } = this;
 
     try {
-      dispatch(actions.setPageDetails(getState().pages.get(2).id, {
+      dispatch(actions.setPageDetails(getPages().get(2).id, {
         myVerySpecialProperty: 'Well, hello',
       }));
       expect(false).toEqual(true,
@@ -53,6 +54,6 @@ describe('Action - SET_PAGE_DETAILS', () => {
       expect(true).toEqual(true,
         'setPageDetails with an unknown property should throw');
     }
-    expect(getState().pages.get(2).myVerySpecialProperty).toEqual(void 0);
+    expect(getPages().get(2).myVerySpecialProperty).toEqual(void 0);
   });
 });

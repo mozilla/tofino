@@ -4,38 +4,39 @@
 import expect from 'expect';
 import configureStore from '../../../../app/ui/browser/store/store';
 import * as actions from '../../../../app/ui/browser/actions/main-actions';
+import * as selectors from '../../../../app/ui/browser/selectors';
 
 describe('Action - NAVIGATE_PAGE_BACK', () => {
   beforeEach(function() {
     this.store = configureStore();
-    this.getState = () => this.store.getState().browserWindow;
+    this.getPages = () => selectors.getPages(this.store.getState());
     this.dispatch = this.store.dispatch;
     const { dispatch } = this;
     dispatch(actions.createTab('http://moz1.org'));
     dispatch(actions.createTab('http://moz2.org'));
     dispatch(actions.createTab('http://moz3.org'));
-    dispatch(actions.closeTab(this.getState().pages.get(0).id));
+    dispatch(actions.closeTab(this.getPages().get(0).id));
   });
 
   it('Should execute navigate back commands in page', function() {
-    const { dispatch, getState } = this;
-    const ids = getState().pages.map(p => p.id);
+    const { dispatch, getPages } = this;
+    const ids = getPages().map(p => p.id);
 
     // Ensure page can go back
     dispatch(actions.setPageDetails(ids.get(1), { canGoBack: true }));
 
     dispatch(actions.navigatePageBack(ids.get(1)));
-    expect(getState().pages.get(1).commands.size).toEqual(1);
-    expect(getState().pages.get(1).commands.get(0).command).toEqual('back');
+    expect(getPages().get(1).commands.size).toEqual(1);
+    expect(getPages().get(1).commands.get(0).command).toEqual('back');
 
     dispatch(actions.navigatePageBack(ids.get(1)));
-    expect(getState().pages.get(1).commands.size).toEqual(2);
-    expect(getState().pages.get(1).commands.get(1).command).toEqual('back');
+    expect(getPages().get(1).commands.size).toEqual(2);
+    expect(getPages().get(1).commands.get(1).command).toEqual('back');
   });
 
   it('Should throw if page cannot go back', function() {
-    const { dispatch, getState } = this;
-    const ids = getState().pages.map(p => p.id);
+    const { dispatch, getPages } = this;
+    const ids = getPages().map(p => p.id);
 
     // Ensure page cannot go back
     dispatch(actions.setPageDetails(ids.get(1), { canGoBack: false }));
@@ -48,6 +49,6 @@ describe('Action - NAVIGATE_PAGE_BACK', () => {
       expect(true).toEqual(true,
         'Expected NAVIGATE_PAGE_BACK to throw when page cannot go back.');
     }
-    expect(getState().pages.get(2).commands.size).toEqual(0);
+    expect(getPages().get(2).commands.size).toEqual(0);
   });
 });
