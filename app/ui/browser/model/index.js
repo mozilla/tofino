@@ -34,7 +34,6 @@ export class Page extends Immutable.Record({
   id: null,
   location: undefined,
   title: 'New Tab',
-  statusText: false,
   state: false,
   isSearching: false,
   canGoBack: false,
@@ -65,6 +64,9 @@ export const Profile = Immutable.Record({
  * Frequently changing UI state.
  */
 export const UIState = Immutable.Record({
+  // The url of the currently hovered-over link
+  statusText: false,
+
   // What the user has typed into the location bar, stored by page id
   userTypedLocation: Immutable.Map(),
 });

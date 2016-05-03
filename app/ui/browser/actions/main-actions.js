@@ -38,6 +38,10 @@ export function setPageAreaVisibility(visible) {
   return { type: types.SET_PAGE_AREA_VISIBILITY, visible };
 }
 
+export function setStatusText(text) {
+  return { type: types.SET_STATUS_TEXT, text };
+}
+
 export function setUserTypedLocation(pageId, payload) {
   return dispatch => {
     // Update this window's state before telling the profile service.

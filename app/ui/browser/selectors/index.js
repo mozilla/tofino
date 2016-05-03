@@ -31,6 +31,10 @@ export function getProfile(state) {
   return state.profile;
 }
 
+export function getStatusText(state) {
+  return state.uiState.statusText;
+}
+
 export function getUserTypedLocation(state, pageId) {
   return state.uiState.userTypedLocation.get(pageId) || '';
 }
