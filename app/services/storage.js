@@ -27,7 +27,7 @@ import path from 'path';
 import thenify from 'thenify';
 
 import { Bookmark } from '../model/index';
-import { ProfileStorageSchemaV4 } from './profile-schema';
+import { ProfileStorageSchemaV5 } from './profile-schema';
 import { DB, verbose } from './sqlite';
 
 const mkdirp = thenify(cbmkdirp);
@@ -38,6 +38,14 @@ interface ProfileSchema {
   version: number;
   createOrUpdate(storage: ProfileStorage): Promise<number>;
 }
+
+export const SessionStartReason = {
+  newTab: 0,
+};
+
+export const SessionEndReason = {
+  tabClosed: 0,
+};
 
 export const VisitType = {
   unknown: 0,
@@ -52,8 +60,9 @@ export const StarOp = {
  * Public API:
  *
  *   let storage = await ProfileStorage.open(dir);
- *   let session = await storage.startSession(scope, ancestor);
+ *   let session = await storage.startSession(scope, ancestor, reason);
  *   await storage.visit(url, session, microseconds);
+ *   await storage.endSession(session, microseconds, reason);
  *   let visitedURLs = await storage.visited(since, limit);
  *   await storage.close();
  */
@@ -109,7 +118,7 @@ export class ProfileStorage {
     return max;
   }
 
-  async init(schema: ProfileSchema = new ProfileStorageSchemaV4()): Promise<ProfileStorage> {
+  async init(schema: ProfileSchema = new ProfileStorageSchemaV5()): Promise<ProfileStorage> {
     await this.db.exec('PRAGMA foreign_keys = ON');
     const v = await schema.createOrUpdate(this);
 
@@ -213,11 +222,22 @@ export class ProfileStorage {
 
   async startSession(scope: ?number,
                      ancestor: ?number,
-                     now: number = microtime.now()): Promise<number> {
+                     now: number = microtime.now(),
+                     reason: number = SessionStartReason.newTab): Promise<number> {
     const result =
       await this.db
-                .run('INSERT INTO sessionStarts (scope, ancestor, ts) VALUES (?, ?, ?)',
-                     [scope, ancestor, now]);
+                .run('INSERT INTO sessionStarts (scope, ancestor, ts, reason) VALUES (?, ?, ?, ?)',
+                     [scope, ancestor, now, reason]);
+    return result.lastID;
+  }
+
+  async endSession(session: number,
+                   now: number = microtime.now(),
+                   reason: number = SessionEndReason.tabClosed): Promise<number> {
+    const result =
+      await this.db
+                .run('INSERT INTO sessionEnds (id, ts, reason) VALUES (?, ?, ?)',
+                     [session, now, reason]);
     return result.lastID;
   }
 

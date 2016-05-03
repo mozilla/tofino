@@ -18,14 +18,14 @@ const debug = false;
 
 // Associate URLs with persistent IDs.
 // Note the use of AUTOINCREMENT to ensure that IDs are never reused after deletion.
-const tablePlacesV4 = `CREATE TABLE placeEvents (
+const tablePlacesV5 = `CREATE TABLE placeEvents (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   url TEXT UNIQUE NOT NULL,
   ts INTEGER NOT NULL
 )`;
 
 // Associate titles with places.
-const tableTitlesV4 = `CREATE TABLE titleEvents (
+const tableTitlesV5 = `CREATE TABLE titleEvents (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   place INTEGER NOT NULL REFERENCES placeEvents(id),
   ts INTEGER NOT NULL,
@@ -33,7 +33,7 @@ const tableTitlesV4 = `CREATE TABLE titleEvents (
 )`;
 
 // Associate visits with places.
-const tableVisitsV4 = `CREATE TABLE visitEvents (
+const tableVisitsV5 = `CREATE TABLE visitEvents (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   place INTEGER NOT NULL REFERENCES placeEvents(id),
   ts INTEGER NOT NULL,
@@ -43,21 +43,23 @@ const tableVisitsV4 = `CREATE TABLE visitEvents (
 
 // Track the start of a session. Note that each session has a unique identifier, can
 // be born of another (the ancestor), and can be within a scope (e.g., a window ID).
-const tableSessionStartsV4 = `CREATE TABLE sessionStarts (
+const tableSessionStartsV5 = `CREATE TABLE sessionStarts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   scope INTEGER,
   ancestor INTEGER REFERENCES sessionStarts(id),
-  ts INTEGER NOT NULL
+  ts INTEGER NOT NULL,
+  reason TINYINT NOT NULL DEFAULT 0
 )`;
 
 // Track the end of a session. Note that sessions must be started before they are
 // ended.
-const tableSessionEndsV4 = `CREATE TABLE sessionEnds (
+const tableSessionEndsV5 = `CREATE TABLE sessionEnds (
   id INTEGER PRIMARY KEY REFERENCES sessionStarts(id),
-  ts INTEGER NOT NULL
+  ts INTEGER NOT NULL,
+  reason TINYINT NOT NULL DEFAULT 0
 )`;
 
-const tableStarsV4 = `CREATE TABLE starEvents (
+const tableStarsV5 = `CREATE TABLE starEvents (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   place INTEGER NOT NULL REFERENCES placeEvents(id),
   session INTEGER NOT NULL REFERENCES sessionStarts(id),
@@ -65,7 +67,17 @@ const tableStarsV4 = `CREATE TABLE starEvents (
   ts INTEGER NOT NULL
 )`;
 
-const viewStarsV4 = `CREATE VIEW vStarred AS
+// Optional settings:
+// tokenize="porter"
+// prefix='2,3'
+// By default we use Unicode-aware tokenizing (particularly for case folding), but
+// preserve diacritics.
+const virtualTableContentV5 = `
+CREATE VIRTUAL TABLE pages
+USING FTS4 (place, session, ts, title, excerpt, content, tokenize=unicode61 "remove_diacritics=0")
+`;
+
+const viewStarsV5 = `CREATE VIEW vStarred AS
 SELECT place,
        MAX(starEvents.ts) AS ts,
        url FROM starEvents
@@ -80,23 +92,23 @@ WHERE place IN (
 GROUP BY place
 `;
 
-const materializedStarsV4 = `CREATE TABLE mStarred (
+const materializedStarsV5 = `CREATE TABLE mStarred (
   place INTEGER NOT NULL UNIQUE REFERENCES placeEvents(id),
   ts INTEGER NOT NULL,
   url TEXT NOT NULL
 )`;
 
 // We maximize on timestamp, not ID, but we can change our mind later.
-const viewTitlesV4 = `CREATE VIEW vTitles AS
+const viewTitlesV5 = `CREATE VIEW vTitles AS
 SELECT id AS titleID, MAX(ts) AS titleTS, place, title FROM titleEvents GROUP BY place
 `;
 
-const viewVisitsV4 = `CREATE VIEW vVisits AS
+const viewVisitsV5 = `CREATE VIEW vVisits AS
 SELECT id AS visitID, MAX(ts) AS lastVisited, COUNT(id) AS visitCount, place
 FROM visitEvents GROUP BY place
 `;
 
-const viewHistoryV4 = `CREATE VIEW vHistory AS
+const viewHistoryV5 = `CREATE VIEW vHistory AS
 SELECT
   p.id AS place, p.url AS url,
   t.title AS lastTitle,
@@ -109,7 +121,7 @@ WHERE
 ORDER BY lastVisited DESC
 `;
 
-const materializedHistoryV4 = `CREATE TABLE mHistory (
+const materializedHistoryV5 = `CREATE TABLE mHistory (
   place INTEGER NOT NULL REFERENCES placeEvents(id),
   url TEXT NOT NULL,
   lastTitle TEXT,
@@ -117,15 +129,15 @@ const materializedHistoryV4 = `CREATE TABLE mHistory (
   visitCount INTEGER NOT NULL
 )`;
 
-export class ProfileStorageSchemaV4 {
+export class ProfileStorageSchemaV5 {
   version: number;
 
   constructor() {
-    this.version = 4;
+    this.version = 5;
   }
 
   /**
-   * Take a newly opened ProfileStorage and make sure it reaches v4.
+   * Take a newly opened ProfileStorage and make sure it reaches v5.
    * @param storage an open storage instance.
    */
   async createOrUpdate(storage: ProfileStorage): Promise<number> {
@@ -156,18 +168,32 @@ export class ProfileStorageSchemaV4 {
   }
 
   async update(storage: ProfileStorage, from: number): Promise<number> {
+    async function migrateSessionsToV5() {
+      await storage.db.run(`
+        ALTER TABLE sessionStarts
+        ADD COLUMN reason TINYINT NOT NULL DEFAULT 0
+        `);
+      await storage.db.run(`
+        ALTER TABLE sessionEnds
+        ADD COLUMN reason TINYINT NOT NULL DEFAULT 0
+        `);
+    }
+
     // Precondition: from < this.version.
     // Precondition: from > 0 (else we'd call `create`).
     switch (from) {
       case 1:
-        await storage.db.run(tableTitlesV4);
-        await storage.db.run(tableSessionStartsV4);
-        await storage.db.run(tableSessionEndsV4);
-        await storage.db.run(tableStarsV4);
+        await storage.db.run(tableTitlesV5);
+        await storage.db.run(tableSessionStartsV5);
+        await storage.db.run(tableSessionEndsV5);
+        await storage.db.run(tableStarsV5);
 
         // Change the schema for visits. Lose existing ones.
         await storage.db.run('DROP TABLE visitEvents');
-        await storage.db.run(tableVisitsV4);
+        await storage.db.run(tableVisitsV5);
+
+        // Add text indexing.
+        await storage.db.run(virtualTableContentV5);
 
         await storage.db.run(`PRAGMA user_version = ${this.version}`);
         break;
@@ -175,49 +201,69 @@ export class ProfileStorageSchemaV4 {
       case 2:
 
         // Tables.
-        await storage.db.run(tableStarsV4);
+        await storage.db.run(tableStarsV5);
 
         // We gave titles and visits IDs.
         await storage.db.run('DROP TABLE visitEvents');
         await storage.db.run('DROP TABLE titleEvents');
-        await storage.db.run(tableVisitsV4);
-        await storage.db.run(tableTitlesV4);
+        await storage.db.run(tableVisitsV5);
+        await storage.db.run(tableTitlesV5);
 
         // Views.
-        await storage.db.run(viewStarsV4);
-        await storage.db.run(viewVisitsV4);
-        await storage.db.run(viewTitlesV4);
-        await storage.db.run(viewHistoryV4);
+        await storage.db.run(viewStarsV5);
+        await storage.db.run(viewVisitsV5);
+        await storage.db.run(viewTitlesV5);
+        await storage.db.run(viewHistoryV5);
 
         // Materialized views.
-        await storage.db.run(materializedStarsV4);
-        await storage.db.run(materializedHistoryV4);
+        await storage.db.run(materializedStarsV5);
+        await storage.db.run(materializedHistoryV5);
         await storage.materializeStars();
         await storage.materializeHistory();
+
+        migrateSessionsToV5();
+
+        // Add text indexing.
+        await storage.db.run(virtualTableContentV5);
 
         await storage.db.run(`PRAGMA user_version = ${this.version}`);
         break;
 
       case 3:
 
-        // No tables change in v3 -> v4: it's just adding a materialized view.
+        // No tables change in v3 -> v5: it's just adding a materialized view.
         // Views.
-        await storage.db.run(viewStarsV4);
-        await storage.db.run(viewVisitsV4);
-        await storage.db.run(viewTitlesV4);
-        await storage.db.run(viewHistoryV4);
+        await storage.db.run(viewStarsV5);
+        await storage.db.run(viewVisitsV5);
+        await storage.db.run(viewTitlesV5);
+        await storage.db.run(viewHistoryV5);
 
         // Materialized views.
-        await storage.db.run(materializedStarsV4);
-        await storage.db.run(materializedHistoryV4);
+        await storage.db.run(materializedStarsV5);
+        await storage.db.run(materializedHistoryV5);
         await storage.materializeStars();
         await storage.materializeHistory();
+
+        migrateSessionsToV5();
+
+        // Add text indexing.
+        await storage.db.run(virtualTableContentV5);
+
+        await storage.db.run(`PRAGMA user_version = ${this.version}`);
+        break;
+
+      case 4:
+
+        migrateSessionsToV5();
+
+        // Add text indexing.
+        await storage.db.run(virtualTableContentV5);
 
         await storage.db.run(`PRAGMA user_version = ${this.version}`);
         break;
 
       default:
-        throw new Error('Can\'t upgrade from anything other than v1 or v2.');
+        throw new Error(`Can\'t upgrade from ${from}: outside v1-v4.`);
     }
 
     return storage.userVersion();
@@ -225,24 +271,27 @@ export class ProfileStorageSchemaV4 {
 
   async create(storage: ProfileStorage): Promise<number> {
     // Tables.
-    await storage.db.run(tablePlacesV4);
-    await storage.db.run(tableTitlesV4);
-    await storage.db.run(tableVisitsV4);
-    await storage.db.run(tableStarsV4);
-    await storage.db.run(tableSessionStartsV4);
-    await storage.db.run(tableSessionEndsV4);
+    await storage.db.run(tablePlacesV5);
+    await storage.db.run(tableTitlesV5);
+    await storage.db.run(tableVisitsV5);
+    await storage.db.run(tableStarsV5);
+    await storage.db.run(tableSessionStartsV5);
+    await storage.db.run(tableSessionEndsV5);
 
     // Views.
-    await storage.db.run(viewStarsV4);
-    await storage.db.run(viewVisitsV4);
-    await storage.db.run(viewTitlesV4);
-    await storage.db.run(viewHistoryV4);
+    await storage.db.run(viewStarsV5);
+    await storage.db.run(viewVisitsV5);
+    await storage.db.run(viewTitlesV5);
+    await storage.db.run(viewHistoryV5);
 
     // Materialized views.
-    await storage.db.run(materializedStarsV4);
-    await storage.db.run(materializedHistoryV4);
+    await storage.db.run(materializedStarsV5);
+    await storage.db.run(materializedHistoryV5);
     await storage.materializeStars();
     await storage.materializeHistory();
+
+    // Text indexing.
+    await storage.db.run(virtualTableContentV5);
 
     await storage.db.run(`PRAGMA user_version = ${this.version}`);
 
