@@ -99,7 +99,7 @@ const INPUT_BAR_STYLE = Style.registerStyle({
  * to ipcRenderer on mount, and because the key-down event handler is non
  * trivial.
  */
-class Location extends Component {
+export class Location extends Component {
   constructor(props) {
     super(props);
 
@@ -293,8 +293,6 @@ Location.propTypes = {
   navigateTo: PropTypes.func.isRequired,
   userTypedLocation: PropTypes.string.isRequired,
 };
-
-
 
 function mapStateToProps(state, ownProps) {
   return {
