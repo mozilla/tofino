@@ -14,28 +14,7 @@ import Immutable from 'immutable';
 import uuid from 'uuid';
 
 /**
- * The browser window's view of its profile.
- */
-export const Profile = Immutable.Record({
-  bookmarks: Immutable.Set(),
-  recentBookmarks: Immutable.List(),
-  completions: Immutable.Map(),
-});
-
-/**
- * Frequently changing UI state.
- */
-export const UIState = Immutable.Record({
-  // What the user has typed into the location bar, stored by page id
-  userTypedLocation: Immutable.Map(),
-});
-
-/**
- * The top level definition of what a browser looks like.
- * (At least a new-born browser that can do little more than cry)
- *
- * @TODO This currently does not reflect the shape of the full state object.
- * It is being restructured as part of #283.
+ * The data directly related to pages and tabs.
  */
 export const Pages = Immutable.Record({
   // This is a list of Page objects (see below)
@@ -72,3 +51,20 @@ export class Page extends Immutable.Record({
 Page.PAGE_STATE_LOADING = 'loading';
 Page.PAGE_STATE_LOADED = 'loaded';
 Page.PAGE_STATE_FAILED = 'failed';
+
+/**
+ * The browser window's view of its profile.
+ */
+export const Profile = Immutable.Record({
+  bookmarks: Immutable.Set(),
+  recentBookmarks: Immutable.List(),
+  completions: Immutable.Map(),
+});
+
+/**
+ * Frequently changing UI state.
+ */
+export const UIState = Immutable.Record({
+  // What the user has typed into the location bar, stored by page id
+  userTypedLocation: Immutable.Map(),
+});
