@@ -33,7 +33,7 @@ We hang out on Slack here: https://project-tofino.slack.com (you can get an invi
 
 ### Windows
 
-* Install Node: https://nodejs.org/en/
+* Install Node 5: https://nodejs.org/en/
 * Install Visual Studio 2013: https://www.visualstudio.com/news/vs2013-community-vs
   * Make sure you use the VS command line or otherwise have your environment variables set correctly.
 
@@ -44,7 +44,8 @@ Install node 5 through the package manager of your Linux distribution or if not 
 ### OSX
 
 ```
-brew install node --with-full-icu
+brew install nvm
+nvm install 5
 ```
 
 Every time you update from the git repository you may need to install or update any new node dependencies:
