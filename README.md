@@ -31,6 +31,8 @@ We hang out on Slack here: https://project-tofino.slack.com (you can get an invi
 
 ## Build
 
+Project Tofino currently requires Node 5 (5.11.0 being the current release); it won't build on Node 6.
+
 ### Windows
 
 * Install Node 5: https://nodejs.org/en/
@@ -39,7 +41,7 @@ We hang out on Slack here: https://project-tofino.slack.com (you can get an invi
 
 ### Linux
 
-Install node 5 through the package manager of your Linux distribution or if not available see https://nodejs.org/en/download/.
+Install Node 5 through the package manager of your Linux distribution. If not available, see https://nodejs.org/en/download/.
 
 ### OSX
 
