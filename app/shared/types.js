@@ -19,6 +19,7 @@ export type ReadabilityResult = {
   uri: string,
   title: ?string,
   content: string,
+  textContent: string,
   length: number,
   excerpt: string,
 };

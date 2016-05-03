@@ -61,11 +61,15 @@ export function menuBrowser(dispatch) {
       const startTime = Date.now();
       console.log(`Fetching page contents at ${startTime}`);
       const script = 'window._readerify(window.document)';
-      webview.executeJavaScript(script, false, ({ excerpt, uri }) => {
+      webview.executeJavaScript(script, false, readerResult => {
+        console.log(`Got reader result: ${readerResult}.`);
+        if (!readerResult) {
+          return;
+        }
         const endTime = Date.now();
         const duration = endTime - startTime;
-        console.log(`In flight at ${endTime} (took ${duration}), location ${uri}.`);
-        ipcRenderer.send('profile-command', profileCommands.savePage(uri, excerpt));
+        console.log(`In flight at ${endTime} (took ${duration}), location ${readerResult.uri}.`);
+        ipcRenderer.send('profile-command', profileCommands.savePage(readerResult));
       });
     },
   }));

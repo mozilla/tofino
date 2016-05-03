@@ -1830,6 +1830,7 @@ Readability.prototype = {
              byline: metadata.byline || this._articleByline,
              dir: this._articleDir,
              content: articleContent.innerHTML,
+             textContent: articleContent.textContent,
              length: articleContent.textContent.length,
              excerpt: metadata.excerpt };
   }

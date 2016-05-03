@@ -14,7 +14,7 @@
 
 import type { ReadabilityResult } from '../../shared/types';
 
-export function readerify(document: any): ReadabilityResult {
+export function readerify(document: any): ?ReadabilityResult {
   const location = document.location;
   const documentClone = document.cloneNode(true);
   const base = location.pathname.substr(0, location.pathname.lastIndexOf('/') + 1);
@@ -29,10 +29,15 @@ export function readerify(document: any): ReadabilityResult {
   };
 
   const article = new window._Readability(uri, documentClone).parse();
+  if (!article) {
+    return undefined;
+  }
+
   return {
     uri: location.toString(),
     title: article.title,
     content: article.content,
+    textContent: article.textContent,
     length: article.length,
     excerpt: article.excerpt,
   };
