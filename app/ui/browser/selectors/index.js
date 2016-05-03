@@ -30,3 +30,7 @@ export function getPageAreaVisible(state) {
 export function getProfile(state) {
   return state.profile;
 }
+
+export function getUserTypedLocation(state, pageId) {
+  return state.uiState.userTypedLocation.get(pageId);
+}

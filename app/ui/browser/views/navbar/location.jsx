@@ -11,6 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 
 import Style from '../../browser-style';
 import Btn from './btn';
@@ -18,6 +19,7 @@ import Btn from './btn';
 import { fixURL, getCurrentWebView } from '../../browser-util';
 import { SHOW_COMPLETIONS } from '../../constants/ui';
 import { Page } from '../../model';
+import { getUserTypedLocation } from '../../selectors';
 
 const LOCATION_BAR_CONTAINER_STYLE = Style.registerStyle({
   flex: 1,
@@ -205,8 +207,8 @@ class Location extends Component {
   }
 
   render() {
-    const { page, profile } = this.props;
-    const urlValue = page.userTyped !== null ? page.userTyped : page.location;
+    const { page, profile, userTypedLocation } = this.props;
+    const urlValue = userTypedLocation !== null ? userTypedLocation : page.location;
 
     let completions = null;
     const completionsForURL = profile.completions.get(urlValue);
@@ -256,8 +258,8 @@ class Location extends Component {
             hidden={!this.state.showURLBar}
             type="url"
             ref="input"
-            defaultValue={this.props.page.userTyped !== null
-              ? this.props.page.userTyped
+            defaultValue={userTypedLocation !== null
+              ? userTypedLocation
               : this.props.page.location}
             onFocus={this.handleURLBarFocus}
             onBlur={this.handleURLBarBlur}
@@ -289,6 +291,15 @@ Location.propTypes = {
   unbookmark: PropTypes.func.isRequired,
   ipcRenderer: PropTypes.object.isRequired,
   navigateTo: PropTypes.func.isRequired,
+  userTypedLocation: PropTypes.string.isRequired,
 };
 
-export default Location;
+
+
+function mapStateToProps(state, ownProps) {
+  return {
+    userTypedLocation: getUserTypedLocation(state, ownProps.page.id),
+  };
+}
+
+export default connect(mapStateToProps)(Location);

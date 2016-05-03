@@ -12,6 +12,8 @@ describe('Action - SET_USER_TYPED_LOCATION', () => {
   beforeEach(function() {
     this.store = configureStore();
     this.getPages = () => selectors.getPages(this.store.getState());
+    this.getUserTypedLocation =
+      pageId => selectors.getUserTypedLocation(this.store.getState(), pageId);
     this.dispatch = this.store.dispatch;
 
     const { dispatch } = this;
@@ -34,12 +36,12 @@ describe('Action - SET_USER_TYPED_LOCATION', () => {
   });
 
   it('Should update page values', function() {
-    const { dispatch, getPages } = this;
+    const { dispatch, getPages, getUserTypedLocation } = this;
 
     dispatch(actions.setUserTypedLocation(getPages().get(1).id, {
       text: 'Foo',
     }));
-    expect(getPages().get(1).userTyped).toEqual('Foo');
+    expect(getUserTypedLocation(getPages().get(1).id)).toEqual('Foo');
   });
 
   it('Should send a message to the main process', function(done) {
