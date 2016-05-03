@@ -180,15 +180,25 @@ describe('ProfileStorage data access', () => {
         const sessionD = await storage.startSession(null, sessionA);
 
         const rows = await storage.db.all(`
-        SELECT id, scope, ancestor
+        SELECT id, scope, ancestor, reason
         FROM sessionStarts
         ORDER BY id ASC
         `);
 
-        expect(rows[0]).toEqual({ id: sessionA, scope: null, ancestor: null });
-        expect(rows[1]).toEqual({ id: sessionB, scope: 1, ancestor: null });
-        expect(rows[2]).toEqual({ id: sessionC, scope: 1, ancestor: sessionB });
-        expect(rows[3]).toEqual({ id: sessionD, scope: null, ancestor: sessionA });
+        expect(rows[0]).toEqual({ id: sessionA, scope: null, ancestor: null, reason: 0 });
+        expect(rows[1]).toEqual({ id: sessionB, scope: 1, ancestor: null, reason: 0 });
+        expect(rows[2]).toEqual({ id: sessionC, scope: 1, ancestor: sessionB, reason: 0 });
+        expect(rows[3]).toEqual({ id: sessionD, scope: null, ancestor: sessionA, reason: 0 });
+
+        await storage.endSession(sessionA);
+        await storage.endSession(sessionC, 12345);
+
+        const ends = await storage.db.all('SELECT id, ts, reason FROM sessionEnds ORDER BY id ASC');
+        expect(ends[0].id).toEqual(sessionA);
+        expect(ends[0].reason).toEqual(0);
+        expect(ends[1].id).toEqual(sessionC);
+        expect(ends[1].ts).toEqual(12345);
+        expect(ends[1].reason).toEqual(0);
 
         await storage.close();
 
@@ -358,7 +368,7 @@ describe('Schema upgrades', () => {
     }());
   });
 
-  it('Can upgrade from v2 to v4.', (done) => {
+  it('Can upgrade from v2 to v5.', (done) => {
     (async function () {
       try {
         const tempPath = tmp.tmpNameSync();
@@ -374,7 +384,35 @@ describe('Schema upgrades', () => {
 
         // Upgrade it.
         await storage.init();
+        expect((await db.get('PRAGMA user_version')).user_version === 5);
+
+        await storage.close();
+        fs.unlinkSync(tempPath);   // Clean up.
+
+        done();
+      } catch (e) {
+        done(e);
+      }
+    }());
+  });
+
+  it('Can upgrade from v4 to v5.', (done) => {
+    (async function () {
+      try {
+        const tempPath = tmp.tmpNameSync();
+        const db = await DB.open(tempPath);
+
+        expect(db instanceof DB);
+        expect((await db.get('PRAGMA user_version')).user_version === 0);
+
+        // Make a v4 DB.
+        const storage = new ProfileStorage(db);
+        await new ProfileStorageSchemaV4().createOrUpdate(storage);
         expect((await db.get('PRAGMA user_version')).user_version === 4);
+
+        // Upgrade it.
+        await storage.init();
+        expect((await db.get('PRAGMA user_version')).user_version === 5);
 
         await storage.close();
         fs.unlinkSync(tempPath);   // Clean up.
@@ -531,6 +569,229 @@ class ProfileStorageSchemaV2 {
     await storage.db.run(tableSessionStartsV2);
     await storage.db.run(tableSessionEndsV2);
     await storage.db.run('PRAGMA user_version = 2');
+
+    return storage.userVersion();
+  }
+}
+
+const tablePlacesV4 = `CREATE TABLE placeEvents (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  url TEXT UNIQUE NOT NULL,
+  ts INTEGER NOT NULL
+)`;
+
+// Associate titles with places.
+const tableTitlesV4 = `CREATE TABLE titleEvents (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  place INTEGER NOT NULL REFERENCES placeEvents(id),
+  ts INTEGER NOT NULL,
+  title TEXT NOT NULL
+)`;
+
+// Associate visits with places.
+const tableVisitsV4 = `CREATE TABLE visitEvents (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  place INTEGER NOT NULL REFERENCES placeEvents(id),
+  ts INTEGER NOT NULL,
+  session INTEGER NOT NULL REFERENCES sessionStarts(id),
+  type INTEGER NOT NULL
+)`;
+
+// Track the start of a session. Note that each session has a unique identifier, can
+// be born of another (the ancestor), and can be within a scope (e.g., a window ID).
+const tableSessionStartsV4 = `CREATE TABLE sessionStarts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  scope INTEGER,
+  ancestor INTEGER REFERENCES sessionStarts(id),
+  ts INTEGER NOT NULL
+)`;
+
+// Track the end of a session. Note that sessions must be started before they are
+// ended.
+const tableSessionEndsV4 = `CREATE TABLE sessionEnds (
+  id INTEGER PRIMARY KEY REFERENCES sessionStarts(id),
+  ts INTEGER NOT NULL
+)`;
+
+const tableStarsV4 = `CREATE TABLE starEvents (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  place INTEGER NOT NULL REFERENCES placeEvents(id),
+  session INTEGER NOT NULL REFERENCES sessionStarts(id),
+  action TINYINT NOT NULL,
+  ts INTEGER NOT NULL
+)`;
+
+const viewStarsV4 = `CREATE VIEW vStarred AS
+SELECT place,
+       MAX(starEvents.ts) AS ts,
+       url FROM starEvents
+JOIN placeEvents ON placeEvents.id = place
+WHERE place IN (
+  SELECT place FROM (
+    SELECT place, ts, SUM(action) AS stars
+    FROM starEvents
+    GROUP BY place
+  ) WHERE stars > 0
+) AND action = 1
+GROUP BY place
+`;
+
+const materializedStarsV4 = `CREATE TABLE mStarred (
+  place INTEGER NOT NULL UNIQUE REFERENCES placeEvents(id),
+  ts INTEGER NOT NULL,
+  url TEXT NOT NULL
+)`;
+
+// We maximize on timestamp, not ID, but we can change our mind later.
+const viewTitlesV4 = `CREATE VIEW vTitles AS
+SELECT id AS titleID, MAX(ts) AS titleTS, place, title FROM titleEvents GROUP BY place
+`;
+
+const viewVisitsV4 = `CREATE VIEW vVisits AS
+SELECT id AS visitID, MAX(ts) AS lastVisited, COUNT(id) AS visitCount, place
+FROM visitEvents GROUP BY place
+`;
+
+const viewHistoryV4 = `CREATE VIEW vHistory AS
+SELECT
+  p.id AS place, p.url AS url,
+  t.title AS lastTitle,
+  v.lastVisited AS lastVisited, v.visitCount AS visitCount
+FROM
+vVisits AS v, vTitles AS t, placeEvents AS p
+WHERE
+ p.id = v.place AND
+ p.id = t.place
+ORDER BY lastVisited DESC
+`;
+
+const materializedHistoryV4 = `CREATE TABLE mHistory (
+  place INTEGER NOT NULL REFERENCES placeEvents(id),
+  url TEXT NOT NULL,
+  lastTitle TEXT,
+  lastVisited INTEGER NOT NULL,
+  visitCount INTEGER NOT NULL
+)`;
+
+class ProfileStorageSchemaV4 {
+  version: number;
+
+  constructor() {
+    this.version = 4;
+  }
+
+  /**
+   * Take a newly opened ProfileStorage and make sure it reaches v4.
+   * @param storage an open storage instance.
+   */
+  async createOrUpdate(storage: ProfileStorage): Promise<number> {
+    const v = await storage.userVersion();
+
+    if (v === this.version) {
+      return v;
+    }
+
+    if (v === 0) {
+      return this.create(storage);
+    }
+
+    if (v < this.version) {
+      return this.update(storage, v);
+    }
+
+    throw new Error(`Target version ${this.version} lower than DB version ${v}!`);
+  }
+
+  async update(storage: ProfileStorage, from: number): Promise<number> {
+    // Precondition: from < this.version.
+    // Precondition: from > 0 (else we'd call `create`).
+    switch (from) {
+      case 1:
+        await storage.db.run(tableTitlesV4);
+        await storage.db.run(tableSessionStartsV4);
+        await storage.db.run(tableSessionEndsV4);
+        await storage.db.run(tableStarsV4);
+
+        // Change the schema for visits. Lose existing ones.
+        await storage.db.run('DROP TABLE visitEvents');
+        await storage.db.run(tableVisitsV4);
+
+        await storage.db.run(`PRAGMA user_version = ${this.version}`);
+        break;
+
+      case 2:
+
+        // Tables.
+        await storage.db.run(tableStarsV4);
+
+        // We gave titles and visits IDs.
+        await storage.db.run('DROP TABLE visitEvents');
+        await storage.db.run('DROP TABLE titleEvents');
+        await storage.db.run(tableVisitsV4);
+        await storage.db.run(tableTitlesV4);
+
+        // Views.
+        await storage.db.run(viewStarsV4);
+        await storage.db.run(viewVisitsV4);
+        await storage.db.run(viewTitlesV4);
+        await storage.db.run(viewHistoryV4);
+
+        // Materialized views.
+        await storage.db.run(materializedStarsV4);
+        await storage.db.run(materializedHistoryV4);
+        await storage.materializeStars();
+        await storage.materializeHistory();
+
+        await storage.db.run(`PRAGMA user_version = ${this.version}`);
+        break;
+
+      case 3:
+
+        // No tables change in v3 -> v4: it's just adding a materialized view.
+        // Views.
+        await storage.db.run(viewStarsV4);
+        await storage.db.run(viewVisitsV4);
+        await storage.db.run(viewTitlesV4);
+        await storage.db.run(viewHistoryV4);
+
+        // Materialized views.
+        await storage.db.run(materializedStarsV4);
+        await storage.db.run(materializedHistoryV4);
+        await storage.materializeStars();
+        await storage.materializeHistory();
+
+        await storage.db.run(`PRAGMA user_version = ${this.version}`);
+        break;
+
+      default:
+        throw new Error('Can\'t upgrade from anything other than v1-v3.');
+    }
+
+    return storage.userVersion();
+  }
+
+  async create(storage: ProfileStorage): Promise<number> {
+    // Tables.
+    await storage.db.run(tablePlacesV4);
+    await storage.db.run(tableTitlesV4);
+    await storage.db.run(tableVisitsV4);
+    await storage.db.run(tableStarsV4);
+    await storage.db.run(tableSessionStartsV4);
+    await storage.db.run(tableSessionEndsV4);
+
+    // Views.
+    await storage.db.run(viewStarsV4);
+    await storage.db.run(viewVisitsV4);
+    await storage.db.run(viewTitlesV4);
+    await storage.db.run(viewHistoryV4);
+
+    // Materialized views.
+    await storage.db.run(materializedStarsV4);
+    await storage.db.run(materializedHistoryV4);
+    await storage.materializeStars();
+    await storage.materializeHistory();
+
+    await storage.db.run(`PRAGMA user_version = ${this.version}`);
 
     return storage.userVersion();
   }
