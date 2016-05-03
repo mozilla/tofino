@@ -1,3 +1,5 @@
+/* @flow */
+
 /*
  Copyright 2016 Mozilla
 
@@ -10,9 +12,9 @@
  specific language governing permissions and limitations under the License.
  */
 
-// Getting Readability.js to work is a pain in the ass, so we fake it for now.
+import type { ReadabilityResult } from '../../shared/types';
 
-export function readerify(document) {
+export function readerify(document: any): ReadabilityResult {
   const location = document.location;
   const documentClone = document.cloneNode(true);
   const base = location.pathname.substr(0, location.pathname.lastIndexOf('/') + 1);
