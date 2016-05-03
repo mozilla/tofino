@@ -4,25 +4,27 @@
 import expect from 'expect';
 import configureStore from '../../../../app/ui/browser/store/store';
 import * as actions from '../../../../app/ui/browser/actions/main-actions';
+import * as selectors from '../../../../app/ui/browser/selectors';
 
 describe('Action - SET_CURRENT_TAB', () => {
   beforeEach(function() {
     this.store = configureStore();
-    this.getState = () => this.store.getState().browserWindow;
+    this.getPages = () => selectors.getPages(this.store.getState());
+    this.getCurrentPageIndex = () => selectors.getCurrentPageIndex(this.store.getState());
     this.dispatch = this.store.dispatch;
   });
 
   it('Should update the current tab', function() {
-    const { getState, dispatch } = this;
+    const { getCurrentPageIndex, getPages, dispatch } = this;
 
     dispatch(actions.createTab('http://moz.com'));
-    expect(getState().pages.size).toEqual(2);
-    const ids = getState().pages.map(p => p.id);
+    expect(getPages().size).toEqual(2);
+    const ids = getPages().map(p => p.id);
 
-    expect(getState().currentPageIndex).toEqual(1);
+    expect(getCurrentPageIndex()).toEqual(1);
     dispatch(actions.setCurrentTab(ids.get(0)));
-    expect(getState().currentPageIndex).toEqual(0);
+    expect(getCurrentPageIndex()).toEqual(0);
     dispatch(actions.setCurrentTab(ids.get(1)));
-    expect(getState().currentPageIndex).toEqual(1);
+    expect(getCurrentPageIndex()).toEqual(1);
   });
 });

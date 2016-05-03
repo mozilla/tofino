@@ -5,21 +5,22 @@ import expect from 'expect';
 import configureStore from '../../../../app/ui/browser/store/store';
 import * as actions from '../../../../app/ui/browser/actions/main-actions';
 import * as profileCommandTypes from '../../../../app/shared/constants/profile-command-types';
+import * as selectors from '../../../../app/ui/browser/selectors';
 import { ipcMain as ipcMainMock } from '../../../../app/shared/electron';
 
 describe('Action - bookmark', () => {
   beforeEach(function() {
     this.store = configureStore();
-    this.getState = () => this.store.getState().profile;
+    this.getProfile = () => selectors.getProfile(this.store.getState());
     this.dispatch = this.store.dispatch;
   });
 
   it('Should add bookmarks to profile state', function() {
-    const { dispatch, getState } = this;
+    const { dispatch, getProfile } = this;
 
-    expect(getState().get('bookmarks').has('http://moz1.com')).toEqual(false);
+    expect(getProfile().get('bookmarks').has('http://moz1.com')).toEqual(false);
     dispatch(actions.bookmark('http://moz1.com', 'moz1'));
-    expect(getState().get('bookmarks').has('http://moz1.com')).toEqual(true);
+    expect(getProfile().get('bookmarks').has('http://moz1.com')).toEqual(true);
   });
 
   it('Should send a message to the main process', function(done) {

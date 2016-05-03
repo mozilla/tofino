@@ -4,37 +4,39 @@
 import expect from 'expect';
 import configureStore from '../../../../app/ui/browser/store/store';
 import * as actions from '../../../../app/ui/browser/actions/main-actions';
+import * as selectors from '../../../../app/ui/browser/selectors';
 
 const HOME_PAGE = 'tofino://mozilla';
 
 describe('Action - CREATE_TAB', () => {
   beforeEach(function() {
     this.store = configureStore();
-    this.getState = () => this.store.getState().browserWindow;
+    this.getPages = () => selectors.getPages(this.store.getState());
+    this.getCurrentPageIndex = () => selectors.getCurrentPageIndex(this.store.getState());
     this.dispatch = this.store.dispatch;
   });
 
   it('Should create a new tab with default location and select it', function() {
-    const { getState, dispatch } = this;
-    expect(getState().currentPageIndex).toEqual(0);
+    const { getCurrentPageIndex, getPages, dispatch } = this;
+    expect(getCurrentPageIndex()).toEqual(0);
 
     dispatch(actions.createTab());
-    expect(getState().pages.size).toEqual(2);
-    expect(getState().pages.get(1).location).toEqual(HOME_PAGE,
+    expect(getPages().size).toEqual(2);
+    expect(getPages().get(1).location).toEqual(HOME_PAGE,
       'CREATE_TAB defaults to home page when no location given.');
-    expect(getState().currentPageIndex).toEqual(1,
+    expect(getCurrentPageIndex()).toEqual(1,
       'CREATE_TAB updates `currentPageIndex` when creating a new tab');
   });
 
   it('Should create a new tab with given location and select it', function() {
-    const { getState, dispatch } = this;
+    const { getCurrentPageIndex, getPages, dispatch } = this;
     dispatch(actions.createTab());
     dispatch(actions.createTab('https://github.com/'));
 
-    expect(getState().pages.size).toEqual(3);
-    expect(getState().pages.get(2).location).toEqual('https://github.com/',
+    expect(getPages().size).toEqual(3);
+    expect(getPages().get(2).location).toEqual('https://github.com/',
       'CREATE_TAB uses passed in location for new tab');
-    expect(getState().currentPageIndex).toEqual(2,
+    expect(getCurrentPageIndex()).toEqual(2,
       'CREATE_TAB updates `currentPageIndex` when creating a new tab with location');
   });
 });

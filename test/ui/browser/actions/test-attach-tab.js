@@ -8,7 +8,6 @@ import * as actions from '../../../../app/ui/browser/actions/main-actions'; // e
 describe('Action - ATTACH_TAB', () => {
   beforeEach(function() {
     this.store = configureStore();
-    this.getState = () => this.store.getState().browserWindow;
     this.dispatch = this.store.dispatch;
   });
 

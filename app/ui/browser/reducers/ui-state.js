@@ -10,15 +10,19 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { combineReducers } from 'redux';
-import pages from './pages';
-import profile from './profile';
-import uiState from './ui-state';
+import 'babel-polyfill';
 
-const rootReducer = combineReducers({
-  pages,
-  profile,
-  uiState,
-});
+import * as types from '../constants/action-types';
+import { UIState } from '../model';
 
-export default rootReducer;
+const initialState = new UIState();
+
+export default function uiState(state = initialState, action) {
+  switch (action.type) {
+    case types.SET_USER_TYPED_LOCATION:
+      return state.setIn(['userTypedLocation', action.pageId], action.payload.text);
+
+    default:
+      return state;
+  }
+}

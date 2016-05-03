@@ -4,28 +4,29 @@
 import expect from 'expect';
 import configureStore from '../../../../app/ui/browser/store/store';
 import * as actions from '../../../../app/ui/browser/actions/main-actions';
+import * as selectors from '../../../../app/ui/browser/selectors';
 
 describe('Action - SET_PAGE_AREA_VISIBILITY', () => {
   beforeEach(function() {
     this.store = configureStore();
-    this.getState = () => this.store.getState().browserWindow;
+    this.getPageAreaVisible = () => selectors.getPageAreaVisible(this.store.getState());
     this.dispatch = this.store.dispatch;
   });
 
   it('Should set pageAreaVisible', function() {
-    const { getState, dispatch } = this;
+    const { getPageAreaVisible, dispatch } = this;
 
     dispatch(actions.setPageAreaVisibility(true));
-    expect(getState().pageAreaVisible).toEqual(true);
+    expect(getPageAreaVisible()).toEqual(true);
     dispatch(actions.setPageAreaVisibility(true));
-    expect(getState().pageAreaVisible).toEqual(true);
+    expect(getPageAreaVisible()).toEqual(true);
 
     dispatch(actions.setPageAreaVisibility(false));
-    expect(getState().pageAreaVisible).toEqual(false);
+    expect(getPageAreaVisible()).toEqual(false);
     dispatch(actions.setPageAreaVisibility(false));
-    expect(getState().pageAreaVisible).toEqual(false);
+    expect(getPageAreaVisible()).toEqual(false);
 
     dispatch(actions.setPageAreaVisibility(true));
-    expect(getState().pageAreaVisible).toEqual(true);
+    expect(getPageAreaVisible()).toEqual(true);
   });
 });

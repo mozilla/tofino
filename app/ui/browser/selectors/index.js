@@ -11,22 +11,26 @@ specific language governing permissions and limitations under the License.
 */
 
 export function getPages(state) {
-  return state.browserWindow.pages;
+  return state.pages.pages;
 }
 
 export function getCurrentPage(state) {
   const index = getCurrentPageIndex(state);
-  return state.browserWindow.pages.get(index);
+  return state.pages.pages.get(index);
 }
 
 export function getCurrentPageIndex(state) {
-  return state.browserWindow.currentPageIndex;
+  return state.pages.currentPageIndex;
 }
 
 export function getPageAreaVisible(state) {
-  return state.browserWindow.pageAreaVisible;
+  return state.pages.pageAreaVisible;
 }
 
 export function getProfile(state) {
   return state.profile;
+}
+
+export function getUserTypedLocation(state, pageId) {
+  return state.uiState.userTypedLocation.get(pageId) || '';
 }

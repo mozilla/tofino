@@ -5,7 +5,7 @@ import expect from 'expect';
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import Location from '../../../../../app/ui/browser/views/navbar/location';
+import { Location } from '../../../../../app/ui/browser/views/navbar/location';
 import { Page, Profile } from '../../../../../app/ui/browser/model/index';
 
 function createSpyProps() {

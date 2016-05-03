@@ -15,7 +15,7 @@ import 'babel-polyfill';
 
 import Immutable from 'immutable';
 import * as types from '../constants/action-types';
-import { State, Page } from '../model';
+import { Pages, Page } from '../model';
 import { isUUID } from '../browser-util';
 
 /**
@@ -23,7 +23,7 @@ import { isUUID } from '../browser-util';
  */
 const HOME_PAGE = 'tofino://mozilla';
 
-const initialState = new State({
+const initialState = new Pages({
   pages: Immutable.List.of(new Page({ location: HOME_PAGE })),
   currentPageIndex: 0,
   pageAreaVisible: false,
@@ -77,29 +77,9 @@ export default function basic(state = initialState, action) {
     case types.SET_PAGE_AREA_VISIBILITY:
       return setPageAreaVisibility(state, action.visible);
 
-    case types.SET_USER_TYPED_LOCATION:
-      return setUserTypedLocation(state, action.pageId, action.payload);
-
     default:
       return state;
   }
-}
-
-export function getPages(state) {
-  return state.browserWindow.pages;
-}
-
-export function getCurrentPage(state) {
-  const index = getCurrentPageIndex(state);
-  return state.browserWindow.pages.get(index);
-}
-
-export function getCurrentPageIndex(state) {
-  return state.browserWindow.currentPageIndex;
-}
-
-export function getPageAreaVisible(state) {
-  return state.browserWindow.pageAreaVisible;
 }
 
 function createTab(state, location = HOME_PAGE) {
@@ -211,14 +191,6 @@ function setPageDetails(state, pageId, payload) {
       mut.setIn(['pages', pageIndex, key], value);
     }
   });
-}
-
-function setUserTypedLocation(state, pageId, { text }) {
-  assert(isUUID(pageId), 'SET_USER_TYPED_LOCATION requires a page id.');
-  const pageIndex = getPageIndexById(state, pageId);
-  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
-
-  return state.setIn(['pages', pageIndex, 'userTyped'], text);
 }
 
 function setCurrentTab(state, pageId) {
