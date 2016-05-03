@@ -13,8 +13,18 @@ import startFixtureServer from '../utils/server';
 const TAB = '\uE004';
 const RETURN = '\uE006';
 
+// The timeout used in all webdriver 'wait' functions.
+const WEBDRIVER_TIMEOUT_IN_MS = 10000;
+
+// This is the timeout for webdriver to start up. Default is 5000.
+// Sometimes this is not long enough, and not sure what we can even
+// do to make this go faster.
+const WEBDRIVER_START_TIMEOUT_IN_MS = 10000;
+
 const Driver = {
   app: null,
+  fixturesURL: null,
+  port: null,
 
   start: async function() {
     expect(this.app).toBe(null, 'Attempting to start an already activated Electron instance');
@@ -25,9 +35,13 @@ const Driver = {
       path: getElectronPath(),
       args: [getRoot()],
       env: process.env,
+      startTimeout: WEBDRIVER_START_TIMEOUT_IN_MS,
+      waitTimeout: WEBDRIVER_TIMEOUT_IN_MS,
     });
 
+    // app.start() can take up to 30s on Appveyor Windows builds
     await this.app.start();
+
     this.client = this.app.client;
     expect(this.app.isRunning()).toBe(true);
     await this.client.waitUntilWindowLoaded();
@@ -35,9 +49,13 @@ const Driver = {
     // Wait for both BrowserWindow and first tab webview to exist
     await this.client.waitUntil(() => this.client.getWindowCount().then(count => count === 2));
 
+    const { value: bwHandle } = await this.client.windowHandle();
     const { stop, port } = await server;
+
+    this._bwHandle = bwHandle;
     this._stopServer = stop;
     this.port = port;
+    this.fixturesURL = `http://localhost:${this.port}`;
     return this.app;
   },
 
@@ -50,10 +68,39 @@ const Driver = {
       await this._stopServer();
     }
 
-    this.app = this.port = this._stopServer = null;
+    this.app = this.port = this.fixturesURL = this._stopServer = this._bwHandle = null;
+  },
+
+  /**
+   * Sets the webdriver target to the main browser window.
+   */
+  setTargetToBrowserWindow: async function() {
+    await this.app.client.window(this._bwHandle);
+  },
+
+  /**
+   * Accepts a string url and iterates over the current
+   * webdriver window handlers until one matches and updates
+   * the context. Throws an error if not found.
+   *
+   * @param {String} url
+   */
+  setTargetByURL: async function(url) {
+    const { value: handles } = await this.app.client.windowHandles();
+
+    for (const handle of handles) {
+      await this.app.client.window(handle);
+      const { value: handleURL } = await this.client.url();
+      if (handleURL === url) {
+        return;
+      }
+    }
+
+    throw new Error(`No valid webdriver handles found for ${url}`);
   },
 
   waitForCurrentTabLoaded: async function() {
+    await this.setTargetToBrowserWindow();
     return await this.app.client
       .waitForVisible('.active-browser-page[data-page-state="loaded"]');
   },
@@ -71,6 +118,7 @@ const Driver = {
   },
 
   navigate: async function(loc) {
+    await this.setTargetToBrowserWindow();
     await this.click('#browser-location-title-bar');
     await this.app.client
       .waitForVisible('#urlbar-input')
@@ -78,10 +126,12 @@ const Driver = {
   },
 
   navigateBack: async function() {
+    await this.setTargetToBrowserWindow();
     return await this.click('#browser-navbar-back');
   },
 
   navigateForward: async function() {
+    await this.setTargetToBrowserWindow();
     return await this.click('#browser-navbar-forward');
   },
 
@@ -89,6 +139,8 @@ const Driver = {
    * A bit hacky, but ensures we don't have the url bar focused
    */
   blur: async function() {
+    await this.setTargetToBrowserWindow();
+
     // If our URL bar is visible, send a tab event
     if (await this.app.client.isVisible('#urlbar-input')) {
       await this.app.client.setValue('#urlbar-input', TAB);

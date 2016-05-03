@@ -135,7 +135,6 @@ function addListenersToWebView(webview, page, dispatch, ipcRenderer) {
   webview.addEventListener('did-start-loading', () => {
     dispatch(setPageDetails(page.id, {
       state: PageModel.PAGE_STATE_LOADING,
-      title: false,
     }));
   });
 
@@ -162,18 +161,21 @@ function addListenersToWebView(webview, page, dispatch, ipcRenderer) {
 
   webview.addEventListener('did-stop-loading', () => {
     const url = webview.getURL();
+    const title = webview.getTitle();
+
     dispatch(setPageDetails(page.id, {
       statusText: false,
       location: url,
       canGoBack: webview.canGoBack(),
       canGoForward: webview.canGoForward(),
       state: PageModel.PAGE_STATE_LOADED,
+      title,
     }));
+
     dispatch(setUserTypedLocation(page.id, {
       text: null,
     }));
 
-    const title = webview.getTitle();
     ipcRenderer.send('profile-command', profileCommands.visited(url, title));
   });
 

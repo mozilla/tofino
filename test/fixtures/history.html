@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+- License, v. 2.0. If a copy of the MPL was not distributed with this
+- file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>HTML5 History Fixture</title>
+  </head>
+
+  <body>
+    <a id="red" href="#" data-url="red.html" data-title="red">red</a>
+    <a id="blue" href="#" data-url="blue.html" data-title="blue">blue</a>
+    <a id="green" href="#" data-url="green.html" data-title="green">green</a>
+    <a id="no-title" href="#" data-url="no-title.html">no-title</a>
+    <script>
+Array.prototype.forEach.call(document.querySelectorAll('a'), function(anchor) {
+  anchor.addEventListener('click', function(e) {
+    const target = e.target;
+    const url = target.getAttribute('data-url');
+    const title = target.getAttribute('data-title');
+    window.history.pushState({ title, url }, title, url);
+
+    if (title) {
+      document.title = title;
+    }
+
+    e.preventDefault();
+  });
+});
+
+window.onpopstate = function(e) {
+  document.title = (e.state && e.state.title) ? e.state.title : 'HTML5 History Fixture';
+}
+    </script>
+  </body>
+</html>

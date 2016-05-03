@@ -13,6 +13,7 @@ describe('navigation', function() {
   }
 
   this.timeout(30000);
+
   beforeEach(async function() {
     await Driver.start();
   });
@@ -22,12 +23,12 @@ describe('navigation', function() {
   });
 
   it('can navigate back and forward in a page', async function() {
-    await Driver.navigate(`http://localhost:${Driver.port}/simple.html`);
+    await Driver.navigate(`${Driver.fixturesURL}/simple.html`);
     await Driver.waitForCurrentTabLoaded();
     expect(true).toBe(true, 'Navigated to simple.html');
 
     await Driver.blur();
-    await Driver.app.client.waitForText('#browser-location-title-bar > span',
+    await Driver.client.waitForText('#browser-location-title-bar > span',
       'A Very Simple Page');
     expect(true).toBe(true, 'Got updated title bar text');
 
@@ -36,17 +37,45 @@ describe('navigation', function() {
     expect(true).toBe(true, 'Navigated to mozilla.html');
 
     await Driver.blur();
-    await Driver.app.client.waitForText('#browser-location-title-bar > span',
+    await Driver.client.waitForText('#browser-location-title-bar > span',
       'The Book of Mozilla, 15:1');
 
     await Driver.navigateBack();
-    await Driver.app.client.waitForText('#browser-location-title-bar > span',
+    await Driver.client.waitForText('#browser-location-title-bar > span',
       'A Very Simple Page');
     expect(true).toBe(true, 'Navigated back to simple.html');
 
     await Driver.navigateForward();
-    await Driver.app.client.waitForText('#browser-location-title-bar > span',
+    await Driver.client.waitForText('#browser-location-title-bar > span',
       'The Book of Mozilla, 15:1');
     expect(true).toBe(true, 'Navigated forward to mozilla.html');
+  });
+
+  it('updates display title when navigating via HTML5 history', async function() {
+    await Driver.navigate(`${Driver.fixturesURL}/history.html`);
+    await Driver.waitForCurrentTabLoaded();
+
+    await Driver.setTargetByURL(`${Driver.fixturesURL}/history.html`);
+    await Driver.client.click('#red');
+    await checkTitle('red');
+
+    await Driver.setTargetByURL(`${Driver.fixturesURL}/red.html`);
+    await Driver.client.click('#blue');
+    await checkTitle('blue');
+
+    await Driver.setTargetByURL(`${Driver.fixturesURL}/blue.html`);
+    await Driver.client.click('#no-title');
+    await checkTitle('blue');
+
+    await Driver.navigateBack();
+    await checkTitle('blue');
+    await Driver.navigateBack();
+    await checkTitle('red');
+
+    async function checkTitle(expected) {
+      await Driver.setTargetToBrowserWindow();
+      await Driver.blur();
+      await Driver.client.waitForText('#browser-location-title-bar > span', expected);
+    }
   });
 });
