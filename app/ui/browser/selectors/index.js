@@ -32,5 +32,5 @@ export function getProfile(state) {
 }
 
 export function getUserTypedLocation(state, pageId) {
-  return state.uiState.userTypedLocation.get(pageId);
+  return state.uiState.userTypedLocation.get(pageId) || '';
 }
