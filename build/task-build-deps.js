@@ -5,9 +5,36 @@
 
 import path from 'path';
 import fs from 'fs-promise';
+import os from 'os';
 
-import { BUILD_CONFIG_JSON } from './task-config-builder';
+import download from 'electron-download';
+import unzip from 'extract-zip';
+import thenify from 'thenify';
+
 import * as BuildUtils from './utils';
+
+async function downloadElectron() {
+  const tmpDir = path.join(os.tmpdir(), 'tofino-tmp');
+  await fs.mkdirs(tmpDir);
+
+  try {
+    const zipPath = await thenify(download)(BuildUtils.getDownloadOptions());
+
+    await thenify(unzip)(zipPath, { dir: tmpDir });
+
+    // Some tools like electron-rebuild rely on this to find the executable
+    await fs.writeFile(path.join(tmpDir, 'path.txt'),
+                       BuildUtils.ELECTRON_EXECUTABLE[os.platform()]);
+
+    const targetDir = BuildUtils.getElectronRoot();
+    await fs.remove(targetDir);
+    await fs.move(tmpDir, targetDir);
+  } finally {
+    if (await fs.exists(tmpDir)) {
+      fs.remove(tmpDir);
+    }
+  }
+}
 
 async function findNativeModules() {
   const nodeModules = path.join(__dirname, '..', 'node_modules');
@@ -43,7 +70,11 @@ async function findNativeModules() {
 async function rebuild() {
   console.log('Rebuilding modules...');
   const command = path.join(__dirname, '..', 'node_modules', '.bin', 'electron-rebuild');
-  await BuildUtils.spawn(command, ['-f'], {
+  await BuildUtils.spawn(command, [
+    '-f',
+    '-e', BuildUtils.getElectronRoot(),
+    '-v', BuildUtils.getElectronVersion(),
+  ], {
     stdio: 'inherit',
   });
 }
@@ -51,9 +82,21 @@ async function rebuild() {
 export default async function() {
   let existingConfig = {};
   try {
-    existingConfig = await fs.readJson(BUILD_CONFIG_JSON);
+    existingConfig = await fs.readJson(BuildUtils.getBuildConfigFile());
   } catch (e) {
     // Missing files mean we rebuild
+  }
+
+  const electron = BuildUtils.getManifest()._electron;
+  let currentElectron = null;
+  try {
+    currentElectron = BuildUtils.getElectronVersion();
+  } catch (e) {
+    // Fall through and download
+  }
+
+  if (electron.version !== currentElectron) {
+    await downloadElectron();
   }
 
   const modules = await findNativeModules();
@@ -87,6 +130,6 @@ export default async function() {
     await rebuild();
     existingConfig.electron = BuildUtils.getElectronVersion();
     existingConfig.nativeModules = modules;
-    await fs.writeJson(BUILD_CONFIG_JSON, existingConfig, { spaces: 2 });
+    await fs.writeJson(BuildUtils.getBuildConfigFile(), existingConfig, { spaces: 2 });
   }
 }

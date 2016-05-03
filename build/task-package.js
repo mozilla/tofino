@@ -67,6 +67,11 @@ export default async function() {
   const electronVersion = BuildUtils.getElectronVersion();
   const appVersion = BuildUtils.getAppVersion();
 
+  const downloadOptions = BuildUtils.getDownloadOptions();
+
+  // packager displays a warning if this property is set.
+  delete downloadOptions.version;
+
   const packagedApp = await packageApp({
     arch: ARCH,
     platform: PLATFORM,
@@ -76,6 +81,7 @@ export default async function() {
     dir: ROOT,
     icon: path.join(ROOT, 'branding', 'app-icon'),
     out: path.join(ROOT, 'dist'),
+    download: downloadOptions,
   });
 
   const packageName = `${manifest.name}-${appVersion}-${PLATFORM}-${ARCH}.zip`;

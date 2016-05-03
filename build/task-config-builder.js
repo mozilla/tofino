@@ -6,13 +6,10 @@
  * build configurations.
  */
 
-import path from 'path';
 import os from 'os';
 import fs from 'fs-promise';
 
 import * as BuildUtils from './utils';
-
-export const BUILD_CONFIG_JSON = path.join(__dirname, '..', 'build-config.json');
 
 const BASE_CONFIG = {
   // System information
@@ -54,12 +51,12 @@ export default async function(config) {
   let currentConfig = {};
 
   try {
-    currentConfig = await fs.readJson(BUILD_CONFIG_JSON);
+    currentConfig = await fs.readJson(BuildUtils.getBuildConfigFile());
   } catch (e) {
     // Ignore missing file errors.
   }
 
   const configToWrite = Object.assign({}, currentConfig, BASE_CONFIG, config);
 
-  await fs.writeJson(BUILD_CONFIG_JSON, configToWrite, { spaces: 2 });
+  await fs.writeJson(BuildUtils.getBuildConfigFile(), configToWrite, { spaces: 2 });
 }

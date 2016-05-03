@@ -10,12 +10,25 @@
 import os from 'os';
 import path from 'path';
 import manifest from '../package.json';
-import electronPath from 'electron-prebuilt';
 import fs from 'fs-promise';
 import mz from 'mz';
 
 export const IS_TRAVIS = process.env.TRAVIS === 'true';
 export const IS_APPVEYOR = process.env.APPVETOR === 'True';
+
+export const ELECTRON_EXECUTABLE = {
+  win32: 'electron.exe',
+  darwin: path.join('Electron.app', 'Contents', 'MacOS', 'Electron'),
+  linux: 'electron',
+};
+
+// We cache the download in a private place since these builds may not be
+// official Electron builds.
+export const getDownloadOptions = () => ({
+  version: manifest._electron.version,
+  cache: path.join(__dirname, '..', '.cache'),
+  strictSSL: true,
+});
 
 export const getAppVersion = () => {
   if (IS_TRAVIS) {
@@ -29,11 +42,27 @@ export const getAppVersion = () => {
 
 export const getRoot = () => path.dirname(__dirname);
 
+export const getBuildConfigFile = () => path.join(__dirname, '..', 'build-config.json');
+
 export const getManifest = () => manifest;
 
-export const getElectronPath = () => electronPath;
+export function getElectronRoot() {
+  return path.join(__dirname, '..', '.electron');
+}
 
-export const getElectronVersion = () => manifest.devDependencies['electron-prebuilt'];
+export function getElectronPath() {
+  return path.join(getElectronRoot(), ELECTRON_EXECUTABLE[os.platform()]);
+}
+
+// This intentionally throws an exception if electron hasn't been downloaded yet.
+export function getElectronVersion() {
+  const versionFile = path.join(getElectronRoot(), 'version');
+
+  const version = fs.readFileSync(versionFile, { encoding: 'utf8' });
+
+  // Trim off the leading 'v'.
+  return version.trim().substring(1);
+}
 
 export async function spawn(command, args, options = {}) {
   if (os.type() === 'Windows_NT') {

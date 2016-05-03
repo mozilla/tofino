@@ -9,3 +9,5 @@ build-config.json
 .nyc_output/
 *~
 /browser.db
+.electron
+.cache
