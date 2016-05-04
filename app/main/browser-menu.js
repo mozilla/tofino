@@ -18,6 +18,15 @@ const Menu = electron.Menu;
 
 const HELP_LINK = 'https://github.com/mozilla/tofino';
 
+const openNewWindow = () => {
+  // This setImmediate avoids an interaction between the main process and child
+  // rendering process event loops that results in the window only being shown after IO
+  // events have happened, which can be quite delayed.
+  setImmediate(() => {
+    electron.ipcMain.emit('profile-command', {}, profileCommands.newBrowserWindow());
+  });
+};
+
 const BrowserMenu = {
   file: {
     label: 'File',
@@ -28,20 +37,15 @@ const BrowserMenu = {
         click: (item, focusedWindow) => {
           if (focusedWindow) {
             focusedWindow.webContents.send('new-tab');
+          } else {
+            openNewWindow();
           }
         },
       },
       {
         label: 'New Window',
         accelerator: 'CmdOrCtrl+N',
-        click: () => {
-          // This setImmediate avoids an interaction between the main process and child
-          // rendering process event loops that results in the window only being shown after IO
-          // events have happened, which can be quite delayed.
-          setImmediate(() => {
-            electron.ipcMain.emit('profile-command', {}, profileCommands.newBrowserWindow());
-          });
-        },
+        click: openNewWindow,
       },
     ],
   },
@@ -322,6 +326,7 @@ const BrowserMenu = {
       });
     }
 
+    template.push(this.file);
     template.push(this.edit);
     template.push(this.window);
     template.push(this.help);
