@@ -30,6 +30,8 @@ import { Bookmark } from '../model/index';
 import { ProfileStorageSchemaV5 } from './profile-schema';
 import { DB, verbose } from './sqlite';
 
+import type { ReadabilityResult } from '../shared/types';
+
 const mkdirp = thenify(cbmkdirp);
 
 type BookmarkRow = { place: number, title: ?string, ts: number, url: string };
@@ -435,6 +437,17 @@ export class ProfileStorage {
       new Bookmark({
         title: row.title, location: row.url, visitedAt: row.ts,
       }));
+  }
+
+  async savePage(page: ReadabilityResult,
+                 session: number,
+                 now: number = microtime.now()): Promise<any> {
+    const place = await this.savePlace(page.uri, now);
+    const query = `
+    INSERT INTO pages (place, session, ts, title, excerpt, content)
+    VALUES (?, ?, ?, ?, ?, ?)
+    `;
+    return this.db.run(query, [place, session, now, page.title, page.excerpt, page.textContent]);
   }
 
   userVersion(): Promise<number> {
