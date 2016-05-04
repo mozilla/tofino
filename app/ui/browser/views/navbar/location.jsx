@@ -209,9 +209,9 @@ export class Location extends Component {
   render() {
     const { page, profile, userTypedLocation } = this.props;
     const urlValue = userTypedLocation !== null ? userTypedLocation : page.location;
-
     let completions = null;
     const completionsForURL = profile.completions.get(urlValue);
+
     if (SHOW_COMPLETIONS && completionsForURL && this.state.focusedURLBar) {
       const results = completionsForURL.map((completion, i) => (<div
         key={completion}
@@ -224,11 +224,15 @@ export class Location extends Component {
         {completion}</div>
       ));
 
-      completions = <div className={LOCATION_BAR_AUTOCOMPLETE_STYLE}>{results}</div>;
+      completions = (
+        <div id="autocomplete-results"
+          className={LOCATION_BAR_AUTOCOMPLETE_STYLE}>{results}</div>
+       );
 
-      // Don't show a completion if it matches the URL exactly and it's the only
-      // result.
-      if (completionsForURL.length === 1 && completionsForURL[0] === urlValue) {
+      // Don't show the completion box if there aren't any, or if there's
+      // only one that matches the URL exactly.
+      if (completionsForURL.length === 0 ||
+           (completionsForURL.length === 1 && completionsForURL[0] === urlValue)) {
         completions = null;
       }
     }
