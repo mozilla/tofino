@@ -14,6 +14,8 @@
 
 import * as profileCommandTypes from './constants/profile-command-types';
 
+import type { ReadabilityResult } from '../shared/types';
+
 export type ProfileCommand = { type: string, payload: Object };
 
 /**
@@ -66,5 +68,12 @@ export function newBrowserWindow(tabInfo: ?Object): ProfileCommand {
     payload: {
       tabInfo,
     },
+  };
+}
+
+export function savePage(page: ReadabilityResult): ProfileCommand {
+  return {
+    type: profileCommandTypes.DID_REQUEST_SAVE_PAGE,
+    payload: page,
   };
 }

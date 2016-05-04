@@ -16,6 +16,7 @@
   },
 
   "plugins": [
+    "flow-vars",
     "import",
     "react"
   ],
@@ -53,6 +54,8 @@
       "allowObjectStart": true,
       "allowArrayStart": true
     }],
+    "flow-vars/define-flow-type": 1,
+    "flow-vars/use-flow-type": 1,
     "react/jsx-closing-bracket-location": ["error", "after-props"],
     "react/jsx-indent": ["error", 2],
     "react/jsx-indent-props": ["error", 2],

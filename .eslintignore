@@ -1,3 +1,4 @@
 electron
 node_modules
 lib
+app/content/preload/readability.js

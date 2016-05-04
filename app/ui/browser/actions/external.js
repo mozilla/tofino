@@ -10,6 +10,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
+/* eslint no-console: 0 */
+
 import {
   createTab, setUserTypedLocation, closeTab, navigatePageTo,
 } from './main-actions';
@@ -50,6 +52,26 @@ export function menuBrowser(dispatch) {
   menu.append(new MenuItem({
     label: 'New Window',
     click: () => newBrowserWindow(),
+  }));
+
+  menu.append(new MenuItem({
+    label: 'Fetch page contents',
+    click: () => {
+      const webview = getCurrentWebView(document);
+      const startTime = Date.now();
+      console.log(`Fetching page contents at ${startTime}`);
+      const script = 'window._readerify(window.document)';
+      webview.executeJavaScript(script, false, readerResult => {
+        console.log(`Got reader result: ${readerResult}.`);
+        if (!readerResult) {
+          return;
+        }
+        const endTime = Date.now();
+        const duration = endTime - startTime;
+        console.log(`In flight at ${endTime} (took ${duration}), location ${readerResult.uri}.`);
+        ipcRenderer.send('profile-command', profileCommands.savePage(readerResult));
+      });
+    },
   }));
 
   menu.popup(remote.getCurrentWindow());

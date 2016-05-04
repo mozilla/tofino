@@ -103,7 +103,17 @@ export async function handler(
       return userAgent.set('browserWindows',
         userAgent.browserWindows.add((await makeBrowserWindow(payload.tabInfo)).id));
 
+    case profileCommandTypes.DID_REQUEST_SAVE_PAGE:
+      if (!browserWindow || !browserWindow.sessionId) {
+        break;
+      }
+      console.log(`Saving ${payload.uri} at ${Date.now()}.`);
+      console.log(`Saving: ${payload.textContent}`);
+      await storage.savePage(payload, browserWindow.sessionId);
+      break;
+
     default:
+      console.log(`Don't recognize type ${command.type}.`);
       break;
   }
 

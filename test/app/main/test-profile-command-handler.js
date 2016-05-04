@@ -48,6 +48,33 @@ describe('profile-command-handler', () => {
     fs.rmdirSync(tempDir);
   });
 
+  it('Handles save-page commands.', async function () {
+    const reader = {
+      uri: 'http://example.com',
+      title: 'The Éxample',
+      content: '<html><head><h1>Header</h1><p>Content goes here</p></head></html>',
+      textContent: `Header
+
+Content goes here`,
+      length: 123,
+      excerpt: 'Content goes here',
+    };
+
+    const startState = store.getState();
+    const nextState = await profileCommandHandler.handler(
+      startState, storage, { sessionId }, () => null,
+      profileCommands.savePage(reader)
+    );
+
+    // The state doesn't change.
+    expect(nextState).toIs(startState);
+
+    // But we stored the document.
+    const row = await storage.db.get('SELECT title, excerpt FROM pages');
+    expect(row.title).toEqual('The Éxample');
+    expect(row.excerpt).toEqual('Content goes here');
+  });
+
   it('handles bookmark and unbookmark profile commands', async function () {
     let newState = store.getState();
     newState = await profileCommandHandler.handler(
