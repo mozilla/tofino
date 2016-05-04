@@ -14,7 +14,7 @@
 
 import * as profileCommandTypes from './constants/profile-command-types';
 
-import { ReadabilityResult } from '../shared/types';
+import type { ReadabilityResult } from '../shared/types';
 
 export type ProfileCommand = { type: string, payload: Object };
 
