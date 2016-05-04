@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes } from 'react';
 
 import { Page } from '../../model';
 import Style from '../../browser-style';
@@ -27,9 +27,6 @@ const TAB_STYLE = Style.registerStyle({
   '&.active': {
     background: '#fff',
     color: '#555',
-  },
-  '&.dragging': {
-    opacity: '0.6',
   },
 });
 
@@ -51,54 +48,31 @@ const TAB_CLOSE_BUTTON_STYLE = Style.registerStyle({
  * one of the opened tabs. The web page contained within the tab may not be
  * visible
  */
-class Tab extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { dragging: false };
+function Tab(props) {
+  const {
+    page, isActive, onClose, onClick, onContextMenu,
+  } = props;
 
-    this.onDragStart = this.onDragStart.bind(this);
-    this.onDragEnd = this.onDragEnd.bind(this);
-  }
+  const modes = [
+    ...(isActive ? ['active'] : []),
+  ];
 
-  onDragStart(event) {
-    this.props.onDragStart(event);
-    this.setState({ dragging: true });
-  }
-
-  onDragEnd(event) {
-    this.setState({ dragging: false });
-    this.props.onDragEnd(event);
-  }
-
-  render() {
-    const { onDragStart, onDragEnd } = this;
-    const {
-      page, isActive, onClose, onDragEnter, onDrop, onClick, onContextMenu,
-    } = this.props;
-
-    const modes = [
-      ...(isActive ? ['active'] : []),
-      ...(this.state.dragging ? ['dragging'] : []),
-    ];
-
-    return (
-      <div className={`${TAB_STYLE} ${modes.join(' ')}`}
-        draggable="true"
-        {...{ onDragEnter, onDrop, onClick, onContextMenu, onDragStart, onDragEnd }}>
-        <span className={TAB_TITLE_STYLE}>
-          {page.state === Page.PAGE_STATE_LOADING ? 'Loading...' : page.title}
-        </span>
-        <span>
-          {page.state === Page.PAGE_STATE_LOADING ? <i className="fa fa-spinner fa-pulse" /> : null}
-        </span>
-        <Btn className={TAB_CLOSE_BUTTON_STYLE}
-          title="Close tab"
-          clickHandler={onClose}>
-          <i className="fa fa-close" />
-        </Btn>
-      </div>
-    );
-  }
+  return (
+    <div className={`${TAB_STYLE} ${modes.join(' ')}`}
+      {...{ onClick, onContextMenu }}>
+      <span className={TAB_TITLE_STYLE}>
+        {page.state === Page.PAGE_STATE_LOADING ? 'Loading...' : page.title}
+      </span>
+      <span>
+        {page.state === Page.PAGE_STATE_LOADING ? <i className="fa fa-spinner fa-pulse" /> : null}
+      </span>
+      <Btn className={TAB_CLOSE_BUTTON_STYLE}
+        title="Close tab"
+        clickHandler={onClose}>
+        <i className="fa fa-close" />
+      </Btn>
+    </div>
+  );
 }
 
 Tab.displayName = 'Tab';
@@ -107,10 +81,6 @@ Tab.propTypes = {
   page: PropTypes.object.isRequired,
   isActive: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  onDragStart: PropTypes.func.isRequired,
-  onDragEnd: PropTypes.func.isRequired,
-  onDragEnter: PropTypes.func.isRequired,
-  onDrop: PropTypes.func.isRequired,
   onClick: PropTypes.func.isRequired,
   onContextMenu: PropTypes.func.isRequired,
 };

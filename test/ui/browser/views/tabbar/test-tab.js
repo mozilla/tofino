@@ -21,10 +21,6 @@ describe('components - NavBar', () => {
       <Tab isActive
         page={page}
         onClose={expect.createSpy()}
-        onDragStart={expect.createSpy()}
-        onDragEnd={expect.createSpy()}
-        onDragEnter={expect.createSpy()}
-        onDrop={expect.createSpy()}
         onClick={onClick}
         onContextMenu={expect.createSpy()} />
     );
