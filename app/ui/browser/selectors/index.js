@@ -16,7 +16,7 @@ export function getPages(state) {
 
 export function getCurrentPage(state) {
   const index = getCurrentPageIndex(state);
-  return state.pages.pages.get(index);
+  return getPageByIndex(state, index);
 }
 
 export function getCurrentPageIndex(state) {
@@ -33,4 +33,16 @@ export function getStatusText(state) {
 
 export function getUserTypedLocation(state, pageId) {
   return state.uiState.userTypedLocation.get(pageId) || '';
+}
+
+export function getPageByIndex(state, index) {
+  return state.pages.pages.get(index);
+}
+
+export function getPageIndexById(state, id) {
+  return state.pages.findIndex(page => page.id === id);
+}
+
+export function getPageIndexBySessionId(state, sessionId) {
+  return state.pages.findIndex(page => page.sessionId === sessionId);
 }

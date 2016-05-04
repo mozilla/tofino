@@ -17,6 +17,7 @@ import Immutable from 'immutable';
 import * as types from '../constants/action-types';
 import { Pages, Page } from '../model';
 import { isUUID } from '../browser-util';
+import { getPageIndexById, getPageIndexBySessionId } from '../selectors';
 
 /**
  * Fairly sure we should hard code this
@@ -27,14 +28,6 @@ const initialState = new Pages({
   pages: Immutable.List.of(),
   currentPageIndex: -1,
 });
-
-function getPageIndexById(state, id) {
-  return state.pages.findIndex(page => page.id === id);
-}
-
-function getPageIndexBySessionId(state, sessionId) {
-  return state.pages.findIndex(page => page.sessionId === sessionId);
-}
 
 export default function basic(state = initialState, action) {
   switch (action.type) {
@@ -61,19 +54,6 @@ export default function basic(state = initialState, action) {
     case types.CLOSE_TAB:
     case types.IPC_COMMAND_CLOSE_TAB:
       return closeTab(state, action.pageId);
-
-    case types.NAVIGATE_PAGE_BACK:
-      return navigatePageBack(state, action.pageId);
-
-    case types.NAVIGATE_PAGE_FORWARD:
-      return navigatePageForward(state, action.pageId);
-
-    case types.NAVIGATE_PAGE_REFRESH:
-    case types.IPC_COMMAND_PAGE_REFRESH:
-      return navigatePageRefresh(state, action.pageId);
-
-    case types.NAVIGATE_PAGE_TO:
-      return navigatePageTo(state, action.pageId, action.location);
 
     case types.SET_PAGE_DETAILS:
       return setPageDetails(state, action.pageId, action.payload);
@@ -166,54 +146,6 @@ function closeTab(state, pageId) {
       return;
     }
   });
-}
-
-function navigatePageBack(state, pageId) {
-  assert(isUUID(pageId), 'NAVIGATE_PAGE_BACK requires a page id.');
-  const pageIndex = getPageIndexById(state, pageId);
-  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
-
-  assert(state.pages.get(pageIndex).canGoBack, 'Page cannot go back.');
-
-  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push({
-    command: 'back',
-  }));
-}
-
-function navigatePageForward(state, pageId) {
-  assert(isUUID(pageId), 'NAVIGATE_PAGE_FORWARD requires a page id.');
-  const pageIndex = getPageIndexById(state, pageId);
-  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
-
-  assert(state.pages.get(pageIndex).canGoForward, 'Page cannot go forward.');
-
-  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push({
-    command: 'forward',
-  }));
-}
-
-function navigatePageRefresh(state, pageId) {
-  assert(isUUID(pageId), 'NAVIGATE_PAGE_REFRESH requires a page id.');
-  const pageIndex = getPageIndexById(state, pageId);
-  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
-
-  assert(state.pages.get(pageIndex).canRefresh, 'Page cannot refresh.');
-
-  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push({
-    command: 'refresh',
-  }));
-}
-
-function navigatePageTo(state, pageId, location) {
-  assert(typeof location === 'string', '`location` must be a string.');
-  assert(isUUID(pageId), 'NAVIGATE_PAGE_TO requires a page id.');
-  const pageIndex = getPageIndexById(state, pageId);
-  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
-
-  return state.updateIn(['pages', pageIndex, 'commands'], commands => commands.push({
-    location,
-    command: 'navigate-to',
-  }));
 }
 
 function setPageDetails(state, pageId, payload) {
