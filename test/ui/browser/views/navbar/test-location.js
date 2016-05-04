@@ -88,5 +88,17 @@ describe('Location', () => {
       expect(wrapper.find('#autocomplete-results').childAt(0).text()).toEqual('https://mozilla.com');
       expect(wrapper.find('#autocomplete-results').childAt(1).text()).toEqual('https://mozilla.org');
     });
+
+    it('should reset the selected index when input changes', () => {
+      const props = createSpyProps();
+      props.userTypedLocation = 'm';
+      const wrapper = shallow(
+        <Location {...props} />
+      );
+      props.userTypedLocation = 'mo';
+      wrapper.setState({ showURLBar: true, focusedURLBar: true, focusedResultIndex: 1 });
+      wrapper.setProps(props);
+      expect(wrapper.state('focusedResultIndex')).toEqual(-1);
+    });
   });
 });

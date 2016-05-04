@@ -121,6 +121,16 @@ export class Location extends Component {
     this.props.ipcRenderer.on('focus-urlbar', () => this.refs.input.select());
   }
 
+  componentWillReceiveProps(nextProps) {
+    // Reset the focused result if the input has changed (so that an index doesn't
+    // get reused over a different result set).
+    // focusedResultIndex may want to be moved to redux a la userTypedLocation,
+    // depending on the eventual UX and if anywhere else would want to change it.
+    if (this.props.userTypedLocation !== nextProps.userTypedLocation) {
+      this.setState({ focusedResultIndex: -1 });
+    }
+  }
+
   componentDidUpdate() {
     // If we're showing the URL bar, it should be focused. The scenario
     // where this isn't true is immediately after displaying the URL bar,
