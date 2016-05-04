@@ -16,5 +16,4 @@ import { readerify } from './reader';
 import Readability from './readability';
 import './scroll';
 
-window._readerify = readerify;
-window._Readability = Readability;
+window._readerify = readerify.bind(null, Readability);

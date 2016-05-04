@@ -14,7 +14,7 @@
 
 import type { ReadabilityResult } from '../../shared/types';
 
-export function readerify(document: any): ?ReadabilityResult {
+export function readerify(Readability: any, document: any): ?ReadabilityResult {
   const location = document.location;
   const documentClone = document.cloneNode(true);
   const base = location.pathname.substr(0, location.pathname.lastIndexOf('/') + 1);
@@ -28,7 +28,7 @@ export function readerify(document: any): ?ReadabilityResult {
     pathBase: `${location.protocol}//${location.host}${base}`,
   };
 
-  const article = new window._Readability(uri, documentClone).parse();
+  const article = new Readability(uri, documentClone).parse();
   if (!article) {
     return undefined;
   }
