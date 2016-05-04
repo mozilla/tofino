@@ -16,6 +16,8 @@ import * as profileCommands from '../shared/profile-commands';
 
 const Menu = electron.Menu;
 
+const HELP_LINK = 'https://github.com/mozilla/tofino';
+
 const BrowserMenu = {
   file: {
     label: 'File',
@@ -201,7 +203,7 @@ const BrowserMenu = {
       {
         label: 'Learn More',
         click() {
-          electron.shell.openExternal('https://support.mozilla.org/products/firefox');
+          electron.shell.openExternal(HELP_LINK);
         },
       },
     ],
