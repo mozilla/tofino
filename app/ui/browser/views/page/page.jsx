@@ -44,7 +44,7 @@ class Page extends Component {
     const { page, dispatch } = this.props;
     const webview = this.refs.webview;
 
-    addListenersToWebView(webview, page, dispatch);
+    addListenersToWebView(webview, () => this.props.page, dispatch);
 
     if (!page.guestInstanceId && page.location) {
       webview.setAttribute('src', fixURL(page.location));
@@ -118,15 +118,15 @@ Page.propTypes = {
 
 export default Page;
 
-function addListenersToWebView(webview, page, dispatch) {
+function addListenersToWebView(webview, pageAccessor, dispatch) {
   webview.addEventListener('did-start-loading', () => {
-    dispatch(setPageDetails(page.id, {
+    dispatch(setPageDetails(pageAccessor().id, {
       state: PageModel.PAGE_STATE_LOADING,
     }));
   });
 
   webview.addEventListener('dom-ready', () => {
-    dispatch(setPageDetails(page.id, {
+    dispatch(setPageDetails(pageAccessor().id, {
       canGoBack: webview.canGoBack(),
       canGoForward: webview.canGoForward(),
       canRefresh: true,
@@ -134,14 +134,14 @@ function addListenersToWebView(webview, page, dispatch) {
   });
 
   webview.addEventListener('page-title-set', e => {
-    dispatch(setPageDetails(page.id, {
+    dispatch(setPageDetails(pageAccessor().id, {
       title: e.title,
       location: webview.getURL(),
     }));
   });
 
   webview.addEventListener('did-fail-load', () => {
-    dispatch(setPageDetails(page.id, {
+    dispatch(setPageDetails(pageAccessor().id, {
       state: PageModel.PAGE_STATE_FAILED,
     }));
   });
@@ -150,7 +150,7 @@ function addListenersToWebView(webview, page, dispatch) {
     const url = webview.getURL();
     const title = webview.getTitle();
 
-    dispatch(setPageDetails(page.id, {
+    dispatch(setPageDetails(pageAccessor().id, {
       location: url,
       canGoBack: webview.canGoBack(),
       canGoForward: webview.canGoForward(),
@@ -160,11 +160,14 @@ function addListenersToWebView(webview, page, dispatch) {
 
     dispatch(setStatusText(false));
 
-    dispatch(setUserTypedLocation(page.id, {
+    dispatch(setUserTypedLocation(pageAccessor().id, {
       text: null,
     }));
 
-    profileCommands.send(profileCommands.visited(url, title));
+    const sessionId = pageAccessor().sessionId;
+    if (sessionId) {
+      profileCommands.send(profileCommands.visited(sessionId, url, title));
+    }
   });
 
   webview.addEventListener('ipc-message', e => {
@@ -173,7 +176,7 @@ function addListenersToWebView(webview, page, dispatch) {
         dispatch(setStatusText(e.args[0]));
         break;
       case 'contextmenu-data':
-        menuWebViewContext(webview, e.args[0], dispatch);
+        menuWebViewContext(webview, e.args[0], dispatch, pageAccessor().sessionId);
         break;
       case 'show-bookmarks':
         console.warn('@TODO: ipc-message:show-bookmarks');
@@ -185,6 +188,6 @@ function addListenersToWebView(webview, page, dispatch) {
   });
 
   webview.addEventListener('destroyed', () => {
-    dispatch(closeTab(page.id));
+    dispatch(closeTab(pageAccessor().id));
   });
 }

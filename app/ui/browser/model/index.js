@@ -29,6 +29,8 @@ export const Pages = Immutable.Record({
  */
 export class Page extends Immutable.Record({
   id: null,
+  sessionId: undefined, // ?number.
+  ancestorId: undefined, // ?number.
   location: undefined,
   title: 'New Tab',
   state: false,

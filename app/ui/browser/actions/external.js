@@ -41,7 +41,7 @@ external actions.
 /**
  * Open the browser (hamburger) menu
  */
-export function menuBrowser(dispatch) {
+export function menuBrowser(pageSessionId, dispatch) {
   const menu = new Menu();
 
   menu.append(new MenuItem({
@@ -69,7 +69,9 @@ export function menuBrowser(dispatch) {
         const endTime = Date.now();
         const duration = endTime - startTime;
         console.log(`In flight at ${endTime} (took ${duration}), location ${readerResult.uri}.`);
-        profileCommands.send(profileCommands.savePage(readerResult));
+        if (pageSessionId) {
+          profileCommands.send(profileCommands.savePage(pageSessionId, readerResult));
+        }
       });
     },
   }));
@@ -154,13 +156,13 @@ export function menuTabContext(pageIndex, dispatch) {
 /**
  * Right click on the page itself
  */
-export function menuWebViewContext(webview, e, dispatch) {
+export function menuWebViewContext(webview, e, dispatch, pageSessionId: number) {
   const menu = new Menu();
 
   if (e.href) {
     menu.append(new MenuItem({
       label: 'Open Link in New Tab',
-      click: () => dispatch(createTab(e.href)),
+      click: () => dispatch(createTab(e.href, pageSessionId)),
     }));
 
     menu.append(new MenuItem({
@@ -182,7 +184,7 @@ export function menuWebViewContext(webview, e, dispatch) {
 
     menu.append(new MenuItem({
       label: 'Open Image in New Tab',
-      click: () => dispatch(createTab(e.img)),
+      click: () => dispatch(createTab(e.img, pageSessionId)),
     }));
   }
 

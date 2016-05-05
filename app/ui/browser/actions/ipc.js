@@ -12,10 +12,6 @@ specific language governing permissions and limitations under the License.
 
 import * as types from '../constants/action-types';
 
-export function createTab() {
-  return { type: types.IPC_COMMAND_CREATE_TAB };
-}
-
 export function focusURLBar() {
   return { type: types.IPC_COMMAND_FOCUS_URL_BAR };
 }
@@ -26,10 +22,6 @@ export function showBookmarks() {
 
 export function openBookmark(bookmark) {
   return { type: types.IPC_COMMAND_OPEN_BOOKMARK, bookmark };
-}
-
-export function closeTab(pageId) {
-  return { type: types.IPC_COMMAND_CLOSE_TAB, pageId };
 }
 
 export function refreshPage(pageId) {
