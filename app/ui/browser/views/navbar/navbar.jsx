@@ -66,10 +66,6 @@ const NAVBAR_APP_MENU_BUTTON_STYLE = Style.registerStyle({
   margin: '0 6px',
 });
 
-const NAVBAR_PAGES_BUTTON_STYLE = Style.registerStyle({
-  margin: '0',
-});
-
 const NAVBAR_NAVIGATION_BUTTONS_STYLE = Style.registerStyle({
   margin: '0 12px',
 });
@@ -142,19 +138,14 @@ const NavBar = (props) => {
           image="glyph-menu-16.svg"
           clickHandler={props.openMenu} />
         <VerticalSeparator />
-        <Btn id="pages-button"
-          className={NAVBAR_PAGES_BUTTON_STYLE}
-          title="Pages"
-          clickHandler={() => props.setPageAreaVisibility(!props.pageAreaVisible)}>
-          <div id="browser-navbar-pages-count"
-            className={NAVBAR_PAGES_COUNT_STYLE}>
-            {props.pages.size}
-          </div>
-          <span id="browser-navbar-pages-label"
-            className={NAVBAR_PAGES_LABEL_STYLE}>
-            {"Pages"}
-          </span>
-        </Btn>
+        <div id="browser-navbar-pages-count"
+          className={NAVBAR_PAGES_COUNT_STYLE}>
+          {props.pages.size}
+        </div>
+        <span id="browser-navbar-pages-label"
+          className={NAVBAR_PAGES_LABEL_STYLE}>
+          {((props.pages.size === 1) ? 'Page' : 'Pages')}
+        </span>
         <VerticalSeparator />
         <Btn id="browser-navbar-back"
           className={`${NAVBAR_NAVIGATION_BACK_BUTTON_STYLE} ${props.page.chromeMode === 'expanded'
@@ -208,7 +199,6 @@ NavBar.displayName = 'NavBar';
 NavBar.propTypes = {
   page: PropTypes.object,
   pages: PropTypes.object.isRequired,
-  pageAreaVisible: PropTypes.bool.isRequired,
   ipcRenderer: PropTypes.object.isRequired,
   navBack: PropTypes.func.isRequired,
   navForward: PropTypes.func.isRequired,
@@ -225,7 +215,6 @@ NavBar.propTypes = {
   onLocationChange: PropTypes.func.isRequired,
   onLocationContextMenu: PropTypes.func.isRequired,
   onLocationReset: PropTypes.func.isRequired,
-  setPageAreaVisibility: PropTypes.func.isRequired,
   navigateTo: PropTypes.func.isRequired,
 };
 

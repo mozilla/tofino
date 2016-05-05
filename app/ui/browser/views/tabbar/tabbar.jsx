@@ -30,37 +30,30 @@ const NEW_TAB_BUTTON_STYLE = Style.registerStyle({
 });
 
 const TabBar = ({
-  pages, currentPageIndex, pageAreaVisible,
+  pages, currentPageIndex,
   handleTabContextMenu, handleNewTabClick, handleTabClick, handleTabClose,
-}) => {
-  // This is the 'pages' section, which can be collapsed
-  if (!pageAreaVisible) {
-    return null;
-  }
+}) => (
+  <div id="browser-tabbar"
+    className={TABBAR_STYLE}>
 
-  return (
-    <div id="browser-tabbar"
-      className={TABBAR_STYLE}>
+    {pages.map((page, i) => (
+      <Tab key={`browser-tab-${i}`}
+        className={`browser-tab-${i}`}
+        isActive={currentPageIndex === i}
+        page={page}
+        onClick={handleTabClick(page.id)}
+        onContextMenu={handleTabContextMenu(page.id)}
+        onClose={handleTabClose(page.id)} />
+      )
+    )}
 
-      {pages.map((page, i) => (
-        <Tab key={`browser-tab-${i}`}
-          className={`browser-tab-${i}`}
-          isActive={currentPageIndex === i}
-          page={page}
-          onClick={handleTabClick(page.id)}
-          onContextMenu={handleTabContextMenu(page.id)}
-          onClose={handleTabClose(page.id)} />
-        )
-      )}
-
-      <Btn className={NEW_TAB_BUTTON_STYLE}
-        title="Add new tab"
-        clickHandler={handleNewTabClick}>
-        <i className="fa fa-plus" />
-      </Btn>
-    </div>
-  );
-};
+    <Btn className={NEW_TAB_BUTTON_STYLE}
+      title="Add new tab"
+      clickHandler={handleNewTabClick}>
+      <i className="fa fa-plus" />
+    </Btn>
+  </div>
+);
 
 TabBar.displayName = 'TabBar';
 
@@ -71,7 +64,6 @@ TabBar.propTypes = {
   handleTabClose: PropTypes.func.isRequired,
   handleNewTabClick: PropTypes.func.isRequired,
   handleTabContextMenu: PropTypes.func.isRequired,
-  pageAreaVisible: PropTypes.bool.isRequired,
 };
 
 export default TabBar;

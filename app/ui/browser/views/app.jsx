@@ -23,7 +23,7 @@ const APP_STYLE = Style.registerStyle({
   height: '100%',
 });
 
-const App = function({ pages, profile, currentPageIndex, currentPage, pageAreaVisible, dispatch }) {
+const App = function({ pages, profile, currentPageIndex, currentPage, dispatch }) {
   return (
     <div className={APP_STYLE}>
       <BrowserWindow ipcRenderer={ipcRenderer}
@@ -31,8 +31,7 @@ const App = function({ pages, profile, currentPageIndex, currentPage, pageAreaVi
         pages={pages}
         profile={profile}
         currentPageIndex={currentPageIndex}
-        currentPage={currentPage}
-        pageAreaVisible={pageAreaVisible} />
+        currentPage={currentPage} />
       <Style.Element />
     </div>
   );
@@ -45,7 +44,6 @@ App.propTypes = {
   profile: PropTypes.object.isRequired,
   currentPageIndex: PropTypes.number.isRequired,
   currentPage: PropTypes.object.isRequired,
-  pageAreaVisible: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
 };
 
@@ -55,7 +53,6 @@ function mapStateToProps(state) {
     profile: selectors.getProfile(state),
     currentPageIndex: selectors.getCurrentPageIndex(state),
     currentPage: selectors.getCurrentPage(state),
-    pageAreaVisible: selectors.getPageAreaVisible(state),
   };
 }
 

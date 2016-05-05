@@ -23,10 +23,6 @@ export function getCurrentPageIndex(state) {
   return state.pages.currentPageIndex;
 }
 
-export function getPageAreaVisible(state) {
-  return state.pages.pageAreaVisible;
-}
-
 export function getProfile(state) {
   return state.profile;
 }

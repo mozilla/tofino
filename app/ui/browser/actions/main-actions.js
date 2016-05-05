@@ -34,10 +34,6 @@ export function setCurrentTab(pageId) {
   return { type: types.SET_CURRENT_TAB, pageId, instrument: true };
 }
 
-export function setPageAreaVisibility(visible) {
-  return { type: types.SET_PAGE_AREA_VISIBILITY, visible };
-}
-
 export function setStatusText(text) {
   return { type: types.SET_STATUS_TEXT, text };
 }

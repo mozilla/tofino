@@ -26,7 +26,6 @@ const HOME_PAGE = 'tofino://mozilla';
 const initialState = new Pages({
   pages: Immutable.List.of(new Page({ location: HOME_PAGE })),
   currentPageIndex: 0,
-  pageAreaVisible: false,
 });
 
 function getPageIndexById(state, id) {
@@ -74,9 +73,6 @@ export default function basic(state = initialState, action) {
     case types.SET_CURRENT_TAB:
       return setCurrentTab(state, action.pageId);
 
-    case types.SET_PAGE_AREA_VISIBILITY:
-      return setPageAreaVisibility(state, action.visible);
-
     default:
       return state;
   }
@@ -87,7 +83,6 @@ function createTab(state, location = HOME_PAGE) {
     const page = new Page({ location });
     mut.update('pages', pages => pages.push(page));
     mut.set('currentPageIndex', state.pages.size);
-    mut.set('pageAreaVisible', true);
   });
 }
 
@@ -198,8 +193,4 @@ function setCurrentTab(state, pageId) {
   const pageIndex = getPageIndexById(state, pageId);
   assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
   return state.set('currentPageIndex', pageIndex);
-}
-
-function setPageAreaVisibility(state, visible) {
-  return state.set('pageAreaVisible', visible);
 }

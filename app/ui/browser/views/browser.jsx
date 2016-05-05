@@ -64,7 +64,7 @@ class BrowserWindow extends Component {
 
   render() {
     const {
-      currentPage, ipcRenderer, dispatch, profile, pages, currentPageIndex, pageAreaVisible,
+      currentPage, ipcRenderer, dispatch, profile, pages, currentPageIndex,
     } = this.props;
 
     const currentPageId = currentPage.id;
@@ -90,7 +90,6 @@ class BrowserWindow extends Component {
     const onLocationReset = () => {
       dispatch(actions.setUserTypedLocation(currentPageId, { text: void 0 }));
     };
-    const setPageAreaVisibility = visible => dispatch(actions.setPageAreaVisibility(visible));
     const navigateTo = loc => dispatch(actions.navigatePageTo(currentPageId, loc));
 
 
@@ -127,9 +126,7 @@ class BrowserWindow extends Component {
               isBookmarked,
               bookmark,
               unbookmark,
-              pageAreaVisible,
               ipcRenderer,
-              setPageAreaVisibility,
               profile,
             }} />
           <TabBar handleTabClick={handleTabClick}
@@ -159,7 +156,6 @@ BrowserWindow.propTypes = {
   dispatch: PropTypes.func.isRequired,
   ipcRenderer: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired,
-  pageAreaVisible: PropTypes.bool.isRequired,
 };
 
 export default BrowserWindow;
