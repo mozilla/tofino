@@ -25,23 +25,7 @@ const NAVBAR_STYLE = Style.registerStyle({
   fontSize: '80%',
 
   WebkitAppRegion: 'drag',
-});
-
-const NAVBAR_EXPANDED_STYLE = Style.registerStyle({
-  // Need to apply custom transition rules for the expanded vs. collapsed modes. We'll have to
-  // transition the opacity quicker when switching into expanded mode, to avoid noticing content
-  // translating back into position from behind the navbar.
-  transition: `min-height 0.3s ease-in-out,
-               opacity 0.1s ease-in-out`,
   minHeight: `${UIConstants.NAVBAR_EXPANDED_HEIGHT}px`,
-  opacity: 1,
-});
-
-const NAVBAR_COLLAPSED_STYLE = Style.registerStyle({
-  transition: `min-height 0.3s ease-in-out,
-               opacity 0.3s ease-in-out`,
-  minHeight: `${UIConstants.NAVBAR_COLLAPSED_HEIGHT}px`,
-  opacity: '0.9',
 });
 
 const NAVBAR_SIDE_SECTIONS_STYLE = Style.registerStyle({
@@ -73,29 +57,11 @@ const NAVBAR_NAVIGATION_BUTTONS_STYLE = Style.registerStyle({
 const NAVBAR_NAVIGATION_BACK_BUTTON_STYLE = Style.registerStyle({
   borderRadius: '100px',
   border: '1px solid',
+  borderColor: '#4c4c4c',
   backgroundColor: '#fff',
   marginRight: '4px',
-});
-
-const NAVBAR_EXPANDED_NAVIGATION_BACK_BUTTON_STYLE = Style.registerStyle({
-  // Need to apply custom transition rules for the expanded vs. collapsed modes. We'll have to
-  // transition the border-color with a delay so that the change in width doesn't visually
-  // affect the roundness of the element's border.
-  transition: `width 0.3s ease-in-out,
-               height 0.3s ease-in-out,
-               border-color 0.1s ease-in-out 0.2s`,
   width: `${UIConstants.NAVBAR_EXPANDED_HEIGHT - 10}px`,
   height: `${UIConstants.NAVBAR_EXPANDED_HEIGHT - 10}px`,
-  borderColor: '#4c4c4c',
-});
-
-const NAVBAR_COLLAPSED_NAVIGATION_BACK_BUTTON_STYLE = Style.registerStyle({
-  transition: `width 0.3s ease-in-out,
-               height 0.3s ease-in-out,
-               border-color 0.1s ease-in-out`,
-  width: `${UIConstants.NAVBAR_EXPANDED_HEIGHT - 10}px`,
-  height: '16px',
-  borderColor: 'transparent',
 });
 
 const NAVBAR_WINDOW_CONTROL_BUTTONS_STYLE = Style.registerStyle({
@@ -128,9 +94,7 @@ const NavBar = (props) => {
 
   return (
     <div id="browser-navbar"
-      className={`${NAVBAR_STYLE} ${props.page.chromeMode === 'expanded'
-        ? NAVBAR_EXPANDED_STYLE
-        : NAVBAR_COLLAPSED_STYLE}`}>
+      className={`${NAVBAR_STYLE}`}>
       <div className={`${NAVBAR_SIDE_SECTIONS_STYLE} ${NAVBAR_SIDE_SECTION_LEFT_STYLE}`}>
         <Btn id="browser-navbar-menu"
           className={NAVBAR_APP_MENU_BUTTON_STYLE}
@@ -148,9 +112,7 @@ const NavBar = (props) => {
         </span>
         <VerticalSeparator />
         <Btn id="browser-navbar-back"
-          className={`${NAVBAR_NAVIGATION_BACK_BUTTON_STYLE} ${props.page.chromeMode === 'expanded'
-            ? NAVBAR_EXPANDED_NAVIGATION_BACK_BUTTON_STYLE
-            : NAVBAR_COLLAPSED_NAVIGATION_BACK_BUTTON_STYLE}`}
+          className={`${NAVBAR_NAVIGATION_BACK_BUTTON_STYLE}`}
           title="Back"
           image="glyph-arrow-nav-back-16.svg"
           imgWidth="16px"

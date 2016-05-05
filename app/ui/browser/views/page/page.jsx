@@ -30,10 +30,6 @@ import {
 import * as profileCommands from '../../../../shared/profile-commands';
 
 const PAGE_STYLE = Style.registerStyle({
-  // Hide the overflow for pages because when applying a `translateY` to the webview element,
-  // a scrollbar appears for the browser window, due to shifting everything vertically.
-  overflow: 'hidden',
-
   // Mark this as the relative anchor for floating children (e.g. search bar).
   position: 'relative',
   flex: 1,
@@ -42,15 +38,6 @@ const PAGE_STYLE = Style.registerStyle({
 const WEB_VIEW_STYLE = Style.registerStyle({
   display: 'flex',
   flex: 1,
-  transition: 'transform 0.3s ease-in-out',
-});
-
-const WEB_VIEW_CHROME_EXPANDED_STYLE = Style.registerStyle({
-  transform: `translateY(${UIConstants.NAVBAR_EXPANDED_HEIGHT + UIConstants.TABBAR_HEIGHT}px)`,
-});
-
-const WEB_VIEW_CHROME_COLLAPSED_STYLE = Style.registerStyle({
-  transform: `translateY(${UIConstants.TABBAR_HEIGHT}px)`,
 });
 
 class Page extends Component {
@@ -114,10 +101,7 @@ class Page extends Component {
         <Search hidden={!this.props.page.isSearching} />
         <webview is="webview"
           ref="webview"
-          class={`webview-${this.props.page.id} ${WEB_VIEW_STYLE}
-            ${this.props.page.chromeMode === 'expanded'
-              ? WEB_VIEW_CHROME_EXPANDED_STYLE
-              : WEB_VIEW_CHROME_COLLAPSED_STYLE}`}
+          class={`webview-${this.props.page.id} ${WEB_VIEW_STYLE}`}
           preload={'../../content/preload/content.js'}
           guestInstanceId={this.props.page.guestInstanceId}
           onContextMenu={requestContextData} />
@@ -196,12 +180,6 @@ function addListenersToWebView(webview, page, dispatch, ipcRenderer) {
       case 'show-bookmarks':
         console.warn('@TODO: ipc-message:show-bookmarks');
         break;
-      case 'scroll': {
-        const { y: scrollY } = e.args[0];
-        const chromeMode = scrollY ? 'collapsed' : 'expanded';
-        dispatch(setPageDetails(page.id, { chromeMode }));
-        break;
-      }
       default:
         console.warn(`@TODO: Unknown ipc-message:${e.channel}`);
         break;

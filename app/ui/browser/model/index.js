@@ -36,7 +36,6 @@ export class Page extends Immutable.Record({
   canGoBack: false,
   canGoForward: false,
   canRefresh: false,
-  chromeMode: 'expanded',
   commands: Immutable.List(),
 }) {
   constructor(data) {

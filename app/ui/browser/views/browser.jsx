@@ -27,14 +27,11 @@ import * as ipcActions from '../actions/ipc';
 
 const BROWSER_WINDOW_STYLE = Style.registerStyle({
   flex: 1,
+  flexDirection: 'column',
 });
 
 const CHROME_AREA_STYLE = Style.registerStyle({
   flexDirection: 'column',
-  position: 'absolute',
-  left: '0',
-  right: '0',
-  zIndex: '1',
 });
 
 const CONTENT_AREA_STYLE = Style.registerStyle({

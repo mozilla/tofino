@@ -34,24 +34,13 @@ const LOCATION_BAR_STYLE = Style.registerStyle({
   backgroundColor: '#fff',
   borderRadius: '2px',
   border: '1px solid',
+  borderColor: '#e5e5e5',
   transition: `margin 0.3s ease-in-out,
                border-color 0.3s ease-in-out`,
 
   WebkitAppRegion: 'no-drag',
-});
 
-const LOCATION_BAR_EXPANDED_STYLE = Style.registerStyle({
   margin: '12px 4vw',
-  borderColor: '#e5e5e5',
-
-  '@media (max-width: 1024px)': {
-    margin: '12px 0',
-  },
-});
-
-const LOCATION_BAR_COLLAPSED_STYLE = Style.registerStyle({
-  margin: '0 4vw',
-  borderColor: 'transparent',
 
   '@media (max-width: 1024px)': {
     margin: '12px 0',
@@ -250,9 +239,7 @@ export class Location extends Component {
     return (
       <div className={LOCATION_BAR_CONTAINER_STYLE}>
         <div id="browser-location-bar"
-          className={`${LOCATION_BAR_STYLE} ${this.props.page.chromeMode === 'expanded'
-            ? LOCATION_BAR_EXPANDED_STYLE
-            : LOCATION_BAR_COLLAPSED_STYLE}`}>
+          className={`${LOCATION_BAR_STYLE}`}>
           <Btn title="Info"
             className={LOCATION_BAR_BUTTONS_STYLE}
             image=""
