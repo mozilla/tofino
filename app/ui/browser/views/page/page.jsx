@@ -46,11 +46,11 @@ const WEB_VIEW_STYLE = Style.registerStyle({
 });
 
 const WEB_VIEW_CHROME_EXPANDED_STYLE = Style.registerStyle({
-  transform: `translateY(${UIConstants.NAVBAR_EXPANDED_HEIGHT}px)`,
+  transform: `translateY(${UIConstants.NAVBAR_EXPANDED_HEIGHT + UIConstants.TABBAR_HEIGHT}px)`,
 });
 
 const WEB_VIEW_CHROME_COLLAPSED_STYLE = Style.registerStyle({
-  transform: 'none',
+  transform: `translateY(${UIConstants.TABBAR_HEIGHT}px)`,
 });
 
 class Page extends Component {
