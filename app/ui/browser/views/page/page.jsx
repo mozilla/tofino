@@ -20,12 +20,7 @@ import Search from './search';
 
 import { fixURL } from '../../browser-util';
 import { menuWebViewContext } from '../../actions/external';
-import {
-  closeTab,
-  setPageDetails,
-  setStatusText,
-  setUserTypedLocation,
-} from '../../actions/main-actions';
+import * as actions from '../../actions/main-actions';
 import * as profileCommands from '../../../../shared/profile-commands';
 
 const PAGE_STYLE = Style.registerStyle({
@@ -120,13 +115,13 @@ export default Page;
 
 function addListenersToWebView(webview, pageAccessor, dispatch) {
   webview.addEventListener('did-start-loading', () => {
-    dispatch(setPageDetails(pageAccessor().id, {
+    dispatch(actions.setPageDetails(pageAccessor().id, {
       state: PageModel.PAGE_STATE_LOADING,
     }));
   });
 
   webview.addEventListener('dom-ready', () => {
-    dispatch(setPageDetails(pageAccessor().id, {
+    dispatch(actions.setPageDetails(pageAccessor().id, {
       canGoBack: webview.canGoBack(),
       canGoForward: webview.canGoForward(),
       canRefresh: true,
@@ -134,14 +129,14 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
   });
 
   webview.addEventListener('page-title-set', e => {
-    dispatch(setPageDetails(pageAccessor().id, {
+    dispatch(actions.setPageDetails(pageAccessor().id, {
       title: e.title,
       location: webview.getURL(),
     }));
   });
 
   webview.addEventListener('did-fail-load', () => {
-    dispatch(setPageDetails(pageAccessor().id, {
+    dispatch(actions.setPageDetails(pageAccessor().id, {
       state: PageModel.PAGE_STATE_FAILED,
     }));
   });
@@ -150,7 +145,7 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
     const url = webview.getURL();
     const title = webview.getTitle();
 
-    dispatch(setPageDetails(pageAccessor().id, {
+    dispatch(actions.setPageDetails(pageAccessor().id, {
       location: url,
       canGoBack: webview.canGoBack(),
       canGoForward: webview.canGoForward(),
@@ -158,9 +153,9 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
       title,
     }));
 
-    dispatch(setStatusText(false));
+    dispatch(actions.setStatusText(false));
 
-    dispatch(setUserTypedLocation(pageAccessor().id, {
+    dispatch(actions.setUserTypedLocation(pageAccessor().id, {
       text: null,
     }));
 
@@ -173,7 +168,7 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
   webview.addEventListener('ipc-message', e => {
     switch (e.channel) {
       case 'status':
-        dispatch(setStatusText(e.args[0]));
+        dispatch(actions.setStatusText(e.args[0]));
         break;
       case 'contextmenu-data':
         menuWebViewContext(webview, e.args[0], dispatch, pageAccessor().sessionId);
@@ -188,6 +183,6 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
   });
 
   webview.addEventListener('destroyed', () => {
-    dispatch(closeTab(pageAccessor().id));
+    dispatch(actions.closeTab(pageAccessor().id));
   });
 }
