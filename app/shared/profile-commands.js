@@ -15,8 +15,41 @@
 import * as profileCommandTypes from './constants/profile-command-types';
 
 import type { ReadabilityResult } from '../shared/types';
+import { ipcRenderer } from './electron';
 
 export type ProfileCommand = { type: string, payload: Object };
+
+let tokenCounter = 0;
+
+/**
+ * Send a command to the User Agent service and do not expect a
+ * response.
+ *
+ * Fire and forget.  Returns a Promise for convenience.
+ */
+export function send(command: ProfileCommand): Promise<any> {
+  ipcRenderer.send('profile-command', { command });
+  return Promise.resolve();
+}
+
+/**
+ * Send a command to the User Agent service and expect a response.
+ *
+ * Returns a Promise that resolves to the response value.
+ */
+export function request(command: ProfileCommand): Promise<any> {
+  const token = ++tokenCounter;
+  return new Promise((resolve, reject) => {
+    ipcRenderer.once(`profile-command-${token}`, (_event, response) => {
+      if (response.error) {
+        reject(response.payload);
+        return;
+      }
+      resolve(response.payload);
+    });
+    ipcRenderer.send('profile-command', { token, command });
+  });
+}
 
 /**
  * The command for the '✫' bookmark button.

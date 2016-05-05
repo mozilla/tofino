@@ -16,7 +16,7 @@ import {
   createTab, setUserTypedLocation, closeTab, navigatePageTo,
 } from './main-actions';
 import { getCurrentWebView, fixURL } from '../browser-util';
-import { remote, clipboard, ipcRenderer } from '../../../shared/electron';
+import { remote, clipboard } from '../../../shared/electron';
 import * as profileCommands from '../../../shared/profile-commands';
 
 const { Menu, MenuItem } = remote;
@@ -69,7 +69,7 @@ export function menuBrowser(dispatch) {
         const endTime = Date.now();
         const duration = endTime - startTime;
         console.log(`In flight at ${endTime} (took ${duration}), location ${readerResult.uri}.`);
-        ipcRenderer.send('profile-command', profileCommands.savePage(readerResult));
+        profileCommands.send(profileCommands.savePage(readerResult));
       });
     },
   }));
@@ -230,14 +230,14 @@ export function minimize() {
  * Close window.
  */
 export function close() {
-  ipcRenderer.send('profile-command', profileCommands.closeBrowserWindow());
+  profileCommands.send(profileCommands.closeBrowserWindow());
 }
 
 /**
  * Open New Window.
  */
 export function newBrowserWindow() {
-  ipcRenderer.send('profile-command', profileCommands.newBrowserWindow());
+  profileCommands.send(profileCommands.newBrowserWindow());
 }
 
 /**
