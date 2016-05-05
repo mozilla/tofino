@@ -35,7 +35,7 @@ import path from 'path';
 import electron from 'electron';
 import electronLocalshortcut from 'electron-localshortcut';
 
-import BrowserMenu from './browser-menu';
+import * as menu from './menu/index';
 import * as instrument from '../services/instrument';
 import * as profileCommands from '../shared/profile-commands';
 import * as profileDiffs from '../shared/profile-diffs';
@@ -107,7 +107,7 @@ function sendDiffsToWindows(): void {
     !Immutable.is(currentState.recentBookmarks, previousState.recentBookmarks);
 
   if (recentBookmarksChanged) {
-    BrowserMenu.build({ recentBookmarks: currentState.recentBookmarks });
+    menu.build({ recentBookmarks: currentState.recentBookmarks });
   }
 
   const bookmarksChanged =
@@ -192,7 +192,7 @@ app.on('ready', async function() {
   instrument.event('app', 'READY', 'ms', appReadyTime - appStartupTime);
 
   // Force the menu to be built at least once on startup
-  BrowserMenu.build();
+  menu.build();
 
   // Register `about:*` protocols after app's 'ready' event
   registerAboutPages();
@@ -221,7 +221,7 @@ app.on('window-all-closed', () => {
   }
 
   // Set a simple menu since all browser windows are closed.
-  BrowserMenu.default();
+  menu.build({ osxMinimal: true });
 });
 
 app.on('activate', async function() {
