@@ -1,3 +1,5 @@
+/* @flow */
+
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
@@ -8,6 +10,8 @@ import * as profileCommandTypes from '../../../../app/shared/constants/profile-c
 import { ipcMain as ipcMainMock } from '../../../../app/shared/electron';
 
 describe('Action - unbookmark', () => {
+  const sessionId = 1;
+
   beforeEach(function() {
     this.store = configureStore();
     this.getState = () => this.store.getState().profile;
@@ -18,9 +22,9 @@ describe('Action - unbookmark', () => {
     const { dispatch, getState } = this;
 
     expect(getState().get('bookmarks').has('http://moz1.com')).toEqual(false);
-    dispatch(actions.bookmark('http://moz1.com', 'moz1'));
+    dispatch(actions.bookmark(sessionId, 'http://moz1.com', 'moz1'));
     expect(getState().get('bookmarks').has('http://moz1.com')).toEqual(true);
-    dispatch(actions.unbookmark('http://moz1.com'));
+    dispatch(actions.unbookmark(sessionId, 'http://moz1.com'));
     expect(getState().get('bookmarks').has('http://moz1.com')).toEqual(false);
   });
 
@@ -29,10 +33,10 @@ describe('Action - unbookmark', () => {
 
     ipcMainMock.on('profile-command', handleIpc);
 
-    dispatch(actions.bookmark('http://moz1.com', 'moz1'));
-    dispatch(actions.unbookmark('http://moz1.com'));
+    dispatch(actions.bookmark(sessionId, 'http://moz1.com', 'moz1'));
+    dispatch(actions.unbookmark(sessionId, 'http://moz1.com'));
 
-    function handleIpc(e, command) {
+    function handleIpc(e, { command }) {
       // Filter out any mock ipc calls that are not of interest
       // to the current test.
       if (command.type !== profileCommandTypes.DID_UNBOOKMARK_LOCATION ||
@@ -41,6 +45,7 @@ describe('Action - unbookmark', () => {
       }
       expect(command.type).toEqual(profileCommandTypes.DID_UNBOOKMARK_LOCATION);
       expect(command.payload.url).toEqual('http://moz1.com');
+      expect(command.payload.sessionId).toEqual(sessionId);
       ipcMainMock.removeListener('profile-command', handleIpc);
       done();
     }

@@ -15,41 +15,108 @@
 import * as profileCommandTypes from './constants/profile-command-types';
 
 import type { ReadabilityResult } from '../shared/types';
+import { ipcRenderer } from './electron';
 
 export type ProfileCommand = { type: string, payload: Object };
+
+let tokenCounter = 0;
+
+/**
+ * Send a command to the User Agent service and do not expect a
+ * response.
+ *
+ * Fire and forget.  Returns a Promise for convenience.
+ */
+export function send(command: ProfileCommand): Promise<any> {
+  ipcRenderer.send('profile-command', { command });
+  return Promise.resolve();
+}
+
+/**
+ * Send a command to the User Agent service and expect a response.
+ *
+ * Returns a Promise that resolves to the response value.
+ */
+export function request(command: ProfileCommand): Promise<any> {
+  const token = ++tokenCounter;
+  return new Promise((resolve, reject) => {
+    ipcRenderer.once(`profile-command-${token}`, (_event, response) => {
+      if (response.error) {
+        reject(response.payload);
+        return;
+      }
+      resolve(response.payload);
+    });
+    ipcRenderer.send('profile-command', { token, command });
+  });
+}
 
 /**
  * The command for the '✫' bookmark button.
  */
-export function bookmark(url: string, title: ?string = undefined): ProfileCommand {
+export function bookmark(sessionId: number, url: string,
+                         title: ?string = undefined): ProfileCommand {
   return {
     type: profileCommandTypes.DID_BOOKMARK_LOCATION,
-    payload: { url, title },
+    payload: {
+      sessionId,
+      url,
+      title,
+    },
   };
 }
 
 /**
  * The command for undoing the '✫' bookmark button.
  */
-export function unbookmark(url: string): ProfileCommand {
+export function unbookmark(sessionId: number, url: string): ProfileCommand {
   return {
     type: profileCommandTypes.DID_UNBOOKMARK_LOCATION,
-    payload: { url },
+    payload: {
+      sessionId,
+      url,
+    },
   };
 }
 
-export function visited(url: string, title: ?string = undefined): ProfileCommand {
+export function visited(sessionId: number, url: string,
+                        title: ?string = undefined): ProfileCommand {
   return {
     type: profileCommandTypes.DID_VISIT_LOCATION,
-    payload: { url, title },
+    payload: {
+      sessionId,
+      url,
+      title,
+    },
   };
 }
 
-export function setUserTypedLocation(text: string): ProfileCommand {
+export function setUserTypedLocation(text: string, sessionId: ?number = undefined): ProfileCommand {
   return {
     type: profileCommandTypes.DID_SET_USER_TYPED_LOCATION,
     payload: {
+      sessionId,
       text,
+    },
+  };
+}
+
+export function startSession(ancestorId: ?number, reason: ?string): ProfileCommand {
+  return {
+    type: profileCommandTypes.DID_START_SESSION,
+    payload: {
+      ancestorId,
+      reason,
+    },
+  };
+}
+
+export function endSession(sessionId: number, reason: ?string): ProfileCommand {
+  return {
+    type: profileCommandTypes.DID_END_SESSION,
+    payload: {
+      sessionId,
+      reason,
     },
   };
 }
@@ -71,9 +138,12 @@ export function newBrowserWindow(tabInfo: ?Object): ProfileCommand {
   };
 }
 
-export function savePage(page: ReadabilityResult): ProfileCommand {
+export function savePage(sessionId: number, page: ReadabilityResult): ProfileCommand {
   return {
     type: profileCommandTypes.DID_REQUEST_SAVE_PAGE,
-    payload: page,
+    payload: {
+      sessionId,
+      page,
+    },
   };
 }

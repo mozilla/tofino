@@ -1,3 +1,5 @@
+/* @flow */
+
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
@@ -17,6 +19,7 @@ describe('Action - SET_CURRENT_TAB', () => {
   it('Should update the current tab', function() {
     const { getCurrentPageIndex, getPages, dispatch } = this;
 
+    dispatch(actions.createTab());
     dispatch(actions.createTab('http://moz.com'));
     expect(getPages().size).toEqual(2);
     const ids = getPages().map(p => p.id);

@@ -117,21 +117,15 @@ function sendDiffsToWindows(): void {
   if (bookmarksChanged) {
     sendToAllWindows('profile-diff', profileDiffs.bookmarks(currentState.bookmarks.toJS()));
   }
-
-  const locationsChanged =
-    !previousState ||
-    !Immutable.is(currentState.locations, previousState.locations);
-
-  if (locationsChanged) {
-    sendToAllWindows('profile-diff', profileDiffs.completions(currentState.locations.toJS()));
-  }
 }
 
 store.subscribe(sendDiffsToWindows);
 
 async function makeBrowserWindow(tabInfo: ?Object): Promise<electron.BrowserWindow> {
   const profileStorage = await profileStoragePromise;
-  const sessionId = await profileStorage.startSession(); // TODO: scope, ancestor.
+
+  // TODO: don't abuse the storage layer's session ID generation to produce scopes.
+  const scope = await profileStorage.startSession();
 
   // Create the browser window.
   const browser = new BrowserWindow({
@@ -143,7 +137,7 @@ async function makeBrowserWindow(tabInfo: ?Object): Promise<electron.BrowserWind
     frame: false,
     show: false,
   });
-  browser.sessionId = sessionId;
+  browser.scope = scope;
 
   browser.didFinishLoadPromise = new Promise((resolve, _reject) => {
     browser.webContents.once('did-finish-load', () => {
@@ -154,32 +148,54 @@ async function makeBrowserWindow(tabInfo: ?Object): Promise<electron.BrowserWind
         browser.webContents.send('tab-attach', tabInfo);
       }
 
+      electronLocalshortcut.register(browser, 'CmdOrCtrl+L', () => {
+        browser.webContents.send('focus-url-bar');
+      });
+
+      electronLocalshortcut.register(browser, 'CmdOrCtrl+R', () => {
+        browser.webContents.send('page-refresh');
+      });
+
+      // Without this setImmediate, the event loop appears to wait for IO before dispatching.
+      electronLocalshortcut.register(browser, 'CmdOrCtrl+Shift+W', () => setImmediate(async function() {
+        await dispatchProfileCommand(profileCommands.closeBrowserWindow(), browser);
+      }));
+
       resolve();
     });
   });
 
+  browser.on('closed', () => electronLocalshortcut.unregisterAll(browser));
+
   // Start loading browser chrome.
   browser.loadURL(fileUrl(path.join(UI_DIR, 'browser', 'browser.html')));
-
-  electronLocalshortcut.register(browser, 'CmdOrCtrl+L', () => {
-    browser.webContents.send('focus-url-bar');
-  });
-
-  electronLocalshortcut.register(browser, 'CmdOrCtrl+R', () => {
-    browser.webContents.send('page-refresh');
-  });
 
   return browser;
 }
 
-async function dispatchProfileCommand(
-    command: Object,
-    browserWindow: ?electron.BrowserWindow = null): Promise<void> {
+async function dispatchProfileCommand(command: Object,
+                                      browserWindow: ?electron.BrowserWindow = undefined,
+                                      token: ?string = undefined): Promise<void> {
   const profileStorage = await profileStoragePromise;
-  const newState = await profileCommandHandler.handler(store.getState(),
-    profileStorage, browserWindow,
-    makeBrowserWindow, command);
-  store.dispatch({ type: 'REPLACE', payload: newState });
+
+  const respond = (response) => {
+    if (browserWindow && token) {
+      browserWindow.webContents.send(`profile-command-${token}`, response);
+    }
+  };
+
+  const oldState = store.getState();
+  const newState = await profileCommandHandler.handler(
+    oldState,
+    profileStorage,
+    browserWindow,
+    makeBrowserWindow,
+    respond,
+    command);
+
+  if (!oldState || !Immutable.is(oldState, newState)) {
+    store.dispatch({ type: 'REPLACE', payload: newState });
+  }
 }
 
 const appStartupTime = Date.now();
@@ -260,10 +276,10 @@ ipc.on('tab-detach', async function(event, tabInfo) {
   dispatchProfileCommand(profileCommands.newBrowserWindow(tabInfo));
 });
 
-ipc.on('profile-command', async function(event, command) {
+ipc.on('profile-command', async function(event, { token, command }) {
   // Not all events come from a window.  Some come from the main process.
   const browserWindow = (event && event.sender)
       ? BrowserWindow.fromWebContents(event.sender)
       : null;
-  await dispatchProfileCommand(command, browserWindow);
+  await dispatchProfileCommand(command, browserWindow, token);
 });

@@ -29,6 +29,8 @@ export const Pages = Immutable.Record({
  */
 export class Page extends Immutable.Record({
   id: null,
+  sessionId: undefined, // ?number.
+  ancestorId: undefined, // ?number.
   location: undefined,
   title: 'New Tab',
   state: false,
@@ -53,7 +55,6 @@ Page.PAGE_STATE_FAILED = 'failed';
  */
 export const Profile = Immutable.Record({
   bookmarks: Immutable.Set(),
-  recentBookmarks: Immutable.List(),
   completions: Immutable.Map(),
 });
 

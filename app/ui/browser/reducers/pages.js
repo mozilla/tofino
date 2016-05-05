@@ -24,19 +24,27 @@ import { isUUID } from '../browser-util';
 const HOME_PAGE = 'tofino://mozilla';
 
 const initialState = new Pages({
-  pages: Immutable.List.of(new Page({ location: HOME_PAGE })),
-  currentPageIndex: 0,
+  pages: Immutable.List.of(),
+  currentPageIndex: -1,
 });
 
 function getPageIndexById(state, id) {
   return state.pages.findIndex(page => page.id === id);
 }
 
+function getPageIndexBySessionId(state, sessionId) {
+  return state.pages.findIndex(page => page.sessionId === sessionId);
+}
+
 export default function basic(state = initialState, action) {
   switch (action.type) {
     case types.CREATE_TAB:
     case types.IPC_COMMAND_CREATE_TAB:
-      return createTab(state, action.location);
+      return createTab(state, action.location, action.id);
+
+    case types.DID_START_SESSION:
+      return setPageDetails(state, action.pageId,
+                            { sessionId: action.sessionId, ancestorId: action.ancestorId });
 
     case types.IPC_COMMAND_OPEN_BOOKMARK:
       return createTab(state, action.bookmark.location);
@@ -78,9 +86,26 @@ export default function basic(state = initialState, action) {
   }
 }
 
-function createTab(state, location = HOME_PAGE) {
+export function getPages(state) {
+  return state.browserWindow.pages;
+}
+
+export function getCurrentPage(state) {
+  const index = getCurrentPageIndex(state);
+  return state.browserWindow.pages.get(index);
+}
+
+export function getCurrentPageIndex(state) {
+  return state.browserWindow.currentPageIndex;
+}
+
+export function getPageAreaVisible(state) {
+  return state.browserWindow.pageAreaVisible;
+}
+
+function createTab(state, location = HOME_PAGE, id = undefined) {
   return state.withMutations(mut => {
-    const page = new Page({ location });
+    const page = new Page({ id, location });
     mut.update('pages', pages => pages.push(page));
     mut.set('currentPageIndex', state.pages.size);
   });
@@ -101,24 +126,38 @@ function closeTab(state, pageId) {
   const pageIndex = getPageIndexById(state, pageId);
   assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
 
+  // We never allow closing the last tab.  If the user tries to close the last tab, the action
+  // creator dispatches an action to replace the last tab rather than close the last tab.
   const pageCount = state.pages.size;
+  assert(pageCount > 1, 'Cannot close last tab.');
 
-  // If this is the last tab, do a full reset.
-  // FIXME: Do we really want to do this? It will also reset the profile
-  // and everything else. It seems more likely to me that we just want to do
-  // something like creating a new default page, similar to `attachTab`.
-  if (pageCount === 1) {
-    return initialState;
+  const ancestorId = state.pages.get(pageIndex).ancestorId;
+  let ancestorIndex = -1;
+  if (ancestorId && ancestorId >= 0) {
+    ancestorIndex = getPageIndexBySessionId(state, ancestorId);
   }
 
   return state.withMutations(mut => {
     mut.update('pages', pages => pages.delete(pageIndex));
 
+    const current = state.currentPageIndex;
+
+    // If we're currently looking at the closed tab and it has an ancestor that is still open,
+    // focus the ancestor.
+    if (current === pageIndex && ancestorIndex > -1) {
+      if (current > ancestorIndex) {
+        mut.set('currentPageIndex', ancestorIndex);
+      } else {
+        mut.set('currentPageIndex', ancestorIndex - 1);
+      }
+      return;
+    }
+
     // If tab closed comes before our current tab, or if this is the right-most
     // tab and it's selected, decrement the current page index.
-    const current = state.currentPageIndex;
     if (current > pageIndex || (current === pageIndex && pageIndex === (pageCount - 1))) {
       mut.set('currentPageIndex', current - 1);
+      return;
     }
   });
 }

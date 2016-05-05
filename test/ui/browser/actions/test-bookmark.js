@@ -1,3 +1,5 @@
+/* @flow */
+
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
@@ -9,6 +11,8 @@ import * as selectors from '../../../../app/ui/browser/selectors';
 import { ipcMain as ipcMainMock } from '../../../../app/shared/electron';
 
 describe('Action - bookmark', () => {
+  const sessionId = 1;
+
   beforeEach(function() {
     this.store = configureStore();
     this.getProfile = () => selectors.getProfile(this.store.getState());
@@ -19,7 +23,7 @@ describe('Action - bookmark', () => {
     const { dispatch, getProfile } = this;
 
     expect(getProfile().get('bookmarks').has('http://moz1.com')).toEqual(false);
-    dispatch(actions.bookmark('http://moz1.com', 'moz1'));
+    dispatch(actions.bookmark(sessionId, 'http://moz1.com', 'moz1'));
     expect(getProfile().get('bookmarks').has('http://moz1.com')).toEqual(true);
   });
 
@@ -28,9 +32,9 @@ describe('Action - bookmark', () => {
 
     ipcMainMock.on('profile-command', handleIpc);
 
-    dispatch(actions.bookmark('http://moz1.com', 'moz1'));
+    dispatch(actions.bookmark(sessionId, 'http://moz1.com', 'moz1'));
 
-    function handleIpc(e, command) {
+    function handleIpc(e, { command }) {
       // Filter out any mock ipc calls that are not of interest
       // to the current test.
       if (command.type !== profileCommandTypes.DID_BOOKMARK_LOCATION ||
@@ -41,6 +45,7 @@ describe('Action - bookmark', () => {
       expect(command.type).toEqual(profileCommandTypes.DID_BOOKMARK_LOCATION);
       expect(command.payload.url).toEqual('http://moz1.com');
       expect(command.payload.title).toEqual('moz1');
+      expect(command.payload.sessionId).toEqual(sessionId);
       ipcMainMock.removeListener('profile-command', handleIpc);
       done();
     }

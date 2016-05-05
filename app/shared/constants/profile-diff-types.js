@@ -10,5 +10,5 @@
  specific language governing permissions and limitations under the License.
  */
 
- export const BOOKMARKS = 'PROFILE_DIFF_BOOKMARKS';
- export const COMPLETIONS = 'PROFILE_DIFF_COMPLETIONS';
+export const BOOKMARKS = 'PROFILE_DIFF_BOOKMARKS';
+export const COMPLETIONS = 'PROFILE_DIFF_COMPLETIONS';
