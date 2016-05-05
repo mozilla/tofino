@@ -1,3 +1,5 @@
+/* @flow */
+
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
@@ -18,13 +20,13 @@ describe('Action - CREATE_TAB', () => {
 
   it('Should create a new tab with default location and select it', function() {
     const { getCurrentPageIndex, getPages, dispatch } = this;
-    expect(getCurrentPageIndex()).toEqual(0);
+    expect(getCurrentPageIndex()).toEqual(-1);
 
     dispatch(actions.createTab());
-    expect(getPages().size).toEqual(2);
-    expect(getPages().get(1).location).toEqual(HOME_PAGE,
+    expect(getPages().size).toEqual(1);
+    expect(getPages().get(0).location).toEqual(HOME_PAGE,
       'CREATE_TAB defaults to home page when no location given.');
-    expect(getCurrentPageIndex()).toEqual(1,
+    expect(getCurrentPageIndex()).toEqual(0,
       'CREATE_TAB updates `currentPageIndex` when creating a new tab');
   });
 
@@ -33,10 +35,10 @@ describe('Action - CREATE_TAB', () => {
     dispatch(actions.createTab());
     dispatch(actions.createTab('https://github.com/'));
 
-    expect(getPages().size).toEqual(3);
-    expect(getPages().get(2).location).toEqual('https://github.com/',
+    expect(getPages().size).toEqual(2);
+    expect(getPages().get(1).location).toEqual('https://github.com/',
       'CREATE_TAB uses passed in location for new tab');
-    expect(getCurrentPageIndex()).toEqual(2,
+    expect(getCurrentPageIndex()).toEqual(1,
       'CREATE_TAB updates `currentPageIndex` when creating a new tab with location');
   });
 });
