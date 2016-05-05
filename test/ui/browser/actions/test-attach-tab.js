@@ -1,3 +1,5 @@
+/* @flow */
+
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
@@ -11,5 +13,6 @@ describe('Action - ATTACH_TAB', () => {
     this.dispatch = this.store.dispatch;
   });
 
-  it('Should attach tab');
+  it('Should attach tab', () => {
+  });
 });

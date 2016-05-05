@@ -1,3 +1,5 @@
+/* @flow */
+
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
@@ -13,6 +15,7 @@ describe('Action - SET_PAGE_DETAILS', () => {
     this.dispatch = this.store.dispatch;
 
     const { dispatch } = this;
+    dispatch(actions.createTab());
     dispatch(actions.createTab('http://moz1.org'));
     dispatch(actions.createTab('http://moz2.org'));
     dispatch(actions.createTab('http://moz3.org'));

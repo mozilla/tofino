@@ -24,8 +24,8 @@ import { isUUID } from '../browser-util';
 const HOME_PAGE = 'tofino://mozilla';
 
 const initialState = new Pages({
-  pages: Immutable.List.of(new Page({ location: HOME_PAGE })),
-  currentPageIndex: 0,
+  pages: Immutable.List.of(),
+  currentPageIndex: -1,
 });
 
 function getPageIndexById(state, id) {

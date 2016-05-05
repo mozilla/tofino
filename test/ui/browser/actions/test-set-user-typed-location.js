@@ -1,3 +1,5 @@
+/* @flow */
+
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
@@ -20,8 +22,6 @@ describe('Action - SET_USER_TYPED_LOCATION', () => {
     dispatch(actions.createTab('http://moz1.org'));
     dispatch(actions.createTab('http://moz2.org'));
     dispatch(actions.createTab('http://moz3.org'));
-
-    dispatch(actions.closeTab(this.getPages().get(0).id));
 
     dispatch(actions.setPageDetails(this.getPages().get(0).id, {
       title: 'moz1',

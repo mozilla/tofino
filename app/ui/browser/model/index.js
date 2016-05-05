@@ -53,7 +53,6 @@ Page.PAGE_STATE_FAILED = 'failed';
  */
 export const Profile = Immutable.Record({
   bookmarks: Immutable.Set(),
-  recentBookmarks: Immutable.List(),
   completions: Immutable.Map(),
 });
 
