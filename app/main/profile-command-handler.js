@@ -14,6 +14,8 @@
 
 /* eslint no-console: 0 */
 
+import assert from 'assert';
+
 import type { BrowserWindow } from 'electron';
 import Immutable from 'immutable';
 
@@ -43,16 +45,35 @@ export async function handler(
       .set('recentBookmarks', new Immutable.List(recentBookmarks));
   }
 
+  async function startSession(scope: number, payload: Object = {}): Promise<void> {
+    const { ancestorId } = payload;
+    const sessionId = await storage.startSession(scope, ancestorId);
+    if (respond) {
+      respond({ payload: { sessionId, ancestorId } });
+    }
+  }
+
+  async function endSession(payload: Object = {}): Promise<void> {
+    const { sessionId } = payload;
+    assert(sessionId, 'Cannot end a session with an undefined sessionId.');
+    try {
+      await storage.endSession(sessionId);
+      if (respond) {
+        respond({ payload: { sessionId } });
+      }
+    } catch (e) {
+      if (respond) {
+        respond({ error: true, payload: e });
+      }
+    }
+  }
+
   const payload = command.payload;
   switch (command.type) {
     case profileCommandTypes.DID_VISIT_LOCATION:
       try {
-        if (!browserWindow || !browserWindow.sessionId) {
-          break;
-        }
-
         // TODO: include visit types.
-        await storage.visit(payload.url, browserWindow.sessionId, payload.title);
+        await storage.visit(payload.url, payload.sessionId, payload.title);
 
         // TODO: actually fetch top sites.
         return userAgent.set('visits', new Immutable.List());
@@ -63,10 +84,7 @@ export async function handler(
 
     case profileCommandTypes.DID_BOOKMARK_LOCATION:
       try {
-        if (!browserWindow || !browserWindow.sessionId) {
-          break;
-        }
-        await storage.starPage(payload.url, browserWindow.sessionId, +1);
+        await storage.starPage(payload.url, payload.sessionId, +1);
         return await dispatchActionsForChangedStarred(payload.url);
       } catch (e) {
         console.log(e); // TODO: do more than ignore failure.
@@ -75,10 +93,7 @@ export async function handler(
 
     case profileCommandTypes.DID_UNBOOKMARK_LOCATION:
       try {
-        if (!browserWindow || !browserWindow.sessionId) {
-          break;
-        }
-        await storage.starPage(payload.url, browserWindow.sessionId, -1);
+        await storage.starPage(payload.url, payload.sessionId, -1);
         return await dispatchActionsForChangedStarred(payload.url);
       } catch (e) {
         console.log(e); // TODO: do more than ignore failure.
@@ -108,12 +123,23 @@ export async function handler(
         userAgent.browserWindows.add((await makeBrowserWindow(payload.tabInfo)).id));
 
     case profileCommandTypes.DID_REQUEST_SAVE_PAGE:
-      if (!browserWindow || !browserWindow.sessionId) {
-        break;
+      console.log(`Saving ${payload.page.uri} at ${Date.now()}.`);
+      console.log(`Saving: ${payload.page.textContent}`);
+      await storage.savePage(payload.page, payload.sessionId);
+      break;
+
+    case profileCommandTypes.DID_START_SESSION:
+      if (browserWindow) {
+        await startSession(browserWindow.scope, payload);
+      } else {
+        if (respond) {
+          respond({ error: true, payload: 'browserWindow must be defined' });
+        }
       }
-      console.log(`Saving ${payload.uri} at ${Date.now()}.`);
-      console.log(`Saving: ${payload.textContent}`);
-      await storage.savePage(payload, browserWindow.sessionId);
+      break;
+
+    case profileCommandTypes.DID_END_SESSION:
+      await endSession(payload);
       break;
 
     default:

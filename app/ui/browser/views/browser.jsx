@@ -72,13 +72,13 @@ class BrowserWindow extends Component {
     const navBack = () => dispatch(actions.navigatePageBack(currentPageId));
     const navForward = () => dispatch(actions.navigatePageForward(currentPageId));
     const navRefresh = () => dispatch(actions.navigatePageRefresh(currentPageId));
-    const openMenu = () => menuBrowser(dispatch);
+    const openMenu = () => menuBrowser(currentPage.sessionId, dispatch);
     const isBookmarked = (url) => profile.bookmarks.has(url);
     const bookmark = (title, url) => {
-      dispatch(actions.bookmark(url, title));
+      dispatch(actions.bookmark(currentPage.sessionId, url, title));
     };
     const unbookmark = (url) => {
-      dispatch(actions.unbookmark(url));
+      dispatch(actions.unbookmark(currentPage.sessionId, url));
     };
     const onLocationChange = e => {
       const text = e.target.value;
@@ -165,13 +165,13 @@ function attachIPCRendererListeners(browserView) {
 
   ipcRenderer.on('profile-diff', (_, args) => dispatch(args));
   ipcRenderer.on('focus-url-bar', () => dispatch(ipcActions.focusURLBar()));
-  ipcRenderer.on('new-tab', () => dispatch(ipcActions.createTab()));
+  ipcRenderer.on('new-tab', () => dispatch(actions.createTab()));
 
   // @TODO main process should be sending an id to close a tab
   // most likely, not just whatever tab is currently open, or we should
   // handle key shortcuts in this process
   ipcRenderer.on('close-tab', () =>
-    dispatch(ipcActions.closeTab(browserView.props.currentPage.id)));
+    dispatch(actions.closeTab(browserView.props.currentPage.id)));
 
   // @TODO main process should be sending an id to refresh a tab
   // most likely, not just whatever tab is currently open

@@ -123,7 +123,9 @@ store.subscribe(sendDiffsToWindows);
 
 async function makeBrowserWindow(tabInfo: ?Object): Promise<electron.BrowserWindow> {
   const profileStorage = await profileStoragePromise;
-  const sessionId = await profileStorage.startSession(); // TODO: scope, ancestor.
+
+  // TODO: don't abuse the storage layer's session ID generation to produce scopes.
+  const scope = await profileStorage.startSession();
 
   // Create the browser window.
   const browser = new BrowserWindow({
@@ -135,7 +137,7 @@ async function makeBrowserWindow(tabInfo: ?Object): Promise<electron.BrowserWind
     frame: false,
     show: false,
   });
-  browser.sessionId = sessionId;
+  browser.scope = scope;
 
   browser.didFinishLoadPromise = new Promise((resolve, _reject) => {
     browser.webContents.once('did-finish-load', () => {

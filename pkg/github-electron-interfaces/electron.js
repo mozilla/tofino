@@ -40,12 +40,12 @@ declare module 'electron' {
   }
 
   declare class BrowserWindow {
-    sessionId: number; // This is Tofino specific.
+    scope: number; // This is Tofino specific.
     didFinishLoadPromise: Promise<void>; // This is Tofino specific.
 
     webContents: WebContents;
 
-	  loadURL(url: string, options?: LoadURLOptions): void;
+		loadURL(url: string, options?: LoadURLOptions): void;
 
     static fromId(id: number): ?BrowserWindow;
     static fromWebContents(webContents: WebContents): ?BrowserWindow;

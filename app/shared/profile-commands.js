@@ -54,35 +54,69 @@ export function request(command: ProfileCommand): Promise<any> {
 /**
  * The command for the '✫' bookmark button.
  */
-export function bookmark(url: string, title: ?string = undefined): ProfileCommand {
+export function bookmark(sessionId: number, url: string,
+                         title: ?string = undefined): ProfileCommand {
   return {
     type: profileCommandTypes.DID_BOOKMARK_LOCATION,
-    payload: { url, title },
+    payload: {
+      sessionId,
+      url,
+      title,
+    },
   };
 }
 
 /**
  * The command for undoing the '✫' bookmark button.
  */
-export function unbookmark(url: string): ProfileCommand {
+export function unbookmark(sessionId: number, url: string): ProfileCommand {
   return {
     type: profileCommandTypes.DID_UNBOOKMARK_LOCATION,
-    payload: { url },
+    payload: {
+      sessionId,
+      url,
+    },
   };
 }
 
-export function visited(url: string, title: ?string = undefined): ProfileCommand {
+export function visited(sessionId: number, url: string,
+                        title: ?string = undefined): ProfileCommand {
   return {
     type: profileCommandTypes.DID_VISIT_LOCATION,
-    payload: { url, title },
+    payload: {
+      sessionId,
+      url,
+      title,
+    },
   };
 }
 
-export function setUserTypedLocation(text: string): ProfileCommand {
+export function setUserTypedLocation(text: string, sessionId: ?number = undefined): ProfileCommand {
   return {
     type: profileCommandTypes.DID_SET_USER_TYPED_LOCATION,
     payload: {
+      sessionId,
       text,
+    },
+  };
+}
+
+export function startSession(ancestorId: ?number, reason: ?string): ProfileCommand {
+  return {
+    type: profileCommandTypes.DID_START_SESSION,
+    payload: {
+      ancestorId,
+      reason,
+    },
+  };
+}
+
+export function endSession(sessionId: number, reason: ?string): ProfileCommand {
+  return {
+    type: profileCommandTypes.DID_END_SESSION,
+    payload: {
+      sessionId,
+      reason,
     },
   };
 }
@@ -104,9 +138,12 @@ export function newBrowserWindow(tabInfo: ?Object): ProfileCommand {
   };
 }
 
-export function savePage(page: ReadabilityResult): ProfileCommand {
+export function savePage(sessionId: number, page: ReadabilityResult): ProfileCommand {
   return {
     type: profileCommandTypes.DID_REQUEST_SAVE_PAGE,
-    payload: page,
+    payload: {
+      sessionId,
+      page,
+    },
   };
 }
