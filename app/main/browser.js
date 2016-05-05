@@ -117,14 +117,6 @@ function sendDiffsToWindows(): void {
   if (bookmarksChanged) {
     sendToAllWindows('profile-diff', profileDiffs.bookmarks(currentState.bookmarks.toJS()));
   }
-
-  const locationsChanged =
-    !previousState ||
-    !Immutable.is(currentState.locations, previousState.locations);
-
-  if (locationsChanged) {
-    sendToAllWindows('profile-diff', profileDiffs.completions(currentState.locations.toJS()));
-  }
 }
 
 store.subscribe(sendDiffsToWindows);
@@ -172,14 +164,29 @@ async function makeBrowserWindow(tabInfo: ?Object): Promise<electron.BrowserWind
   return browser;
 }
 
-async function dispatchProfileCommand(
-    command: Object,
-    browserWindow: ?electron.BrowserWindow = null): Promise<void> {
+async function dispatchProfileCommand(command: Object,
+                                      browserWindow: ?electron.BrowserWindow = undefined,
+                                      token: ?string = undefined): Promise<void> {
   const profileStorage = await profileStoragePromise;
-  const newState = await profileCommandHandler.handler(store.getState(),
-    profileStorage, browserWindow,
-    makeBrowserWindow, command);
-  store.dispatch({ type: 'REPLACE', payload: newState });
+
+  const respond = (response) => {
+    if (browserWindow && token) {
+      browserWindow.webContents.send(`profile-command-${token}`, response);
+    }
+  };
+
+  const oldState = store.getState();
+  const newState = await profileCommandHandler.handler(
+    oldState,
+    profileStorage,
+    browserWindow,
+    makeBrowserWindow,
+    respond,
+    command);
+
+  if (!oldState || !Immutable.is(oldState, newState)) {
+    store.dispatch({ type: 'REPLACE', payload: newState });
+  }
 }
 
 const appStartupTime = Date.now();
@@ -260,10 +267,10 @@ ipc.on('tab-detach', async function(event, tabInfo) {
   dispatchProfileCommand(profileCommands.newBrowserWindow(tabInfo));
 });
 
-ipc.on('profile-command', async function(event, command) {
+ipc.on('profile-command', async function(event, { token, command }) {
   // Not all events come from a window.  Some come from the main process.
   const browserWindow = (event && event.sender)
       ? BrowserWindow.fromWebContents(event.sender)
       : null;
-  await dispatchProfileCommand(command, browserWindow);
+  await dispatchProfileCommand(command, browserWindow, token);
 });

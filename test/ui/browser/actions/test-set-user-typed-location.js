@@ -53,15 +53,15 @@ describe('Action - SET_USER_TYPED_LOCATION', () => {
       text: 'Bar',
     }));
 
-    function handleIpc(e, ...args) {
+    function handleIpc(e, { command }) {
       // Filter out any mock ipc calls that are not yet guaranteed to have
       // completed
-      if (args[0].type !== profileCommandTypes.DID_SET_USER_TYPED_LOCATION ||
-          args[0].payload.text !== 'Bar') {
+      if (command.type !== profileCommandTypes.DID_SET_USER_TYPED_LOCATION ||
+          command.payload.text !== 'Bar') {
         return;
       }
-      expect(args[0].type).toEqual(profileCommandTypes.DID_SET_USER_TYPED_LOCATION);
-      expect(args[0].payload.text).toEqual('Bar');
+      expect(command.type).toEqual(profileCommandTypes.DID_SET_USER_TYPED_LOCATION);
+      expect(command.payload.text).toEqual('Bar');
       ipcMainMock.removeListener('profile-command', handleIpc);
       done();
     }

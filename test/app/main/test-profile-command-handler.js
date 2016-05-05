@@ -65,6 +65,7 @@ Content goes here`,
     const startState = store.getState();
     const nextState = await profileCommandHandler.handler(
       startState, storage, { sessionId }, () => null,
+      undefined,
       profileCommands.savePage(reader)
     );
 
@@ -82,9 +83,11 @@ Content goes here`,
     let newState = store.getState();
     newState = await profileCommandHandler.handler(
       newState, storage, { sessionId }, () => null,
+      undefined,
       profileCommands.bookmark('http://moz1.com', 'title'));
     newState = await profileCommandHandler.handler(
       newState, storage, { sessionId }, () => null,
+      undefined,
       profileCommands.bookmark('http://moz2.com', 'title'));
     expect(newState.bookmarks).toIs(new Immutable.Set(['http://moz1.com', 'http://moz2.com']));
     expect(newState.recentBookmarks.map((b) => b.location))
@@ -92,6 +95,7 @@ Content goes here`,
 
     newState = await profileCommandHandler.handler(
       newState, storage, { sessionId }, () => null,
+      undefined,
       profileCommands.unbookmark('http://moz2.com', 'title'));
     expect(newState.bookmarks).toIs(new Immutable.Set(['http://moz1.com']));
     expect(newState.recentBookmarks.map((b) => b.location))
@@ -102,14 +106,17 @@ Content goes here`,
     let newState = store.getState();
     newState = await profileCommandHandler.handler(
       newState, storage, { sessionId }, () => ({ id: 11 }),
+      undefined,
       profileCommands.newBrowserWindow());
     newState = await profileCommandHandler.handler(
       newState, storage, { sessionId }, () => ({ id: 22 }),
+      undefined,
       profileCommands.newBrowserWindow());
     expect(newState.browserWindows).toIs(new Immutable.Set([11, 22]));
 
     newState = await profileCommandHandler.handler(
       newState, storage, { sessionId, id: 11 }, () => ({ id: 33 }),
+      undefined,
       profileCommands.closeBrowserWindow());
     expect(newState.browserWindows).toIs(new Immutable.Set([22]));
   });

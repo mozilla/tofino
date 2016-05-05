@@ -18,6 +18,8 @@ import type { BrowserWindow } from 'electron';
 import Immutable from 'immutable';
 
 import * as model from '../model';
+import * as profileDiffs from '../shared/profile-diffs';
+import * as profileDiffTypes from '../shared/constants/profile-diff-types';
 import * as profileCommands from '../shared/profile-commands';
 import * as profileCommandTypes from '../shared/constants/profile-command-types';
 import { ProfileStorage } from '../services/storage';
@@ -27,6 +29,7 @@ export async function handler(
   storage: ProfileStorage,
   browserWindow: ?BrowserWindow,
   makeBrowserWindow: () => Promise<BrowserWindow>,
+  respond: ?((response: any) => any),
   command: profileCommands.ProfileCommand): Promise<model.UserAgent> {
   async function dispatchActionsForChangedStarred(
     url: string     // eslint-disable-line no-unused-vars
@@ -83,12 +86,13 @@ export async function handler(
       break;
 
     case profileCommandTypes.DID_SET_USER_TYPED_LOCATION:
-      try {
-        const completions = await storage.visitedMatches(payload.text);
-        return userAgent.set('locations',
-          userAgent.locations.set(payload.text, new Immutable.List(completions)));
-      } catch (e) {
-        console.log(e); // TODO: do more than ignore failure.
+      if (respond) {
+        try {
+          const completions = await storage.visitedMatches(payload.text);
+          respond(profileDiffs.completions(payload.text, completions));
+        } catch (e) {
+          respond({ type: profileDiffTypes.COMPLETIONS, error: true, payload: e });
+        }
       }
       break;
 

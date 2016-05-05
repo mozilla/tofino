@@ -11,8 +11,8 @@ specific language governing permissions and limitations under the License.
 */
 
 import * as types from '../constants/action-types';
+import * as profileDiffs from '../../../shared/profile-diffs';
 import * as profileCommands from '../../../shared/profile-commands';
-import { ipcRenderer } from '../../../shared/electron';
 
 export function createTab(location) {
   return { type: types.CREATE_TAB, location, instrument: true };
@@ -39,7 +39,7 @@ export function setStatusText(text) {
 }
 
 export function setUserTypedLocation(pageId, payload) {
-  return dispatch => {
+  return (dispatch) => {
     // Update this window's state before telling the profile service.
     dispatch({ type: types.SET_USER_TYPED_LOCATION, pageId, payload, instrument: false });
 
@@ -47,7 +47,11 @@ export function setUserTypedLocation(pageId, payload) {
     // Empty input could happen if a page finishes loading and the userTyped
     // state is going to be reset.
     if (payload.text) {
-      ipcRenderer.send('profile-command', profileCommands.setUserTypedLocation(payload.text));
+      profileCommands.request(profileCommands.setUserTypedLocation(payload.text))
+        .then(({ text, completionList }) => {
+          dispatch(profileDiffs.completions(text, completionList));
+        })
+        .catch(console.warn); // Ignore failures.  Not much to be done here.
     }
   };
 }
@@ -57,7 +61,7 @@ export function bookmark(url, title) {
     // Update this window's state before telling the profile service.
     dispatch({ type: types.SET_BOOKMARK_STATE, url, isBookmarked: true, title });
 
-    ipcRenderer.send('profile-command', profileCommands.bookmark(url, title));
+    profileCommands.send(profileCommands.bookmark(url, title));
   };
 }
 
@@ -66,7 +70,7 @@ export function unbookmark(url) {
     // Update this window's state before telling the profile service.
     dispatch({ type: types.SET_BOOKMARK_STATE, url, isBookmarked: false });
 
-    ipcRenderer.send('profile-command', profileCommands.unbookmark(url));
+    profileCommands.send(profileCommands.unbookmark(url));
   };
 }
 
