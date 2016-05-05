@@ -11,8 +11,11 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 import Style from '../../browser-style';
+
+import { getStatusText } from '../../selectors';
 
 const STATUS_STYLE = Style.registerStyle({
   position: 'fixed',
@@ -30,11 +33,12 @@ const STATUS_STYLE = Style.registerStyle({
 /**
  * The old status bar at the bottom of the page
  */
-const Status = ({ page }) => {
+
+const Status = ({ page, statusText }) => {
   let contents;
 
-  if (page.statusText) {
-    contents = page.statusText;
+  if (statusText) {
+    contents = statusText;
   } else if (page.isLoading) {
     contents = 'Loading...';
   }
@@ -51,6 +55,13 @@ Status.displayName = 'Status';
 
 Status.propTypes = {
   page: PropTypes.object.isRequired,
+  statusText: PropTypes.string.isRequired,
 };
 
-export default Status;
+function mapStateToProps(state) {
+  return {
+    statusText: getStatusText(state),
+  };
+}
+
+export default connect(mapStateToProps)(Status);

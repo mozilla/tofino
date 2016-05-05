@@ -21,7 +21,12 @@ import Search from './search';
 
 import { fixURL } from '../../browser-util';
 import { menuWebViewContext } from '../../actions/external';
-import { closeTab, setPageDetails, setUserTypedLocation } from '../../actions/main-actions';
+import {
+  closeTab,
+  setPageDetails,
+  setStatusText,
+  setUserTypedLocation,
+} from '../../actions/main-actions';
 import * as profileCommands from '../../../../shared/profile-commands';
 
 const PAGE_STYLE = Style.registerStyle({
@@ -164,13 +169,14 @@ function addListenersToWebView(webview, page, dispatch, ipcRenderer) {
     const title = webview.getTitle();
 
     dispatch(setPageDetails(page.id, {
-      statusText: false,
       location: url,
       canGoBack: webview.canGoBack(),
       canGoForward: webview.canGoForward(),
       state: PageModel.PAGE_STATE_LOADED,
       title,
     }));
+
+    dispatch(setStatusText(false));
 
     dispatch(setUserTypedLocation(page.id, {
       text: null,
@@ -182,9 +188,7 @@ function addListenersToWebView(webview, page, dispatch, ipcRenderer) {
   webview.addEventListener('ipc-message', e => {
     switch (e.channel) {
       case 'status':
-        dispatch(setPageDetails(page.id, {
-          statusText: e.args[0],
-        }));
+        dispatch(setStatusText(e.args[0]));
         break;
       case 'contextmenu-data':
         menuWebViewContext(webview, e.args[0], dispatch);

@@ -19,6 +19,9 @@ const initialState = new UIState();
 
 export default function uiState(state = initialState, action) {
   switch (action.type) {
+    case types.SET_STATUS_TEXT:
+      return state.set('statusText', action.text);
+
     case types.SET_USER_TYPED_LOCATION:
       return state.setIn(['userTypedLocation', action.pageId], action.payload.text);
 
