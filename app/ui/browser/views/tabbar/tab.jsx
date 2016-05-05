@@ -60,6 +60,9 @@ function Tab(props) {
   return (
     <div className={`${TAB_STYLE} ${modes.join(' ')}`}
       {...{ onClick, onContextMenu }}>
+      <span>
+        {page.sessionId} - {page.ancestorId}
+      </span>
       <span className={TAB_TITLE_STYLE}>
         {page.state === Page.PAGE_STATE_LOADING ? 'Loading...' : page.title}
       </span>
