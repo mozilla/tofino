@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes, Component } from 'react';
 
-import * as UIConstants from '../../constants/ui';
 import Style from '../../browser-style';
 import { Page as PageModel } from '../../model';
 

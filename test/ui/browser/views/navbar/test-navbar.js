@@ -110,24 +110,6 @@ describe('NavBar', () => {
       expect(props.navRefresh).toHaveBeenCalled();
     });
   });
-  describe('Pages button', () => {
-    it('calls handler');
-    it('has correct page count', () => {
-      const props = createSpyProps();
-      const pages = [new Page(), new Page(), new Page()];
-      props.page = pages[0];
-      props.pages = new Set([pages[0]]);
-
-      let wrapper = shallow(<NavBar {...props} />);
-      expect(wrapper.find('#browser-navbar-pages-count').text()).toEqual('1');
-
-      props.page = pages[1];
-      props.pages = new Set(pages);
-
-      wrapper = shallow(<NavBar {...props} />);
-      expect(wrapper.find('#browser-navbar-pages-count').text()).toEqual('3');
-    });
-  });
   describe('Minimize button ', () => {
     it('calls handler', () => {
       const props = createSpyProps();

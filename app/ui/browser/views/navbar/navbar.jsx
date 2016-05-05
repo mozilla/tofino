@@ -68,22 +68,6 @@ const NAVBAR_WINDOW_CONTROL_BUTTONS_STYLE = Style.registerStyle({
   margin: '0 7px',
 });
 
-const NAVBAR_PAGES_COUNT_STYLE = Style.registerStyle({
-  alignItems: 'center',
-  justifyContent: 'center',
-  minWidth: '15px',
-  minHeight: '15px',
-  backgroundColor: '#4c4c4c',
-  color: '#fff',
-  fontSize: '80%',
-  borderRadius: '3px',
-  marginRight: '6px',
-});
-
-const NAVBAR_PAGES_LABEL_STYLE = Style.registerStyle({
-  fontSize: '110%',
-});
-
 const NavBar = (props) => {
   if (props.page == null) {
     return (
@@ -101,15 +85,6 @@ const NavBar = (props) => {
           title="Menu"
           image="glyph-menu-16.svg"
           clickHandler={props.openMenu} />
-        <VerticalSeparator />
-        <div id="browser-navbar-pages-count"
-          className={NAVBAR_PAGES_COUNT_STYLE}>
-          {props.pages.size}
-        </div>
-        <span id="browser-navbar-pages-label"
-          className={NAVBAR_PAGES_LABEL_STYLE}>
-          {((props.pages.size === 1) ? 'Page' : 'Pages')}
-        </span>
         <VerticalSeparator />
         <Btn id="browser-navbar-back"
           className={`${NAVBAR_NAVIGATION_BACK_BUTTON_STYLE}`}
