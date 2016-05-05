@@ -1,3 +1,5 @@
+/* @flow */
+
 /*
  Copyright 2016 Mozilla
 
@@ -12,10 +14,19 @@
 
 import * as profileDiffTypes from './constants/profile-diff-types';
 
-export function bookmarks(newBookmarks) {
-  return { type: profileDiffTypes.BOOKMARKS, payload: newBookmarks };
+export function bookmarks(bookmarkSet: [string]) {
+  return {
+    type: profileDiffTypes.BOOKMARKS,
+    payload: bookmarkSet,
+  };
 }
 
-export function completions(completionMap) {
-  return { type: profileDiffTypes.COMPLETIONS, payload: completionMap };
+export function completions(text: string, completionList: [string]) {
+  return {
+    type: profileDiffTypes.COMPLETIONS,
+    payload: {
+      text,
+      completionList,
+    },
+  };
 }

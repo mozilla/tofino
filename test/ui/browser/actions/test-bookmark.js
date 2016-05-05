@@ -30,7 +30,7 @@ describe('Action - bookmark', () => {
 
     dispatch(actions.bookmark('http://moz1.com', 'moz1'));
 
-    function handleIpc(e, command) {
+    function handleIpc(e, { command }) {
       // Filter out any mock ipc calls that are not of interest
       // to the current test.
       if (command.type !== profileCommandTypes.DID_BOOKMARK_LOCATION ||

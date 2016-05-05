@@ -32,7 +32,7 @@ describe('Action - unbookmark', () => {
     dispatch(actions.bookmark('http://moz1.com', 'moz1'));
     dispatch(actions.unbookmark('http://moz1.com'));
 
-    function handleIpc(e, command) {
+    function handleIpc(e, { command }) {
       // Filter out any mock ipc calls that are not of interest
       // to the current test.
       if (command.type !== profileCommandTypes.DID_UNBOOKMARK_LOCATION ||

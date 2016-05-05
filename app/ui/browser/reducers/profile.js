@@ -28,7 +28,7 @@ export default function profile(state = initialState, action) {
       return setBookmarks(state, Immutable.Set(action.payload));
 
     case profileDiffTypes.COMPLETIONS:
-      return state.set('completions', Immutable.Map(action.payload));
+      return setCompletion(state, action.payload.text, action.payload.completionList);
 
     default:
       return state;
@@ -43,4 +43,8 @@ function setBookmarkState(state, url, isBookmarked) {
 
 function setBookmarks(state, bookmarks) {
   return state.set('bookmarks', bookmarks);
+}
+
+function setCompletion(state, text: string, completionList: [string]) {
+  return state.set('completions', state.completions.set(text, completionList));
 }

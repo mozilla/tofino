@@ -31,7 +31,7 @@ function openNewWindow() {
   // rendering process event loops that results in the window only being shown after IO
   // events have happened, which can be quite delayed.
   setImmediate(() => {
-    electron.ipcMain.emit('profile-command', {}, profileCommands.newBrowserWindow());
+    electron.ipcMain.emit('profile-command', {}, { command: profileCommands.newBrowserWindow() });
   });
 }
 

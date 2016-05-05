@@ -37,7 +37,5 @@ export const UserAgent = Immutable.Record({
 
   recentBookmarks: new Immutable.List(),
 
-  locations: new Immutable.Map(),
-
   visits: new Immutable.List(),
 });

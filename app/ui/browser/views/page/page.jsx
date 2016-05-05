@@ -41,10 +41,10 @@ const WEB_VIEW_STYLE = Style.registerStyle({
 
 class Page extends Component {
   componentDidMount() {
-    const { page, dispatch, ipcRenderer } = this.props;
+    const { page, dispatch } = this.props;
     const webview = this.refs.webview;
 
-    addListenersToWebView(webview, page, dispatch, ipcRenderer);
+    addListenersToWebView(webview, page, dispatch);
 
     if (!page.guestInstanceId && page.location) {
       webview.setAttribute('src', fixURL(page.location));
@@ -114,12 +114,11 @@ Page.propTypes = {
   page: PropTypes.object.isRequired,
   isActive: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
-  ipcRenderer: PropTypes.object.isRequired,
 };
 
 export default Page;
 
-function addListenersToWebView(webview, page, dispatch, ipcRenderer) {
+function addListenersToWebView(webview, page, dispatch) {
   webview.addEventListener('did-start-loading', () => {
     dispatch(setPageDetails(page.id, {
       state: PageModel.PAGE_STATE_LOADING,
@@ -165,7 +164,7 @@ function addListenersToWebView(webview, page, dispatch, ipcRenderer) {
       text: null,
     }));
 
-    ipcRenderer.send('profile-command', profileCommands.visited(url, title));
+    profileCommands.send(profileCommands.visited(url, title));
   });
 
   webview.addEventListener('ipc-message', e => {
