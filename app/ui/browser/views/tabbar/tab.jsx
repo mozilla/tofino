@@ -58,7 +58,7 @@ function Tab(props) {
   ];
 
   return (
-    <div className={`${TAB_STYLE} ${modes.join(' ')}`}
+    <div className={`tab ${TAB_STYLE} ${modes.join(' ')}`}
       {...{ onClick, onContextMenu }}>
       <span className={TAB_TITLE_STYLE}>
         {page.state === Page.PAGE_STATE_LOADING ? 'Loading...' : page.title}
@@ -66,7 +66,7 @@ function Tab(props) {
       <span>
         {page.state === Page.PAGE_STATE_LOADING ? <i className="fa fa-spinner fa-pulse" /> : null}
       </span>
-      <Btn className={TAB_CLOSE_BUTTON_STYLE}
+      <Btn className={`tab-close ${TAB_CLOSE_BUTTON_STYLE}`}
         title="Close tab"
         clickHandler={onClose}>
         <i className="fa fa-close" />

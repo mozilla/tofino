@@ -56,6 +56,7 @@ const Driver = {
     this._stopServer = stop;
     this.port = port;
     this.fixturesURL = `http://localhost:${this.port}`;
+
     return this.app;
   },
 
@@ -69,6 +70,10 @@ const Driver = {
     }
 
     this.app = this.port = this.fixturesURL = this._stopServer = this._bwHandle = null;
+  },
+
+  ipcSendToMain(channel, ...args) {
+    this.app.electron.ipcRenderer.send(channel, ...args);
   },
 
   /**
