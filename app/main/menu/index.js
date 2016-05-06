@@ -23,6 +23,12 @@ const OSX_MINIMAL_MENU_ITEMS = [
 ];
 
 /**
+ * Store the most recently used template so we know what hotkey accelerators
+ * are currently active.
+ */
+let currentMenu = null;
+
+/**
  * A function that takes data and generates electron OS menus based on that data.
  * Most of the menus are based off of templates, but can take the following options:
  *
@@ -54,6 +60,42 @@ export function build(data = {}) {
     return template;
   }, menuTemplate);
 
-  const menu = electron.Menu.buildFromTemplate(menuTemplate);
+
+  const menu = currentMenu = electron.Menu.buildFromTemplate(menuTemplate);
   electron.Menu.setApplicationMenu(menu);
+}
+
+/**
+ * To be used in responding to IPC 'synthesize-accelerator' messages, by triggering
+ * the click handler if the accelerator matches a currently active menu item.
+ *
+ * Does not analyze the accelerator for the 'true' command used, for example,
+ * it just crudly maps "CmdOrCtrl+T" to "CmdOrCtrl+T" -- it would not match
+ * "CommandOrControl+T" or "Command+T" on OSX, etc. This is fine as we're just using
+ * these in tests.
+ *
+ * Currently should only be used in tests.
+ */
+export function handleIPCAcceleratorCommand(e, accelerator) {
+  if (!currentMenu) {
+    return;
+  }
+
+  const focusedWindow = electron.BrowserWindow.getFocusedWindow();
+
+  // Recursively iterate and descend over the current menu items to find
+  // items that match the passed in accelerator. If a match is found,
+  // the `click` handler is executed.
+  currentMenu.items.forEach(function findMatchingAccelerator(item) {
+    if (item.accelerator === accelerator) {
+      // We have to pass in the window as the first argument, and item as second,
+      // because in the handler it's in the opposite order. Not sure how or why
+      // these arguments get flipped in menu creation.
+      item.click(focusedWindow, item);
+    }
+
+    if (item.submenu && item.submenu.items) {
+      item.submenu.items.forEach(findMatchingAccelerator);
+    }
+  });
 }

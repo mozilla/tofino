@@ -276,3 +276,5 @@ ipc.on('profile-command', async function(event, { token, command }) {
       : null;
   await dispatchProfileCommand(command, browserWindow, token);
 });
+
+ipc.on('synthesize-accelerator', menu.handleIPCAcceleratorCommand);
