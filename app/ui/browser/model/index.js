@@ -67,3 +67,12 @@ export const UIState = Immutable.Record({
   // What the user has typed into the location bar, stored by page id
   userTypedLocation: Immutable.Map(),
 });
+
+/**
+ * Aggregate state.  Keep this synchronized with ../reducers/index.js!
+ */
+export const State = Immutable.Record({
+  pages: new Pages(),
+  profile: new Profile(),
+  uiState: new UIState(),
+});

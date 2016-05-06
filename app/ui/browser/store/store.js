@@ -14,6 +14,7 @@ import { applyMiddleware, createStore } from 'redux';
 import createLogger from 'redux-logger';
 import rootReducer from '../reducers';
 import thunk from '../../../shared/thunk';
+import * as model from '../model/index';
 import * as instrument from '../../shared/instrument';
 import BUILD_CONFIG from '../../../../build-config';
 
@@ -33,16 +34,18 @@ export default function configureStore(initialState) {
       duration: true,
       collapsed: true,
       stateTransformer(state) {
-        // combineReducers composes a JS object.  Assume each composed state object is an Immutable
-        // instance.
-        const transformed = {};
-        Object.keys(state).forEach((key) => {
-          transformed[key] = state[key].toJS();
-        });
-        return transformed;
+        return state.toJS();
       },
     }));
   }
+
+  if (!initialState) {
+    // This gets a "blank" state that may not be renderable.
+    initialState = rootReducer(undefined, { type: null });
+  }
+
+  // We want a Record, not just a Map.  Upgrade!
+  initialState = new model.State(initialState);
 
   const store = createStore(rootReducer, initialState, applyMiddleware(...middleware));
 
