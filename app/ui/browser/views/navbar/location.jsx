@@ -117,6 +117,15 @@ export class Location extends Component {
     // depending on the eventual UX and if anywhere else would want to change it.
     if (this.props.userTypedLocation !== nextProps.userTypedLocation) {
       this.setState({ focusedResultIndex: -1 });
+
+      // this happens when userTypedLocation changed outside of a 'normal' input
+      // change i.e. 'paste' context menu.  Need to make sure the input is actually set.
+      // No tests for this right now, since shallow rendering doesn't support 'refs'.
+      if (this.refs.input &&
+          nextProps.userTypedLocation &&
+          this.refs.input.value !== nextProps.userTypedLocation) {
+        this.setInputValue(nextProps.userTypedLocation);
+      }
     }
   }
 

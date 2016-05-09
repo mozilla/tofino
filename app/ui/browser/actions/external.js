@@ -82,7 +82,7 @@ export function menuBrowser(pageSessionId, dispatch) {
 /**
  * Right click on the location bar
  */
-export function menuLocationContext(input, dispatch) {
+export function menuLocationContext(input, pageId, dispatch) {
   const menu = new Menu();
 
   menu.append(new MenuItem({
@@ -96,9 +96,8 @@ export function menuLocationContext(input, dispatch) {
       const value = input.value;
       clipboard.writeText(value.slice(input.selectionStart, input.selectionEnd));
       const loc = value.slice(0, input.selectionStart) + value.slice(input.selectionEnd);
-      dispatch(setUserTypedLocation({
-        pageIndex: -1,
-        userTyped: loc,
+      dispatch(setUserTypedLocation(pageId, {
+        text: loc,
       }));
     },
   }));
@@ -108,9 +107,8 @@ export function menuLocationContext(input, dispatch) {
     click: () => {
       const before = input.value.slice(0, input.selectionStart);
       const after = input.value.slice(input.selectionEnd);
-      dispatch(setUserTypedLocation({
-        pageIndex: -1,
-        userTyped: `${before}${clipboard.readText()}${after}`,
+      dispatch(setUserTypedLocation(pageId, {
+        text: `${before}${clipboard.readText()}${after}`,
       }));
     },
   }));
@@ -121,11 +119,10 @@ export function menuLocationContext(input, dispatch) {
       const before = input.value.slice(0, input.selectionStart);
       const after = input.value.slice(input.selectionEnd);
       const loc = before + clipboard.readText() + after;
-      dispatch(setUserTypedLocation({
-        pageIndex: -1,
-        userTyped: loc,
+      dispatch(setUserTypedLocation(pageId, {
+        text: loc,
       }));
-      dispatch(navigatePageTo(-1, fixURL(loc)));
+      dispatch(navigatePageTo(pageId, fixURL(loc)));
     },
   }));
 

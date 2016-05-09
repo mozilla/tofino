@@ -83,7 +83,7 @@ class BrowserWindow extends Component {
         text,
       }));
     };
-    const onLocationContextMenu = e => menuLocationContext(e.target, dispatch);
+    const onLocationContextMenu = e => menuLocationContext(e.target, currentPageId, dispatch);
     const onLocationReset = () => {
       dispatch(actions.setUserTypedLocation(currentPageId, { text: void 0 }));
     };

@@ -100,5 +100,9 @@ describe('Location', () => {
       wrapper.setProps(props);
       expect(wrapper.state('focusedResultIndex')).toEqual(-1);
     });
+
+    // Pending test due to not being able to use refs in shallow rendering
+    // See https://github.com/mozilla/tofino/pull/385.
+    it('should set the input value when userTypedLocation changes externally');
   });
 });
