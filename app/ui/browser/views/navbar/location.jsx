@@ -112,6 +112,7 @@ export class Location extends Component {
 
   componentDidMount() {
     this.props.ipcRenderer.on('focus-urlbar', () => this.refs.input.select());
+    this.setInputValue(this.getRenderURL());
   }
 
   componentWillReceiveProps(nextProps) {
@@ -121,15 +122,6 @@ export class Location extends Component {
     // depending on the eventual UX and if anywhere else would want to change it.
     if (this.props.userTypedLocation !== nextProps.userTypedLocation) {
       this.setState({ focusedResultIndex: -1 });
-
-      // this happens when userTypedLocation changed outside of a 'normal' input
-      // change i.e. 'paste' context menu.  Need to make sure the input is actually set.
-      // No tests for this right now, since shallow rendering doesn't support 'refs'.
-      if (this.refs.input &&
-          nextProps.userTypedLocation &&
-          this.refs.input.value !== nextProps.userTypedLocation) {
-        this.setInputValue(nextProps.userTypedLocation);
-      }
     }
   }
 
@@ -140,6 +132,19 @@ export class Location extends Component {
     if (this.state.showURLBar && document.activeElement !== this.refs.input) {
       this.refs.input.focus();
     }
+
+    // this happens when userTypedLocation changed outside of a 'normal' input
+    // change i.e. 'paste' context menu.  Need to make sure the input is actually set.
+    // No tests for this right now, since shallow rendering doesn't support 'refs'.
+    const nextLocation = this.getRenderURL();
+    if (this.refs.input && nextLocation && this.refs.input.value !== nextLocation) {
+      this.setInputValue(nextLocation);
+    }
+  }
+
+  getRenderURL() {
+    return this.props.userTypedLocation === null ?
+            this.props.page.location : this.props.userTypedLocation;
   }
 
   getBookmarkIcon() {
@@ -219,8 +224,8 @@ export class Location extends Component {
   }
 
   render() {
-    const { page, profile, userTypedLocation } = this.props;
-    const urlValue = userTypedLocation !== null ? userTypedLocation : page.location;
+    const { profile } = this.props;
+    const urlValue = this.getRenderURL();
     let completions = null;
     const completionsForURL = profile.completions.get(urlValue);
 
@@ -296,7 +301,6 @@ export class Location extends Component {
             hidden={!this.state.showURLBar}
             type="url"
             ref="input"
-            defaultValue={urlValue}
             onFocus={this.handleURLBarFocus}
             onBlur={this.handleURLBarBlur}
             onChange={this.props.onLocationChange}
