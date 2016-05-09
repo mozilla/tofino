@@ -296,9 +296,7 @@ export class Location extends Component {
             hidden={!this.state.showURLBar}
             type="url"
             ref="input"
-            defaultValue={userTypedLocation !== null
-              ? userTypedLocation
-              : this.props.page.location}
+            defaultValue={urlValue}
             onFocus={this.handleURLBarFocus}
             onBlur={this.handleURLBarBlur}
             onChange={this.props.onLocationChange}

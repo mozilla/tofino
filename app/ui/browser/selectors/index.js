@@ -32,7 +32,8 @@ export function getStatusText(state) {
 }
 
 export function getUserTypedLocation(state, pageId) {
-  return state.uiState.userTypedLocation.get(pageId) || '';
+  return state.uiState.userTypedLocation.has(pageId) ?
+          state.uiState.userTypedLocation.get(pageId) : null;
 }
 
 export function getPageByIndex(state, index) {
