@@ -227,6 +227,7 @@ app.on('window-all-closed', () => {
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
     app.quit();
+    return;
   }
 
   // Set a simple menu since all browser windows are closed.
