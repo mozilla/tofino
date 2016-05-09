@@ -58,10 +58,10 @@ describe('Location', () => {
 
     it('should not render when the location is exactly the same as the URL', () => {
       const props = createSpyProps();
-      props.page.set('location', 'https://mozilla.com');
-      props.userTypedLocation = 'https://mozilla.com';
+      props.page.set('location', 'https://mozilla.com/');
+      props.userTypedLocation = 'https://mozilla.com/';
       props.profile = props.profile.set('completions', Immutable.Map({
-        'https://mozilla.com': ['https://mozilla.com'],
+        'https://mozilla.com': [{ title: 'Mozilla.com', uri: 'https://mozilla.com/' }],
       }));
 
       const wrapper = shallow(
@@ -76,7 +76,10 @@ describe('Location', () => {
       const props = createSpyProps();
       props.userTypedLocation = 'moz';
       props.profile = props.profile.set('completions', Immutable.Map({
-        moz: ['https://mozilla.com', 'https://mozilla.org'],
+        moz: [
+          { title: 'Mozilla.com', uri: 'https://mozilla.com/' },
+          { title: 'Mozilla.org', uri: 'https://mozilla.org/' },
+        ],
       }));
 
       const wrapper = shallow(
@@ -85,8 +88,8 @@ describe('Location', () => {
 
       wrapper.setState({ showURLBar: true, focusedURLBar: true });
       expect(wrapper.find('#autocomplete-results').length).toEqual(1);
-      expect(wrapper.find('#autocomplete-results').childAt(0).text()).toEqual('https://mozilla.com');
-      expect(wrapper.find('#autocomplete-results').childAt(1).text()).toEqual('https://mozilla.org');
+      expect(wrapper.find('#autocomplete-results').childAt(0).text()).toEqual('Mozilla.com — https://mozilla.com/');
+      expect(wrapper.find('#autocomplete-results').childAt(1).text()).toEqual('Mozilla.org — https://mozilla.org/');
     });
 
     it('should reset the selected index when input changes', () => {

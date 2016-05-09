@@ -57,6 +57,13 @@ const LOCATION_BAR_AUTOCOMPLETE_STYLE = Style.registerStyle({
   zIndex: 2,
 });
 
+const LOCATION_BAR_RESULTS_SNIPPET_STYLE = Style.registerStyle({
+  color: 'rgba(100, 100, 100, 1)',
+  padding: '0.5em',
+  'white-space': 'pre-wrap',           // So that spaces show up in snippets.
+  zIndex: 2,
+});
+
 const LOCATION_BAR_BUTTONS_STYLE = Style.registerStyle({
   margin: '0 3px',
 });
@@ -217,17 +224,41 @@ export class Location extends Component {
     let completions = null;
     const completionsForURL = profile.completions.get(urlValue);
 
-    if (SHOW_COMPLETIONS && completionsForURL && this.state.focusedURLBar) {
-      const results = completionsForURL.map((completion, i) => (<div
-        key={completion}
-        onMouseDown={(ev) => { ev.preventDefault(); }}
-        onMouseOver={() => { this.setState({ focusedResultIndex: i }); }}
-        onClick={() => {
-          this.setInputValue(completionsForURL[i].uri);
-        }}
-        style={this.state.focusedResultIndex === i ? { background: 'red' } : null}>
-        {completion.uri}</div>
-      ));
+    const renderRow = (completion, i) => {
+      // We get safe, decorated (<b>foo</b>) HTML from the database.
+      const snippet = completion.snippet ? (
+        <div
+          className={LOCATION_BAR_RESULTS_SNIPPET_STYLE}
+          dangerouslySetInnerHTML={{          // eslint-disable-line react/no-danger
+            __html: completion.snippet,
+          }}>
+        </div>
+      ) : null;
+
+      return (
+        <div style={{
+          // We're nesting multi-line items inside a flexbox, so
+          // we need to mark these children as columnar.
+          'flex-flow': 'column',
+          display: 'flex',
+        }}>
+          <div
+            key={completion.uri}
+            onMouseDown={(ev) => { ev.preventDefault(); }}
+            onMouseOver={() => { this.setState({ focusedResultIndex: i }); }}
+            onClick={() => {
+              this.setInputValue(completionsForURL[i].uri);
+            }}
+            style={this.state.focusedResultIndex === i ? { background: 'red' } : null}>
+            <span>{completion.title}</span>&nbsp;—&nbsp;<span>{completion.uri}</span>
+          </div>
+          {snippet}
+        </div>
+      );
+    };
+
+    if (SHOW_COMPLETIONS && completionsForURL) {
+      const results = completionsForURL.map(renderRow);
 
       completions = (
         <div id="autocomplete-results"
