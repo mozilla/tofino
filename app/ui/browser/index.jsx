@@ -17,16 +17,10 @@ import { ipcRenderer } from '../../shared/electron';
 
 import App from './views/app';
 import configureStore from './store/store';
-import rootReducer from './reducers';
 import * as actions from './actions/main-actions';
 import * as profileDiffs from '../../shared/profile-diffs';
 
-const initialProfileState = ipcRenderer.sendSync('window-loaded');
-
-// This gets a "blank" state that may not be renderable.
-const initialState = rootReducer(undefined, { type: null });
-
-const store = configureStore(initialState);
+const store = configureStore();
 
 // Before rendering, add a fresh tab and prepare the cached profile data.  This is leading toward a
 // session restore model where the main process can instantiate a mostly-formed browser window.
@@ -34,6 +28,8 @@ const store = configureStore(initialState);
 // can't necessarily produce the resulting state (which is supposed to be the initial state
 // presented to the user).  Dispatching actions also uses the same codepaths the rest of the
 // application uses.
+
+const initialProfileState = ipcRenderer.sendSync('window-loaded');
 
 store.dispatch(profileDiffs.bookmarks(initialProfileState.bookmarks));
 store.dispatch(actions.createTab());

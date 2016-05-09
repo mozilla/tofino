@@ -10,11 +10,15 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { combineReducers } from 'redux';
+import { combineReducers } from 'redux-immutable';
+
 import pages from './pages';
 import profile from './profile';
 import uiState from './ui-state';
 
+/**
+ * Aggregate reducer.  Keep this synchronized with ../model/index.js!
+ */
 const rootReducer = combineReducers({
   pages,
   profile,
