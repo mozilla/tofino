@@ -103,8 +103,8 @@ export async function handler(
     case profileCommandTypes.DID_SET_USER_TYPED_LOCATION:
       if (respond) {
         try {
-          const completions = await storage.visitedMatches(payload.text);
-          respond(profileDiffs.completions(payload.text, completions));
+          const results = await storage.query(payload.text);
+          respond(profileDiffs.completions(payload.text, results));
         } catch (e) {
           respond({ type: profileDiffTypes.COMPLETIONS, error: true, payload: e });
         }

@@ -13,6 +13,7 @@
  */
 
 import * as profileDiffTypes from './constants/profile-diff-types';
+import type { AwesomebarMatch } from '../shared/types';
 
 export function bookmarks(bookmarkSet: [string]) {
   return {
@@ -21,7 +22,7 @@ export function bookmarks(bookmarkSet: [string]) {
   };
 }
 
-export function completions(text: string, completionList: [string]) {
+export function completions(text: string, completionList: [AwesomebarMatch]) {
   return {
     type: profileDiffTypes.COMPLETIONS,
     payload: {

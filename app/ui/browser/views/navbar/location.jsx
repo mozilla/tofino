@@ -191,7 +191,7 @@ export class Location extends Component {
       if (this.state.focusedResultIndex >= 0 &&
           this.state.focusedResultIndex < maxCompletions) {
         ev.preventDefault();
-        this.setInputValue(completionsForURL[this.state.focusedResultIndex]);
+        this.setInputValue(completionsForURL[this.state.focusedResultIndex].uri);
       } else {
         this.props.navigateTo(fixURL(ev.target.value));
       }
@@ -223,10 +223,10 @@ export class Location extends Component {
         onMouseDown={(ev) => { ev.preventDefault(); }}
         onMouseOver={() => { this.setState({ focusedResultIndex: i }); }}
         onClick={() => {
-          this.setInputValue(completionsForURL[i]);
+          this.setInputValue(completionsForURL[i].uri);
         }}
         style={this.state.focusedResultIndex === i ? { background: 'red' } : null}>
-        {completion}</div>
+        {completion.uri}</div>
       ));
 
       completions = (
@@ -237,7 +237,7 @@ export class Location extends Component {
       // Don't show the completion box if there aren't any, or if there's
       // only one that matches the URL exactly.
       if (completionsForURL.length === 0 ||
-           (completionsForURL.length === 1 && completionsForURL[0] === urlValue)) {
+           (completionsForURL.length === 1 && completionsForURL[0].uri === urlValue)) {
         completions = null;
       }
     }
