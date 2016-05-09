@@ -23,3 +23,11 @@ export type ReadabilityResult = {
   length: number,
   excerpt: string,
 };
+
+export type AwesomebarMatch = {
+  place: number,
+  uri: string,
+  title: ?string,
+  snippet: ?string,
+  lastVisited: ?number,
+};

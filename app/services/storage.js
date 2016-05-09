@@ -25,6 +25,7 @@ import cbmkdirp from 'less-mkdirp';
 import microtime from 'microtime-fast';
 import path from 'path';
 import thenify from 'thenify';
+import escaper from 'true-html-escape';
 
 import { Bookmark } from '../model/index';
 import { ProfileStorageSchemaV5 } from './profile-schema';
@@ -371,6 +372,77 @@ export class ProfileStorage {
       out.push(row.url);
     }
     return out;
+  }
+
+  /**
+   * Search for places that match title, URL, or saved content
+   * since the specified timestamp.
+   *
+   * Snippets in the returned results are guaranteed to be HTML-escaped.
+   * They will include `<b>` `</b>` tags around matches.
+   *
+   * @param string The substring to match. Not tokenized.
+   * @param since The earliest visit time in microseconds.
+   * @param limit The maximum number of results to return.
+   * @returns {Promise<[AwesomebarMatch]>}
+   */
+  async query(string: string,
+              since: number = 0,
+              limit: number = 10): Promise<[AwesomebarMatch]> {
+    const contentMatches = `
+    SELECT p.id AS place,
+           p.url AS uri,
+           pages.title AS title,
+           snippet(pages, '╞', '╡', '…') AS snippet,
+           pages.ts AS lastVisited
+    FROM placeEvents AS p JOIN pages ON p.id = pages.place
+    WHERE pages.ts > ? AND pages MATCH ?
+    `;
+
+    const visitMatches = `
+    SELECT place,
+           url AS uri,
+           lastTitle AS title,
+           NULL AS snippet,
+           lastVisited
+    FROM mHistory
+    WHERE lastVisited > ? AND (
+      lastTitle LIKE ? OR url LIKE ?
+    )`;
+
+    const query = `
+    SELECT place,
+           uri,
+           MAX(title) AS title,
+           MAX(snippet) AS snippet,
+           MAX(lastVisited) AS lastVisited
+    FROM (${contentMatches} UNION ${visitMatches})
+    GROUP BY place
+    ORDER BY lastVisited DESC
+    LIMIT ?`;
+
+    const like = `%${string}%`;
+    const rows = await this.db.all(query, [since, string, since, like, like, limit]);
+
+    // We escape on the way out, not the way in, for two reasons:
+    // 1. We can't rely on the retrieved content correctly including the entirety of an escaped
+    //    character like '&amp;'.
+    // 2. We'd like to be able to match on the unescaped text.
+    function escape(s) {
+      if (!s) {
+        return s;
+      }
+
+      return escaper.escape(s)
+                    .replace(/╞/g, '<b>')
+                    .replace(/╡/g, '</b>');
+    }
+
+    rows.forEach(row => {
+      console.log(`Escaping ${row.snippet}.`);
+      row.snippet = escape(row.snippet);
+    });
+    return rows;
   }
 
   async visitedMatches(substring: string,
