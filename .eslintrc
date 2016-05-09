@@ -28,7 +28,7 @@
           ".js",
           ".jsx"
         ]
-      },
+      }
     }
   },
 
@@ -41,7 +41,8 @@
     "no-param-reassign": ["off"],
     "no-return-assign": ["off"],
     "no-unused-vars": ["error", {
-      "argsIgnorePattern": "^_"
+      "argsIgnorePattern": "^_",
+      "varsIgnorePattern": "^_"
     }],
     "no-use-before-define": ["off"],
     "eqeqeq": ["error", "allow-null"],
