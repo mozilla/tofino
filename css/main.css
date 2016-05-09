@@ -22,7 +22,7 @@ a, a:visited, a:active {
 h1 {
   height: 220px;
   background: url(../images/mozilla-tofino.png) no-repeat;
-  background-size: 250px;
+  background-size: 220px;
   padding-left: 240px;
   font-size: 3.3rem;
   display: flex;
