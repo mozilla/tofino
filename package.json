@@ -67,7 +67,7 @@
     "mocha": "2.4.5",
     "mocha-eslint": "2.0.2",
     "mocha-jsdom": "1.1.0",
-    "nyc": "6.4.0",
+    "nyc": "6.4.4",
     "react-addons-perf": "15.0.1",
     "react-addons-test-utils": "15.0.1",
     "rimraf": "2.5.2",
