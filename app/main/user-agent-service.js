@@ -15,12 +15,14 @@
 /* eslint no-console: 0 */
 
 import express from 'express';
+import expressWs from 'express-ws';
 import expressValidator from 'express-validator';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import * as Task from 'co-task';
 
 import { ProfileStorage, StarOp } from '../services/storage';
+import * as profileDiffs from '../shared/profile-diffs';
 
 const PORT = 9090;
 
@@ -39,6 +41,41 @@ function configure(app: any, storage: ProfileStorage) {
    */
   function wrap(genfun) {
     return (...args) => Task.async(genfun)(...args).catch(args[2]); // next = args[2];
+  }
+
+  const initial = Task.async(function*() {
+    const stars = yield storage.starredURLs();
+    const recentStars = yield storage.recentlyStarred();
+    return { stars, recentStars };
+  });
+
+  const diffsClients = [];
+  app.ws('/diffs', Task.async(function* (ws, _req) {
+    diffsClients.push(ws);
+
+    ws.send(JSON.stringify({ type: 'initial', payload: yield initial() }));
+
+    ws.on('close', () => {
+      const index = diffsClients.indexOf(ws);
+      if (index > -1) {
+        diffsClients.splice(index, 1);
+      }
+    });
+  }));
+
+  function sendDiff(diff) {
+    diffsClients.forEach((ws) => {
+      ws.send(JSON.stringify(diff));
+    });
+  }
+
+  function dispatchBookmarkDiffs() {
+    setImmediate(() => Task.spawn(function* () {
+      // TODO: only send add/remove starredness for `url`, rather than grabbing the whole set.
+      sendDiff(profileDiffs.bookmarks(yield storage.starredURLs()));
+
+      // TODO: sendDiff(profileDiffs.recentBookmarks(yield storage.recentlyStarred()));
+    }));
   }
 
   app.post('/session/start', wrap(function* (req, res) {
@@ -116,6 +153,8 @@ function configure(app: any, storage: ProfileStorage) {
     const { session, _title } = req.body;
     yield storage.starPage(req.params.url, session, StarOp.star);
     res.json();
+
+    dispatchBookmarkDiffs();
   }));
 
   app.delete('/stars/:url', wrap(function* (req, res) {
@@ -131,6 +170,8 @@ function configure(app: any, storage: ProfileStorage) {
     const { session, _title } = req.body;
     yield storage.starPage(req.params.url, session, StarOp.unstar);
     res.json();
+
+    dispatchBookmarkDiffs();
   }));
 
   app.get('/stars', wrap(function* (req, res) {
@@ -205,6 +246,8 @@ export function start(storage: ProfileStorage, port: ?number = PORT, debug: ?boo
 
   return new Promise((resolve, reject) => {
     const app = express();
+    expressWs(app);
+
     configure(app, storage);
 
     if (debug) {
