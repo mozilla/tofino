@@ -21,15 +21,3 @@ export const Bookmark = Immutable.Record({
   createdAt: null,
   visitedAt: null,
 });
-
-export const UserAgent = Immutable.Record({
-  /**
-   * Set of known BrowserWindow IDs.
-   *
-   * We diff the current and previous state.  However, after a BrowserWindow is closed, its ID
-   * property is no longer available.  (The error will say "Object has been destroyed".)  Therefore,
-   * to allow to compare to a previous state with a BrowserWindow that is no longer alive, we
-   * maintain a set of known BrowserWindow IDs and take care to not fetch the ID of closed windows.
-   */
-  browserWindows: new Immutable.Set(),
-});

@@ -37,13 +37,10 @@ import electron from 'electron';
 import * as hotkeys from './hotkeys';
 import * as menu from './menu/index';
 import * as instrument from '../services/instrument';
-import * as model from '../model/index';
-import * as storeStore from './store/store';
 import registerAboutPages from './about-pages';
 import { ProfileStorage } from '../services/storage';
 import * as userAgentService from './user-agent-service';
 const profileStoragePromise = ProfileStorage.open(path.join(__dirname, '..', '..'));
-import Immutable from 'immutable';
 import { UI_DIR, fileUrl } from './util';
 
 import WebSocket from 'ws';
@@ -54,57 +51,10 @@ const app = electron.app; // control application life.
 const ipc = electron.ipcMain;
 const globalShortcut = electron.globalShortcut;
 
-
-let currentState = new model.UserAgent();
-const store = storeStore.configureStore(currentState);
-
-function sendToAllWindows(event: string, args: Object): void {
-  const windows = store.getState().browserWindows;
-
-  if (!windows) {
-    return;
-  }
-
-  windows.forEach((id) => {
-    const bw = BrowserWindow.fromId(id);
-    if (bw) {
-      bw.webContents.send(event, args);
-    }
-  });
-}
-
-function sendDiffsToWindows(): void {
-  const previousState = currentState;
-  currentState = store.getState();
-
-  // TODO: handle empty state.
-  if (previousState && !Immutable.is(currentState.browserWindows,
-                                     previousState.browserWindows)) {
-    // Show new windows, taking care to use key IDs rather than possibly deleted ID members.
-    currentState.browserWindows.forEach((id) => {
-      if (previousState.browserWindows.has(id)) {
-        return;
-      }
-      const bw = BrowserWindow.fromId(id);
-      if (bw) {
-        bw.didFinishLoadPromise.then(() => bw.show());
-      }
-    });
-
-    // Close old windows, taking care to use key IDs rather than possibly deleted ID members.
-    previousState.browserWindows.forEach((id) => {
-      if (currentState.browserWindows.has(id)) {
-        return;
-      }
-      const bw = BrowserWindow.fromId(id);
-      if (bw) {
-        bw.didFinishLoadPromise.then(() => bw.close());
-      }
-    });
-  }
-}
-
-store.subscribe(sendDiffsToWindows);
+/**
+ * Top-level list of Browser Windows.
+ */
+const browserWindowIds = [];
 
 async function makeBrowserWindow(): Promise<electron.BrowserWindow> {
   const profileStorage = await profileStoragePromise;
@@ -178,25 +128,27 @@ app.on('window-all-closed', () => {
 app.on('activate', async function() {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (store.getState().browserWindows.isEmpty()) {
+  if (browserWindowIds.length === 0) {
     await newBrowserWindow();
   }
 });
 
 async function newBrowserWindow(tabInfo: ?Object) {
   const bw = await makeBrowserWindow(tabInfo);
-
-  const state = store.getState();
-  const newState = state.set('browserWindows', state.browserWindows.add(bw.id));
-
-  store.dispatch({ type: 'REPLACE', payload: newState });
+  browserWindowIds.push(bw.id);
 }
 
 async function closeBrowserWindow(id: number) {
-  const state = store.getState();
-  const newState = state.set('browserWindows', state.browserWindows.delete(id));
+  const index = browserWindowIds.indexOf(id);
+  if (index < 0) {
+    return;
+  }
+  browserWindowIds.splice(index, 1);
 
-  store.dispatch({ type: 'REPLACE', payload: newState });
+  const bw = BrowserWindow.fromId(id);
+  if (bw) {
+    bw.close();
+  }
 }
 
 ipc.on('new-browser-window', async function(_event, args) {
