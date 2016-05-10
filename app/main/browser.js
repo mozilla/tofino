@@ -33,8 +33,8 @@ process.on('unhandledRejection', (reason, p) => {
 
 import path from 'path';
 import electron from 'electron';
-import electronLocalshortcut from 'electron-localshortcut';
 
+import * as hotkeys from './hotkeys';
 import * as menu from './menu/index';
 import * as instrument from '../services/instrument';
 import * as profileCommands from '../shared/profile-commands';
@@ -155,13 +155,7 @@ async function makeBrowserWindow(tabInfo: ?Object): Promise<electron.BrowserWind
   // Start loading browser chrome.
   browser.loadURL(fileUrl(path.join(UI_DIR, 'browser', 'browser.html')));
 
-  electronLocalshortcut.register(browser, 'CmdOrCtrl+L', () => {
-    browser.webContents.send('focus-url-bar');
-  });
-
-  electronLocalshortcut.register(browser, 'CmdOrCtrl+R', () => {
-    browser.webContents.send('page-refresh');
-  });
+  hotkeys.bindBrowserWindowHotkeys(browser);
 
   return browser;
 }
@@ -278,4 +272,7 @@ ipc.on('profile-command', async function(event, { token, command }) {
   await dispatchProfileCommand(command, browserWindow, token);
 });
 
-ipc.on('synthesize-accelerator', menu.handleIPCAcceleratorCommand);
+ipc.on('synthesize-accelerator', (...args) => {
+  hotkeys.handleIPCAcceleratorCommand(...args);
+  menu.handleIPCAcceleratorCommand(...args);
+});

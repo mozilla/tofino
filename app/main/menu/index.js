@@ -74,6 +74,9 @@ export function build(data = {}) {
  * "CommandOrControl+T" or "Command+T" on OSX, etc. This is fine as we're just using
  * these in tests.
  *
+ * @see `./app/main/hotkeys.js` as well for handling synthesized browser
+ * window hotkeys.
+ *
  * Currently should only be used in tests.
  */
 export function handleIPCAcceleratorCommand(e, accelerator) {
