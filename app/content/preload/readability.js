@@ -1763,6 +1763,46 @@ Readability.prototype = {
   },
 
   /**
+   * Recursively calls 'textContent' on the provided element, but adds two newlines
+   * after each paragraph.
+   *
+   * @return string
+   */
+  _textContentWithNewlines: function (elem) {
+    var acc = [];
+    function pushContent(e) {
+      var t = e.textContent;
+      if (t) {
+        acc.push(t);
+      }
+    }
+
+    function accumulate(e) {
+      if (!e) {
+        return;
+      }
+
+      if (e.tagName == "P") {
+        pushContent(e);
+        acc.push("\n\n");
+        return;
+      }
+
+      if (e.hasChildNodes && e.hasChildNodes()) {
+        for (var i = 0; i < e.children.length; ++i) {
+          accumulate(e.children[i]);
+        }
+        return;
+      }
+
+      pushContent(e);
+    }
+
+    accumulate(elem);
+    return acc.join("") || "";
+  },
+
+  /**
    * Runs readability.
    *
    * Workflow:
