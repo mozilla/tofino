@@ -1770,32 +1770,31 @@ Readability.prototype = {
    */
   _textContentWithNewlines: function (elem) {
     var acc = [];
-    function pushContent(e) {
-      var t = e.textContent;
-      if (t) {
-        acc.push(t);
-      }
-    }
-
     function accumulate(e) {
       if (!e) {
         return;
       }
 
-      if (e.tagName == "P") {
-        pushContent(e);
-        acc.push("\n\n");
+      if (e.nodeType === Node.TEXT_NODE) {
+        acc.push(e.data);
         return;
       }
 
-      if (e.hasChildNodes && e.hasChildNodes()) {
-        for (var i = 0; i < e.children.length; ++i) {
-          accumulate(e.children[i]);
+      if (e.nodeType !== Node.ELEMENT_NODE) {
+        return;
+      }
+
+      // This should always be the case for any elements that have
+      // content.
+      if (e.childNodes.length > 0) {
+        for (var i = 0; i < e.childNodes.length; ++i) {
+          accumulate(e.childNodes[i]);
         }
-        return;
-      }
 
-      pushContent(e);
+        if (e.tagName == "P") {
+          acc.push("\n\n");
+        }
+      }
     }
 
     accumulate(elem);
