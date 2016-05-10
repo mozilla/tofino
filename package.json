@@ -70,7 +70,7 @@
     "mocha-jsdom": "1.1.0",
     "nyc": "6.4.0",
     "react-addons-perf": "15.0.1",
-    "react-addons-test-utils": "15.0.1",
+    "react-addons-test-utils": "15.0.2",
     "rimraf": "2.5.2",
     "source-map-support": "ncalexan/node-source-map-support#fileUrls-plus",
     "spectron": "2.37.0",
