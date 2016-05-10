@@ -81,6 +81,12 @@ export default function basic(state = initialState, action) {
     case types.SET_CURRENT_TAB:
       return setCurrentTab(state, action.pageId);
 
+    case types.SET_CURRENT_TAB_LEFT:
+      return setCurrentTabLeft(state);
+
+    case types.SET_CURRENT_TAB_RIGHT:
+      return setCurrentTabRight(state);
+
     default:
       return state;
   }
@@ -232,4 +238,20 @@ function setCurrentTab(state, pageId) {
   const pageIndex = getPageIndexById(state, pageId);
   assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
   return state.set('currentPageIndex', pageIndex);
+}
+
+function setCurrentTabLeft(state) {
+  const pageToSelect = state.pages.get(state.currentPageIndex - 1);
+  if (!pageToSelect) {
+    return state;
+  }
+  return setCurrentTab(state, pageToSelect.id);
+}
+
+function setCurrentTabRight(state) {
+  const pageToSelect = state.pages.get(state.currentPageIndex + 1);
+  if (!pageToSelect) {
+    return state;
+  }
+  return setCurrentTab(state, pageToSelect.id);
 }
