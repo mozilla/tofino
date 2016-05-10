@@ -19,7 +19,6 @@ import expressWs from 'express-ws';
 import expressValidator from 'express-validator';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
-import * as Task from 'co-task';
 
 import { ProfileStorage, StarOp } from '../services/storage';
 import * as profileDiffs from '../shared/profile-diffs';
@@ -34,26 +33,33 @@ function configure(app: any, storage: ProfileStorage) {
   app.use(expressValidator()); // Keep this immediately after express.bodyParser().
 
   /**
-   * Catch errors from the given generator function and forward them to `next` for handling.
+   * TODO Catch errors from the given generator function and forward them to `next` for handling.
    *
-   * @param genfun: function*(req, res, next)
+   * @param genfun: async function(req, res, next)
    * @returns {function(req, res, next): (Promise.<T>)}
    */
-  function wrap(genfun) {
-    return (...args) => Task.async(genfun)(...args).catch(args[2]); // next = args[2];
+  function wrap(fun) {
+    return async function(...args) {
+      try {
+        await fun(...args);
+      } catch (e) {
+        const next = args[2];
+        next(e);
+      }
+    };
   }
 
-  const initial = Task.async(function*() {
-    const stars = yield storage.starredURLs();
-    const recentStars = yield storage.recentlyStarred();
+  async function initial() {
+    const stars = await storage.starredURLs();
+    const recentStars = await storage.recentlyStarred();
     return { stars, recentStars };
-  });
+  }
 
   const diffsClients = [];
-  app.ws('/diffs', Task.async(function* (ws, _req) {
+  app.ws('/diffs', async function(ws, _req) {
     diffsClients.push(ws);
 
-    ws.send(JSON.stringify({ type: 'initial', payload: yield initial() }));
+    ws.send(JSON.stringify({ type: 'initial', payload: await initial() }));
 
     ws.on('close', () => {
       const index = diffsClients.indexOf(ws);
@@ -61,7 +67,7 @@ function configure(app: any, storage: ProfileStorage) {
         diffsClients.splice(index, 1);
       }
     });
-  }));
+  });
 
   function sendDiff(diff) {
     diffsClients.forEach((ws) => {
@@ -69,16 +75,15 @@ function configure(app: any, storage: ProfileStorage) {
     });
   }
 
-  function dispatchBookmarkDiffs() {
-    setImmediate(() => Task.spawn(function* () {
-      // TODO: only send add/remove starredness for `url`, rather than grabbing the whole set.
-      sendDiff(profileDiffs.bookmarks(yield storage.starredURLs()));
+  async function dispatchBookmarkDiffs() {
+    // TODO: only send add/remove starredness for `url`, rather than grabbing the whole set.
+    const stars = await storage.starredURLs();
+    sendDiff(profileDiffs.bookmarks(stars));
 
-      sendDiff({ type: '/stars/recent', payload: yield storage.recentlyStarred() });
-    }));
+    sendDiff({ type: '/stars/recent', payload: await storage.recentlyStarred() });
   }
 
-  app.post('/session/start', wrap(function* (req, res) {
+  app.post('/session/start', wrap(async function(req, res) {
     req.checkBody('scope').notEmpty().isInt();
     req.checkBody('ancestor').optional().isInt();
 
@@ -90,11 +95,11 @@ function configure(app: any, storage: ProfileStorage) {
     }
 
     const { scope, ancestor } = req.body;
-    const session = yield storage.startSession(scope, ancestor);
+    const session = await storage.startSession(scope, ancestor);
     res.json({ session });
   }));
 
-  app.post('/session/end', wrap(function* (req, res) {
+  app.post('/session/end', wrap(async function(req, res) {
     req.checkBody('session').isInt().notEmpty();
 
     const errors = req.validationErrors();
@@ -104,11 +109,11 @@ function configure(app: any, storage: ProfileStorage) {
     }
 
     const { session } = req.body;
-    yield storage.endSession(session);
+    await storage.endSession(session);
     res.json();
   }));
 
-  app.post('/visits', wrap(function* (req, res) {
+  app.post('/visits', wrap(async function(req, res) {
     req.checkBody('url').notEmpty();
     req.checkBody('title').optional();
     req.checkBody('session').notEmpty().isInt();
@@ -121,11 +126,11 @@ function configure(app: any, storage: ProfileStorage) {
 
     // TODO: include visit types.
     const { url, session, title } = req.body;
-    yield storage.visit(url, session, title);
+    await storage.visit(url, session, title);
     res.json();
   }));
 
-  app.get('/visits', wrap(function* (req, res) {
+  app.get('/visits', wrap(async function(req, res) {
     req.checkQuery('q').notEmpty();
 
     const errors = req.validationErrors();
@@ -135,11 +140,11 @@ function configure(app: any, storage: ProfileStorage) {
     }
 
     const { q } = req.query;
-    const results = yield storage.query(q);
+    const results = await storage.query(q);
     res.json({ results });
   }));
 
-  app.put('/stars/:url', wrap(function* (req, res) {
+  app.put('/stars/:url', wrap(async function(req, res) {
     req.checkParams('url').notEmpty();
     req.checkBody('title').optional();
     req.checkBody('session').isInt().notEmpty();
@@ -151,13 +156,13 @@ function configure(app: any, storage: ProfileStorage) {
     }
 
     const { session, _title } = req.body;
-    yield storage.starPage(req.params.url, session, StarOp.star);
+    await storage.starPage(req.params.url, session, StarOp.star);
     res.json();
 
-    dispatchBookmarkDiffs();
+    dispatchBookmarkDiffs(); // Spawn, but don't await.
   }));
 
-  app.delete('/stars/:url', wrap(function* (req, res) {
+  app.delete('/stars/:url', wrap(async function(req, res) {
     req.checkParams('url').notEmpty();
     req.checkBody('session').isInt().notEmpty();
 
@@ -168,37 +173,35 @@ function configure(app: any, storage: ProfileStorage) {
     }
 
     const { session, _title } = req.body;
-    yield storage.starPage(req.params.url, session, StarOp.unstar);
+    await storage.starPage(req.params.url, session, StarOp.unstar);
     res.json();
 
-    dispatchBookmarkDiffs();
+    dispatchBookmarkDiffs(); // Spawn, but don't await.
   }));
 
-  app.get('/stars', wrap(function* (req, res) {
+  app.get('/stars', wrap(async function(req, res) {
     const errors = req.validationErrors();
     if (errors) {
       res.status(401).json(errors);
       return;
     }
 
-    const stars = yield storage.starredURLs();
+    const stars = await storage.starredURLs();
     res.json({ stars });
   }));
 
-  app.get('/recentStars', wrap(function* (req, res) {
+  app.get('/recentStars', wrap(async function(req, res) {
     const errors = req.validationErrors();
     if (errors) {
       res.status(401).json(errors);
       return;
     }
 
-    const stars = yield storage.recentlyStarred();
-    console.log(JSON.stringify(stars));
-
+    const stars = await storage.recentlyStarred();
     res.json({ stars });
   }));
 
-  app.post('/pages/:url', wrap(function* (req, res) {
+  app.post('/pages/:url', wrap(async function(req, res) {
     req.checkParams('url').notEmpty();
     req.checkBody(['page', 'textContent']).notEmpty();
     req.checkBody('session').isInt().notEmpty();
@@ -211,7 +214,7 @@ function configure(app: any, storage: ProfileStorage) {
 
     const { page, session } = req.body;
     page.uri = req.params.url;
-    yield storage.savePage(page, session);
+    await storage.savePage(page, session);
     res.json();
   }));
 

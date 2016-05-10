@@ -44,7 +44,6 @@ const profileStoragePromise = ProfileStorage.open(path.join(__dirname, '..', '..
 import { UI_DIR, fileUrl } from './util';
 
 import WebSocket from 'ws';
-import * as Task from 'co-task';
 
 const BrowserWindow = electron.BrowserWindow;  // create native browser window.
 const app = electron.app; // control application life.
@@ -156,7 +155,13 @@ ipc.on('new-browser-window', async function(_event, args) {
 });
 
 ipc.on('close-browser-window', async function (event, _args) {
+  if (!event || !event.sender) {
+    return;
+  }
   const bw = BrowserWindow.fromWebContents(event.sender);
+  if (!bw) {
+    return;
+  }
   await closeBrowserWindow(bw.id);
 });
 
@@ -179,9 +184,9 @@ ipc.on('synthesize-accelerator', (...args) => {
 
 let ws = undefined;
 
-Task.spawn(function* () {
-  const profileStorage = yield profileStoragePromise;
-  yield userAgentService.start(profileStorage, 9090, true);
+
+profileStoragePromise.then(async function(profileStorage) {
+  await userAgentService.start(profileStorage, 9090, true);
 
   ws = new WebSocket('ws://localhost:9090/diffs');
 
