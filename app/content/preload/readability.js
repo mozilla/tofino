@@ -1368,7 +1368,7 @@ Readability.prototype = {
       }
     }
 
-    // Loop thrugh all of our possible pages from above and find our top
+    // Loop through all of our possible pages from above and find our top
     // candidate for the next page URL. Require at least a score of 50, which
     // is a relatively high confidence that this page is the next link.
     var topPage = null;
