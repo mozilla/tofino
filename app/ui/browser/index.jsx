@@ -19,8 +19,15 @@ import App from './views/app';
 import configureStore from './store/store';
 import * as actions from './actions/main-actions';
 import * as profileDiffs from '../../shared/profile-diffs';
+import BUILD_CONFIG from '../../../build-config';
 
 const store = configureStore();
+
+// Make the store accessible from the ipcRenderer singleton
+// so we can easily access in tests
+if (BUILD_CONFIG.test) {
+  ipcRenderer.store = store;
+}
 
 // Before rendering, add a fresh tab and prepare the cached profile data.  This is leading toward a
 // session restore model where the main process can instantiate a mostly-formed browser window.

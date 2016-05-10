@@ -56,6 +56,7 @@ const Driver = {
     this._stopServer = stop;
     this.port = port;
     this.fixturesURL = `http://localhost:${this.port}`;
+
     return this.app;
   },
 
@@ -69,6 +70,44 @@ const Driver = {
     }
 
     this.app = this.port = this.fixturesURL = this._stopServer = this._bwHandle = null;
+  },
+
+  /**
+   * Fetches the redux state of the first browser window and returns
+   * it as a plain JS object (de-immutable-ified).
+   *
+   * @return Promise<Object>
+   */
+  getReduxState: async function() {
+    await this.setTargetToBrowserWindow();
+
+    return await this.client.execute(() =>
+      JSON.stringify(require('electron').ipcRenderer.store.getState()))
+      .then(res => JSON.parse(res.value));
+  },
+
+  /**
+   * Polls the redux state of the first browser window
+   * until the passed in predicate, which receives the state as a
+   * plain JS Object, returns a truthy value, or resolves to a truthy value.
+   *
+   * @param {Function} predicate
+   * @return Promise
+   */
+  waitUntilReduxState: async function(predicate) {
+    let result = false;
+    do {
+      const state = await this.getReduxState();
+      result = await predicate(state);
+    } while (!result);
+  },
+
+  ipcSendToRenderer(channel, ...args) {
+    this.app.electron.ipcRenderer.emit(channel, {}, ...args);
+  },
+
+  ipcSendToMain(channel, ...args) {
+    this.app.electron.ipcRenderer.send(channel, ...args);
   },
 
   /**

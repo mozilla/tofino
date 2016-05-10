@@ -73,7 +73,7 @@
     "react-addons-test-utils": "15.0.1",
     "rimraf": "2.5.2",
     "source-map-support": "ncalexan/node-source-map-support#fileUrls-plus",
-    "spectron": "1.37.0",
+    "spectron": "2.37.0",
     "through2": "2.0.1",
     "tmp": "0.0.28",
     "uuid": "2.0.2",
