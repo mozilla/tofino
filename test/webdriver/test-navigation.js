@@ -12,7 +12,7 @@ describe('navigation', function() {
     return;
   }
 
-  this.timeout(30000);
+  this.timeout(Driver.TEST_TIMEOUT_IN_MS);
 
   beforeEach(async function() {
     await Driver.start();

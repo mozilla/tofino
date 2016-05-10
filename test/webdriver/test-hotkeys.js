@@ -14,7 +14,7 @@ describe('hotkeys', function() {
     return;
   }
 
-  this.timeout(30000);
+  this.timeout(Driver.TEST_TIMEOUT_IN_MS);
 
   /**
    * These tests all run in the same browser cycle,

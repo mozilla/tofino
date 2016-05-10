@@ -22,6 +22,10 @@ const WEBDRIVER_TIMEOUT_IN_MS = 10000;
 const WEBDRIVER_START_TIMEOUT_IN_MS = 10000;
 
 const Driver = {
+
+  // Timeout used by test suites: `this.timeout(Driver.TEST_TIMEOUT_IN_MS)`
+  TEST_TIMEOUT_IN_MS: 60000,
+
   app: null,
   fixturesURL: null,
   port: null,
