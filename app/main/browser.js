@@ -235,18 +235,6 @@ ipc.on('instrument-event', (event, args) => {
   instrument.event(args.name, args.method, args.label, args.value);
 });
 
-// Inject initial state into the window. Eventually this will behave like session restore.
-// Whenever you add something to the app state, make sure to also add it here.
-
-ipc.on('window-loaded', (event) => {
-  const bookmarkSet = store.getState().bookmarks || Immutable.Set();
-  const recentBookmarks = store.getState().recentBookmarks || Immutable.List();
-  event.returnValue = {
-    bookmarks: bookmarkSet.toJS(),
-    recentBookmarks: recentBookmarks.toJS(),
-  };
-});
-
 ipc.on('window-ready', event => {
   const bw = BrowserWindow.fromWebContents(event.sender);
   if (bw) {
