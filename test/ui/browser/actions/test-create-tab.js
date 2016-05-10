@@ -7,8 +7,8 @@ import expect from 'expect';
 import configureStore from '../../../../app/ui/browser/store/store';
 import * as actions from '../../../../app/ui/browser/actions/main-actions';
 import * as selectors from '../../../../app/ui/browser/selectors';
-import { ipcMain as ipcMainMock } from '../../../../app/shared/electron';
-import * as profileCommandTypes from '../../../../app/shared/constants/profile-command-types';
+
+import fetchMock from 'fetch-mock';
 
 const HOME_PAGE = 'tofino://mozilla';
 
@@ -19,6 +19,8 @@ describe('Action - CREATE_TAB', () => {
     this.getCurrentPageIndex = () => selectors.getCurrentPageIndex(this.store.getState());
     this.dispatch = this.store.dispatch;
   });
+
+  afterEach(fetchMock.reset);
 
   it('Should create a new tab with default location and select it', function() {
     const { getCurrentPageIndex, getPages, dispatch } = this;
@@ -57,22 +59,17 @@ describe('Action - CREATE_TAB', () => {
                                           ' new tab with location');
   });
 
-  it('Should send a message to the main process', function(done) {
+  it('Should send a message to the main process', function() {
     const { dispatch } = this;
 
-    ipcMainMock.on('profile-command', handleIpc);
+    fetchMock.mock('^http://localhost:9090', 200);
 
     dispatch(actions.createTab('https://github.com/', 1234));
 
-    function handleIpc(e, { command }) {
-      // Filter out any mock ipc calls that are not yet guaranteed to have
-      // completed.  We see bleed-through in this test.
-      if (command.type !== profileCommandTypes.DID_START_SESSION || !command.payload.ancestorId) {
-        return;
-      }
-      expect(command.payload.ancestorId).toEqual(1234);
-      ipcMainMock.removeListener('profile-command', handleIpc);
-      done();
-    }
+    expect(fetchMock.lastUrl('^http://localhost:9090'))
+      .toEqual('http://localhost:9090/session/start');
+    expect(fetchMock.lastOptions('^http://localhost:9090').method).toEqual('POST');
+    expect(fetchMock.lastOptions('^http://localhost:9090').json)
+      .toEqual({ ancestor: 1234, reason: undefined, scope: 0 });
   });
 });

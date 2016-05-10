@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 */
 
 import electron from 'electron';
-import * as profileCommands from '../../shared/profile-commands';
 
 const app = electron.app;
 const APP_NAME = app.getName();

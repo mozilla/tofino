@@ -6,11 +6,11 @@
 import expect from 'expect';
 import configureStore from '../../../../app/ui/browser/store/store';
 import * as actions from '../../../../app/ui/browser/actions/main-actions';
-import * as profileCommandTypes from '../../../../app/shared/constants/profile-command-types';
-import { ipcMain as ipcMainMock } from '../../../../app/shared/electron';
+
+import fetchMock from 'fetch-mock';
 
 describe('Action - unbookmark', () => {
-  const sessionId = 1;
+  const session = 1;
 
   beforeEach(function() {
     this.store = configureStore();
@@ -18,36 +18,31 @@ describe('Action - unbookmark', () => {
     this.dispatch = this.store.dispatch;
   });
 
+  afterEach(fetchMock.reset);
+
   it('Should remove bookmarks from profile state', function() {
     const { dispatch, getState } = this;
 
     expect(getState().get('bookmarks').has('http://moz1.com')).toEqual(false);
-    dispatch(actions.bookmark(sessionId, 'http://moz1.com', 'moz1'));
+    dispatch(actions.bookmark(session, 'http://moz1.com', 'moz1'));
     expect(getState().get('bookmarks').has('http://moz1.com')).toEqual(true);
-    dispatch(actions.unbookmark(sessionId, 'http://moz1.com'));
+    dispatch(actions.unbookmark(session, 'http://moz1.com'));
     expect(getState().get('bookmarks').has('http://moz1.com')).toEqual(false);
   });
 
-  it('Should send a message to the main process', function(done) {
+  it('Should send a message to the main process', function() {
     const { dispatch } = this;
 
-    ipcMainMock.on('profile-command', handleIpc);
+    fetchMock
+      .mock('^http://localhost:9090/stars', 200);
 
-    dispatch(actions.bookmark(sessionId, 'http://moz1.com', 'moz1'));
-    dispatch(actions.unbookmark(sessionId, 'http://moz1.com'));
+    dispatch(actions.bookmark(session, 'http://moz1.com', 'moz1'));
+    dispatch(actions.unbookmark(session, 'http://moz1.com'));
 
-    function handleIpc(e, { command }) {
-      // Filter out any mock ipc calls that are not of interest
-      // to the current test.
-      if (command.type !== profileCommandTypes.DID_UNBOOKMARK_LOCATION ||
-          command.payload.url !== 'http://moz1.com') {
-        return;
-      }
-      expect(command.type).toEqual(profileCommandTypes.DID_UNBOOKMARK_LOCATION);
-      expect(command.payload.url).toEqual('http://moz1.com');
-      expect(command.payload.sessionId).toEqual(sessionId);
-      ipcMainMock.removeListener('profile-command', handleIpc);
-      done();
-    }
+    expect(fetchMock.lastUrl('^http://localhost:9090/stars'))
+      .toEqual(`http://localhost:9090/stars/${encodeURIComponent('http://moz1.com')}`);
+    expect(fetchMock.lastOptions('^http://localhost:9090/stars').method).toEqual('DELETE');
+    expect(fetchMock.lastOptions('^http://localhost:9090/stars').json)
+      .toEqual({ session });
   });
 });

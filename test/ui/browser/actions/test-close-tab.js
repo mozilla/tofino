@@ -7,8 +7,8 @@ import expect from 'expect';
 import configureStore from '../../../../app/ui/browser/store/store';
 import * as actions from '../../../../app/ui/browser/actions/main-actions';
 import * as selectors from '../../../../app/ui/browser/selectors';
-import { ipcMain as ipcMainMock } from '../../../../app/shared/electron';
-import * as profileCommandTypes from '../../../../app/shared/constants/profile-command-types';
+
+import fetchMock from 'fetch-mock';
 
 describe('Action - CLOSE_TAB', () => {
   beforeEach(function() {
@@ -25,6 +25,8 @@ describe('Action - CLOSE_TAB', () => {
     expect(getCurrentPageIndex()).toEqual(3);
     expect(getPages().size).toEqual(4);
   });
+
+  afterEach(fetchMock.reset);
 
   it('Should maintain tab selection when destroying a tab before the selected tab', function() {
     const { getCurrentPageIndex, getPages, dispatch } = this;
@@ -139,26 +141,21 @@ describe('Action - CLOSE_TAB', () => {
     expect(getPages().get(0).location).toEqual('tofino://mozilla');
   });
 
-  it('Should send a message to the main process', function(done) {
+  it('Should send a message to the main process', function() {
     const { dispatch, getPages } = this;
 
     // Fake session ID for first tab, and make second tab a descendant of the first tab.
     dispatch(actions.didStartSession(getPages().get(0).id, 11));
     dispatch(actions.didStartSession(getPages().get(1).id, 22, 11));
 
-    ipcMainMock.on('profile-command', handleIpc);
+    fetchMock.mock('^http://localhost:9090', 200);
 
     dispatch(actions.closeTab(getPages().get(1).id));
 
-    function handleIpc(e, { command }) {
-      // Filter out any mock ipc calls that are not yet guaranteed to have
-      // completed
-      if (command.type !== profileCommandTypes.DID_END_SESSION) {
-        return;
-      }
-      expect(command.payload.sessionId).toEqual(22);
-      ipcMainMock.removeListener('profile-command', handleIpc);
-      done();
-    }
+    expect(fetchMock.lastUrl('^http://localhost:9090'))
+      .toEqual('http://localhost:9090/session/end');
+    expect(fetchMock.lastOptions('^http://localhost:9090').method).toEqual('POST');
+    expect(fetchMock.lastOptions('^http://localhost:9090').json)
+      .toEqual({ session: 22, reason: undefined });
   });
 });

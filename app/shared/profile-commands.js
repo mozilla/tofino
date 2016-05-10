@@ -12,44 +12,20 @@
  specific language governing permissions and limitations under the License.
  */
 
+import * as requestModule from 'request';
+
 import * as profileCommandTypes from './constants/profile-command-types';
 
 import type { ReadabilityResult } from '../shared/types';
-import { ipcRenderer } from './electron';
 
 export type ProfileCommand = { type: string, payload: Object };
 
-let tokenCounter = 0;
-
-/**
- * Send a command to the User Agent service and do not expect a
- * response.
- *
- * Fire and forget.  Returns a Promise for convenience.
- */
-export function send(command: ProfileCommand): Promise<any> {
-  ipcRenderer.send('profile-command', { command });
-  return Promise.resolve();
-}
-
-/**
- * Send a command to the User Agent service and expect a response.
- *
- * Returns a Promise that resolves to the response value.
- */
-export function request(command: ProfileCommand): Promise<any> {
-  const token = ++tokenCounter;
-  return new Promise((resolve, reject) => {
-    ipcRenderer.once(`profile-command-${token}`, (_event, response) => {
-      if (response.error) {
-        reject(response.payload);
-        return;
-      }
-      resolve(response.payload);
-    });
-    ipcRenderer.send('profile-command', { token, command });
-  });
-}
+requestModule.debug = true;
+const request = requestModule.defaults({
+  baseUrl: 'http://localhost:9090',
+  json: true,
+});
+export { request };
 
 /**
  * The command for the '✫' bookmark button.

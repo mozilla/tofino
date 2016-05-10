@@ -12,12 +12,12 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
+import * as userAgent from '../user-agent';
 import * as uuid from 'uuid';
 
 import * as model from '../model/index';
 import * as types from '../constants/action-types';
 import * as profileDiffs from '../../../shared/profile-diffs';
-import * as profileCommands from '../../../shared/profile-commands';
 
 // Order matters!  Flow will try the earliest first.
 type Action = ((dispatch: (action: Action) => any, getState: () => Object) => any) |
@@ -54,11 +54,23 @@ export function createTab(location: ?string = undefined,
     // Start loading a tab while asking the User Agent to start its browsing session.
     dispatch({ type: types.CREATE_TAB, id, ancestorId, location, instrument: true });
 
-    profileCommands.request(profileCommands.startSession(ancestorId, reason))
-      .then(({ sessionId }) => {
-        dispatch(didStartSession(id, sessionId, ancestorId));
+    // TODO: properly track window scope.
+    userAgent.api('/session/start', {
+      method: 'POST',
+      json: { scope: 0, ancestor: ancestorId, reason },
+    })
+      .then(async function (response) {
+        if (!response.ok) {
+          return;
+        }
+        const body = await response.json();
+        const session = body.session;
+        dispatch(didStartSession(id, session, ancestorId));
       })
-      .catch(); // This situation is bad for persisting browsing data, but there's nothing to do!
+
+      // This situation is bad for persisting browsing data, but there's nothing to
+      // do! In the future, we could retry.
+      .catch();
   };
 }
 
@@ -84,9 +96,12 @@ export function closeTab(pageId: string): Action {
 
     // Notify User Agent with sessionId before closing the tab (and losing the sessionId).
     maybeWithPageById(getState(), pageId, (page) => {
-      if (page.sessionId) {
-        profileCommands.send(profileCommands.endSession(page.sessionId, reason));
-      }
+      userAgent.api('/session/end', {
+        method: 'POST',
+        json: { session: page.sessionId, reason },
+      })
+        .then() // Fire and forget.
+        .catch(); // In the future, we could retry.
     });
 
     dispatch({ type: types.CLOSE_TAB, pageId, instrument: true });
@@ -122,34 +137,46 @@ export function setUserTypedLocation(pageId: string, payload: Object): Action {
     // Empty input could happen if a page finishes loading and the userTyped
     // state is going to be reset.
     if (payload.text) {
-      profileCommands.request(profileCommands.setUserTypedLocation(payload.text))
-        .then(({ text, completionList }) => {
-          dispatch(profileDiffs.completions(text, completionList));
+      userAgent.api(`/visits?q=${encodeURIComponent(payload.text)}`, {
+        method: 'GET',
+      })
+        .then(async function (response) {
+          if (!response.ok) {
+            return;
+          }
+          const body = await response.json();
+          dispatch(profileDiffs.completions(payload.text, body.results));
         })
-        .catch(); // Ignore failures.  Not much to be done here.
+        .catch(); // Right now, nothing to be done.  In the future, we could retry.
     }
   };
 }
 
-export function bookmark(sessionId: number, url: string, title: ?string = undefined): Action {
+export function bookmark(session: number, url: string, title: ?string = undefined): Action {
   return dispatch => {
     // Update this window's state before telling the profile service.
     dispatch({ type: types.SET_BOOKMARK_STATE, url, isBookmarked: true, title });
 
-    if (sessionId) {
-      profileCommands.send(profileCommands.bookmark(sessionId, url, title));
-    }
+    userAgent.api(`/stars/${encodeURIComponent(url)}`, {
+      method: 'PUT',
+      json: { title, session },
+    })
+      .then() // Fire and forget.
+      .catch(); // Right now, nothing to be done.  In the future, we could retry.
   };
 }
 
-export function unbookmark(sessionId: number, url: string): Action {
+export function unbookmark(session: number, url: string): Action {
   return dispatch => {
     // Update this window's state before telling the profile service.
     dispatch({ type: types.SET_BOOKMARK_STATE, url, isBookmarked: false });
 
-    if (sessionId) {
-      profileCommands.send(profileCommands.unbookmark(sessionId, url));
-    }
+    userAgent.api(`/stars/${encodeURIComponent(url)}`, {
+      method: 'DELETE',
+      json: { session },
+    })
+      .then() // Fire and forget.
+      .catch(); // Right now, nothing to be done.  In the future, we could retry.
   };
 }
 

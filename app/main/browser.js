@@ -37,13 +37,12 @@ import electron from 'electron';
 import * as hotkeys from './hotkeys';
 import * as menu from './menu/index';
 import * as instrument from '../services/instrument';
-import * as profileCommands from '../shared/profile-commands';
-import * as profileDiffs from '../shared/profile-diffs';
 import * as model from '../model/index';
 import * as storeStore from './store/store';
 import registerAboutPages from './about-pages';
 import { ProfileStorage } from '../services/storage';
 import * as profileCommandHandler from './profile-command-handler';
+import * as userAgentService from './user-agent-service';
 const profileStoragePromise = ProfileStorage.open(path.join(__dirname, '..', '..'));
 import Immutable from 'immutable';
 import { UI_DIR, fileUrl } from './util';
@@ -253,7 +252,7 @@ ipc.on('new-browser-window', async function(_event, args) {
 });
 
 ipc.on('close-browser-window', async function (event, _args) {
-  const bw = BrowserWindow.fromWebContents(event.sender)
+  const bw = BrowserWindow.fromWebContents(event.sender);
   await closeBrowserWindow(bw.id);
 });
 
@@ -292,4 +291,8 @@ ipc.on('profile-command', async function(event, { token, command }) {
 ipc.on('synthesize-accelerator', (...args) => {
   hotkeys.handleIPCAcceleratorCommand(...args);
   menu.handleIPCAcceleratorCommand(...args);
+});
+
+profileStoragePromise.then((profileStorage) => {
+  userAgentService.start(profileStorage, 9090, true);
 });

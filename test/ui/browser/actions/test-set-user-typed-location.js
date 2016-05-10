@@ -6,9 +6,9 @@
 import expect from 'expect';
 import configureStore from '../../../../app/ui/browser/store/store';
 import * as actions from '../../../../app/ui/browser/actions/main-actions';
-import * as profileCommandTypes from '../../../../app/shared/constants/profile-command-types';
 import * as selectors from '../../../../app/ui/browser/selectors';
-import { ipcMain as ipcMainMock } from '../../../../app/shared/electron';
+
+import fetchMock from 'fetch-mock';
 
 describe('Action - SET_USER_TYPED_LOCATION', () => {
   beforeEach(function() {
@@ -44,26 +44,18 @@ describe('Action - SET_USER_TYPED_LOCATION', () => {
     expect(getUserTypedLocation(getPages().get(1).id)).toEqual('Foo');
   });
 
-  it('Should send a message to the main process', function(done) {
+  it('Should send a message to the main process', function() {
     const { dispatch, getPages } = this;
 
-    ipcMainMock.on('profile-command', handleIpc);
+    fetchMock
+      .mock('^http://localhost:9090', 200);
 
     dispatch(actions.setUserTypedLocation(getPages().get(1).id, {
       text: 'Bar',
     }));
 
-    function handleIpc(e, { command }) {
-      // Filter out any mock ipc calls that are not yet guaranteed to have
-      // completed
-      if (command.type !== profileCommandTypes.DID_SET_USER_TYPED_LOCATION ||
-          command.payload.text !== 'Bar') {
-        return;
-      }
-      expect(command.type).toEqual(profileCommandTypes.DID_SET_USER_TYPED_LOCATION);
-      expect(command.payload.text).toEqual('Bar');
-      ipcMainMock.removeListener('profile-command', handleIpc);
-      done();
-    }
+    expect(fetchMock.lastUrl('^http://localhost:9090'))
+      .toEqual(`http://localhost:9090/visits?q=${encodeURIComponent('Bar')}`);
+    expect(fetchMock.lastOptions('^http://localhost:9090').method).toEqual('GET');
   });
 });

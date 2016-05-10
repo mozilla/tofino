@@ -22,6 +22,7 @@ import { fixURL } from '../../browser-util';
 import { menuWebViewContext } from '../../actions/external';
 import * as actions from '../../actions/main-actions';
 import * as profileCommands from '../../../../shared/profile-commands';
+import * as userAgent from '../../user-agent';
 
 const PAGE_STYLE = Style.registerStyle({
   // Mark this as the relative anchor for floating children (e.g. search bar).
@@ -131,10 +132,12 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
       text: null,
     }));
 
-    const sessionId = pageAccessor().sessionId;
-    if (sessionId) {
-      profileCommands.send(profileCommands.visited(sessionId, url, title));
-    }
+    userAgent.api('/visits', {
+      method: 'POST',
+      json: { url, title, session: pageAccessor().sessionId },
+    })
+      .then() // Fire and forget.
+      .catch(); // In the future, we could retry.
   });
 
   webview.addEventListener('ipc-message', e => {

@@ -6,12 +6,12 @@
 import expect from 'expect';
 import configureStore from '../../../../app/ui/browser/store/store';
 import * as actions from '../../../../app/ui/browser/actions/main-actions';
-import * as profileCommandTypes from '../../../../app/shared/constants/profile-command-types';
 import * as selectors from '../../../../app/ui/browser/selectors';
-import { ipcMain as ipcMainMock } from '../../../../app/shared/electron';
+
+import fetchMock from 'fetch-mock';
 
 describe('Action - bookmark', () => {
-  const sessionId = 1;
+  const session = 1;
 
   beforeEach(function() {
     this.store = configureStore();
@@ -19,35 +19,28 @@ describe('Action - bookmark', () => {
     this.dispatch = this.store.dispatch;
   });
 
+  afterEach(fetchMock.reset);
+
   it('Should add bookmarks to profile state', function() {
     const { dispatch, getProfile } = this;
 
     expect(getProfile().get('bookmarks').has('http://moz1.com')).toEqual(false);
-    dispatch(actions.bookmark(sessionId, 'http://moz1.com', 'moz1'));
+    dispatch(actions.bookmark(session, 'http://moz1.com', 'moz1'));
     expect(getProfile().get('bookmarks').has('http://moz1.com')).toEqual(true);
   });
 
-  it('Should send a message to the main process', function(done) {
+  it('Should send a message to the main process', function() {
     const { dispatch } = this;
 
-    ipcMainMock.on('profile-command', handleIpc);
+    fetchMock
+      .mock('^http://localhost:9090/stars', 200);
 
-    dispatch(actions.bookmark(sessionId, 'http://moz1.com', 'moz1'));
+    dispatch(actions.bookmark(session, 'http://moz1.com', 'moz1'));
 
-    function handleIpc(e, { command }) {
-      // Filter out any mock ipc calls that are not of interest
-      // to the current test.
-      if (command.type !== profileCommandTypes.DID_BOOKMARK_LOCATION ||
-          command.payload.url !== 'http://moz1.com' ||
-          command.payload.title !== 'moz1') {
-        return;
-      }
-      expect(command.type).toEqual(profileCommandTypes.DID_BOOKMARK_LOCATION);
-      expect(command.payload.url).toEqual('http://moz1.com');
-      expect(command.payload.title).toEqual('moz1');
-      expect(command.payload.sessionId).toEqual(sessionId);
-      ipcMainMock.removeListener('profile-command', handleIpc);
-      done();
-    }
+    expect(fetchMock.lastUrl('^http://localhost:9090/stars'))
+      .toEqual(`http://localhost:9090/stars/${encodeURIComponent('http://moz1.com')}`);
+    expect(fetchMock.lastOptions('^http://localhost:9090/stars').method).toEqual('PUT');
+    expect(fetchMock.lastOptions('^http://localhost:9090/stars').json)
+      .toEqual({ session, title: 'moz1' });
   });
 });

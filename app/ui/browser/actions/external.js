@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 import * as actions from './main-actions';
 import { getCurrentWebView } from '../browser-util';
 import { remote, clipboard, ipcRenderer } from '../../../shared/electron';
-import * as profileCommands from '../../../shared/profile-commands';
+import * as userAgent from '../user-agent';
 
 const { Menu, MenuItem } = remote;
 
@@ -67,9 +67,13 @@ export function menuBrowser(pageSessionId, dispatch) {
         const endTime = Date.now();
         const duration = endTime - startTime;
         console.log(`In flight at ${endTime} (took ${duration}), location ${readerResult.uri}.`);
-        if (pageSessionId) {
-          profileCommands.send(profileCommands.savePage(pageSessionId, readerResult));
-        }
+
+        userAgent.api(`/pages/${encodeURIComponent(readerResult.uri)}`, {
+          method: 'POST',
+          json: { session: pageSessionId, page: readerResult },
+        })
+          .then() // Fire and forget!
+          .catch(); // In the future, we could retry.
       });
     },
   }));
@@ -122,7 +126,7 @@ export function menuLocationContext(input, pageId, dispatch) {
       }));
 
       // TODO this doesn't work anyway, we have to pass in webViewController
-      // dispatch(navigatePageTo(-1, fixURL(loc)));
+      // dispatch(actions.navigatePageTo(-1, fixURL(loc)));
     },
   }));
 
