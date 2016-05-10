@@ -331,6 +331,11 @@ Readability.prototype = {
       styleNode.parentNode.removeChild(styleNode);
     });
 
+    // Remove script tags.
+    this._forEachNode(doc.getElementsByTagName("script"), function(scriptNode) {
+      scriptNode.parentNode.removeChild(scriptNode);
+    });
+
     if (doc.body) {
       this._replaceBrs(doc.body);
     }
