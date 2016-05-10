@@ -46,6 +46,9 @@ const profileStoragePromise = ProfileStorage.open(path.join(__dirname, '..', '..
 import Immutable from 'immutable';
 import { UI_DIR, fileUrl } from './util';
 
+import WebSocket from 'ws';
+import * as Task from 'co-task';
+
 const BrowserWindow = electron.BrowserWindow;  // create native browser window.
 const app = electron.app; // control application life.
 const ipc = electron.ipcMain;
@@ -98,22 +101,6 @@ function sendDiffsToWindows(): void {
         bw.didFinishLoadPromise.then(() => bw.close());
       }
     });
-  }
-
-  const recentBookmarksChanged =
-    !previousState ||
-    !Immutable.is(currentState.recentBookmarks, previousState.recentBookmarks);
-
-  if (recentBookmarksChanged) {
-    menu.build({ recentBookmarks: currentState.recentBookmarks });
-  }
-
-  const bookmarksChanged =
-    !previousState ||
-    !Immutable.is(currentState.bookmarks, previousState.bookmarks);
-
-  if (bookmarksChanged) {
-    sendToAllWindows('profile-diff', profileDiffs.bookmarks(currentState.bookmarks.toJS()));
   }
 }
 
@@ -168,15 +155,6 @@ app.on('ready', async function() {
 
   // Register `about:*` protocols after app's 'ready' event
   registerAboutPages();
-
-  // Extract the initial state from the profile storage.
-  const profileStorage = await profileStoragePromise;
-  const starredLocations = await profileStorage.starredURLs();
-  const recentlyStarredLocations = await profileStorage.recentlyStarred();
-  const userAgent = store.getState()
-    .set('bookmarks', starredLocations)
-    .set('recentBookmarks', new Immutable.List(recentlyStarredLocations));
-  store.dispatch({ type: 'REPLACE', payload: userAgent });
 
   await newBrowserWindow();
 });
@@ -247,6 +225,38 @@ ipc.on('synthesize-accelerator', (...args) => {
   menu.handleIPCAcceleratorCommand(...args);
 });
 
-profileStoragePromise.then((profileStorage) => {
-  userAgentService.start(profileStorage, 9090, true);
+let ws = undefined;
+
+Task.spawn(function* () {
+  const profileStorage = yield profileStoragePromise;
+  yield userAgentService.start(profileStorage, 9090, true);
+
+  ws = new WebSocket('ws://localhost:9090/diffs');
+
+  ws.on('open', () => {
+    // Nothing for now.
+  });
+
+  ws.on('message', (data, flags) => {
+    // flags.binary will be set if a binary data is received.
+    // flags.masked will be set if the data was masked.
+    if (flags.binary) {
+      return;
+    }
+    const command = JSON.parse(data);
+    if (!command) {
+      return;
+    }
+
+    console.log(`got command ${data}`);
+
+    if (command.type === 'initial') {
+      menu.build({ recentBookmarks: command.payload.recentStars });
+      return;
+    }
+
+    if (command.type === '/stars/recent') {
+      menu.build({ recentBookmarks: command.payload });
+    }
+  });
 });

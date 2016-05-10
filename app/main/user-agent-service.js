@@ -74,7 +74,7 @@ function configure(app: any, storage: ProfileStorage) {
       // TODO: only send add/remove starredness for `url`, rather than grabbing the whole set.
       sendDiff(profileDiffs.bookmarks(yield storage.starredURLs()));
 
-      // TODO: sendDiff(profileDiffs.recentBookmarks(yield storage.recentlyStarred()));
+      sendDiff({ type: '/stars/recent', payload: yield storage.recentlyStarred() });
     }));
   }
 

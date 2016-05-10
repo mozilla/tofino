@@ -32,10 +32,4 @@ export const UserAgent = Immutable.Record({
    * maintain a set of known BrowserWindow IDs and take care to not fetch the ID of closed windows.
    */
   browserWindows: new Immutable.Set(),
-
-  bookmarks: new Immutable.Set(),
-
-  recentBookmarks: new Immutable.List(),
-
-  visits: new Immutable.List(),
 });
