@@ -1848,8 +1848,6 @@ Readability.prototype = {
     if (!articleContent)
       return null;
 
-    this.log("Grabbed: " + articleContent.innerHTML);
-
     this._postProcessContent(articleContent);
 
     // if (nextPageLink) {
@@ -1870,7 +1868,7 @@ Readability.prototype = {
       }
     }
 
-    const textContent = articleContent.textContent || '';
+    const textContent = this._textContentWithNewlines(articleContent);
     return { uri: this._uri,
              title: articleTitle,
              byline: metadata.byline || this._articleByline,
