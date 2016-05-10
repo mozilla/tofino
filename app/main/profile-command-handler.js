@@ -120,7 +120,7 @@ export async function handler(
 
     case profileCommandTypes.DID_OPEN_NEW_BROWSER_WINDOW:
       return userAgent.set('browserWindows',
-        userAgent.browserWindows.add((await makeBrowserWindow(payload.tabInfo)).id));
+        userAgent.browserWindows.add((await makeBrowserWindow()).id));
 
     case profileCommandTypes.DID_REQUEST_SAVE_PAGE:
       console.log(`Saving ${payload.page.uri} at ${Date.now()}.`);

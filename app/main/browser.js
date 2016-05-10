@@ -121,7 +121,7 @@ function sendDiffsToWindows(): void {
 
 store.subscribe(sendDiffsToWindows);
 
-async function makeBrowserWindow(tabInfo: ?Object): Promise<electron.BrowserWindow> {
+async function makeBrowserWindow(): Promise<electron.BrowserWindow> {
   const profileStorage = await profileStoragePromise;
 
   // TODO: don't abuse the storage layer's session ID generation to produce scopes.
@@ -143,10 +143,6 @@ async function makeBrowserWindow(tabInfo: ?Object): Promise<electron.BrowserWind
     browser.webContents.once('did-finish-load', () => {
       const browserDidFinishLoadTime = Date.now();
       instrument.event('browser', 'READY', 'ms', browserDidFinishLoadTime - browserStartTime);
-
-      if (tabInfo) {
-        browser.webContents.send('tab-attach', tabInfo);
-      }
 
       resolve();
     });
@@ -258,10 +254,6 @@ ipc.on('window-ready', event => {
   if (bw) {
     bw.show();
   }
-});
-
-ipc.on('tab-detach', async function(event, tabInfo) {
-  dispatchProfileCommand(profileCommands.newBrowserWindow(tabInfo));
 });
 
 ipc.on('profile-command', async function(event, { token, command }) {
