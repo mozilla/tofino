@@ -101,12 +101,12 @@ export function setCurrentTab(pageId: string): Action {
   return { type: types.SET_CURRENT_TAB, pageId, instrument: true };
 }
 
-export function setCurrentTabLeft(): Action {
-  return { type: types.SET_CURRENT_TAB_LEFT, instrument: true };
+export function setCurrentTabPrevious(): Action {
+  return { type: types.SET_CURRENT_TAB_PREVIOUS, instrument: true };
 }
 
-export function setCurrentTabRight(): Action {
-  return { type: types.SET_CURRENT_TAB_RIGHT, instrument: true };
+export function setCurrentTabNext(): Action {
+  return { type: types.SET_CURRENT_TAB_NEXT, instrument: true };
 }
 
 export function setStatusText(text: string): Action {

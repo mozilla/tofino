@@ -29,8 +29,8 @@ const HOTKEYS = new Map([
   ['CmdOrCtrl+6', bw => () => bw.webContents.send('select-tab-index', 5)],
   ['CmdOrCtrl+7', bw => () => bw.webContents.send('select-tab-index', 6)],
   ['CmdOrCtrl+8', bw => () => bw.webContents.send('select-tab-index', 7)],
-  ['CmdOrCtrl+Alt+Left', bw => () => bw.webContents.send('select-tab-left')],
-  ['CmdOrCtrl+Alt+Right', bw => () => bw.webContents.send('select-tab-right')],
+  ['CmdOrCtrl+Alt+Left', bw => () => bw.webContents.send('select-tab-previous')],
+  ['CmdOrCtrl+Alt+Right', bw => () => bw.webContents.send('select-tab-next')],
 ]);
 
 export function bindBrowserWindowHotkeys(browserWindow) {

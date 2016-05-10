@@ -6,6 +6,8 @@ import expect from 'expect';
 import { quickTest } from '../../build-config';
 import Driver from '../utils/driver';
 
+const STARTING_TAB_COUNT = 1;
+
 describe('hotkeys', function() {
   if (quickTest) {
     it.skip('all tests');
@@ -29,7 +31,7 @@ describe('hotkeys', function() {
   it('CmdOrCtrl+T: New Tab', async function() {
     let state = await Driver.getReduxState();
     const initialPages = state.pages.pages;
-    expect(initialPages.length).toBeGreaterThan(0, 'Have atleast one tab to start.');
+    expect(initialPages.length).toEqual(STARTING_TAB_COUNT, 'Have one tab to start.');
 
     Driver.ipcSendToMain('synthesize-accelerator', 'CmdOrCtrl+T');
 
@@ -50,7 +52,7 @@ describe('hotkeys', function() {
     const MAX = 8;
     const state = await Driver.getReduxState();
     const initialPages = state.pages.pages;
-    expect(initialPages.length).toBeGreaterThan(0, 'Have atleast one tab to start.');
+    expect(initialPages.length).toEqual(STARTING_TAB_COUNT, 'Have one tab to start.');
 
     // Open tabs until we have 8
     for (let i = initialPages.length; i < MAX; i++) {
@@ -85,5 +87,29 @@ describe('hotkeys', function() {
       currentState.pages.currentPageIndex === 0);
     expect(true).toEqual(true,
       'Does not throw when CmdOrCtrl+[1-8] is out of bounds');
+  });
+
+  it('CmdOrCtrl+Alt+[Left/Right]: Select Tab', async function() {
+    const state = await Driver.getReduxState();
+    const initialPages = state.pages.pages;
+    expect(initialPages.length).toEqual(STARTING_TAB_COUNT, 'Have one tab to start.');
+
+    Driver.ipcSendToMain('synthesize-accelerator', 'CmdOrCtrl+T');
+    await Driver.waitUntilReduxState(currentState =>
+      currentState.pages.currentPageIndex === 1 &&
+      currentState.pages.pages.length === 2);
+
+    Driver.ipcSendToMain('synthesize-accelerator', 'CmdOrCtrl+Alt+Left');
+    await Driver.waitUntilReduxState(currentState =>
+      currentState.pages.currentPageIndex === 0);
+
+    Driver.ipcSendToMain('synthesize-accelerator', 'CmdOrCtrl+Alt+Right');
+    await Driver.waitUntilReduxState(currentState =>
+      currentState.pages.currentPageIndex === 1);
+
+    Driver.ipcSendToRenderer('close-tab');
+    await Driver.waitUntilReduxState(currentState =>
+      currentState.pages.pages.length === STARTING_TAB_COUNT &&
+      currentState.pages.currentPageIndex === 0);
   });
 });

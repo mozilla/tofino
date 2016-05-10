@@ -167,8 +167,8 @@ function attachIPCRendererListeners(browserView) {
     }
   });
 
-  ipcRenderer.on('select-tab-left', () => dispatch(actions.setCurrentTabLeft()));
-  ipcRenderer.on('select-tab-right', () => dispatch(actions.setCurrentTabRight()));
+  ipcRenderer.on('select-tab-previous', () => dispatch(actions.setCurrentTabPrevious()));
+  ipcRenderer.on('select-tab-next', () => dispatch(actions.setCurrentTabNext()));
 
   ipcRenderer.on('profile-diff', (_, args) => dispatch(args));
   ipcRenderer.on('focus-url-bar', () => dispatch(ipcActions.focusURLBar()));

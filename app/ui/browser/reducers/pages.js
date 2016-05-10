@@ -81,11 +81,11 @@ export default function basic(state = initialState, action) {
     case types.SET_CURRENT_TAB:
       return setCurrentTab(state, action.pageId);
 
-    case types.SET_CURRENT_TAB_LEFT:
-      return setCurrentTabLeft(state);
+    case types.SET_CURRENT_TAB_PREVIOUS:
+      return setCurrentTabPrevious(state);
 
-    case types.SET_CURRENT_TAB_RIGHT:
-      return setCurrentTabRight(state);
+    case types.SET_CURRENT_TAB_NEXT:
+      return setCurrentTabNext(state);
 
     default:
       return state;
@@ -240,7 +240,8 @@ function setCurrentTab(state, pageId) {
   return state.set('currentPageIndex', pageIndex);
 }
 
-function setCurrentTabLeft(state) {
+function setCurrentTabPrevious(state) {
+  // Immutable handles looping for us via negative indexes.
   const pageToSelect = state.pages.get(state.currentPageIndex - 1);
   if (!pageToSelect) {
     return state;
@@ -248,8 +249,12 @@ function setCurrentTabLeft(state) {
   return setCurrentTab(state, pageToSelect.id);
 }
 
-function setCurrentTabRight(state) {
-  const pageToSelect = state.pages.get(state.currentPageIndex + 1);
+function setCurrentTabNext(state) {
+  const pageCount = state.pages.size;
+  const newIndex = state.currentPageIndex + 1;
+
+  // Handling looping when going out of bounds rightward.
+  const pageToSelect = state.pages.get(newIndex === pageCount ? 0 : newIndex);
   if (!pageToSelect) {
     return state;
   }
