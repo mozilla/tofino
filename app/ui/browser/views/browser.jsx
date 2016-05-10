@@ -160,6 +160,13 @@ export default BrowserWindow;
 function attachIPCRendererListeners(browserView) {
   const { dispatch, ipcRenderer } = browserView.props;
 
+  ipcRenderer.on('select-tab-index', (_, index) => {
+    const page = browserView.props.pages.get(index);
+    if (page) {
+      dispatch(actions.setCurrentTab(page.id));
+    }
+  });
+
   ipcRenderer.on('profile-diff', (_, args) => dispatch(args));
   ipcRenderer.on('focus-url-bar', () => dispatch(ipcActions.focusURLBar()));
   ipcRenderer.on('new-tab', () => dispatch(actions.createTab()));
