@@ -23,7 +23,6 @@ import { getUserTypedLocation } from '../../selectors';
 
 const LOCATION_BAR_CONTAINER_STYLE = Style.registerStyle({
   flex: 1,
-  position: 'relative',
 });
 
 const LOCATION_BAR_STYLE = Style.registerStyle({
@@ -50,9 +49,7 @@ const LOCATION_BAR_STYLE = Style.registerStyle({
 const LOCATION_BAR_AUTOCOMPLETE_STYLE = Style.registerStyle({
   flexDirection: 'column',
   position: 'absolute',
-  background: 'rgba(255, 255, 255, .8)',
-  margin: '0 4vw',
-  marginTop: -12,
+  background: '#fcfcfc',
   padding: 10,
   left: 0,
   right: 0,

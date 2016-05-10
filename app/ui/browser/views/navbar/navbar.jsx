@@ -23,6 +23,7 @@ const NAVBAR_STYLE = Style.registerStyle({
   background: '#fcfcfc',
   padding: '0 10px',
   fontSize: '80%',
+  position: 'relative',
 
   WebkitAppRegion: 'drag',
   minHeight: `${UIConstants.NAVBAR_EXPANDED_HEIGHT}px`,
