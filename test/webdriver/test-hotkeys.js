@@ -45,4 +45,45 @@ describe('hotkeys', function() {
     await Driver.waitUntilReduxState(currentState =>
       currentState.pages.pages.length === initialPages.length);
   });
+
+  it('CmdOrCtrl+[1-8]: Select Tab', async function() {
+    const MAX = 8;
+    const state = await Driver.getReduxState();
+    const initialPages = state.pages.pages;
+    expect(initialPages.length).toBeGreaterThan(0, 'Have atleast one tab to start.');
+
+    // Open tabs until we have 8
+    for (let i = initialPages.length; i < MAX; i++) {
+      Driver.ipcSendToMain('synthesize-accelerator', 'CmdOrCtrl+T');
+    }
+    await Driver.waitUntilReduxState(currentState =>
+      currentState.pages.pages.length === MAX);
+
+    for (let i = 0; i < MAX; i++) {
+      Driver.ipcSendToMain('synthesize-accelerator', `CmdOrCtrl+${i + 1}`);
+      await Driver.waitUntilReduxState(currentState =>
+        currentState.pages.currentPageIndex === i);
+      expect(true).toEqual(true, `Selected tab index ${i} when firing CmdOrCtrl+${i + 1}`);
+    }
+
+    // Close all tabs except the first
+    for (let i = MAX; i > 1; i--) {
+      Driver.ipcSendToRenderer('close-tab');
+    }
+
+    await Driver.waitUntilReduxState(currentState =>
+      currentState.pages.currentPageIndex === 0 &&
+      currentState.pages.pages.length === 1);
+
+    // Fire all the CmdOrCtrl+[1-8] commands again to ensure
+    // nothing breaks when there are less tabs than can be selected
+    for (let i = 1; i <= MAX; i++) {
+      Driver.ipcSendToMain('synthesize-accelerator', `CmdOrCtrl+${i}`);
+    }
+
+    await Driver.waitUntilReduxState(currentState =>
+      currentState.pages.currentPageIndex === 0);
+    expect(true).toEqual(true,
+      'Does not throw when CmdOrCtrl+[1-8] is out of bounds');
+  });
 });
