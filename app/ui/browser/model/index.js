@@ -22,7 +22,7 @@ export const Pages = Immutable.Record({
 
   // The currently displayed tab
   currentPageIndex: -1,
-});
+}, 'Pages');
 
 /**
  * The data that we store alongside a single web page
@@ -39,7 +39,7 @@ export class Page extends Immutable.Record({
   canGoForward: false,
   canRefresh: false,
   chromeMode: 'expanded',
-}) {
+}, 'Page') {
   constructor(data) {
     super(Object.assign({ id: uuid.v4() }, data));
   }
@@ -55,7 +55,7 @@ Page.PAGE_STATE_FAILED = 'failed';
 export const Profile = Immutable.Record({
   bookmarks: Immutable.Set(),
   completions: Immutable.Map(),
-});
+}, 'Profile');
 
 /**
  * Frequently changing UI state.
@@ -66,7 +66,7 @@ export const UIState = Immutable.Record({
 
   // What the user has typed into the location bar, stored by page id
   userTypedLocation: Immutable.Map(),
-});
+}, 'UIState');
 
 /**
  * Aggregate state.  Keep this synchronized with ../reducers/index.js!
@@ -75,4 +75,4 @@ export const State = Immutable.Record({
   pages: new Pages(),
   profile: new Profile(),
   uiState: new UIState(),
-});
+}, 'State');
