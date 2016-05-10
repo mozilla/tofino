@@ -28,7 +28,28 @@ describe('hotkeys', function() {
     await Driver.stop();
   });
 
-  it('CmdOrCtrl+T: New Tab', async function() {
+  it('CmdOrCtrl+N, CmdOrCtrl+Shift+W: New/Close Window', async function() {
+    const state = await Driver.getReduxState();
+    const initialPages = state.pages.pages;
+    expect(initialPages.length).toEqual(1, 'Have one tab to start.');
+
+    let windowCount = await Driver.client.getWindowCount();
+    expect(windowCount).toEqual(2, 'Should only have one tab and one window open');
+
+    Driver.ipcSendToMain('synthesize-accelerator', 'CmdOrCtrl+N');
+    await Driver.client.waitUntil(() => Driver.client.getWindowCount().then(count => count === 4));
+    windowCount = await Driver.client.getWindowCount();
+    expect(windowCount).toEqual(4, 'Should only have two windows each with one tab');
+    expect((await Driver.getReduxState()).pages.pages.length).toEqual(1,
+      'Still one tab in our first window');
+
+    Driver.ipcSendToMain('synthesize-accelerator', 'CmdOrCtrl+Shift+W');
+    await Driver.client.waitUntil(() => Driver.client.getWindowCount().then(count => count === 2));
+    expect((await Driver.getReduxState()).pages.pages.length).toEqual(1,
+      'Still one tab in our first window');
+  });
+
+  it('CmdOrCtrl+T, CmdOrCtrl+W: New/Close Tab', async function() {
     let state = await Driver.getReduxState();
     const initialPages = state.pages.pages;
     expect(initialPages.length).toEqual(STARTING_TAB_COUNT, 'Have one tab to start.');
@@ -43,7 +64,7 @@ describe('hotkeys', function() {
       'Got a new page');
 
     // Clean up
-    Driver.ipcSendToRenderer('close-tab');
+    Driver.ipcSendToMain('synthesize-accelerator', 'CmdOrCtrl+W');
     await Driver.waitUntilReduxState(currentState =>
       currentState.pages.pages.length === initialPages.length);
   });
