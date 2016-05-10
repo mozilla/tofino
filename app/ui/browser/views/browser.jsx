@@ -173,10 +173,6 @@ function attachIPCRendererListeners(browserView) {
   ipcRenderer.on('profile-diff', (_, args) => dispatch(args));
   ipcRenderer.on('focus-url-bar', () => dispatch(ipcActions.focusURLBar()));
   ipcRenderer.on('new-tab', () => dispatch(actions.createTab()));
-
-  // @TODO main process should be sending an id to close a tab
-  // most likely, not just whatever tab is currently open, or we should
-  // handle key shortcuts in this process
   ipcRenderer.on('close-tab', () =>
     dispatch(actions.closeTab(browserView.props.currentPage.id)));
 
