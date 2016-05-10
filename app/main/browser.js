@@ -41,7 +41,6 @@ import * as model from '../model/index';
 import * as storeStore from './store/store';
 import registerAboutPages from './about-pages';
 import { ProfileStorage } from '../services/storage';
-import * as profileCommandHandler from './profile-command-handler';
 import * as userAgentService from './user-agent-service';
 const profileStoragePromise = ProfileStorage.open(path.join(__dirname, '..', '..'));
 import Immutable from 'immutable';
@@ -155,31 +154,6 @@ async function makeBrowserWindow(): Promise<electron.BrowserWindow> {
   return browser;
 }
 
-async function dispatchProfileCommand(command: Object,
-                                      browserWindow: ?electron.BrowserWindow = undefined,
-                                      token: ?string = undefined): Promise<void> {
-  const profileStorage = await profileStoragePromise;
-
-  const respond = (response) => {
-    if (browserWindow && token) {
-      browserWindow.webContents.send(`profile-command-${token}`, response);
-    }
-  };
-
-  const oldState = store.getState();
-  const newState = await profileCommandHandler.handler(
-    oldState,
-    profileStorage,
-    browserWindow,
-    makeBrowserWindow,
-    respond,
-    command);
-
-  if (!oldState || !Immutable.is(oldState, newState)) {
-    store.dispatch({ type: 'REPLACE', payload: newState });
-  }
-}
-
 const appStartupTime = Date.now();
 instrument.event('app', 'STARTUP');
 
@@ -278,14 +252,6 @@ ipc.on('window-ready', event => {
   if (bw) {
     bw.show();
   }
-});
-
-ipc.on('profile-command', async function(event, { token, command }) {
-  // Not all events come from a window.  Some come from the main process.
-  const browserWindow = (event && event.sender)
-      ? BrowserWindow.fromWebContents(event.sender)
-      : null;
-  await dispatchProfileCommand(command, browserWindow, token);
 });
 
 ipc.on('synthesize-accelerator', (...args) => {

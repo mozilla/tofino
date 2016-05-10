@@ -21,7 +21,6 @@ import Search from './search';
 import { fixURL } from '../../browser-util';
 import { menuWebViewContext } from '../../actions/external';
 import * as actions from '../../actions/main-actions';
-import * as profileCommands from '../../../../shared/profile-commands';
 import * as userAgent from '../../user-agent';
 
 const PAGE_STYLE = Style.registerStyle({
