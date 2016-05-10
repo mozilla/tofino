@@ -27,20 +27,22 @@ describe('hotkeys', function() {
   });
 
   it('CmdOrCtrl+T: New Tab', async function() {
-    let { value: elements } = await Driver.client.elements('#browser-tabbar .tab');
-    expect(elements.length).toBe(1);
+    let state = await Driver.getReduxState();
+    const initialPages = state.pages.pages;
+    expect(initialPages.length).toBeGreaterThan(0, 'Have atleast one tab to start.');
 
     Driver.ipcSendToMain('synthesize-accelerator', 'CmdOrCtrl+T');
 
-    await Driver.client.waitUntil(() =>
-      Driver.client.elements('#browser-tabbar .tab').then(({ value }) => value.length === 2));
+    await Driver.waitUntilReduxState(currentState =>
+      currentState.pages.pages.length === initialPages.length + 1);
 
-    ({ value: elements } = await Driver.client.elements('#browser-tabbar .tab'));
-    expect(elements.length).toBe(2);
+    state = await Driver.getReduxState();
+    expect(state.pages.pages.length).toEqual(initialPages.length + 1,
+      'Got a new page');
 
-    // Clean up and close a tab (doesn't matter which one in this case)
-    await Driver.click('#browser-tabbar .tab-close');
-    await Driver.client.waitUntil(() =>
-      Driver.client.elements('#browser-tabbar .tab').then(({ value }) => value.length === 1));
+    // Clean up
+    Driver.ipcSendToRenderer('close-tab');
+    await Driver.waitUntilReduxState(currentState =>
+      currentState.pages.pages.length === initialPages.length);
   });
 });
