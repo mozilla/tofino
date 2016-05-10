@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 
 import * as actions from './main-actions';
 import { getCurrentWebView } from '../browser-util';
-import { remote, clipboard } from '../../../shared/electron';
+import { remote, clipboard, ipcRenderer } from '../../../shared/electron';
 import * as profileCommands from '../../../shared/profile-commands';
 
 const { Menu, MenuItem } = remote;
@@ -229,14 +229,14 @@ export function minimize() {
  * Close window.
  */
 export function close() {
-  profileCommands.send(profileCommands.closeBrowserWindow());
+  ipcRenderer.send('close-browser-window');
 }
 
 /**
  * Open New Window.
  */
 export function newBrowserWindow() {
-  profileCommands.send(profileCommands.newBrowserWindow());
+  ipcRenderer.send('new-browser-window');
 }
 
 /**

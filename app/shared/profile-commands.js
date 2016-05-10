@@ -121,22 +121,6 @@ export function endSession(sessionId: number, reason: ?string): ProfileCommand {
   };
 }
 
-export function closeBrowserWindow(): ProfileCommand {
-  return {
-    type: profileCommandTypes.DID_CLOSE_BROWSER_WINDOW,
-    payload: {
-    },
-  };
-}
-
-export function newBrowserWindow(): ProfileCommand {
-  return {
-    type: profileCommandTypes.DID_OPEN_NEW_BROWSER_WINDOW,
-    payload: {
-    },
-  };
-}
-
 export function savePage(sessionId: number, page: ReadabilityResult): ProfileCommand {
   return {
     type: profileCommandTypes.DID_REQUEST_SAVE_PAGE,

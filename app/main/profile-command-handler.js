@@ -111,17 +111,6 @@ export async function handler(
       }
       break;
 
-    case profileCommandTypes.DID_CLOSE_BROWSER_WINDOW:
-      if (!browserWindow) {
-        break;
-      }
-      return userAgent.set('browserWindows',
-        userAgent.browserWindows.delete(browserWindow.id));
-
-    case profileCommandTypes.DID_OPEN_NEW_BROWSER_WINDOW:
-      return userAgent.set('browserWindows',
-        userAgent.browserWindows.add((await makeBrowserWindow()).id));
-
     case profileCommandTypes.DID_REQUEST_SAVE_PAGE:
       console.log(`Saving ${payload.page.uri} at ${Date.now()}.`);
       console.log(`Saving: ${payload.page.textContent}`);

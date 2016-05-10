@@ -205,7 +205,7 @@ app.on('ready', async function() {
     .set('recentBookmarks', new Immutable.List(recentlyStarredLocations));
   store.dispatch({ type: 'REPLACE', payload: userAgent });
 
-  dispatchProfileCommand(profileCommands.newBrowserWindow());
+  await newBrowserWindow();
 });
 
 // Unregister all shortcuts.
@@ -228,8 +228,33 @@ app.on('activate', async function() {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (store.getState().browserWindows.isEmpty()) {
-    dispatchProfileCommand(profileCommands.newBrowserWindow());
+    await newBrowserWindow();
   }
+});
+
+async function newBrowserWindow(tabInfo: ?Object) {
+  const bw = await makeBrowserWindow(tabInfo);
+
+  const state = store.getState();
+  const newState = state.set('browserWindows', state.browserWindows.add(bw.id));
+
+  store.dispatch({ type: 'REPLACE', payload: newState });
+}
+
+async function closeBrowserWindow(id: number) {
+  const state = store.getState();
+  const newState = state.set('browserWindows', state.browserWindows.delete(id));
+
+  store.dispatch({ type: 'REPLACE', payload: newState });
+}
+
+ipc.on('new-browser-window', async function(_event, args) {
+  await newBrowserWindow(args);
+});
+
+ipc.on('close-browser-window', async function (event, _args) {
+  const bw = BrowserWindow.fromWebContents(event.sender)
+  await closeBrowserWindow(bw.id);
 });
 
 ipc.on('instrument-event', (event, args) => {
