@@ -439,7 +439,6 @@ export class ProfileStorage {
     }
 
     rows.forEach(row => {
-      console.log(`Escaping ${row.snippet}.`);
       row.snippet = escape(row.snippet);
     });
     return rows;
