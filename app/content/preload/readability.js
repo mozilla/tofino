@@ -76,15 +76,8 @@ var Readability = function(uri, doc, options) {
       return rv + elDesc;
     };
     this.log = function () {
-      if ("dump" in root) {
-        var msg = Array.prototype.map.call(arguments, function(x) {
-          return (x && x.nodeName) ? logEl(x) : x;
-        }).join(" ");
-        dump("Reader: (Readability) " + msg + "\n");
-      } else if ("console" in root) {
-        var args = ["Reader: (Readability) "].concat(arguments);
-        console.log.apply(console, args);
-      }
+      var args = ["Reader: (Readability) "].concat(arguments);
+      console.log.apply(console, args);
     };
   } else {
     this.log = function () {};
@@ -694,7 +687,7 @@ Readability.prototype = {
           } else {
             // EXPERIMENTAL
             this._forEachNode(node.childNodes, function(childNode) {
-              if (childNode.nodeType === Node.TEXT_NODE) {
+              if (childNode.nodeType === childNode.TEXT_NODE) {
                 var p = doc.createElement('p');
                 p.textContent = childNode.textContent;
                 p.style.display = 'inline';
@@ -1775,12 +1768,12 @@ Readability.prototype = {
         return;
       }
 
-      if (e.nodeType === Node.TEXT_NODE) {
+      if (e.nodeType === e.TEXT_NODE) {
         acc.push(e.data);
         return;
       }
 
-      if (e.nodeType !== Node.ELEMENT_NODE) {
+      if (e.nodeType !== e.ELEMENT_NODE) {
         return;
       }
 
