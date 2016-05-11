@@ -145,9 +145,7 @@ const Driver = {
    * Sets the webdriver target to the main browser window.
    */
   setTargetToBrowserWindow: async function() {
-    this.log("set target to browser window");
     await this.app.client.window(this._bwHandle);
-    this.log("set target to browser window");
   },
 
   /**
