@@ -6,8 +6,6 @@ import expect from 'expect';
 import { quickTest } from '../../build-config';
 import Driver from '../utils/driver';
 
-const STARTING_TAB_COUNT = 1;
-
 describe('hotkeys', function() {
   if (quickTest) {
     it.skip('all tests');
@@ -52,12 +50,14 @@ describe('hotkeys', function() {
   it('CmdOrCtrl+T, CmdOrCtrl+W: New/Close Tab', async function() {
     let state = await Driver.getReduxState();
     const initialPages = state.pages.pages;
-    expect(initialPages.length).toEqual(STARTING_TAB_COUNT, 'Have one tab to start.');
+    expect(initialPages.length).toEqual(1, 'Have one tab to start.');
 
     Driver.ipcSendToMain('synthesize-accelerator', 'CmdOrCtrl+T');
 
-    await Driver.waitUntilReduxState(currentState =>
-      currentState.pages.pages.length === initialPages.length + 1);
+    await Driver.waitUntilReduxState(currentState => {
+      console.log('pages', currentState.pages.pages.length);
+      return currentState.pages.pages.length === 2;
+    });
 
     state = await Driver.getReduxState();
     expect(state.pages.pages.length).toEqual(initialPages.length + 1,
@@ -73,14 +73,16 @@ describe('hotkeys', function() {
     const MAX = 8;
     const state = await Driver.getReduxState();
     const initialPages = state.pages.pages;
-    expect(initialPages.length).toEqual(STARTING_TAB_COUNT, 'Have one tab to start.');
+    expect(initialPages.length).toEqual(1, 'Have one tab to start.');
 
     // Open tabs until we have 8
     for (let i = initialPages.length; i < MAX; i++) {
       Driver.ipcSendToMain('synthesize-accelerator', 'CmdOrCtrl+T');
+      await Driver.waitUntilReduxState(currentState => {
+        console.log('pages', currentState.pages.pages.length);
+        return currentState.pages.pages.length === i + 1;
+      });
     }
-    await Driver.waitUntilReduxState(currentState =>
-      currentState.pages.pages.length === MAX);
 
     for (let i = 0; i < MAX; i++) {
       Driver.ipcSendToMain('synthesize-accelerator', `CmdOrCtrl+${i + 1}`);
@@ -113,7 +115,7 @@ describe('hotkeys', function() {
   it('CmdOrCtrl+Alt+[Left/Right]: Select Tab', async function() {
     const state = await Driver.getReduxState();
     const initialPages = state.pages.pages;
-    expect(initialPages.length).toEqual(STARTING_TAB_COUNT, 'Have one tab to start.');
+    expect(initialPages.length).toEqual(1, 'Have one tab to start.');
 
     Driver.ipcSendToMain('synthesize-accelerator', 'CmdOrCtrl+T');
     await Driver.waitUntilReduxState(currentState =>
@@ -130,7 +132,7 @@ describe('hotkeys', function() {
 
     Driver.ipcSendToRenderer('close-tab');
     await Driver.waitUntilReduxState(currentState =>
-      currentState.pages.pages.length === STARTING_TAB_COUNT &&
+      currentState.pages.pages.length === 1 &&
       currentState.pages.currentPageIndex === 0);
   });
 });
