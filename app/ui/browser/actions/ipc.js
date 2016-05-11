@@ -24,6 +24,6 @@ export function openBookmark(bookmark) {
   return { type: types.IPC_COMMAND_OPEN_BOOKMARK, bookmark };
 }
 
-export function refreshPage(pageId) {
-  return { type: types.IPC_COMMAND_PAGE_REFRESH, pageId };
+export function closeTab(pageId) {
+  return { type: types.IPC_COMMAND_CLOSE_TAB, pageId };
 }

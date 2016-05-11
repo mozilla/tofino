@@ -153,22 +153,6 @@ export function unbookmark(sessionId: number, url: string): Action {
   };
 }
 
-export function navigatePageTo(pageId: string, location: string) {
-  return { type: types.NAVIGATE_PAGE_TO, pageId, location };
-}
-
-export function navigatePageBack(pageId: string) {
-  return { type: types.NAVIGATE_PAGE_BACK, pageId };
-}
-
-export function navigatePageForward(pageId: string) {
-  return { type: types.NAVIGATE_PAGE_FORWARD, pageId };
-}
-
-export function navigatePageRefresh(pageId: string) {
-  return { type: types.NAVIGATE_PAGE_REFRESH, pageId };
-}
-
 export function didStartSession(pageId: string, sessionId: number, ancestorId: ?number) {
   return { type: types.DID_START_SESSION, pageId, sessionId, ancestorId };
 }

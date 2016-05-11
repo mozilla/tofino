@@ -17,6 +17,7 @@ import TabBar from './tabbar/tabbar';
 import DeveloperBar from './developerbar';
 import NavBar from './navbar/navbar';
 import Page from './page/page';
+import WebViewController from '../webview-controller';
 
 import {
   menuTabContext, menuLocationContext, menuBrowser, maximize, minimize, close,
@@ -44,6 +45,10 @@ class BrowserWindow extends Component {
     this.handleKeyDown = this.handleKeyDown.bind(this);
   }
 
+  componentWillMount() {
+    this.webViewController = new WebViewController(() => this.props.pages);
+  }
+
   componentDidMount() {
     document.body.addEventListener('keydown', this.handleKeyDown);
     attachIPCRendererListeners(this);
@@ -64,11 +69,14 @@ class BrowserWindow extends Component {
       currentPage, ipcRenderer, dispatch, profile, pages, currentPageIndex,
     } = this.props;
 
+    const webViewController = this.webViewController;
     const currentPageId = currentPage.id;
 
-    const navBack = () => dispatch(actions.navigatePageBack(currentPageId));
-    const navForward = () => dispatch(actions.navigatePageForward(currentPageId));
-    const navRefresh = () => dispatch(actions.navigatePageRefresh(currentPageId));
+    const navBack = () => webViewController.navigateBack(currentPageId);
+    const navForward = () => webViewController.navigateForward(currentPageId);
+    const navRefresh = () => webViewController.navigateRefresh(currentPageId);
+    const navigateTo = loc => webViewController.navigateTo(currentPageId, loc);
+
     const openMenu = () => menuBrowser(currentPage.sessionId, dispatch);
     const isBookmarked = (url) => profile.bookmarks.has(url);
     const bookmark = (title, url) => {
@@ -87,8 +95,6 @@ class BrowserWindow extends Component {
     const onLocationReset = () => {
       dispatch(actions.setUserTypedLocation(currentPageId, { text: void 0 }));
     };
-    const navigateTo = loc => dispatch(actions.navigatePageTo(currentPageId, loc));
-
 
     /**
      * TabBar functions
@@ -137,6 +143,7 @@ class BrowserWindow extends Component {
             <Page key={`page-${page.id}`}
               isActive={pageIndex === currentPageIndex}
               page={page}
+              webViewController={webViewController}
               {...this.props} />
           ))}
         </div>
@@ -159,6 +166,7 @@ export default BrowserWindow;
 
 function attachIPCRendererListeners(browserView) {
   const { dispatch, ipcRenderer } = browserView.props;
+  const { webViewController } = browserView;
 
   ipcRenderer.on('select-tab-index', (_, index) => {
     const page = browserView.props.pages.get(index);
@@ -179,7 +187,7 @@ function attachIPCRendererListeners(browserView) {
   // @TODO main process should be sending an id to refresh a tab
   // most likely, not just whatever tab is currently open
   ipcRenderer.on('page-refresh', () =>
-    dispatch(ipcActions.refreshPage(browserView.props.currentPage.id)));
+    webViewController.navigateRefresh(browserView.props.currentPage.id));
 
   // @TODO Not yet implemented
   ipcRenderer.on('show-bookmarks', () => dispatch(ipcActions.showBookmarks()));

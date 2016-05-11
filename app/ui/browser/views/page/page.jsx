@@ -36,49 +36,20 @@ const WEB_VIEW_STYLE = Style.registerStyle({
 
 class Page extends Component {
   componentDidMount() {
-    const { page, dispatch } = this.props;
+    const { webViewController, page, dispatch } = this.props;
+    const { id } = page;
     const webview = this.refs.webview;
 
     addListenersToWebView(webview, () => this.props.page, dispatch);
 
+    webViewController.on(`navigate-back:${id}`, () => webview.goBack());
+    webViewController.on(`navigate-forward:${id}`, () => webview.goForward());
+    webViewController.on(`navigate-refresh:${id}`, () => webview.reload());
+    webViewController.on(`navigate-to:${id}`,
+      (_, loc) => webview.setAttribute('src', fixURL(loc)));
+
     if (!page.guestInstanceId && page.location) {
       webview.setAttribute('src', fixURL(page.location));
-    }
-  }
-
-  /**
-   * After Page receives new properties, iterate over the new commands
-   * in the queue and execute them.
-   *
-   * @TODO This queue grows indefinitely. We should drain it somehow in a
-   * Reduxy way.
-   */
-  componentDidUpdate({ page }) {
-    const currentPage = this.props.page;
-    if (page.commands.size !== currentPage.commands.size) {
-      for (let i = page.commands.size; i < currentPage.commands.size; i++) {
-        this.executeCommand(currentPage.commands.get(i));
-      }
-    }
-  }
-
-  executeCommand(command) {
-    const webview = this.refs.webview;
-    switch (command.command) {
-      case 'back':
-        webview.goBack();
-        break;
-      case 'forward':
-        webview.goForward();
-        break;
-      case 'refresh':
-        webview.reload();
-        break;
-      case 'navigate-to':
-        webview.setAttribute('src', fixURL(command.location));
-        break;
-      default:
-        throw new Error(`Unknown command for WebView: ${command.command}`);
     }
   }
 
@@ -109,6 +80,7 @@ Page.propTypes = {
   page: PropTypes.object.isRequired,
   isActive: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
+  webViewController: PropTypes.object.isRequired,
 };
 
 export default Page;

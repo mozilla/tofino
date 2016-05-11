@@ -12,10 +12,8 @@ specific language governing permissions and limitations under the License.
 
 /* eslint no-console: 0 */
 
-import {
-  createTab, setUserTypedLocation, closeTab, navigatePageTo,
-} from './main-actions';
-import { getCurrentWebView, fixURL } from '../browser-util';
+import * as actions from './main-actions';
+import { getCurrentWebView } from '../browser-util';
 import { remote, clipboard } from '../../../shared/electron';
 import * as profileCommands from '../../../shared/profile-commands';
 
@@ -46,7 +44,7 @@ export function menuBrowser(pageSessionId, dispatch) {
 
   menu.append(new MenuItem({
     label: 'New Tab',
-    click: () => dispatch(createTab()),
+    click: () => dispatch(actions.createTab()),
   }));
 
   menu.append(new MenuItem({
@@ -96,7 +94,7 @@ export function menuLocationContext(input, pageId, dispatch) {
       const value = input.value;
       clipboard.writeText(value.slice(input.selectionStart, input.selectionEnd));
       const loc = value.slice(0, input.selectionStart) + value.slice(input.selectionEnd);
-      dispatch(setUserTypedLocation(pageId, {
+      dispatch(actions.setUserTypedLocation(pageId, {
         text: loc,
       }));
     },
@@ -107,7 +105,7 @@ export function menuLocationContext(input, pageId, dispatch) {
     click: () => {
       const before = input.value.slice(0, input.selectionStart);
       const after = input.value.slice(input.selectionEnd);
-      dispatch(setUserTypedLocation(pageId, {
+      dispatch(actions.setUserTypedLocation(pageId, {
         text: `${before}${clipboard.readText()}${after}`,
       }));
     },
@@ -119,10 +117,12 @@ export function menuLocationContext(input, pageId, dispatch) {
       const before = input.value.slice(0, input.selectionStart);
       const after = input.value.slice(input.selectionEnd);
       const loc = before + clipboard.readText() + after;
-      dispatch(setUserTypedLocation(pageId, {
+      dispatch(actions.setUserTypedLocation(pageId, {
         text: loc,
       }));
-      dispatch(navigatePageTo(pageId, fixURL(loc)));
+
+      // TODO this doesn't work anyway, we have to pass in webViewController
+      // dispatch(navigatePageTo(-1, fixURL(loc)));
     },
   }));
 
@@ -137,14 +137,14 @@ export function menuTabContext(pageIndex, dispatch) {
 
   menu.append(new MenuItem({
     label: 'New Tab',
-    click: createTab,
+    click: actions.createTab,
   }));
 
   menu.append(new MenuItem({ type: 'separator' }));
 
   menu.append(new MenuItem({
     label: 'Close Tab',
-    click: () => dispatch(closeTab(pageIndex)),
+    click: () => dispatch(actions.closeTab(pageIndex)),
   }));
 
   menu.popup(remote.getCurrentWindow());
@@ -159,7 +159,7 @@ export function menuWebViewContext(webview, e, dispatch, pageSessionId: number) 
   if (e.href) {
     menu.append(new MenuItem({
       label: 'Open Link in New Tab',
-      click: () => dispatch(createTab(e.href, pageSessionId)),
+      click: () => dispatch(actions.createTab(e.href, pageSessionId)),
     }));
 
     menu.append(new MenuItem({
@@ -181,7 +181,7 @@ export function menuWebViewContext(webview, e, dispatch, pageSessionId: number) 
 
     menu.append(new MenuItem({
       label: 'Open Image in New Tab',
-      click: () => dispatch(createTab(e.img, pageSessionId)),
+      click: () => dispatch(actions.createTab(e.img, pageSessionId)),
     }));
   }
 
