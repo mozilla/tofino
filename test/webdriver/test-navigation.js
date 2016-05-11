@@ -31,14 +31,18 @@ describe('navigation', function() {
     await Driver.client.waitForText('#browser-location-title-bar > span',
       'A Very Simple Page');
     expect(true).toBe(true, 'Got updated title bar text');
+    await Driver.waitForURLValue(`${Driver.fixturesURL}/simple.html`);
+    expect(true).toBe(true, 'Got updated url value');
 
-    await Driver.navigate(`http://localhost:${Driver.port}/mozilla.html`);
+    await Driver.navigate(`${Driver.fixturesURL}/mozilla.html`);
     await Driver.waitForCurrentTabLoaded();
     expect(true).toBe(true, 'Navigated to mozilla.html');
 
     await Driver.blur();
     await Driver.client.waitForText('#browser-location-title-bar > span',
       'The Book of Mozilla, 15:1');
+    await Driver.waitForURLValue(`${Driver.fixturesURL}/mozilla.html`);
+    expect(true).toBe(true, 'Got updated url value');
 
     await Driver.navigateBack();
     await Driver.client.waitForText('#browser-location-title-bar > span',

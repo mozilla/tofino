@@ -298,7 +298,12 @@ export class Location extends Component {
           </div>
           <input id="urlbar-input"
             className={INPUT_BAR_STYLE}
-            hidden={!this.state.showURLBar}
+            style={{
+              // Need to keep this in the DOM so it can be focused in setInputValue.
+              // This won't be a problem if we decide to get rid of the hidden URL UI state.
+              position: !this.state.showURLBar ? 'absolute' : null,
+              top: !this.state.showURLBar ? '-1000px' : null,
+            }}
             type="url"
             ref="input"
             onFocus={this.handleURLBarFocus}

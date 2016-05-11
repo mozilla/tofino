@@ -178,6 +178,19 @@ const Driver = {
     return await this.click('#browser-navbar-forward');
   },
 
+  getURLValue: async function() {
+    const { value } = await Driver.client.execute(() =>
+      document.querySelector('#urlbar-input').value
+    );
+    return value;
+  },
+
+  waitForURLValue: async function(val) {
+    await Driver.client.waitUntil(() =>
+      this.getURLValue().then(value => value === val),
+    2000, 10);
+  },
+
   /**
    * A bit hacky, but ensures we don't have the url bar focused
    */
