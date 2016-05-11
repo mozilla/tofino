@@ -189,8 +189,8 @@ function attachIPCRendererListeners(browserView) {
   ipcRenderer.on('page-refresh', () =>
     webViewController.navigateRefresh(browserView.props.currentPage.id));
 
-  // @TODO Not yet implemented
-  ipcRenderer.on('show-bookmarks', () => dispatch(ipcActions.showBookmarks()));
+  ipcRenderer.on('show-stars', () => dispatch(actions.createTab('tofino://stars')));
+  ipcRenderer.on('show-history', () => dispatch(actions.createTab('tofino://history')));
   ipcRenderer.on('open-bookmark',
     (_event, bookmark) => dispatch(ipcActions.openBookmark(bookmark)));
 }

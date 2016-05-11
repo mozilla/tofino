@@ -104,14 +104,18 @@ items.toggleFullScreen = {
 
 items.showHistory = {
   label: 'Show All History',
-  click: () => {},
+  click(item, focusedWindow) {
+    if (focusedWindow) {
+      focusedWindow.webContents.send('show-history');
+    }
+  },
 };
 
 items.showBookmarks = {
-  label: 'Show All Bookmarks',
+  label: 'Show Starred Pages',
   click(item, focusedWindow) {
     if (focusedWindow) {
-      focusedWindow.webContents.send('show-bookmarks');
+      focusedWindow.webContents.send('show-stars');
     }
   },
 };

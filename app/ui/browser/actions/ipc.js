@@ -16,10 +16,6 @@ export function focusURLBar() {
   return { type: types.IPC_COMMAND_FOCUS_URL_BAR };
 }
 
-export function showBookmarks() {
-  return { type: types.IPC_COMMAND_SHOW_BOOKMARKS };
-}
-
 export function openBookmark(bookmark) {
   return { type: types.IPC_COMMAND_OPEN_BOOKMARK, bookmark };
 }

@@ -18,7 +18,9 @@ const NOT_FOUND_ERROR = 404;
 const ABOUT_PROTOCOL_PREFIX = 'tofino';
 const ABOUT_DIR = path.join(UI_DIR, 'about');
 const ABOUT_PAGES = new Set([
+  'history',
   'mozilla',
+  'stars',
 ]);
 
 /**
