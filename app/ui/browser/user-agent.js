@@ -12,7 +12,7 @@
  specific language governing permissions and limitations under the License.
  */
 
-export const endpoint = 'http://localhost:9090'; // TODO: version this endpoint.
+import * as endpoints from '../../shared/constants/endpoints';
 
 export function api(url: string, options: ?Object) {
   const newOptions = Object.assign({}, options);
@@ -26,5 +26,5 @@ export function api(url: string, options: ?Object) {
     newOptions.body = JSON.stringify(newOptions.json);
   }
 
-  return fetch(`${endpoint}${url}`, newOptions);
+  return fetch(`${endpoints.UA_SERVICE_HTTP}${url}`, newOptions);
 }

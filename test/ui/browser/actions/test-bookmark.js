@@ -9,6 +9,7 @@ import * as actions from '../../../../app/ui/browser/actions/main-actions';
 import * as selectors from '../../../../app/ui/browser/selectors';
 
 import fetchMock from 'fetch-mock';
+import * as endpoints from '../../../../app/shared/constants/endpoints';
 
 describe('Action - bookmark', () => {
   const session = 1;
@@ -32,15 +33,15 @@ describe('Action - bookmark', () => {
   it('Should send a message to the main process', function() {
     const { dispatch } = this;
 
-    fetchMock
-      .mock('^http://localhost:9090/stars', 200);
+    const URL = `^${endpoints.UA_SERVICE_HTTP}`; // Observe leading caret ^ (caret)!
+    fetchMock.mock(URL, 200);
 
     dispatch(actions.bookmark(session, 'http://moz1.com', 'moz1'));
 
-    expect(fetchMock.lastUrl('^http://localhost:9090/stars'))
-      .toEqual(`http://localhost:9090/stars/${encodeURIComponent('http://moz1.com')}`);
-    expect(fetchMock.lastOptions('^http://localhost:9090/stars').method).toEqual('PUT');
-    expect(fetchMock.lastOptions('^http://localhost:9090/stars').json)
+    expect(fetchMock.lastUrl(URL))
+      .toEqual(`${endpoints.UA_SERVICE_HTTP}/stars/${encodeURIComponent('http://moz1.com')}`);
+    expect(fetchMock.lastOptions(URL).method).toEqual('PUT');
+    expect(fetchMock.lastOptions(URL).json)
       .toEqual({ session, title: 'moz1' });
   });
 });

@@ -7,6 +7,7 @@ import expect from 'expect';
 import configureStore from '../../../../app/ui/browser/store/store';
 import * as actions from '../../../../app/ui/browser/actions/main-actions';
 import * as selectors from '../../../../app/ui/browser/selectors';
+import * as endpoints from '../../../../app/shared/constants/endpoints';
 
 import fetchMock from 'fetch-mock';
 
@@ -148,14 +149,14 @@ describe('Action - CLOSE_TAB', () => {
     dispatch(actions.didStartSession(getPages().get(0).id, 11));
     dispatch(actions.didStartSession(getPages().get(1).id, 22, 11));
 
-    fetchMock.mock('^http://localhost:9090', 200);
+    const URL = `^${endpoints.UA_SERVICE_HTTP}`; // Observe leading caret ^ (caret)!
+    fetchMock.mock(URL, 200);
 
     dispatch(actions.closeTab(getPages().get(1).id));
 
-    expect(fetchMock.lastUrl('^http://localhost:9090'))
-      .toEqual('http://localhost:9090/session/end');
-    expect(fetchMock.lastOptions('^http://localhost:9090').method).toEqual('POST');
-    expect(fetchMock.lastOptions('^http://localhost:9090').json)
+    expect(fetchMock.lastUrl(URL)).toEqual(`${endpoints.UA_SERVICE_HTTP}/session/end`);
+    expect(fetchMock.lastOptions(URL).method).toEqual('POST');
+    expect(fetchMock.lastOptions(URL).json)
       .toEqual({ session: 22, reason: undefined });
   });
 });

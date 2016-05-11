@@ -32,10 +32,13 @@ function configure(app: any, storage: ProfileStorage) {
   app.use(bodyParser.json());
   app.use(expressValidator()); // Keep this immediately after express.bodyParser().
 
+  const router = express.Router(); // eslint-disable-line new-cap
+
   /**
-   * TODO Catch errors from the given generator function and forward them to `next` for handling.
+   * Catch errors from the given async function and forward them to `next` for handling.  This
+   * allows to write "loose" handling code and still opt-in to Express's error handling backstop.
    *
-   * @param genfun: async function(req, res, next)
+   * @param fun: async function(req, res, next)
    * @returns {function(req, res, next): (Promise.<T>)}
    */
   function wrap(fun) {
@@ -56,7 +59,7 @@ function configure(app: any, storage: ProfileStorage) {
   }
 
   const diffsClients = [];
-  app.ws('/diffs', async function(ws, _req) {
+  router.ws('/diffs', async function(ws, _req) {
     diffsClients.push(ws);
 
     ws.send(JSON.stringify({ type: 'initial', payload: await initial() }));
@@ -83,7 +86,7 @@ function configure(app: any, storage: ProfileStorage) {
     sendDiff({ type: '/stars/recent', payload: await storage.recentlyStarred() });
   }
 
-  app.post('/session/start', wrap(async function(req, res) {
+  router.post('/session/start', wrap(async function(req, res) {
     req.checkBody('scope').notEmpty().isInt();
     req.checkBody('ancestor').optional().isInt();
 
@@ -99,7 +102,7 @@ function configure(app: any, storage: ProfileStorage) {
     res.json({ session });
   }));
 
-  app.post('/session/end', wrap(async function(req, res) {
+  router.post('/session/end', wrap(async function(req, res) {
     req.checkBody('session').isInt().notEmpty();
 
     const errors = req.validationErrors();
@@ -113,7 +116,7 @@ function configure(app: any, storage: ProfileStorage) {
     res.json();
   }));
 
-  app.post('/visits', wrap(async function(req, res) {
+  router.post('/visits', wrap(async function(req, res) {
     req.checkBody('url').notEmpty();
     req.checkBody('title').optional();
     req.checkBody('session').notEmpty().isInt();
@@ -130,7 +133,7 @@ function configure(app: any, storage: ProfileStorage) {
     res.json();
   }));
 
-  app.get('/visits', wrap(async function(req, res) {
+  router.get('/visits', wrap(async function(req, res) {
     req.checkQuery('q').notEmpty();
 
     const errors = req.validationErrors();
@@ -144,7 +147,7 @@ function configure(app: any, storage: ProfileStorage) {
     res.json({ results });
   }));
 
-  app.put('/stars/:url', wrap(async function(req, res) {
+  router.put('/stars/:url', wrap(async function(req, res) {
     req.checkParams('url').notEmpty();
     req.checkBody('title').optional();
     req.checkBody('session').isInt().notEmpty();
@@ -162,7 +165,7 @@ function configure(app: any, storage: ProfileStorage) {
     dispatchBookmarkDiffs(); // Spawn, but don't await.
   }));
 
-  app.delete('/stars/:url', wrap(async function(req, res) {
+  router.delete('/stars/:url', wrap(async function(req, res) {
     req.checkParams('url').notEmpty();
     req.checkBody('session').isInt().notEmpty();
 
@@ -179,7 +182,7 @@ function configure(app: any, storage: ProfileStorage) {
     dispatchBookmarkDiffs(); // Spawn, but don't await.
   }));
 
-  app.get('/stars', wrap(async function(req, res) {
+  router.get('/stars', wrap(async function(req, res) {
     const errors = req.validationErrors();
     if (errors) {
       res.status(401).json(errors);
@@ -190,7 +193,7 @@ function configure(app: any, storage: ProfileStorage) {
     res.json({ stars });
   }));
 
-  app.get('/recentStars', wrap(async function(req, res) {
+  router.get('/recentStars', wrap(async function(req, res) {
     const errors = req.validationErrors();
     if (errors) {
       res.status(401).json(errors);
@@ -201,7 +204,7 @@ function configure(app: any, storage: ProfileStorage) {
     res.json({ stars });
   }));
 
-  app.post('/pages/:url', wrap(async function(req, res) {
+  router.post('/pages/:url', wrap(async function(req, res) {
     req.checkParams('url').notEmpty();
     req.checkBody(['page', 'textContent']).notEmpty();
     req.checkBody('session').isInt().notEmpty();
@@ -217,6 +220,9 @@ function configure(app: any, storage: ProfileStorage) {
     await storage.savePage(page, session);
     res.json();
   }));
+
+  // Version namespace!
+  app.use('/v1', router);
 
   // Must follow route definitions!
   app.use((error, req, res, _next) => {

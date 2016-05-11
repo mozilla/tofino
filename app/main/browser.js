@@ -44,6 +44,7 @@ const profileStoragePromise = ProfileStorage.open(path.join(__dirname, '..', '..
 import { UI_DIR, fileUrl } from './util';
 
 import WebSocket from 'ws';
+import * as endpoints from '../shared/constants/endpoints';
 
 const BrowserWindow = electron.BrowserWindow;  // create native browser window.
 const app = electron.app; // control application life.
@@ -186,9 +187,9 @@ let ws = undefined;
 
 
 profileStoragePromise.then(async function(profileStorage) {
-  await userAgentService.start(profileStorage, 9090, true);
+  await userAgentService.start(profileStorage, endpoints.UA_SERVICE_PORT, false);
 
-  ws = new WebSocket('ws://localhost:9090/diffs');
+  ws = new WebSocket(`${endpoints.UA_SERVICE_WS}/diffs`);
 
   ws.on('open', () => {
     // Nothing for now.
@@ -204,8 +205,6 @@ profileStoragePromise.then(async function(profileStorage) {
     if (!command) {
       return;
     }
-
-    console.log(`got command ${data}`);
 
     if (command.type === 'initial') {
       menu.build({ recentBookmarks: command.payload.recentStars });

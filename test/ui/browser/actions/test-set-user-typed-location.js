@@ -9,6 +9,7 @@ import * as actions from '../../../../app/ui/browser/actions/main-actions';
 import * as selectors from '../../../../app/ui/browser/selectors';
 
 import fetchMock from 'fetch-mock';
+import * as endpoints from '../../../../app/shared/constants/endpoints';
 
 describe('Action - SET_USER_TYPED_LOCATION', () => {
   beforeEach(function() {
@@ -47,15 +48,15 @@ describe('Action - SET_USER_TYPED_LOCATION', () => {
   it('Should send a message to the main process', function() {
     const { dispatch, getPages } = this;
 
-    fetchMock
-      .mock('^http://localhost:9090', 200);
+    const URL = `^${endpoints.UA_SERVICE_HTTP}`; // Observe leading caret ^ (caret)!
+    fetchMock.mock(URL, 200);
 
     dispatch(actions.setUserTypedLocation(getPages().get(1).id, {
       text: 'Bar',
     }));
 
-    expect(fetchMock.lastUrl('^http://localhost:9090'))
-      .toEqual(`http://localhost:9090/visits?q=${encodeURIComponent('Bar')}`);
-    expect(fetchMock.lastOptions('^http://localhost:9090').method).toEqual('GET');
+    expect(fetchMock.lastUrl(URL))
+      .toEqual(`${endpoints.UA_SERVICE_HTTP}/visits?q=${encodeURIComponent('Bar')}`);
+    expect(fetchMock.lastOptions(URL).method).toEqual('GET');
   });
 });

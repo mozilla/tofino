@@ -9,6 +9,7 @@ import * as actions from '../../../../app/ui/browser/actions/main-actions';
 import * as selectors from '../../../../app/ui/browser/selectors';
 
 import fetchMock from 'fetch-mock';
+import * as endpoints from '../../../../app/shared/constants/endpoints';
 
 const HOME_PAGE = 'tofino://mozilla';
 
@@ -62,14 +63,14 @@ describe('Action - CREATE_TAB', () => {
   it('Should send a message to the main process', function() {
     const { dispatch } = this;
 
-    fetchMock.mock('^http://localhost:9090', 200);
+    const URL = `^${endpoints.UA_SERVICE_HTTP}`; // Observe leading caret ^ (caret)!
+    fetchMock.mock(URL, 200);
 
     dispatch(actions.createTab('https://github.com/', 1234));
 
-    expect(fetchMock.lastUrl('^http://localhost:9090'))
-      .toEqual('http://localhost:9090/session/start');
-    expect(fetchMock.lastOptions('^http://localhost:9090').method).toEqual('POST');
-    expect(fetchMock.lastOptions('^http://localhost:9090').json)
+    expect(fetchMock.lastUrl(URL)).toEqual(`${endpoints.UA_SERVICE_HTTP}/session/start`);
+    expect(fetchMock.lastOptions(URL).method).toEqual('POST');
+    expect(fetchMock.lastOptions(URL).json)
       .toEqual({ ancestor: 1234, reason: undefined, scope: 0 });
   });
 });

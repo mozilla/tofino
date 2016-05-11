@@ -20,6 +20,7 @@ import configureStore from './store/store';
 import * as actions from './actions/main-actions';
 import * as profileDiffs from '../../shared/profile-diffs';
 import BUILD_CONFIG from '../../../build-config';
+import * as endpoints from '../../shared/constants/endpoints';
 
 import WebSocket from 'ws';
 
@@ -48,7 +49,7 @@ const onRender = () => ipcRenderer.send('window-ready');
 // presented to the user).  Dispatching actions also uses the same codepaths the rest of the
 // application uses.
 
-const ws = new WebSocket('ws://localhost:9090/diffs');
+const ws = new WebSocket(`${endpoints.UA_SERVICE_WS}/diffs`);
 
 ws.on('open', () => {
   // Nothing for now.
