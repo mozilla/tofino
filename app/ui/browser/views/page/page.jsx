@@ -27,6 +27,14 @@ const PAGE_STYLE = Style.registerStyle({
   // Mark this as the relative anchor for floating children (e.g. search bar).
   position: 'relative',
   flex: 1,
+
+  // See the discussion about hiding <webview> elements at:
+  // https://github.com/electron/electron/blob/master/docs/api/web-view-tag.md#css-styling-notes
+  '&:not(.active-browser-page)': {
+    flex: '0 1',
+    width: '0px',
+    height: '0px',
+  },
 });
 
 const WEB_VIEW_STYLE = Style.registerStyle({
@@ -61,8 +69,7 @@ class Page extends Component {
 
     return (
       <div className={`page ${PAGE_STYLE} ${this.props.isActive ? 'active-browser-page' : ''}`}
-        data-page-state={this.props.page.state}
-        hidden={!this.props.isActive}>
+        data-page-state={this.props.page.state}>
         <Search hidden={!this.props.page.isSearching} />
         <webview is="webview"
           ref="webview"
