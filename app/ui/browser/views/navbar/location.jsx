@@ -98,6 +98,7 @@ export class Location extends Component {
 
     this.state = {
       showURLBar: false,
+      focusedURLBar: false,
       focusedResultIndex: -1,
     };
 
@@ -189,10 +190,12 @@ export class Location extends Component {
 
   handleURLBarFocus() {
     this.refs.input.select();
+    this.setState({ focusedURLBar: true });
   }
 
   handleURLBarBlur() {
     this.setState({ showURLBar: false });
+    this.setState({ focusedURLBar: false });
   }
 
   handleURLBarKeyDown(ev, completionsForURL) {
