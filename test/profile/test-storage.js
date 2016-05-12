@@ -16,7 +16,7 @@ import { ProfileStorage, VisitType } from '../../app/services/storage';
 
 describe('Utility tests', () => {
   it('Compares sets correctly.', (done) => {
-    expect(Immutable.Set(['a', 'b']).equals(Immutable.Set(['b', 'a'])));
+    expect(Immutable.Set(['a', 'b']).equals(Immutable.Set(['b', 'a']))).toBe(true);
     done();
   });
 });
@@ -33,7 +33,7 @@ describe('DB.open', () => {
         fs.accessSync(tempPath);   // Throws on failure.
 
         const row = await db.get('PRAGMA user_version');
-        expect(row.user_version === 0);
+        expect(row.user_version).toBe(0);
         await db.close();
         fs.unlinkSync(tempPath);   // Clean up.
 
@@ -55,8 +55,8 @@ describe('ProfileStorage.open', () => {
         const tempDir = path.join(parent, '/foo/bar/');
         const storage = await ProfileStorage.open(tempDir);
 
-        expect(storage instanceof ProfileStorage);
-        expect((await storage.userVersion()) === 4);
+        expect(storage).toBeA(ProfileStorage);
+        expect((await storage.userVersion())).toBe(5);
         await storage.close();
 
         // This should be the only file after we close.
@@ -91,7 +91,7 @@ describe('ProfileStorage data access', () => {
 
         // You'll need to bump this every time the current version changes.
         const v = await storage.userVersion();
-        expect(v === 2);
+        expect(v).toBe(5);
 
         // Make sure the tables exist.
 
@@ -105,8 +105,8 @@ describe('ProfileStorage data access', () => {
 
         const pE = await storage.db.get('SELECT ts FROM placeEvents');
         const vE = await storage.db.get('SELECT place FROM visitEvents');
-        expect(pE.foo === now);
-        expect(vE.foo === 1);
+        expect(pE.ts).toBe(now);
+        expect(vE.place).toBe(1);
 
         await storage.close();
 
@@ -126,12 +126,12 @@ describe('ProfileStorage data access', () => {
         const idBar = await storageA.savePlace('http://example.com/bar');
         const again = await storageA.savePlace('http://example.com/foo');
 
-        expect(idFoo === again);
-        expect((idBar - idFoo) === 1);
+        expect(idFoo).toBe(again);
+        expect((idBar - idFoo)).toBe(1);
 
         const fetched = await storageA.db.get('SELECT id FROM placeEvents WHERE url = ?',
                                               ['http://example.com/foo']);
-        expect(fetched.id === idFoo);
+        expect(fetched.id).toBe(idFoo);
 
         await storageA.close();
 
@@ -140,7 +140,7 @@ describe('ProfileStorage data access', () => {
         const idBarB = await storageB.savePlace('http://example.com/bar');
 
         // The ID is the same.
-        expect(idBarB === idBar);
+        expect(idBarB).toBe(idBar);
 
         // None of these places have actually been visited yet!
         expect((await storageB.visited(0))).toEqual([]);
@@ -219,8 +219,8 @@ describe('ProfileStorage data access', () => {
         const idBar = await storage.visit('http://example.com/bar', session, 'Some title');
         const again = await storage.visit('http://example.com/foo', session);
 
-        expect(idFoo === again);
-        expect((idBar - idFoo) === 1);
+        expect(idFoo).toBe(again);
+        expect((idBar - idFoo)).toBe(1);
 
         // We only record non-undefined titles.
         expect((await storage.db
@@ -247,12 +247,12 @@ describe('ProfileStorage data access', () => {
         const again = await storage.starPage('http://example.com/foo/noo', session, -1);
         const yet = await storage.starPage('http://example.com/foo/noo', session, 1);
 
-        expect(place === again);
-        expect(place === yet);
+        expect(place).toBe(again);
+        expect(place).toBe(yet);
 
         const visited = await storage.visit('http://example.com/foo/noo', session);
 
-        expect(place === visited);
+        expect(place).toBe(visited);
 
         await storage.close();
 
@@ -276,15 +276,15 @@ describe('ProfileStorage data access', () => {
         const session = await storage.startSession(null, null);
         await storage.starPage(bar, session, 1);
         starred = await storage.starredURLs();
-        expect(Immutable.Set([bar]).equals(starred));
+        expect(Immutable.Set([bar])).toEqual(starred);
 
         await storage.starPage(bar, session, -1);
         starred = await storage.starredURLs();
-        expect(starred.isEmpty());
+        expect(starred.isEmpty()).toBeTruthy();
 
         await storage.starPage(baz, session, 1);
         starred = await storage.starredURLs();
-        expect(Immutable.Set([baz]).equals(starred));
+        expect(Immutable.Set([baz])).toEqual(starred);
 
         let recent = await storage.recentlyStarred(2);
         expect(recent.map(record => record.location)).toEqual([baz]);
@@ -292,7 +292,7 @@ describe('ProfileStorage data access', () => {
         await storage.starPage('http://example.com/foo/bar', session, 1);
 
         starred = await storage.starredURLs();
-        expect(both.equals(starred));
+        expect(both.equals(starred)).toBeTruthy();
 
         recent = await storage.recentlyStarred(2);
         expect(recent.map(record => record.location)).toEqual([bar, baz]);
@@ -303,7 +303,7 @@ describe('ProfileStorage data access', () => {
         // Check that we get the same results for from-scratch materialization.
         await storage.rematerialize();
         starred = await storage.starredURLs();
-        expect(both.equals(starred));
+        expect(both.equals(starred)).toBeTruthy();
 
         await storage.close();
 
@@ -325,9 +325,9 @@ describe('ProfileStorage data access', () => {
         await storage.visit('http://example.com/barbar', session);
 
         const results = await storage.visitedMatches('bar');
-        expect(results.length === 2);
-        expect(results[0] === 'http://example.com/barbar');
-        expect(results[1] === 'http://example.com/barbaz/noo');
+        expect(results.length).toBe(2);
+        expect(results[0]).toBe('http://example.com/barbar');
+        expect(results[1]).toBe('http://example.com/barbaz/noo');
 
         await storage.close();
 
@@ -340,23 +340,23 @@ describe('ProfileStorage data access', () => {
 });
 
 describe('Schema upgrades', () => {
-  it('Can upgrade from v1 to v2.', (done) => {
+  it('Can upgrade from v1 to current.', (done) => {
     (async function () {
       try {
         const tempPath = tmp.tmpNameSync();
         const db = await DB.open(tempPath);
 
-        expect(db instanceof DB);
-        expect((await db.get('PRAGMA user_version')).user_version === 0);
+        expect(db).toBeA(DB);
+        expect((await db.get('PRAGMA user_version')).user_version).toBe(0);
 
         // Make a v1 DB.
         const storage = new ProfileStorage(db);
         await new ProfileStorageSchemaV1().createOrUpdate(storage);
-        expect((await db.get('PRAGMA user_version')).user_version === 1);
+        expect((await db.get('PRAGMA user_version')).user_version).toBe(1);
 
         // Upgrade it.
         await storage.init();
-        expect((await db.get('PRAGMA user_version')).user_version === 2);
+        expect((await db.get('PRAGMA user_version')).user_version).toBe(5);
 
         await storage.close();
         fs.unlinkSync(tempPath);   // Clean up.
@@ -368,23 +368,23 @@ describe('Schema upgrades', () => {
     }());
   });
 
-  it('Can upgrade from v2 to v5.', (done) => {
+  it('Can upgrade from v2 to current.', (done) => {
     (async function () {
       try {
         const tempPath = tmp.tmpNameSync();
         const db = await DB.open(tempPath);
 
-        expect(db instanceof DB);
-        expect((await db.get('PRAGMA user_version')).user_version === 0);
+        expect(db).toBeA(DB);
+        expect((await db.get('PRAGMA user_version')).user_version).toBe(0);
 
         // Make a v2 DB.
         const storage = new ProfileStorage(db);
         await new ProfileStorageSchemaV2().createOrUpdate(storage);
-        expect((await db.get('PRAGMA user_version')).user_version === 2);
+        expect((await db.get('PRAGMA user_version')).user_version).toBe(2);
 
         // Upgrade it.
         await storage.init();
-        expect((await db.get('PRAGMA user_version')).user_version === 5);
+        expect((await db.get('PRAGMA user_version')).user_version).toBe(5);
 
         await storage.close();
         fs.unlinkSync(tempPath);   // Clean up.
@@ -396,23 +396,23 @@ describe('Schema upgrades', () => {
     }());
   });
 
-  it('Can upgrade from v4 to v5.', (done) => {
+  it('Can upgrade from v4 to current  .', (done) => {
     (async function () {
       try {
         const tempPath = tmp.tmpNameSync();
         const db = await DB.open(tempPath);
 
-        expect(db instanceof DB);
-        expect((await db.get('PRAGMA user_version')).user_version === 0);
+        expect(db).toBeA(DB);
+        expect((await db.get('PRAGMA user_version')).user_version).toBe(0);
 
         // Make a v4 DB.
         const storage = new ProfileStorage(db);
         await new ProfileStorageSchemaV4().createOrUpdate(storage);
-        expect((await db.get('PRAGMA user_version')).user_version === 4);
+        expect((await db.get('PRAGMA user_version')).user_version).toBe(4);
 
         // Upgrade it.
         await storage.init();
-        expect((await db.get('PRAGMA user_version')).user_version === 5);
+        expect((await db.get('PRAGMA user_version')).user_version).toBe(5);
 
         await storage.close();
         fs.unlinkSync(tempPath);   // Clean up.
