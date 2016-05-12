@@ -95,6 +95,14 @@ Page.propTypes = {
 export default Page;
 
 function addListenersToWebView(webview, pageAccessor, dispatch) {
+  // 'new-window' is fired when a navigation request that should happen in a new frame is made. See
+  // https://github.com/electron/electron/blob/master/docs/api/web-contents.md#event-new-window
+  webview.addEventListener('new-window', (e) => {
+    // TODO: differentiate more thoroughly based on e.disposition.
+    const selected = e.disposition && e.disposition === 'foreground-tab';
+    dispatch(actions.createTab(e.url, pageAccessor().sessionId, { selected }));
+  });
+
   webview.addEventListener('did-start-loading', () => {
     dispatch(actions.setPageDetails(pageAccessor().id, {
       state: PageModel.PAGE_STATE_LOADING,
