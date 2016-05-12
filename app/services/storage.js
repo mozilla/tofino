@@ -463,15 +463,22 @@ export class ProfileStorage {
   }
 
   // Ordered by last visit, descending.
-  async visited(since: number = 0, limit: number = 10): Promise<[string]> {
+  async visited(since: number = 0, limit: number = 10): Promise<[AwesomebarMatch]> {
     // Fetch all places visited, with the latest timestamp for each.
-    const query = `SELECT * FROM mHistory
-      WHERE lastVisited > ?
-      ORDER BY lastVisited DESC
+    const query = `
+      SELECT h.place AS place,
+             h.url AS uri,
+             h.lastTitle AS title,
+             pages.excerpt AS snippet,
+             h.lastVisited AS lastVisited
+      FROM mHistory AS h LEFT JOIN pages ON pages.place = h.place
+      WHERE h.lastVisited > ?
+      GROUP BY h.place
+      ORDER BY h.lastVisited DESC
       LIMIT ?
     `;
 
-    return this.collectURLs(await this.db.all(query, [since, limit]));
+    return await this.db.all(query, [since, limit]);
   }
 
   async getStarredWithOrderByAndLimit(newestFirst: boolean, limit: ?number):
