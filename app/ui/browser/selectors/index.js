@@ -36,6 +36,10 @@ export function getUserTypedLocation(state, pageId) {
           state.uiState.userTypedLocation.get(pageId) : null;
 }
 
+export function getPageById(state, id) {
+  return state.pages.pages.find(page => page.id === id);
+}
+
 export function getPageByIndex(state, index) {
   return state.pages.pages.get(index);
 }

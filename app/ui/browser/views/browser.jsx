@@ -17,7 +17,7 @@ import TabBar from './tabbar/tabbar';
 import DeveloperBar from './developerbar';
 import NavBar from './navbar/navbar';
 import Page from './page/page';
-import WebViewController from '../webview-controller';
+import WebViewController from '../lib/webview-controller';
 
 import {
   menuTabContext, menuLocationContext, menuBrowser, maximize, minimize, close,

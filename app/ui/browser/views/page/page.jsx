@@ -21,7 +21,7 @@ import Search from './search';
 import { fixURL } from '../../browser-util';
 import { menuWebViewContext } from '../../actions/external';
 import * as actions from '../../actions/main-actions';
-import * as userAgent from '../../user-agent';
+import * as userAgent from '../../lib/user-agent';
 
 const PAGE_STYLE = Style.registerStyle({
   // Mark this as the relative anchor for floating children (e.g. search bar).
@@ -131,12 +131,7 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
       text: null,
     }));
 
-    userAgent.api('/visits', {
-      method: 'POST',
-      json: { url, title, session: pageAccessor().sessionId },
-    })
-      .then() // Fire and forget.
-      .catch(); // In the future, we could retry.
+    userAgent.createHistory({ url, title, session: pageAccessor().sessionId });
   });
 
   webview.addEventListener('ipc-message', e => {

@@ -12,9 +12,9 @@
  specific language governing permissions and limitations under the License.
  */
 
-import * as endpoints from '../../shared/constants/endpoints';
+import * as endpoints from '../../../shared/constants/endpoints';
 
-export function api(url: string, options: ?Object) {
+export default function(url: string, options: ?Object) {
   const newOptions = Object.assign({}, options);
   if (!newOptions.headers) {
     newOptions.headers = {};

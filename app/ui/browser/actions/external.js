@@ -15,7 +15,7 @@ specific language governing permissions and limitations under the License.
 import * as actions from './main-actions';
 import { getCurrentWebView } from '../browser-util';
 import { remote, clipboard, ipcRenderer } from '../../../shared/electron';
-import * as userAgent from '../user-agent';
+import * as userAgent from '../lib/user-agent';
 
 const { Menu, MenuItem } = remote;
 
@@ -55,25 +55,19 @@ export function menuBrowser(pageSessionId, dispatch) {
   menu.append(new MenuItem({
     label: 'Fetch page contents',
     click: () => {
+      // @TODO all webview access must be handled via `webview-controller`
       const webview = getCurrentWebView(document);
-      const startTime = Date.now();
-      console.log(`Fetching page contents at ${startTime}`);
       const script = 'window._readerify(window.document)';
       webview.executeJavaScript(script, false, readerResult => {
-        console.log(`Got reader result: ${readerResult}.`);
         if (!readerResult) {
           return;
         }
-        const endTime = Date.now();
-        const duration = endTime - startTime;
-        console.log(`In flight at ${endTime} (took ${duration}), location ${readerResult.uri}.`);
 
-        userAgent.api(`/pages/${encodeURIComponent(readerResult.uri)}`, {
-          method: 'POST',
-          json: { session: pageSessionId, page: readerResult },
-        })
-          .then() // Fire and forget!
-          .catch(); // In the future, we could retry.
+        userAgent.createPage({
+          url: readerResult.uri,
+          session: pageSessionId,
+          page: readerResult,
+        });
       });
     },
   }));

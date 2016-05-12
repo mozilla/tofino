@@ -12,36 +12,17 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import * as userAgent from '../user-agent';
+import * as userAgent from '../lib/user-agent';
 import * as uuid from 'uuid';
 
 import * as model from '../model/index';
 import * as types from '../constants/action-types';
 import * as profileDiffs from '../../../shared/profile-diffs';
+import { getPageById } from '../selectors/index';
 
 // Order matters!  Flow will try the earliest first.
 type Action = ((dispatch: (action: Action) => any, getState: () => Object) => any) |
               ({ type: string });
-
-/**
- * If pageId corresponds to a non-null open page, synchronously invoke callback(page).
- * Otherwise, do nothing.
- *
- * @param state current top-level state.
- * @param pageId to find.
- * @param callback to invoke.
- */
-function maybeWithPageById(state: Object, pageId: string, callback: any): void {
-  const pageIndex = state.pages.pages.findIndex(page => page.id === pageId);
-  if (pageIndex < 0) {
-    return;
-  }
-  const page = state.pages.pages.get(pageIndex);
-  if (!page) {
-    return;
-  }
-  callback(page);
-}
 
 export function createTab(location: ?string = undefined,
                           ancestorId: ?number = undefined): Action {
@@ -55,22 +36,12 @@ export function createTab(location: ?string = undefined,
     dispatch({ type: types.CREATE_TAB, id, ancestorId, location, instrument: true });
 
     // TODO: properly track window scope.
-    userAgent.api('/session/start', {
-      method: 'POST',
-      json: { scope: 0, ancestor: ancestorId, reason },
-    })
-      .then(async function (response) {
-        if (!response.ok) {
-          return;
-        }
-        const body = await response.json();
-        const session = body.session;
-        dispatch(didStartSession(id, session, ancestorId));
-      })
-
-      // This situation is bad for persisting browsing data, but there's nothing to
-      // do! In the future, we could retry.
-      .catch();
+    userAgent.createSession({ ancestor: ancestorId, reason }).then(res => {
+      if (!res.ok) {
+        return {};
+      }
+      return res.json();
+    }).then(({ session }) => dispatch(didStartSession(id, session, ancestorId)));
   };
 }
 
@@ -95,14 +66,10 @@ export function closeTab(pageId: string): Action {
     }
 
     // Notify User Agent with sessionId before closing the tab (and losing the sessionId).
-    maybeWithPageById(getState(), pageId, (page) => {
-      userAgent.api('/session/end', {
-        method: 'POST',
-        json: { session: page.sessionId, reason },
-      })
-        .then() // Fire and forget.
-        .catch(); // In the future, we could retry.
-    });
+    const page = getPageById(getState(), pageId);
+    if (page) {
+      userAgent.destroySession({ session: page.sessionId, reason });
+    }
 
     dispatch({ type: types.CLOSE_TAB, pageId, instrument: true });
   };
@@ -137,17 +104,12 @@ export function setUserTypedLocation(pageId: string, payload: Object): Action {
     // Empty input could happen if a page finishes loading and the userTyped
     // state is going to be reset.
     if (payload.text) {
-      userAgent.api(`/query?q=${encodeURIComponent(payload.text)}`, {
-        method: 'GET',
-      })
-        .then(async function (response) {
-          if (!response.ok) {
-            return;
-          }
-          const body = await response.json();
-          dispatch(profileDiffs.completions(payload.text, body.results));
-        })
-        .catch(); // Right now, nothing to be done.  In the future, we could retry.
+      userAgent.query({ text: payload.text }).then(res => {
+        if (!res.ok) {
+          return {};
+        }
+        return res.json();
+      }).then(({ results }) => dispatch(profileDiffs.completions(payload.text, results)));
     }
   };
 }
@@ -157,12 +119,7 @@ export function bookmark(session: number, url: string, title: ?string = undefine
     // Update this window's state before telling the profile service.
     dispatch({ type: types.SET_BOOKMARK_STATE, url, isBookmarked: true, title });
 
-    userAgent.api(`/stars/${encodeURIComponent(url)}`, {
-      method: 'PUT',
-      json: { title, session },
-    })
-      .then() // Fire and forget.
-      .catch(); // Right now, nothing to be done.  In the future, we could retry.
+    userAgent.createStar({ session, url, title });
   };
 }
 
@@ -171,12 +128,7 @@ export function unbookmark(session: number, url: string): Action {
     // Update this window's state before telling the profile service.
     dispatch({ type: types.SET_BOOKMARK_STATE, url, isBookmarked: false });
 
-    userAgent.api(`/stars/${encodeURIComponent(url)}`, {
-      method: 'DELETE',
-      json: { session },
-    })
-      .then() // Fire and forget.
-      .catch(); // Right now, nothing to be done.  In the future, we could retry.
+    userAgent.destroyStar({ session, url });
   };
 }
 
