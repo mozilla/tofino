@@ -24,7 +24,6 @@ import {
 } from '../actions/external';
 
 import * as actions from '../actions/main-actions';
-import * as ipcActions from '../actions/ipc';
 
 const BROWSER_WINDOW_STYLE = Style.registerStyle({
   flex: 1,
@@ -179,7 +178,6 @@ function attachIPCRendererListeners(browserView) {
   ipcRenderer.on('select-tab-next', () => dispatch(actions.setCurrentTabNext()));
 
   ipcRenderer.on('profile-diff', (_, args) => dispatch(args));
-  ipcRenderer.on('focus-url-bar', () => dispatch(ipcActions.focusURLBar()));
   ipcRenderer.on('new-tab', () => dispatch(actions.createTab()));
   ipcRenderer.on('close-tab', () =>
     dispatch(actions.closeTab(browserView.props.currentPage.id)));
@@ -189,8 +187,9 @@ function attachIPCRendererListeners(browserView) {
   ipcRenderer.on('page-refresh', () =>
     webViewController.navigateRefresh(browserView.props.currentPage.id));
 
+  // @TODO write tests for the following actions
   ipcRenderer.on('show-stars', () => dispatch(actions.createTab('tofino://stars')));
   ipcRenderer.on('show-history', () => dispatch(actions.createTab('tofino://history')));
-  ipcRenderer.on('open-bookmark',
-    (_event, bookmark) => dispatch(ipcActions.openBookmark(bookmark)));
+  ipcRenderer.on('focus-url-bar', () => {});
+  ipcRenderer.on('open-bookmark', (_, bookmark) => dispatch(actions.createTab(bookmark.location)));
 }
