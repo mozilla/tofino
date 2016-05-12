@@ -80,7 +80,9 @@ export function build(data = {}) {
  * Currently should only be used in tests.
  */
 export function handleIPCAcceleratorCommand(e, accelerator) {
+  console.log("app/main/menu/index.js:handleIPCAcceleratorCommand:", accelerator);
   if (!currentMenu) {
+    console.log("app/main/menu/index.js:handleIPCAcceleratorCommand:", "not found");
     return;
   }
 
@@ -94,6 +96,7 @@ export function handleIPCAcceleratorCommand(e, accelerator) {
       // We have to pass in the window as the first argument, and item as second,
       // because in the handler it's in the opposite order. Not sure how or why
       // these arguments get flipped in menu creation.
+      console.log("app/main/menu/index.js:handleIPCAcceleratorCommand:", "found");
       item.click(focusedWindow, item);
     }
 

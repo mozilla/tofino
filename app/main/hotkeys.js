@@ -55,10 +55,12 @@ export function bindBrowserWindowHotkeys(browserWindow) {
  * Current should only be used in tests.
  */
 export function handleIPCAcceleratorCommand(e, accelerator) {
+  console.log("app/main/hotkeys.js:handleIPCAcceleratorCommand:", accelerator);
   const focused = electron.BrowserWindow.getFocusedWindow();
   const handlerFactory = HOTKEYS.get(accelerator);
 
   if (!focused || !handlerFactory) {
+    console.log("app/main/hotkeys.js:handleIPCAcceleratorCommand:", "not found");
     return;
   }
 
