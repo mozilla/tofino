@@ -179,7 +179,6 @@ function attachIPCRendererListeners(browserView) {
   ipcRenderer.on('select-tab-next', () => dispatch(actions.setCurrentTabNext()));
 
   ipcRenderer.on('profile-diff', (_, args) => dispatch(args));
-  ipcRenderer.on('focus-url-bar', () => dispatch(ipcActions.focusURLBar()));
   ipcRenderer.on('new-tab', () => dispatch(actions.createTab()));
   ipcRenderer.on('close-tab', () =>
     dispatch(actions.closeTab(browserView.props.currentPage.id)));

@@ -12,10 +12,6 @@ specific language governing permissions and limitations under the License.
 
 import * as types from '../constants/action-types';
 
-export function focusURLBar() {
-  return { type: types.IPC_COMMAND_FOCUS_URL_BAR };
-}
-
 export function openBookmark(bookmark) {
   return { type: types.IPC_COMMAND_OPEN_BOOKMARK, bookmark };
 }

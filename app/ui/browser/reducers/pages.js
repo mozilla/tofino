@@ -42,9 +42,6 @@ export default function basic(state = initialState, action) {
     case types.IPC_COMMAND_OPEN_BOOKMARK:
       return createTab(state, action.bookmark.location);
 
-    case types.IPC_COMMAND_FOCUS_URL_BAR:
-      return state;
-
     case types.ATTACH_TAB:
       return attachTab(state, action.page);
 
