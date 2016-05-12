@@ -152,6 +152,8 @@ function configure(app: any, storage: ProfileStorage) {
     }
 
     const limit = parseInt(req.query.limit, 10) || Number.MAX_SAFE_INTEGER;
+
+    // TODO: this should return full-fledged page objects.
     const pages = await storage.visited(0, limit);
     res.json({ pages });
   }));

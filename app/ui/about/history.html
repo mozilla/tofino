@@ -9,9 +9,9 @@
 
     <style>
         html {
-            background: cornflowerblue radial-gradient( circle, #1010a0 0%, #000080 80%) center center / cover no-repeat;
-            color: white;
-            font-style: italic;
+            background: cornflowerblue radial-gradient( circle, #a0a0f0 0%, #5050f0 80%) center center / cover no-repeat;
+            color: #050505;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             text-rendering: optimizeLegibility;
             min-height: 100%;
         }
@@ -22,12 +22,60 @@
 
         a {
             text-decoration: none;
-            color: white;
+            color: #102050;
+        }
+
+        #history {
+            list-style-type: none;
+            padding-top: 1em;
+        }
+
+        #history li {
+            padding: 0.4em 1em 0.4em 0.6em;
+        }
+
+        #history li:nth-child(odd) {
+            background-color: #fafaff;
+        }
+
+        #history li:nth-child(even) {
+            background-color: #dfefff;
+        }
+
+        #history li:hover {
+            background-color: white;
+        }
+
+        .excerpt {
+            color: slategrey;
+            padding: 0.25em 2em 0 2em;
         }
     </style>
 </head>
 
 <body>
-Hello, world.
+<ul id="history"></ul>
+
+<script>
+    var ul = document.getElementById('history');
+    window._browser.visited(200).then(function (visited) {
+        visited.forEach(function (page) {
+            var li = document.createElement('li');
+            var a = document.createElement('a');
+            a.href = page.uri;
+            a.title = page.title || page.uri;
+            a.appendChild(document.createTextNode(page.title || page.uri));
+            li.appendChild(a);
+            li.appendChild(document.createElement('br'));
+            if (page.snippet) {
+                var p = document.createElement('p');
+                p.className = 'excerpt';
+                p.appendChild(document.createTextNode(page.snippet));
+                li.appendChild(p);
+            }
+            ul.appendChild(li);
+        });
+    });
+</script>
 </body>
 </html>

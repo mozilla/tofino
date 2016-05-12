@@ -15,5 +15,30 @@ import './context-menu';
 import { readerify } from './reader';
 import Readability from './readability';
 import './scroll';
+import { api } from '../../ui/browser/user-agent';
 
 window._readerify = readerify.bind(null, Readability);
+
+if (document.location.protocol === 'tofino:') {
+  window._browser = {
+    async visited(limit) {
+      const res = await api(`/visits?limit=${limit}`);
+      if (res.ok) {
+        const body = await res.json();
+        return body.pages;
+      }
+      return [];
+    },
+
+    // We use `recentStars` instead of `stars` because the latter only
+    // gives us URLs, and we want much more.
+    async recentStars(limit) {
+      const res = await api(`/recentStars?limit=${limit}`);
+      if (res.ok) {
+        const body = await res.json();
+        return body.stars;
+      }
+      return [];
+    },
+  };
+}
