@@ -25,12 +25,22 @@ import * as profileDiffs from '../shared/profile-diffs';
 
 const PORT = 9090;
 
+const allowCrossDomain = function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', 'tofino://');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+  next();
+};
+
 function configure(app: any, storage: ProfileStorage) {
   app.use(morgan('combined'));
 
   // These need to be register before our routes.
   app.use(bodyParser.json());
   app.use(expressValidator()); // Keep this immediately after express.bodyParser().
+
+  app.use(allowCrossDomain);
 
   const router = express.Router(); // eslint-disable-line new-cap
 
