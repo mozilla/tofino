@@ -261,7 +261,7 @@ export class Location extends Component {
       );
     };
 
-    if (SHOW_COMPLETIONS && completionsForURL) {
+    if (SHOW_COMPLETIONS && completionsForURL && this.state.focusedURLBar) {
       const results = completionsForURL.map(renderRow);
 
       completions = (
