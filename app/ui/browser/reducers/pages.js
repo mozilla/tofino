@@ -32,24 +32,16 @@ const initialState = new Pages({
 export default function basic(state = initialState, action) {
   switch (action.type) {
     case types.CREATE_TAB:
-    case types.IPC_COMMAND_CREATE_TAB:
       return createTab(state, action.location, action.id);
 
     case types.DID_START_SESSION:
       return setPageDetails(state, action.pageId,
                             { sessionId: action.sessionId, ancestorId: action.ancestorId });
 
-    case types.IPC_COMMAND_OPEN_BOOKMARK:
-      return createTab(state, action.bookmark.location);
-
-    case types.IPC_COMMAND_FOCUS_URL_BAR:
-      return state;
-
     case types.ATTACH_TAB:
       return attachTab(state, action.page);
 
     case types.CLOSE_TAB:
-    case types.IPC_COMMAND_CLOSE_TAB:
       return closeTab(state, action.pageId);
 
     case types.SET_PAGE_DETAILS:
