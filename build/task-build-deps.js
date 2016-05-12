@@ -24,7 +24,7 @@ async function downloadElectron() {
 
     // Some tools like electron-rebuild rely on this to find the executable
     await fs.writeFile(path.join(tmpDir, 'path.txt'),
-                       BuildUtils.ELECTRON_EXECUTABLE[os.platform()]);
+                       BuildUtils.getElectronExecutable()[os.platform()]);
 
     const targetDir = BuildUtils.getElectronRoot();
     await fs.remove(targetDir);
