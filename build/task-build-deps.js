@@ -82,7 +82,7 @@ async function rebuild() {
 export default async function() {
   let existingConfig = {};
   try {
-    existingConfig = await fs.readJson(BuildUtils.getBuildConfigFile());
+    existingConfig = BuildUtils.getBuildConfig();
   } catch (e) {
     // Missing files mean we rebuild
   }
@@ -130,6 +130,6 @@ export default async function() {
     await rebuild();
     existingConfig.electron = BuildUtils.getElectronVersion();
     existingConfig.nativeModules = modules;
-    await fs.writeJson(BuildUtils.getBuildConfigFile(), existingConfig, { spaces: 2 });
+    BuildUtils.writeBuildConfig(existingConfig);
   }
 }

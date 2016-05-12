@@ -2,12 +2,11 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 /**
- * Creates a `build-config.js` in root directory for runtime access to
+ * Creates a `build-config.json` in the root directory for runtime access to
  * build configurations.
  */
 
 import os from 'os';
-import fs from 'fs-promise';
 
 import * as BuildUtils from './utils';
 
@@ -47,16 +46,15 @@ const BASE_CONFIG = {
   googleAnalyticsTrackingID: 'UA-76122102-1',
 };
 
-export default async function(config) {
+export default function(options) {
   let currentConfig = {};
 
   try {
-    currentConfig = await fs.readJson(BuildUtils.getBuildConfigFile());
+    currentConfig = BuildUtils.getBuildConfig();
   } catch (e) {
     // Ignore missing file errors.
   }
 
-  const configToWrite = Object.assign({}, currentConfig, BASE_CONFIG, config);
-
-  await fs.writeJson(BuildUtils.getBuildConfigFile(), configToWrite, { spaces: 2 });
+  const configToWrite = Object.assign({}, currentConfig, BASE_CONFIG, options);
+  BuildUtils.writeBuildConfig(configToWrite);
 }

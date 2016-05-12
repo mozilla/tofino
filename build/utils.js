@@ -44,7 +44,15 @@ export const getAppVersion = () => {
 
 export const getRoot = () => path.dirname(__dirname);
 
-export const getBuildConfigFile = () => path.join(__dirname, '..', 'build-config.json');
+export function getBuildConfig() {
+  const file = path.join(__dirname, '..', 'build-config.json');
+  return fs.readJsonSync(file);
+}
+
+export function writeBuildConfig(obj) {
+  const file = path.join(__dirname, '..', 'build-config.json');
+  return fs.writeJsonSync(file, obj, { spaces: 2 });
+}
 
 export const getManifest = () => manifest;
 
@@ -59,7 +67,6 @@ export function getElectronPath() {
 // This intentionally throws an exception if electron hasn't been downloaded yet.
 export function getElectronVersion() {
   const versionFile = path.join(getElectronRoot(), 'version');
-
   const version = fs.readFileSync(versionFile, { encoding: 'utf8' });
 
   // Trim off the leading 'v'.
