@@ -33,7 +33,7 @@ export default function basic(state = initialState, action) {
   switch (action.type) {
     case types.CREATE_TAB:
     case types.IPC_COMMAND_CREATE_TAB:
-      return createTab(state, action.location, action.id);
+      return createTab(state, action.location, action.id, action.options);
 
     case types.DID_START_SESSION:
       return setPageDetails(state, action.pageId,
@@ -89,11 +89,13 @@ export function getPageAreaVisible(state) {
   return state.browserWindow.pageAreaVisible;
 }
 
-function createTab(state, location = HOME_PAGE, id = undefined) {
+function createTab(state, location = HOME_PAGE, id = undefined, { selected = true }) {
   return state.withMutations(mut => {
     const page = new Page({ id, location });
     mut.update('pages', pages => pages.push(page));
-    mut.set('currentPageIndex', state.pages.size);
+    if (selected) {
+      mut.set('currentPageIndex', state.pages.size);
+    }
   });
 }
 
