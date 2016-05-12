@@ -143,7 +143,7 @@ function configure(app: any, storage: ProfileStorage) {
     res.json();
   }));
 
-  router.get('/visits', wrap(async function(req, res) {
+  router.get('/awesome', wrap(async function(req, res) {
     req.checkQuery('q').notEmpty();
 
     const errors = req.validationErrors();

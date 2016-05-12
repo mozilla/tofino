@@ -56,7 +56,7 @@ describe('Action - SET_USER_TYPED_LOCATION', () => {
     }));
 
     expect(fetchMock.lastUrl(URL))
-      .toEqual(`${endpoints.UA_SERVICE_HTTP}/visits?q=${encodeURIComponent('Bar')}`);
+      .toEqual(`${endpoints.UA_SERVICE_HTTP}/awesome?q=${encodeURIComponent('Bar')}`);
     expect(fetchMock.lastOptions(URL).method).toEqual('GET');
   });
 });
