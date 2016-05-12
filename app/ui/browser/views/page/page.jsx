@@ -27,6 +27,11 @@ const PAGE_STYLE = Style.registerStyle({
   // Mark this as the relative anchor for floating children (e.g. search bar).
   position: 'relative',
   flex: 1,
+  '&:not(.active-browser-page)': {
+    flex: '0 1',
+    width: '0px',
+    height: '0px',
+  },
 });
 
 const WEB_VIEW_STYLE = Style.registerStyle({
@@ -61,8 +66,7 @@ class Page extends Component {
 
     return (
       <div className={`page ${PAGE_STYLE} ${this.props.isActive ? 'active-browser-page' : ''}`}
-        data-page-state={this.props.page.state}
-        hidden={!this.props.isActive}>
+        data-page-state={this.props.page.state}>
         <Search hidden={!this.props.page.isSearching} />
         <webview is="webview"
           ref="webview"
@@ -86,6 +90,13 @@ Page.propTypes = {
 export default Page;
 
 function addListenersToWebView(webview, pageAccessor, dispatch) {
+  webview.addEventListener('new-window', (e) => {
+    // TODO: differentiate more thoroughly based on e.disposition.
+    console.log(`disposition ${e.disposition}`);
+    const selected = e.disposition && e.disposition === 'foreground-tab';
+    dispatch(actions.createTab(e.url, pageAccessor().sessionId, { selected }));
+  });
+
   webview.addEventListener('did-start-loading', () => {
     dispatch(actions.setPageDetails(pageAccessor().id, {
       state: PageModel.PAGE_STATE_LOADING,

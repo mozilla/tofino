@@ -44,7 +44,8 @@ function maybeWithPageById(state: Object, pageId: string, callback: any): void {
 }
 
 export function createTab(location: ?string = undefined,
-                          ancestorId: ?number = undefined): Action {
+                          ancestorId: ?number = undefined,
+                          options: ?Object = { selected: true }): Action {
   const reason = undefined;
 
   return (dispatch) => {
@@ -52,7 +53,7 @@ export function createTab(location: ?string = undefined,
     const id = uuid.v4();
 
     // Start loading a tab while asking the User Agent to start its browsing session.
-    dispatch({ type: types.CREATE_TAB, id, ancestorId, location, instrument: true });
+    dispatch({ type: types.CREATE_TAB, id, ancestorId, location, options, instrument: true });
 
     // TODO: properly track window scope.
     userAgent.api('/session/start', {
