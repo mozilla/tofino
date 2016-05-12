@@ -234,7 +234,7 @@ export class Location extends Component {
   }
 
   render() {
-    const { profile } = this.props;
+    const { profile, pages, page } = this.props;
     const urlValue = this.getRenderURL();
     let completions = null;
     const completionsForURL = profile.completions.get(urlValue);
@@ -288,6 +288,39 @@ export class Location extends Component {
       }
     }
 
+    const allInputs = pages.map(p => {
+      if (page === p) {
+        return (<input
+          id="urlbar-input"
+          className={INPUT_BAR_STYLE}
+          defaultValue={p.location}
+          key={p.id}
+          style={{
+            // Need to keep this in the DOM so it can be focused in setInputValue.
+            // This won't be a problem if we decide to get rid of the hidden URL UI state.
+            position: !this.state.showURLBar ? 'absolute' : null,
+            top: !this.state.showURLBar ? '-1000px' : null,
+          }}
+          disabled={!this.state.showURLBar}
+          type="url"
+          ref="input"
+          onFocus={this.handleURLBarFocus}
+          onBlur={this.handleURLBarBlur}
+          onChange={this.props.onLocationChange}
+          onKeyDown={(e) =>
+            this.handleURLBarKeyDown(e, completionsForURL)
+          }
+          onContextMenu={this.props.onLocationContextMenu} />);
+      }
+
+      return (<input
+        key={p.id}
+        defaultValue={p.location}
+        style={{ display: 'none' }}
+        disabled="true"
+        type="url" />);
+    });
+
     return (
       <div className={LOCATION_BAR_CONTAINER_STYLE}>
         <div id="browser-location-bar"
@@ -306,23 +339,7 @@ export class Location extends Component {
               {this.props.page.title}
             </span>
           </div>
-          <input id="urlbar-input"
-            className={INPUT_BAR_STYLE}
-            style={{
-              // Need to keep this in the DOM so it can be focused in setInputValue.
-              // This won't be a problem if we decide to get rid of the hidden URL UI state.
-              position: !this.state.showURLBar ? 'absolute' : null,
-              top: !this.state.showURLBar ? '-1000px' : null,
-            }}
-            type="url"
-            ref="input"
-            onFocus={this.handleURLBarFocus}
-            onBlur={this.handleURLBarBlur}
-            onKeyDown={(e) =>
-              this.handleURLBarKeyDown(e, completionsForURL)
-            }
-            onChange={this.props.onLocationChange}
-            onContextMenu={this.props.onLocationContextMenu} />
+          {allInputs}
           <Btn title="Bookmark"
             className={LOCATION_BAR_BUTTONS_STYLE}
             image={this.getBookmarkIcon()}
@@ -339,6 +356,7 @@ Location.displayName = 'Location';
 
 Location.propTypes = {
   page: PropTypes.object.isRequired,
+  pages: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired,
   onLocationChange: PropTypes.func.isRequired,
   onLocationContextMenu: PropTypes.func.isRequired,

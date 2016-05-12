@@ -10,7 +10,7 @@ import { Page, Profile } from '../../../../../app/ui/browser/model/index';
 import Immutable from 'immutable';
 
 function createSpyProps() {
-  return {
+  const props = {
     page: new Page(),
     userTypedLocation: '',
     profile: new Profile(),
@@ -23,6 +23,8 @@ function createSpyProps() {
     ipcRenderer: Object.create(null),
     navigateTo: expect.createSpy(),
   };
+  props.pages = [props.page];
+  return props;
 }
 
 describe('Location', () => {
