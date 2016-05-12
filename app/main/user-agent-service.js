@@ -143,6 +143,19 @@ function configure(app: any, storage: ProfileStorage) {
     res.json();
   }));
 
+  router.get('/visits', wrap(async function(req, res) {
+    req.checkQuery('limit').isInt().notEmpty();
+    const errors = req.validationErrors();
+    if (errors) {
+      res.status(401).json(errors);
+      return;
+    }
+
+    const limit = parseInt(req.query.limit, 10) || Number.MAX_SAFE_INTEGER;
+    const pages = await storage.visited(0, limit);
+    res.json({ pages });
+  }));
+
   router.get('/awesome', wrap(async function(req, res) {
     req.checkQuery('q').notEmpty();
 
