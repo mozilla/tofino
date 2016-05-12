@@ -10,6 +10,7 @@ import vinyl from 'vinyl-fs';
 import zip from 'gulp-vinyl-zip';
 
 import * as BuildUtils from './utils';
+import * as BuildConst from './const.js';
 
 const ARCH = process.arch;
 const PLATFORM = os.platform();
@@ -80,12 +81,12 @@ export default async function() {
     version: electronVersion,
     dir: ROOT,
     icon: path.join(ROOT, 'branding', 'app-icon'),
-    out: path.join(ROOT, 'dist'),
+    out: BuildConst.DIST_DIR,
     download: downloadOptions,
   });
 
   const packageName = `${manifest.name}-${appVersion}-${PLATFORM}-${ARCH}.zip`;
-  const distPath = path.join(ROOT, 'dist', packageName);
+  const distPath = path.join(BuildConst.DIST_DIR, packageName);
 
   packagedApp.pipe(zip.dest(distPath));
 }
