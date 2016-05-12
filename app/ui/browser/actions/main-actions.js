@@ -36,12 +36,8 @@ export function createTab(location: ?string = undefined,
     dispatch({ type: types.CREATE_TAB, id, ancestorId, location, instrument: true });
 
     // TODO: properly track window scope.
-    userAgent.createSession({ ancestor: ancestorId, reason }).then(res => {
-      if (!res.ok) {
-        return {};
-      }
-      return res.json();
-    }).then(({ session }) => dispatch(didStartSession(id, session, ancestorId)));
+    userAgent.createSession({ ancestor: ancestorId, reason }).then(({ session }) =>
+      dispatch(didStartSession(id, session, ancestorId)));
   };
 }
 
@@ -104,12 +100,8 @@ export function setUserTypedLocation(pageId: string, payload: Object): Action {
     // Empty input could happen if a page finishes loading and the userTyped
     // state is going to be reset.
     if (payload.text) {
-      userAgent.query({ text: payload.text }).then(res => {
-        if (!res.ok) {
-          return {};
-        }
-        return res.json();
-      }).then(({ results }) => dispatch(profileDiffs.completions(payload.text, results)));
+      userAgent.query({ text: payload.text }).then(({ results }) =>
+        dispatch(profileDiffs.completions(payload.text, results)));
     }
   };
 }

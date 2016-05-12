@@ -26,5 +26,10 @@ export default function(url: string, options: ?Object) {
     newOptions.body = JSON.stringify(newOptions.json);
   }
 
-  return fetch(`${endpoints.UA_SERVICE_HTTP}${url}`, newOptions);
+  return fetch(`${endpoints.UA_SERVICE_HTTP}${url}`, newOptions).then(res => {
+    if (!res.ok) {
+      throw res;
+    }
+    return res.json();
+  });
 }

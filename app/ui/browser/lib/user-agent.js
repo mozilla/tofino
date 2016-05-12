@@ -24,11 +24,11 @@ export function createPage({ url, session, page }) {
   });
 }
 
-export function createSession({ ancestor, reason }) {
+export function createSession({ scope = 0, ancestor, reason }) {
   return request('/session/start', {
     method: 'POST',
     json: {
-      scope: 0,
+      scope,
       ancestor,
       reason,
     },
