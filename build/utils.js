@@ -11,7 +11,7 @@ import os from 'os';
 import path from 'path';
 import manifest from '../package.json';
 import fs from 'fs-promise';
-import mz from 'mz';
+import childProcess from 'child_process';
 
 export const IS_TRAVIS = process.env.TRAVIS === 'true';
 export const IS_APPVEYOR = process.env.APPVETOR === 'True';
@@ -88,7 +88,7 @@ export async function spawn(command, args, options = {}) {
   }
 
   return new Promise((resolve, reject) => {
-    const child = mz.child_process.spawn(command, args, options);
+    const child = childProcess.spawn(command, args, options);
 
     child.on('error', reject);
     child.on('exit', (code) => {
