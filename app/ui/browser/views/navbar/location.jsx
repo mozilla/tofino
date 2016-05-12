@@ -112,7 +112,6 @@ export class Location extends Component {
 
   componentDidMount() {
     this.props.ipcRenderer.on('focus-urlbar', () => this.refs.input.select());
-    this.setInputValue(this.getRenderURL());
   }
 
   componentWillReceiveProps(nextProps) {
