@@ -16,11 +16,13 @@ import mz from 'mz';
 export const IS_TRAVIS = process.env.TRAVIS === 'true';
 export const IS_APPVEYOR = process.env.APPVETOR === 'True';
 
-export const ELECTRON_EXECUTABLE = {
-  win32: 'electron.exe',
-  darwin: path.join('Electron.app', 'Contents', 'MacOS', 'Electron'),
-  linux: 'electron',
-};
+export function getElectronExecutable() {
+  return {
+    win32: 'electron.exe',
+    darwin: path.join('Electron.app', 'Contents', 'MacOS', 'Electron'),
+    linux: 'electron',
+  };
+}
 
 // We cache the download in a private place since these builds may not be
 // official Electron builds.
@@ -51,7 +53,7 @@ export function getElectronRoot() {
 }
 
 export function getElectronPath() {
-  return path.join(getElectronRoot(), ELECTRON_EXECUTABLE[os.platform()]);
+  return path.join(getElectronRoot(), getElectronExecutable()[os.platform()]);
 }
 
 // This intentionally throws an exception if electron hasn't been downloaded yet.
