@@ -9,9 +9,10 @@
 
 import os from 'os';
 import path from 'path';
-import manifest from '../package.json';
 import fs from 'fs-promise';
 import childProcess from 'child_process';
+
+import manifest from '../package.json';
 
 export const IS_TRAVIS = process.env.TRAVIS === 'true';
 export const IS_APPVEYOR = process.env.APPVETOR === 'True';
@@ -26,13 +27,15 @@ export function getElectronExecutable() {
 
 // We cache the download in a private place since these builds may not be
 // official Electron builds.
-export const getDownloadOptions = () => ({
-  version: manifest._electron.version,
-  cache: path.join(__dirname, '..', '.cache'),
-  strictSSL: true,
-});
+export function getDownloadOptions() {
+  return {
+    version: manifest._electron.version,
+    cache: path.join(__dirname, '..', '.cache'),
+    strictSSL: true,
+  };
+}
 
-export const getAppVersion = () => {
+export function getAppVersion() {
   if (IS_TRAVIS) {
     return `${manifest.version}-${process.env.TRAVIS_BUILD_NUMBER}`;
   }
@@ -40,9 +43,11 @@ export const getAppVersion = () => {
     return `${manifest.version}-${process.env.APPVEYOR_BUILD_NUMBER}`;
   }
   return manifest.version;
-};
+}
 
-export const getRoot = () => path.dirname(__dirname);
+export function getRoot() {
+  return path.dirname(__dirname);
+}
 
 export function getBuildConfig() {
   const file = path.join(__dirname, '..', 'build-config.json');
@@ -54,7 +59,9 @@ export function writeBuildConfig(obj) {
   return fs.writeJsonSync(file, obj, { spaces: 2 });
 }
 
-export const getManifest = () => manifest;
+export function getManifest() {
+  return manifest;
+}
 
 export function getElectronRoot() {
   return path.join(__dirname, '..', '.electron');
