@@ -50,6 +50,10 @@ const Driver = {
     expect(this.app.isRunning()).toBe(true);
     await this.client.waitUntilWindowLoaded();
 
+    // See http://webdriver.io/api/protocol/timeouts.html and
+    // http://www.seleniumhq.org/docs/04_webdriver_advanced.jsp.
+    await this.client.timeouts('implicit', WEBDRIVER_TIMEOUT_IN_MS);
+
     // Wait for both BrowserWindow and first tab webview to exist
     await this.client.waitUntil(() => this.client.getWindowCount().then(count => count === 2));
 
@@ -83,11 +87,18 @@ const Driver = {
    * @return Promise<Object>
    */
   getReduxState: async function() {
-    await this.setTargetToBrowserWindow();
+    const oldHandle = await this.setTargetToBrowserWindow();
 
-    return await this.client.execute(() =>
-      JSON.stringify(require('electron').ipcRenderer.store.getState()))
-      .then(res => JSON.parse(res.value));
+    try {
+      return await this.client.execute(() =>
+        JSON.stringify(require('electron').ipcRenderer.store.getState()))
+        .then(res => JSON.parse(res.value));
+    } finally {
+      // Here's a situation where a decorator would be useful.
+      if (oldHandle !== this._bwHandle) {
+        await this.app.client.window(oldHandle);
+      }
+    }
   },
 
   /**
@@ -118,7 +129,9 @@ const Driver = {
    * Sets the webdriver target to the main browser window.
    */
   setTargetToBrowserWindow: async function() {
+    const { value: oldHandle } = await this.app.client.windowHandle();
     await this.app.client.window(this._bwHandle);
+    return oldHandle;
   },
 
   /**
