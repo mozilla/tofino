@@ -20,7 +20,6 @@ import { api } from '../../ui/browser/user-agent';
 window._readerify = readerify.bind(null, Readability);
 
 if (document.location.protocol === 'tofino:') {
-  console.log('Adding _browser.');
   window._browser = {
     async visited(limit) {
       const res = await api(`/visits?limit=${limit}`);

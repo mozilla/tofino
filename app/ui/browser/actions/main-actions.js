@@ -137,7 +137,7 @@ export function setUserTypedLocation(pageId: string, payload: Object): Action {
     // Empty input could happen if a page finishes loading and the userTyped
     // state is going to be reset.
     if (payload.text) {
-      userAgent.api(`/awesome?q=${encodeURIComponent(payload.text)}`, {
+      userAgent.api(`/query?q=${encodeURIComponent(payload.text)}`, {
         method: 'GET',
       })
         .then(async function (response) {
