@@ -28,6 +28,25 @@
 </head>
 
 <body>
-Hello, world.
+<ul id="history"></ul>
+
+<script>
+    var ul = document.getElementById('history');
+    window._browser.visited(200).then(function (visited) {
+        visited.forEach(function (page) {
+            var li = document.createElement('li');
+            var a = document.createElement('a');
+            a.href = page.uri;
+            a.title = page.title || page.uri;
+            a.appendChild(document.createTextNode(page.title || page.uri));
+            li.appendChild(a);
+            li.appendChild(document.createElement('br'));
+            if (page.snippet) {
+                li.appendChild(document.createTextNode(page.snippet));
+            }
+            ul.appendChild(li);
+        });
+    });
+</script>
 </body>
 </html>
