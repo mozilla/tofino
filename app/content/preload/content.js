@@ -22,23 +22,29 @@ window._readerify = readerify.bind(null, Readability);
 if (document.location.protocol === 'tofino:') {
   window._browser = {
     async visited(limit) {
-      const res = await request(`/visits?limit=${limit}`);
-      if (res.ok) {
-        const body = await res.json();
-        return body.pages;
+      return (await request(`/visits?limit=${limit}`)).pages;
+    },
+
+    async query(string, since, limit, snippetSize) {
+      const args = [];
+      args.push(`q=${encodeURIComponent(string)}`);
+      if (since) {
+        args.push(`since=${encodeURIComponent('' + since)}`);
       }
-      return [];
+      if (limit) {
+        args.push(`limit=${encodeURIComponent('' + limit)}`);
+      }
+      if (snippetSize) {
+        args.push(`snippetSize=${encodeURIComponent('' + snippetSize)}`);
+      }
+
+      return (await request(`/query?${args.join('&')}`)).results;
     },
 
     // We use `recentStars` instead of `stars` because the latter only
     // gives us URLs, and we want much more.
     async recentStars(limit) {
-      const res = await request(`/recentStars?limit=${limit}`);
-      if (res.ok) {
-        const body = await res.json();
-        return body.stars;
-      }
-      return [];
+      return (await request(`/recentStars?limit=${limit}`)).stars;
     },
   };
 }

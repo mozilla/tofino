@@ -59,6 +59,14 @@ export const StarOp = {
   star: 1,
 };
 
+// This is an obscuring wrapper around sqlite's numeric range -- 64 is the largest possible.
+export const SnippetSize = {
+  tiny: -5,
+  medium: -15,
+  large: -40,
+  huge: -64,
+};
+
 /**
  * Public API:
  *
@@ -388,12 +396,13 @@ export class ProfileStorage {
    */
   async query(string: string,
               since: number = 0,
-              limit: number = 10): Promise<[AwesomebarMatch]> {
+              limit: number = 10,
+              snippetSize: number = SnippetSize.medium): Promise<[AwesomebarMatch]> {
     const contentMatches = `
     SELECT p.id AS place,
            p.url AS uri,
            pages.title AS title,
-           snippet(pages, '╞', '╡', '…') AS snippet,
+           snippet(pages, '╞', '╡', '…', -1, ?) AS snippet,
            pages.ts AS lastVisited
     FROM placeEvents AS p JOIN pages ON p.id = pages.place
     WHERE pages.ts > ? AND pages MATCH ?
@@ -422,7 +431,7 @@ export class ProfileStorage {
     LIMIT ?`;
 
     const like = `%${string}%`;
-    const rows = await this.db.all(query, [since, string, since, like, like, limit]);
+    const rows = await this.db.all(query, [snippetSize, since, string, since, like, like, limit]);
 
     // We escape on the way out, not the way in, for two reasons:
     // 1. We can't rely on the retrieved content correctly including the entirety of an escaped
