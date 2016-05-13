@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import { ipcRenderer as ipc } from 'electron';
-import throttle from 'lodash.throttle';
+import throttle from 'lodash/throttle';
 
 // How often the scroll handler may be fired at most
 const THROTTLE_TIMER_IN_MS = 50;

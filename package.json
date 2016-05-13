@@ -28,7 +28,7 @@
     "express-ws": "^2.0.0-rc.1",
     "immutable": "3.7.6",
     "less-mkdirp": "1.0.1",
-    "lodash.throttle": "4.0.1",
+    "lodash": "4.12.0",
     "microtime-fast": "1.0.2",
     "morgan": "1.7.0",
     "react": "15.0.1",
@@ -72,23 +72,18 @@
     "fs-promise": "0.5.0",
     "glob": "7.0.3",
     "gulp-vinyl-zip": "1.2.2",
-    "isomorphic-fetch": "2.2.1",
     "jsdom": "8.1.0",
     "mocha": "2.4.5",
     "mocha-eslint": "2.0.2",
-    "mocha-jsdom": "1.1.0",
     "nyc": "6.4.0",
     "react-addons-perf": "15.0.1",
-    "react-addons-test-utils": "15.0.1",
     "rimraf": "2.5.2",
     "source-map-support": "ncalexan/node-source-map-support#fileUrls-plus",
     "spectron": "2.37.0",
     "through2": "2.0.1",
     "tmp": "0.0.28",
     "uuid": "2.0.2",
-    "vinyl-file": "2.0.0",
-    "vinyl-fs": "2.4.2",
-    "vinyl-named": "1.1.0"
+    "vinyl-fs": "2.4.2"
   },
   "engines": {
     "node": ">=5.8.0"
