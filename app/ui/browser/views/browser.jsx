@@ -152,6 +152,8 @@ class BrowserWindow extends Component {
   }
 }
 
+BrowserWindow.displayName = 'BrowserWindow';
+
 BrowserWindow.propTypes = {
   pages: PropTypes.object.isRequired,
   currentPage: PropTypes.object.isRequired,

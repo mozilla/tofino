@@ -72,4 +72,6 @@ class DeveloperBar extends Component {
   }
 }
 
+DeveloperBar.displayName = 'DeveloperBar';
+
 export default DeveloperBar;

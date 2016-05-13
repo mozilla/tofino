@@ -76,6 +76,8 @@ class Page extends Component {
   }
 }
 
+Page.displayName = 'Page';
+
 Page.propTypes = {
   page: PropTypes.object.isRequired,
   isActive: PropTypes.bool.isRequired,
