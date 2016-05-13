@@ -10,10 +10,23 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
+/* eslint import/imports-first: "off" */
+
+import { ipcRenderer } from '../../shared/electron';
+
+// In the case of uncaught error, which is often due to compilation failures, be sure to tell the
+// main process that this window is ready to display -- even if it really isn't.  The main process
+// will then show the window (if it hasn't already) which allows the Browser devtools to debug the
+// underlying issue.
+const onWindowReady = (error = false) => ipcRenderer.send('window-ready', error);
+
+window.onerror = (_message, _source, _lineno, _colno, _error) => {
+  onWindowReady(true);
+};
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { ipcRenderer } from '../../shared/electron';
 
 import App from './views/app';
 import configureStore from './store/store';
@@ -40,14 +53,18 @@ const chrome = (
 
 const container = document.getElementById('browser-container');
 
-const onRender = () => ipcRenderer.send('window-ready');
+// Before rendering, add a fresh tab.  This is leading toward a session restore model where the
+// main process can instantiate a mostly-formed browser window.  The reason to dispatch actions
+// is that some actions start asynchronous processes, and we can't necessarily produce the
+// resulting state (which is supposed to be the initial state presented to the user).
+// Dispatching actions also uses the same codepaths the rest of the application uses.
 
-// Before rendering, add a fresh tab and prepare the cached profile data.  This is leading toward a
-// session restore model where the main process can instantiate a mostly-formed browser window.
-// The reason to dispatch actions is that some actions start asynchronous processes, and we
-// can't necessarily produce the resulting state (which is supposed to be the initial state
-// presented to the user).  Dispatching actions also uses the same codepaths the rest of the
-// application uses.
+// We can dispatch our fresh tab before connecting to the UA service.
+store.dispatch(actions.createTab());
+
+// We start rendering before we connect to the UA service and before we receive the initial state so
+// that if an error occurs while we connect, we at least have some UI in place.
+ReactDOM.render(chrome, container);
 
 const ws = new WebSocket(`${endpoints.UA_SERVICE_WS}/diffs`);
 
@@ -66,15 +83,14 @@ ws.on('message', (data, flags) => {
     return;
   }
 
-  console.log(`got command ${data}`);
-
   if (command.type === 'initial') {
     if (command.payload.stars) {
       store.dispatch(profileDiffs.bookmarks(command.payload.stars));
     }
-    store.dispatch(actions.createTab());
 
-    ReactDOM.render(chrome, container, onRender);
+    // We've connected to the UA service, received the initial state, and (synchronously)
+    // rendered the initial UI.  This window is ready to display!
+    onWindowReady();
 
     return;
   }

@@ -42,6 +42,7 @@ import { ProfileStorage } from '../services/storage';
 import * as userAgentService from './user-agent-service';
 const profileStoragePromise = ProfileStorage.open(path.join(__dirname, '..', '..'));
 import { UI_DIR, fileUrl } from './util';
+import BUILD_CONFIG from '../../build-config';
 
 import WebSocket from 'ws';
 import * as endpoints from '../shared/constants/endpoints';
@@ -81,6 +82,16 @@ async function makeBrowserWindow(): Promise<electron.BrowserWindow> {
 
       resolve();
     });
+  });
+
+  browser.once('window-ready', (error) => {
+    // Show this BW (and a devtools window on error).
+    if (!browser.isDestroyed()) {
+      browser.show();
+      if (BUILD_CONFIG.development && error) {
+        browser.openDevTools({ detach: true });
+      }
+    }
   });
 
   // Start loading browser chrome.
@@ -136,6 +147,7 @@ app.on('activate', async function() {
 async function newBrowserWindow(tabInfo: ?Object) {
   const bw = await makeBrowserWindow(tabInfo);
   browserWindowIds.push(bw.id);
+  return bw;
 }
 
 async function closeBrowserWindow(id: number) {
@@ -171,10 +183,11 @@ ipc.on('instrument-event', (event, args) => {
   instrument.event(args.name, args.method, args.label, args.value);
 });
 
-ipc.on('window-ready', event => {
+ipc.on('window-ready', (event, ...args) => {
+  // Pass through to the BrowserWindow instance.  This just makes it easier to do things per-BW.
   const bw = BrowserWindow.fromWebContents(event.sender);
   if (bw) {
-    bw.show();
+    bw.emit('window-ready', ...args);
   }
 });
 
