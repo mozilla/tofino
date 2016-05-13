@@ -4,13 +4,8 @@
 import expect from 'expect';
 import fs from 'fs-promise';
 import difference from 'lodash/difference';
-import {
-  REQUIRES_REGEX,
-  IMPORTS_REGEX,
-  autoFailingAsyncTest,
-  globMany,
-  regexFiles,
-} from './shared.js';
+import { autoFailingAsyncTest } from '../utils/async';
+import { REQUIRES_REGEX, IMPORTS_REGEX, globMany, regexFiles } from './shared.js';
 
 const all = '/**/';
 const valid = '*.@(js|jsx)';

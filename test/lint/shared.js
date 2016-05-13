@@ -6,18 +6,6 @@ import fs from 'fs-promise';
 export const REQUIRES_REGEX = /require\('([\w-/]+)'\)/g;
 export const IMPORTS_REGEX = /import(?:.*?from)?\s+'([\w-/]+)'/g;
 
-export function autoFailingAsyncTest(runner) {
-  return async function(done) {
-    let caught;
-    try {
-      await runner();
-    } catch (err) {
-      caught = err;
-    }
-    done(caught);
-  };
-}
-
 export function globOne(wildcard) {
   return new Promise((resolve, reject) => {
     glob(wildcard, {}, (err, files) => {
