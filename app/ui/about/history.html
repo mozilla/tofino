@@ -54,11 +54,21 @@
 </head>
 
 <body>
+
+<form id="search" name="search" method="get" action="#">
+<input name="filter" type="search" />
+</form>
+<br/>
+
 <ul id="history"></ul>
 
 <script>
-    var ul = document.getElementById('history');
-    window._browser.visited(200).then(function (visited) {
+    function showResults(visited) {
+        var ul = document.getElementById('history');
+        while (ul.hasChildNodes()) {
+            ul.removeChild(ul.lastChild);
+        }
+
         visited.forEach(function (page) {
             var li = document.createElement('li');
             var a = document.createElement('a');
@@ -75,7 +85,24 @@
             }
             ul.appendChild(li);
         });
-    });
+    }
+
+    function fetchRecent() {
+        window._browser.visited(200).then(showResults);
+    }
+
+    function handleQuery(e) {
+        e.preventDefault();
+        var q = document.search.filter.value;
+        if (q) {
+            window._browser.query(q, undefined, 20, 'large').then(showResults);
+        } else {
+            fetchRecent();
+        }
+    }
+
+    document.getElementById('search').addEventListener('keyup', handleQuery);
+    fetchRecent();
 </script>
 </body>
 </html>

@@ -20,7 +20,7 @@ import expressValidator from 'express-validator';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 
-import { ProfileStorage, StarOp } from '../services/storage';
+import { ProfileStorage, SnippetSize, StarOp } from '../services/storage';
 import * as profileDiffs from '../shared/profile-diffs';
 
 const PORT = 9090;
@@ -160,6 +160,9 @@ function configure(app: any, storage: ProfileStorage) {
 
   router.get('/query', wrap(async function(req, res) {
     req.checkQuery('q').notEmpty();
+    req.checkQuery('limit').optional().isInt();
+    req.checkQuery('since').optional().isInt();
+    req.checkQuery('snippetSize').optional();
 
     const errors = req.validationErrors();
     if (errors) {
@@ -167,8 +170,9 @@ function configure(app: any, storage: ProfileStorage) {
       return;
     }
 
+    const snippetSize = SnippetSize[req.query.snippetSize] || SnippetSize.medium;
     const { q } = req.query;
-    const results = await storage.query(q);
+    const results = await storage.query(q, req.query.since, req.query.limit, snippetSize);
     res.json({ results });
   }));
 
