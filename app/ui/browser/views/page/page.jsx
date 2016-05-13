@@ -63,10 +63,9 @@ class Page extends Component {
           return;
         }
 
-        userAgent.createPage({
+        userAgent.createPage(this.props.page, {
           url: readerResult.uri,
-          session: page.sessionId,
-          page: readerResult,
+          readerResult,
         });
       });
     });
@@ -163,7 +162,7 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
       text: null,
     }));
 
-    userAgent.createHistory({ url, title, session: pageAccessor().sessionId });
+    userAgent.createHistory(pageAccessor(), { url, title });
   });
 
   webview.addEventListener('ipc-message', e => {

@@ -37,7 +37,7 @@ export function createTab(location: ?string = undefined,
     dispatch({ type: types.CREATE_TAB, id, ancestorId, location, options, instrument: true });
 
     // TODO: properly track window scope.
-    userAgent.createSession({ ancestor: ancestorId, reason }).then(({ session }) =>
+    userAgent.createSession(id, { ancestor: ancestorId, reason }).then(({ session }) =>
       dispatch(didStartSession(id, session, ancestorId)));
   };
 }
@@ -65,7 +65,7 @@ export function closeTab(pageId: string): Action {
     // Notify User Agent with sessionId before closing the tab (and losing the sessionId).
     const page = getPageById(getState(), pageId);
     if (page) {
-      userAgent.destroySession({ session: page.sessionId, reason });
+      userAgent.destroySession(page, { reason });
     }
 
     dispatch({ type: types.CLOSE_TAB, pageId, instrument: true });
@@ -140,21 +140,23 @@ export function setUserTypedLocation(pageId: string, payload: Object): Action {
   };
 }
 
-export function bookmark(session: number, url: string, title: ?string = undefined): Action {
-  return dispatch => {
+export function bookmark(pageId: number, url: string, title: ?string = undefined): Action {
+  return (dispatch, getState) => {
     // Update this window's state before telling the profile service.
     dispatch({ type: types.SET_BOOKMARK_STATE, url, isBookmarked: true, title });
 
-    userAgent.createStar({ session, url, title });
+    const page = getPageById(getState(), pageId);
+    userAgent.createStar(page, { url, title });
   };
 }
 
-export function unbookmark(session: number, url: string): Action {
-  return dispatch => {
+export function unbookmark(pageId: number, url: string): Action {
+  return (dispatch, getState) => {
     // Update this window's state before telling the profile service.
     dispatch({ type: types.SET_BOOKMARK_STATE, url, isBookmarked: false });
 
-    userAgent.destroyStar({ session, url });
+    const page = getPageById(getState(), pageId);
+    userAgent.destroyStar(page, { url });
   };
 }
 

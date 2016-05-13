@@ -7,7 +7,7 @@ import expect from 'expect';
 import configureStore from '../../../../../app/ui/browser/store/store';
 import * as actions from '../../../../../app/ui/browser/actions/main-actions';
 import * as selectors from '../../../../../app/ui/browser/selectors';
-
+import * as utils from '../../../../utils/async';
 import fetchMock from 'fetch-mock';
 import * as endpoints from '../../../../../app/shared/constants/endpoints';
 
@@ -17,29 +17,42 @@ describe('Action - bookmark', () => {
   beforeEach(function() {
     this.store = configureStore();
     this.getProfile = () => selectors.getProfile(this.store.getState());
+    this.getPages = () => selectors.getPages(this.store.getState());
     this.dispatch = this.store.dispatch;
+    this.dispatch(actions.createTab('http://moz1.com'));
+    expect(this.getPages().size).toEqual(1);
+
+    // Set the session id directly since we don't have a UA server setting this
+    this.dispatch(actions.setPageDetails(this.getPages().get(0).id, {
+      sessionId: session,
+    }));
   });
 
   afterEach(fetchMock.reset);
 
   it('Should add bookmarks to profile state', function() {
-    const { dispatch, getProfile } = this;
+    const { dispatch, getProfile, getPages } = this;
+    const pageId = getPages().get(0).id;
 
     expect(getProfile().get('bookmarks').has('http://moz1.com')).toEqual(false);
-    dispatch(actions.bookmark(session, 'http://moz1.com', 'moz1'));
+    dispatch(actions.bookmark(pageId, 'http://moz1.com', 'moz1'));
     expect(getProfile().get('bookmarks').has('http://moz1.com')).toEqual(true);
   });
 
-  it('Should send a message to the main process', function() {
-    const { dispatch } = this;
+  it('Should send a message to the main process', async function() {
+    const { dispatch, getPages } = this;
+    const pageId = getPages().get(0).id;
 
     const URL = `^${endpoints.UA_SERVICE_HTTP}`; // Observe leading caret ^ (caret)!
+    const expectedURL = `${endpoints.UA_SERVICE_HTTP}/stars/${encodeURIComponent('http://moz1.com')}`;
+
     fetchMock.mock(URL, 200);
 
-    dispatch(actions.bookmark(session, 'http://moz1.com', 'moz1'));
+    dispatch(actions.bookmark(pageId, 'http://moz1.com', 'moz1'));
 
-    expect(fetchMock.lastUrl(URL))
-      .toEqual(`${endpoints.UA_SERVICE_HTTP}/stars/${encodeURIComponent('http://moz1.com')}`);
+    await utils.waitUntil(() => fetchMock.lastUrl(URL) === expectedURL);
+
+    expect(fetchMock.lastUrl(URL)).toEqual(expectedURL);
     expect(fetchMock.lastOptions(URL).method).toEqual('PUT');
     expect(fetchMock.lastOptions(URL).json)
       .toEqual({ session, title: 'moz1' });
