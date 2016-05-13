@@ -12,9 +12,7 @@ const valid = '*.@(js|jsx)';
 const paths = [
   `app${all}${valid}`,
   `build${all}${valid}`,
-  `shared${all}${valid}`,
   `test${all}${valid}`,
-  `ui${all}${valid}`,
 ];
 
 const ignored = [
