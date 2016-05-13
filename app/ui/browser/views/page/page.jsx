@@ -144,7 +144,7 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
 
     dispatch(actions.setStatusText(false));
 
-    dispatch(actions.setUserTypedLocation(pageAccessor().id, {
+    dispatch(actions.locationChanged(pageAccessor().id, {
       text: null,
     }));
 

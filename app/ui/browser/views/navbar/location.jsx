@@ -135,11 +135,14 @@ export class Location extends Component {
       this.refs.input.focus();
     }
 
-    // this happens when userTypedLocation changed outside of a 'normal' input
-    // change i.e. 'paste' context menu.  Need to make sure the input is actually set.
+    // This happens when userTypedLocation changed outside of a 'normal' input
+    // change i.e., on location change.  Need to make sure the input is actually set.
     // No tests for this right now, since shallow rendering doesn't support 'refs'.
     const nextLocation = this.getRenderURL();
-    if (this.refs.input && nextLocation && this.refs.input.value !== nextLocation) {
+    if (this.refs.input &&
+        this.state.showURLBar &&    // This focuses the element, so don't do if hidden!
+        nextLocation &&
+        this.refs.input.value !== nextLocation) {
       this.setInputValue(nextLocation);
     }
   }
@@ -202,6 +205,11 @@ export class Location extends Component {
     const maxCompletions = completionsForURL ? completionsForURL.length : -1;
 
     if (ev.key === 'Enter') {
+      // When you hit enter, stop editing the URL bar. This avoids us
+      // continuing to show completions, and also means you can tab around
+      // web content.
+      getCurrentWebView(ev.target.ownerDocument).focus();
+
       if (this.state.focusedResultIndex >= 0 &&
           this.state.focusedResultIndex < maxCompletions) {
         ev.preventDefault();
@@ -310,10 +318,10 @@ export class Location extends Component {
             ref="input"
             onFocus={this.handleURLBarFocus}
             onBlur={this.handleURLBarBlur}
-            onChange={this.props.onLocationChange}
             onKeyDown={(e) =>
               this.handleURLBarKeyDown(e, completionsForURL)
             }
+            onChange={this.props.onLocationChange}
             onContextMenu={this.props.onLocationContextMenu} />
           <Btn title="Bookmark"
             className={LOCATION_BAR_BUTTONS_STYLE}

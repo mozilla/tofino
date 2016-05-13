@@ -92,6 +92,15 @@ export function setStatusText(text: string): Action {
   return { type: types.SET_STATUS_TEXT, text };
 }
 
+// Just like setUserTypedLocation, but the user didn't type it, so we
+// don't trigger a search.
+export function locationChanged(pageId: string, payload: Object): Action {
+  return (dispatch) => {
+    // Update this window's state.
+    dispatch({ type: types.LOCATION_CHANGED, pageId, payload, instrument: false });
+  };
+}
+
 export function setUserTypedLocation(pageId: string, payload: Object): Action {
   return (dispatch) => {
     // Update this window's state before telling the profile service.
