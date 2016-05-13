@@ -15,7 +15,6 @@ specific language governing permissions and limitations under the License.
 import * as actions from './main-actions';
 import { getCurrentWebView } from '../browser-util';
 import { remote, clipboard, ipcRenderer } from '../../../shared/electron';
-import * as userAgent from '../lib/user-agent';
 
 const { Menu, MenuItem } = remote;
 
@@ -39,40 +38,8 @@ external actions.
 /**
  * Open the browser (hamburger) menu
  */
-export function menuBrowser(pageSessionId, dispatch) {
-  const menu = new Menu();
-
-  menu.append(new MenuItem({
-    label: 'New Tab',
-    click: () => dispatch(actions.createTab()),
-  }));
-
-  menu.append(new MenuItem({
-    label: 'New Window',
-    click: () => newBrowserWindow(),
-  }));
-
-  menu.append(new MenuItem({
-    label: 'Fetch page contents',
-    click: () => {
-      // @TODO all webview access must be handled via `webview-controller`
-      const webview = getCurrentWebView(document);
-      const script = 'window._readerify(window.document)';
-      webview.executeJavaScript(script, false, readerResult => {
-        if (!readerResult) {
-          return;
-        }
-
-        userAgent.createPage({
-          url: readerResult.uri,
-          session: pageSessionId,
-          page: readerResult,
-        });
-      });
-    },
-  }));
-
-  menu.popup(remote.getCurrentWindow());
+export function menuBrowser() {
+  ipcRenderer.send('open-menu');
 }
 
 /**

@@ -67,7 +67,7 @@ class BrowserWindow extends Component {
     const navRefresh = () => webViewController.navigateRefresh(currentPageId);
     const navigateTo = loc => webViewController.navigateTo(currentPageId, loc);
 
-    const openMenu = () => menuBrowser(currentPage.sessionId, dispatch);
+    const openMenu = () => menuBrowser();
     const isBookmarked = (url) => profile.bookmarks.has(url);
     const bookmark = (title, url) => {
       dispatch(actions.bookmark(currentPage.sessionId, url, title));
@@ -179,4 +179,7 @@ function attachIPCRendererListeners(browserView) {
   ipcRenderer.on('show-history', () => dispatch(actions.createTab('tofino://history')));
   ipcRenderer.on('focus-url-bar', () => {});
   ipcRenderer.on('open-bookmark', (_, bookmark) => dispatch(actions.createTab(bookmark.location)));
+
+  ipcRenderer.on('capture-page', () =>
+    webViewController.capturePage(browserView.props.currentPage.id));
 }

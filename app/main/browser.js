@@ -79,6 +79,7 @@ async function makeBrowserWindow(): Promise<electron.BrowserWindow> {
     browser.webContents.once('did-finish-load', () => {
       const browserDidFinishLoadTime = Date.now();
       instrument.event('browser', 'READY', 'ms', browserDidFinishLoadTime - browserStartTime);
+      menu.buildAppMenu(menuData);
 
       resolve();
     });
@@ -112,7 +113,7 @@ app.on('ready', async function() {
   instrument.event('app', 'READY', 'ms', appReadyTime - appStartupTime);
 
   // Force the menu to be built at least once on startup
-  menu.build();
+  menu.buildAppMenu(menuData);
 
   // Register `about:*` protocols after app's 'ready' event
   registerAboutPages();
@@ -132,8 +133,8 @@ app.on('window-all-closed', () => {
     return;
   }
 
-  // Set a simple menu since all browser windows are closed.
-  menu.build({ osxMinimal: true });
+  // Rebuild the menu to get the simplified version
+  menu.buildAppMenu(menuData);
 });
 
 app.on('activate', async function() {
@@ -204,8 +205,18 @@ ipc.on('synthesize-accelerator', (...args) => {
   menu.handleIPCAcceleratorCommand(...args);
 });
 
+ipc.on('open-menu', (event) => {
+  const bw = BrowserWindow.fromWebContents(event.sender);
+  if (!bw) {
+    return;
+  }
+
+  menu.buildWindowMenu(menuData).popup(bw);
+});
+
 let ws = undefined;
 
+const menuData = {};
 
 profileStoragePromise.then(async function(profileStorage) {
   await userAgentService.start(profileStorage, endpoints.UA_SERVICE_PORT, false);
@@ -228,12 +239,14 @@ profileStoragePromise.then(async function(profileStorage) {
     }
 
     if (command.type === 'initial') {
-      menu.build({ recentBookmarks: command.payload.recentStars });
+      menuData.recentBookmarks = command.payload.recentStars;
+      menu.buildAppMenu(menuData);
       return;
     }
 
     if (command.type === '/stars/recent') {
-      menu.build({ recentBookmarks: command.payload });
+      menuData.recentBookmarks = command.payload;
+      menu.buildAppMenu(menuData);
     }
   });
 });

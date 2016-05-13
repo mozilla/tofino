@@ -11,22 +11,35 @@ specific language governing permissions and limitations under the License.
 */
 
 import electron from 'electron';
-import assert from 'assert';
-import BrowserMenuTemplate from './template';
-
-const DEFAULT_MENU_ITEMS = [
-  'file', 'edit', 'view', 'history', 'bookmarks', 'tools', 'window', 'help',
-];
-
-const OSX_MINIMAL_MENU_ITEMS = [
-  'file', 'edit', 'window', 'help',
-];
+import { MinimalAppMenuTemplate, AppMenuTemplate, WindowMenuTemplate } from './template';
+import menus from './menus';
 
 /**
  * Store the most recently used template so we know what hotkey accelerators
  * are currently active.
  */
 let currentMenu = null;
+
+function buildTemplate(items, data) {
+  const buildItem = (itemTemplate) => {
+    if (typeof itemTemplate === 'function') {
+      itemTemplate = itemTemplate(data);
+    }
+
+    if ('submenu' in itemTemplate) {
+      itemTemplate.submenu = itemTemplate.submenu.map(buildItem);
+    }
+
+    return itemTemplate;
+  };
+
+  return items.map(buildItem);
+}
+
+function buildMenu(items, data) {
+  const template = buildTemplate(items, data);
+  return currentMenu = electron.Menu.buildFromTemplate(template);
+}
 
 /**
  * A function that takes data and generates electron OS menus based on that data.
@@ -35,34 +48,24 @@ let currentMenu = null;
  * @param {Array<Object>} data.recentBookmarks
  *        An array of bookmark objects to populate the recent bookmarks
  *        in the bookmarks menu.
- * @param {Boolean} data.osxMinimal
- *        A flag to indicate whether a minimal menu set should be used. This
- *        should only be used in OSX when all windows have closed.
  */
-export function build(data = {}) {
-  const menuTemplate = [];
-  const isDarwin = process.platform === 'darwin';
+export function buildAppMenu(data = {}) {
+  let template = AppMenuTemplate;
 
-  if (isDarwin) {
-    menuTemplate.push(BrowserMenuTemplate.osx);
+  if (process.os === 'darwin') {
+    if (electron.BrowserWindow.getAllWindows().length === 0) {
+      template = MinimalAppMenuTemplate;
+    }
+
+    template = template.slice(0);
+    template.unshift(menus.osx);
   }
 
-  const menuSet = data.osxMinimal ? OSX_MINIMAL_MENU_ITEMS : DEFAULT_MENU_ITEMS;
+  electron.Menu.setApplicationMenu(buildMenu(template, data));
+}
 
-  assert(data.osxMinimal ? isDarwin : true, '`osxMinimal` may only be used in OSX.');
-
-  menuSet.reduce((template, menuName) => {
-    let itemTemplate = BrowserMenuTemplate[menuName];
-    if (typeof itemTemplate === 'function') {
-      itemTemplate = itemTemplate(data);
-    }
-    template.push(itemTemplate);
-    return template;
-  }, menuTemplate);
-
-
-  const menu = currentMenu = electron.Menu.buildFromTemplate(menuTemplate);
-  electron.Menu.setApplicationMenu(menu);
+export function buildWindowMenu(data = {}) {
+  return buildMenu(WindowMenuTemplate, data);
 }
 
 /**

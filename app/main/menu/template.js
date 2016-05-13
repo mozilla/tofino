@@ -10,105 +10,38 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import electron from 'electron';
-import items from './submenu-items';
-const APP_NAME = electron.app.getName();
+import menus from './menus';
 
-/**
- * A hash of keys mapping to a template object used by Electron's menu API, or
- * a function that takes in data and returns a template object.
- *
- * @see https://electron.atom.io/docs/latest/api/menu/
- */
-const BrowserMenuTemplate = {
-  file: {
-    label: 'File',
-    submenu: [
-      items.newTab,
-      items.newWindow,
-    ],
-  },
-  edit: {
-    label: 'Edit',
-    submenu: [
-      items.undo,
-      items.redo,
-      items.separator,
-      items.cut,
-      items.copy,
-      items.paste,
-      items.selectAll,
-    ],
-  },
-  view: {
-    label: 'View',
-    submenu: [
-      items.toggleFullScreen,
-    ],
-  },
-  history: {
-    label: 'History',
-    submenu: [
-      items.showHistory,
-      items.separator,
-    ],
-  },
-  bookmarks: (data) => {
-    const bookmarksMenu = {
-      label: 'Bookmarks',
-      submenu: [
-        items.showBookmarks,
-        items.separator,
-      ],
-    };
+export const MinimalAppMenuTemplate = [
+  menus.file,
+  menus.edit,
+  menus.window,
+  menus.help,
+];
 
-    if (data.recentBookmarks) {
-      data.recentBookmarks.reduce((submenu, bookmark) => {
-        submenu.push(items.openBookmark(bookmark));
-        return submenu;
-      }, bookmarksMenu.submenu);
-    }
+export const AppMenuTemplate = [
+  menus.file,
+  menus.edit,
+  menus.view,
+  menus.history,
+  menus.bookmarks,
+  menus.tools,
+  menus.window,
+  menus.help,
+];
 
-    return bookmarksMenu;
-  },
-  tools: {
-    label: 'Tools',
-    submenu: [
-      items.reloadApp,
-      items.toggleDevTools,
-    ],
-  },
-  window: {
-    label: 'Window',
-    role: 'window',
-    submenu: [
-      items.minimizeWindow,
-      items.closeTab,
-      items.separator,
-      items.bringAllToFront,
-    ],
-  },
-  help: {
-    label: 'Help',
-    role: 'help',
-    submenu: [
-      items.learnMore,
-    ],
-  },
-  osx: {
-    label: APP_NAME,
-    submenu: [
-      items.osx.about,
-      items.separator,
-      items.osx.services,
-      items.separator,
-      items.osx.hide,
-      items.osx.hideOthers,
-      items.osx.showAll,
-      items.separator,
-      items.osx.quit,
-    ],
-  },
-};
+export const WindowMenuTemplate = [
+  ...menus.file.submenu,
+  menus.edit,
+  menus.view,
+  menus.history,
+  menus.bookmarks,
+  menus.tools,
+  menus.window,
+  menus.help,
+];
 
-export default BrowserMenuTemplate;
+if (process.platform === 'darwin') {
+  MinimalAppMenuTemplate.unshift(menus.osx);
+  AppMenuTemplate.unshift(menus.osx);
+}

@@ -71,6 +71,15 @@ class WebViewController extends EventEmitter {
     this.emit('navigate-refresh', pageId);
     this.emit(`navigate-refresh:${pageId}`, pageId);
   }
+
+  capturePage(pageId) {
+    const index = getPageIndexById(this.getPages(), pageId);
+    assert(index >= 0, `Page ${pageId} not found in current state.`);
+    assert(isUUID(pageId), `Invalid page id: ${pageId}`);
+
+    this.emit('capture-page', pageId);
+    this.emit(`capture-page:${pageId}`, pageId);
+  }
 }
 
 export default WebViewController;

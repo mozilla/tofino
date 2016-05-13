@@ -56,6 +56,11 @@ items.newWindow = {
   click: openNewWindow,
 };
 
+items.capturePage = {
+  label: 'Fetch page contents',
+  click: (item, focusedWindow) => focusedWindow.webContents.send('capture-page'),
+};
+
 items.undo = {
   label: 'Undo',
   accelerator: 'CmdOrCtrl+Z',

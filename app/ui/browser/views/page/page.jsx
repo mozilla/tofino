@@ -56,6 +56,21 @@ class Page extends Component {
     webViewController.on(`navigate-to:${id}`,
       (_, loc) => webview.setAttribute('src', fixURL(loc)));
 
+    webViewController.on(`capture-page:${id}`, () => {
+      const script = 'window._readerify(window.document)';
+      webview.executeJavaScript(script, false, readerResult => {
+        if (!readerResult) {
+          return;
+        }
+
+        userAgent.createPage({
+          url: readerResult.uri,
+          session: page.sessionId,
+          page: readerResult,
+        });
+      });
+    });
+
     if (!page.guestInstanceId && page.location) {
       webview.setAttribute('src', fixURL(page.location));
     }
