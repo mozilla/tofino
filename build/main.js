@@ -15,39 +15,61 @@
 require('babel-polyfill');
 require('babel-register')();
 
-require('check-dependencies')((result) => {
-  if (!result.depsWereOk) {
-    console.error('Dependency checks failed.');
-    result.error.forEach(err => console.error(err));
-    process.exit(1);
-  }
+const checkDependencies = require('check-dependencies');
 
-  const handleTaskFailed = e => {
-    console.error('Build failed.');
-    console.error(e);
-    process.exit(1);
+const handleDepsCheckFailed = result => {
+  console.error('Dependency checks failed.');
+  result.error.forEach(err => console.error(err));
+  process.exit(1);
+};
+
+const handleTaskFailed = err => {
+  console.error('Build failed.');
+  console.error(err);
+  process.exit(1);
+};
+
+const handleDepsCheckSucceeded = () => {
+  const argv = process.argv;
+  const tasks = require('./tasks').default;
+  const handlers = {
+    '--build': args => tasks.build({}, args),
+    '--run': args => tasks.run(args),
+    '--run-dev': args => tasks.runDev(args),
+    '--package': () => tasks.package(),
+    '--test': args => tasks.test(args),
+    '--quicktest': args => tasks.quickTest(args),
+    '--build-deps': () => tasks.buildDeps(),
   };
+  main(argv, tasks, handlers, handleTaskFailed);
+};
 
-  const Tasks = require('./tasks').default;
+function main(argv, tasks, handlers, catcher) {
+  const outstanding = [];
 
-  if (~process.argv.indexOf('--build')) {
-    const taskArgs = process.argv.slice(1 + process.argv.indexOf('--build'));
-    Tasks.build({}, taskArgs).then(null, handleTaskFailed);
-  } else if (~process.argv.indexOf('--run')) {
-    const taskArgs = process.argv.slice(1 + process.argv.indexOf('--run'));
-    Tasks.run(taskArgs).then(null, handleTaskFailed);
-  } else if (~process.argv.indexOf('--run-dev')) {
-    const taskArgs = process.argv.slice(1 + process.argv.indexOf('--run-dev'));
-    Tasks.runDev(taskArgs).then(null, handleTaskFailed);
-  } else if (~process.argv.indexOf('--package')) {
-    Tasks.package().then(null, handleTaskFailed);
-  } else if (~process.argv.indexOf('--test')) {
-    const taskArgs = process.argv.slice(1 + process.argv.indexOf('--test'));
-    Tasks.test(taskArgs).then(null, handleTaskFailed);
-  } else if (~process.argv.indexOf('--quicktest')) {
-    const taskArgs = process.argv.slice(1 + process.argv.indexOf('--quicktest'));
-    Tasks.quickTest(taskArgs).then(null, handleTaskFailed);
-  } else if (~process.argv.indexOf('--build-deps')) {
-    Tasks.buildDeps().then(null, handleTaskFailed);
+  for (const handler of Object.entries(handlers)) {
+    const command = handler[0];
+    const runner = handler[1];
+    if (~argv.indexOf(command)) {
+      const args = argv.slice(1 + argv.indexOf(command));
+      outstanding.push(runner(args));
+    }
   }
-});
+
+  return Promise.all(outstanding).then(null, catcher);
+}
+
+// This is a script that runs in node without any babel support.
+module.exports = main;
+
+// Only auto-run `checkDependencies` if this is *not* imported as a module.
+// If `require.main` is `module`, then this is ran as a script.
+if (require.main === module) {
+  checkDependencies(result => {
+    if (!result.depsWereOk) {
+      handleDepsCheckFailed(result);
+    } else {
+      handleDepsCheckSucceeded();
+    }
+  });
+}
