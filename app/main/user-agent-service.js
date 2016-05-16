@@ -123,7 +123,7 @@ function configure(app: any, storage: ProfileStorage) {
 
     const { session } = req.body;
     await storage.endSession(session);
-    res.json();
+    res.json({});
   }));
 
   router.post('/visits', wrap(async function(req, res) {
@@ -140,7 +140,7 @@ function configure(app: any, storage: ProfileStorage) {
     // TODO: include visit types.
     const { url, session, title } = req.body;
     await storage.visit(url, session, title);
-    res.json();
+    res.json({});
   }));
 
   router.get('/visits', wrap(async function(req, res) {
@@ -185,7 +185,7 @@ function configure(app: any, storage: ProfileStorage) {
 
     const { session, _title } = req.body;
     await storage.starPage(req.params.url, session, StarOp.star);
-    res.json();
+    res.json({});
 
     dispatchBookmarkDiffs(); // Spawn, but don't await.
   }));
@@ -202,7 +202,7 @@ function configure(app: any, storage: ProfileStorage) {
 
     const { session, _title } = req.body;
     await storage.starPage(req.params.url, session, StarOp.unstar);
-    res.json();
+    res.json({});
 
     dispatchBookmarkDiffs(); // Spawn, but don't await.
   }));
@@ -245,7 +245,7 @@ function configure(app: any, storage: ProfileStorage) {
     const { page, session } = req.body;
     page.uri = req.params.url;
     await storage.savePage(page, session);
-    res.json();
+    res.json({});
   }));
 
   // Version namespace!
