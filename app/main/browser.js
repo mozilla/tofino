@@ -198,9 +198,29 @@ ipc.on('synthesize-accelerator', (...args) => {
 
 let ws = undefined;
 
-
 profileStoragePromise.then(async function(profileStorage) {
-  await userAgentService.start(profileStorage, endpoints.UA_SERVICE_PORT, false);
+  const { server, getWss } = await userAgentService.create(profileStorage, false);
+
+  // Let's assume we're already running our service.  In the future, let's do something like test
+  // a /status or /heartbeat endpoint for a version and well-known string to be sure that we're
+  // actually connecting to a UA service.
+  server.on('error', (e) => {
+    if (e.code !== 'EADDRINUSE') {
+      throw e;
+    }
+  });
+
+  getWss().on('error', (e) => {
+    if (e.code !== 'EADDRINUSE') {
+      throw e;
+    }
+    console.log('Ignoring address in use; assuming that a User Agent service is already ' +
+                `running on ${endpoints.UA_SERVICE_PORT}.`);
+  });
+
+  await new Promise((resolve) => server.listen(endpoints.UA_SERVICE_PORT, resolve));
+
+  console.log(`Started a User Agent service running on ${endpoints.UA_SERVICE_PORT}.`);
 
   ws = new WebSocket(`${endpoints.UA_SERVICE_WS}/diffs`);
 

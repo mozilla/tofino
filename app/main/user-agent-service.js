@@ -14,10 +14,11 @@
 
 /* eslint no-console: 0 */
 
+import bodyParser from 'body-parser';
 import express from 'express';
 import expressWs from 'express-ws';
 import expressValidator from 'express-validator';
-import bodyParser from 'body-parser';
+import http from 'http';
 import morgan from 'morgan';
 
 import { ProfileStorage, StarOp } from '../services/storage';
@@ -259,15 +260,12 @@ function configure(app: any, storage: ProfileStorage) {
 }
 
 /**
- * Exposes a function that starts up an Express static server
- * to the `./fixtures` directory on port 8080.
- * Returns a promise that resolves to an object containing
- * both `port` and `stop` function to stop the server.
- *
- * @return {Promise<{ port, stop }>}
+ * Exposes a function that configures a User Agent server.  Returns a
+ * promise that resolves to the server and associated accessors.
  */
-export function start(storage: ProfileStorage, port: ?number = PORT, debug: ?boolean = false) {
-  let server;
+export function create(storage: ProfileStorage, debug: ?boolean = false) {
+  const server = http.createServer();
+
   function stop() {
     return new Promise((res, rej) => {
       server.close(err => {
@@ -280,9 +278,12 @@ export function start(storage: ProfileStorage, port: ?number = PORT, debug: ?boo
     });
   }
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, _reject) => {
+    // We must provide access to the HTTP (and/or HTTPS) and WS(S) servers that express-ws will
+    // upgrade.  If we create them afterward, `listen` will not have the monkey-patched methods
+    // and will immediately close the socket connection.
     const app = express();
-    expressWs(app);
+    const { getWss } = expressWs(app, server);
 
     configure(app, storage);
 
@@ -290,12 +291,6 @@ export function start(storage: ProfileStorage, port: ?number = PORT, debug: ?boo
       storage.db.db.on('trace', console.log);
     }
 
-    server = app.listen(port, (err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve({ port, stop });
-      }
-    });
+    resolve({ server, getWss, stop });
   });
 }
