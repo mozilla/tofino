@@ -13,6 +13,7 @@
     "package": "node build/main.js --package",
     "test": "nyc -s node build/main.js --test",
     "quicktest": "nyc node build/main.js --quicktest",
+    "lint": "nyc node build/main.js --lint",
     "report": "nyc report",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "install": "node build/main.js --build-deps",

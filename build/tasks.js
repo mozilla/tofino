@@ -59,6 +59,11 @@ export default {
     await require('./task-test').default(args);
   },
 
+  async lintOnlyTest(args = []) {
+    await this.build({ development: false, test: true });
+    await require('./task-test').default([...args, 'test/lint']);
+  },
+
   async clean() {
     await require('./task-clean-package').default();
   },
