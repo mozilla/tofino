@@ -22,7 +22,6 @@ const NAVBAR_STYLE = Style.registerStyle({
   alignItems: 'stretch',
   background: '#fcfcfc',
   padding: '0 10px',
-  fontSize: '80%',
   position: 'relative',
 
   WebkitAppRegion: 'drag',
