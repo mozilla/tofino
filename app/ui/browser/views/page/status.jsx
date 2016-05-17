@@ -27,7 +27,6 @@ const STATUS_STYLE = Style.registerStyle({
   border: '1px solid #eee',
   backgroundColor: '#fff',
   color: '#555',
-  fontSize: '75%',
 });
 
 /**

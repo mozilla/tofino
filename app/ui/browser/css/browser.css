@@ -9,5 +9,6 @@ html, body {
 
 body {
   margin: 0;
-  font-family: sans-serif;
+  /* Use the default system font in the entire application */
+  font: 11px BlinkMacSystemFont, sans-serif;
 }

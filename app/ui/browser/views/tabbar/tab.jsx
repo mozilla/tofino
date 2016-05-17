@@ -21,7 +21,6 @@ const TAB_STYLE = Style.registerStyle({
   alignItems: 'center',
   overflow: 'hidden',
   width: '20vw',
-  fontSize: '75%',
   background: '#eee',
   color: '#777',
   '&.active': {
