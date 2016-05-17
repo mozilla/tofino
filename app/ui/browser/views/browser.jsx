@@ -14,8 +14,8 @@ import React, { PropTypes, Component } from 'react';
 
 import Style from '../browser-style';
 import BrowserChrome from './browser-chrome';
+import BrowserContent from './browser-content';
 import DeveloperBar from './developerbar';
-import Page from './page/page';
 import WebViewController from '../lib/webview-controller';
 
 import {
@@ -27,10 +27,6 @@ import * as actions from '../actions/main-actions';
 const BROWSER_WINDOW_STYLE = Style.registerStyle({
   flex: 1,
   flexDirection: 'column',
-});
-
-const CONTENT_AREA_STYLE = Style.registerStyle({
-  flex: 1,
 });
 
 class BrowserWindow extends Component {
@@ -130,15 +126,9 @@ class BrowserWindow extends Component {
             ipcRenderer,
             profile,
           }} />
-        <div className={CONTENT_AREA_STYLE}>
-          {pages.map((page, pageIndex) => (
-            <Page key={`page-${page.id}`}
-              isActive={pageIndex === currentPageIndex}
-              page={page}
-              webViewController={webViewController}
-              {...this.props} />
-          ))}
-        </div>
+        <BrowserContent currentPageIndex={currentPageIndex}
+          webViewController={webViewController}
+          {...this.props} />
         <DeveloperBar />
       </div>
     );
