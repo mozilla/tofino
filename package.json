@@ -20,7 +20,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "babel-polyfill": "6.7.4",
+    "babel-polyfill": "6.8.0",
     "body-parser": "1.15.1",
     "electron-localshortcut": "0.6.0",
     "express": "4.13.4",
