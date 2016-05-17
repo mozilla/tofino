@@ -66,6 +66,9 @@ export const UIState = Immutable.Record({
 
   // What the user has typed into the location bar, stored by page id
   userTypedLocation: Immutable.Map(),
+
+  // Should the autocomplete popup be visible
+  showCompletions: true,
 }, 'UIState');
 
 /**

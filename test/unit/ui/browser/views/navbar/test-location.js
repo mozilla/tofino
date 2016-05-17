@@ -13,6 +13,7 @@ function createSpyProps() {
   const props = {
     page: new Page(),
     userTypedLocation: '',
+    showCompletions: true,
     profile: new Profile(),
     onLocationChange: expect.createSpy(),
     onLocationContextMenu: expect.createSpy(),

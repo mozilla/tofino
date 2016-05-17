@@ -101,6 +101,12 @@ export function locationChanged(pageId: string, payload: Object): Action {
   };
 }
 
+export function clearCompletions(): Action {
+  return (dispatch) => {
+    dispatch({ type: types.CLEAR_COMPLETIONS, instrument: false });
+  };
+}
+
 export function setUserTypedLocation(pageId: string, payload: Object): Action {
   return (dispatch) => {
     // Update this window's state before telling the profile service.

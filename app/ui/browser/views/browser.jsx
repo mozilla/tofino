@@ -82,8 +82,9 @@ class BrowserWindow extends Component {
       }));
     };
     const onLocationContextMenu = e => menuLocationContext(e.target, currentPageId, dispatch);
+    const onClearCompletions = () => dispatch(actions.clearCompletions());
     const onLocationReset = () => {
-      dispatch(actions.setUserTypedLocation(currentPageId, { text: void 0 }));
+      dispatch(actions.locationChanged(currentPageId, { text: null }));
     };
 
     /**
@@ -117,6 +118,7 @@ class BrowserWindow extends Component {
             close,
             pages,
             openMenu,
+            onClearCompletions,
             onLocationChange,
             onLocationContextMenu,
             onLocationReset,

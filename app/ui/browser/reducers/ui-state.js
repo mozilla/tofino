@@ -23,10 +23,16 @@ export default function uiState(state = initialState, action) {
       return state.set('statusText', action.text);
 
     case types.LOCATION_CHANGED:
-
-      // Fallthrough.
-    case types.SET_USER_TYPED_LOCATION:
       return state.setIn(['userTypedLocation', action.pageId], action.payload.text);
+
+    case types.SET_USER_TYPED_LOCATION:
+      return state.withMutations(mut => {
+        mut.setIn(['userTypedLocation', action.pageId], action.payload.text);
+        mut.set('showCompletions', true);
+      });
+
+    case types.CLEAR_COMPLETIONS:
+      return state.set('showCompletions', false);
 
     default:
       return state;

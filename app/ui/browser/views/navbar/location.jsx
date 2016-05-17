@@ -165,6 +165,17 @@ export class Location extends Component {
     return 'glyph-bookmark-hollow-16.svg';
   }
 
+  getVisibleCompletionsForURL() {
+    const { profile } = this.props;
+    const completionsForURL = profile.completions.get(this.getRenderURL());
+    if (SHOW_COMPLETIONS && this.props.showCompletions &&
+       this.state.focusedURLBar && completionsForURL) {
+      return completionsForURL;
+    }
+
+    return null;
+  }
+
   setInputValue(value) {
     // Can't use input.value here, since it breaks undo in chrome - See
     // http://stackoverflow.com/questions/16195644/in-chrome-undo-does-not-work-properly-for-input-element-after-contents-changed-p
@@ -220,8 +231,13 @@ export class Location extends Component {
         this.props.navigateTo(fixURL(ev.target.value));
       }
     } else if (ev.key === 'Escape') {
-      this.props.onLocationReset();
-      ev.target.select();
+      if (this.getVisibleCompletionsForURL()) {
+        // If there are visible completions, then close them.
+        this.props.onClearCompletions();
+      } else {
+        // Otherwise, reset the input value to the page location
+        this.props.onLocationReset();
+      }
     } else if (ev.key === 'ArrowDown' && maxCompletions > 0) {
       const focusedResultIndex =
         this.state.focusedResultIndex >= maxCompletions - 1 ? 0 : this.state.focusedResultIndex + 1;
@@ -236,10 +252,10 @@ export class Location extends Component {
   }
 
   render() {
-    const { profile, pages, page } = this.props;
-    const urlValue = this.getRenderURL();
+    const { pages, page } = this.props;
     let completions = null;
-    const completionsForURL = profile.completions.get(urlValue);
+    const completionsForURL = this.getVisibleCompletionsForURL();
+    const urlValue = this.getRenderURL();
 
     const renderRow = (completion, i) => {
       // We get safe, decorated (<b>foo</b>) HTML from the database.
@@ -274,7 +290,7 @@ export class Location extends Component {
       );
     };
 
-    if (SHOW_COMPLETIONS && completionsForURL && this.state.focusedURLBar) {
+    if (completionsForURL) {
       const results = completionsForURL.map(renderRow);
 
       completions = (
@@ -308,7 +324,14 @@ export class Location extends Component {
           ref="input"
           onFocus={this.handleURLBarFocus}
           onBlur={this.handleURLBarBlur}
-          onChange={this.props.onLocationChange}
+          onChange={(e) => {
+            // There's a weird case here where the location can be reset from an action
+            // which causes a change ('input') event to fire.  In this case, there's no
+            // need to notify about it.
+            if (this.getRenderURL() !== e.target.value) {
+              this.props.onLocationChange(e);
+            }
+          }}
           onKeyDown={(e) =>
             this.handleURLBarKeyDown(e, completionsForURL)
           }
@@ -360,6 +383,7 @@ Location.propTypes = {
   page: PropTypes.object.isRequired,
   pages: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired,
+  onClearCompletions: PropTypes.func.isRequired,
   onLocationChange: PropTypes.func.isRequired,
   onLocationContextMenu: PropTypes.func.isRequired,
   onLocationReset: PropTypes.func.isRequired,
@@ -369,11 +393,13 @@ Location.propTypes = {
   ipcRenderer: PropTypes.object.isRequired,
   navigateTo: PropTypes.func.isRequired,
   userTypedLocation: PropTypes.string.isRequired,
+  showCompletions: PropTypes.bool.isRequired,
 };
 
 function mapStateToProps(state, ownProps) {
   return {
     userTypedLocation: getUserTypedLocation(state, ownProps.page.id),
+    showCompletions: state.uiState.showCompletions,
   };
 }
 
