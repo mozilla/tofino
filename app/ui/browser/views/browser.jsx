@@ -13,10 +13,9 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes, Component } from 'react';
 
 import Style from '../browser-style';
-import TabBar from './tabbar/tabbar';
+import BrowserChrome from './browser-chrome';
+import BrowserContent from './browser-content';
 import DeveloperBar from './developerbar';
-import NavBar from './navbar/navbar';
-import Page from './page/page';
 import WebViewController from '../lib/webview-controller';
 
 import {
@@ -28,14 +27,6 @@ import * as actions from '../actions/main-actions';
 const BROWSER_WINDOW_STYLE = Style.registerStyle({
   flex: 1,
   flexDirection: 'column',
-});
-
-const CHROME_AREA_STYLE = Style.registerStyle({
-  flexDirection: 'column',
-});
-
-const CONTENT_AREA_STYLE = Style.registerStyle({
-  flex: 1,
 });
 
 class BrowserWindow extends Component {
@@ -110,42 +101,34 @@ class BrowserWindow extends Component {
 
     return (
       <div className={BROWSER_WINDOW_STYLE}>
-        <div className={CHROME_AREA_STYLE}>
-          <NavBar page={currentPage}
-            {...{
-              navBack,
-              navForward,
-              navRefresh,
-              navigateTo,
-              minimize,
-              maximize,
-              close,
-              pages,
-              openMenu,
-              onLocationChange,
-              onLocationContextMenu,
-              onLocationReset,
-              isBookmarked,
-              bookmark,
-              unbookmark,
-              ipcRenderer,
-              profile,
-            }} />
-          <TabBar handleTabClick={handleTabClick}
-            handleTabClose={handleTabClose}
-            handleTabContextMenu={handleTabContextMenu}
-            handleNewTabClick={handleNewTabClick}
-            {...this.props } />
-        </div>
-        <div className={CONTENT_AREA_STYLE}>
-          {pages.map((page, pageIndex) => (
-            <Page key={`page-${page.id}`}
-              isActive={pageIndex === currentPageIndex}
-              page={page}
-              webViewController={webViewController}
-              {...this.props} />
-          ))}
-        </div>
+        <BrowserChrome page={currentPage}
+          handleTabClick={handleTabClick}
+          handleTabClose={handleTabClose}
+          handleTabContextMenu={handleTabContextMenu}
+          handleNewTabClick={handleNewTabClick}
+          {...this.props }
+          {...{
+            navBack,
+            navForward,
+            navRefresh,
+            navigateTo,
+            minimize,
+            maximize,
+            close,
+            pages,
+            openMenu,
+            onLocationChange,
+            onLocationContextMenu,
+            onLocationReset,
+            isBookmarked,
+            bookmark,
+            unbookmark,
+            ipcRenderer,
+            profile,
+          }} />
+        <BrowserContent currentPageIndex={currentPageIndex}
+          webViewController={webViewController}
+          {...this.props} />
         <DeveloperBar />
       </div>
     );
