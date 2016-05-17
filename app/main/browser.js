@@ -147,6 +147,14 @@ app.on('activate', async function() {
 async function newBrowserWindow(tabInfo: ?Object) {
   const bw = await makeBrowserWindow(tabInfo);
   browserWindowIds.push(bw.id);
+  if (BUILD_CONFIG.development) {
+    // In development, we'll always show the window and devtools immediately, rather than waiting
+    // for 'window-ready' (in both success and error cases).  This leads to a bit of paint flicker,
+    // but allows to debug index.jsx errors that prevent the onerror handling registering and
+    // firing.  Such errors might include import and parse errors.
+    bw.openDevTools({ detach: true });
+    bw.show();
+  }
   return bw;
 }
 
