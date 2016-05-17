@@ -14,7 +14,7 @@ import React, { Component } from 'react';
 
 import BUILD_CONFIG from '../../../../build-config';
 import Style from '../browser-style';
-import Btn from './navbar/btn';
+import Btn from '../widgets/btn';
 import { perfStart, perfStop } from '../actions/developer';
 
 const DEVELOPER_BAR_STYLE = Style.registerStyle({

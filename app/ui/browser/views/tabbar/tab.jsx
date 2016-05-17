@@ -14,7 +14,7 @@ import React, { PropTypes } from 'react';
 
 import { Page } from '../../model';
 import Style from '../../browser-style';
-import Btn from '../navbar/btn';
+import Btn from '../../widgets/btn';
 
 const TAB_STYLE = Style.registerStyle({
   alignSelf: 'stretch',

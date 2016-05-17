@@ -5,7 +5,7 @@ import expect from 'expect';
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import Btn from '../../../../../app/ui/browser/views/navbar/btn';
+import Btn from '../../../../app/ui/browser/widgets/btn';
 
 describe('Btn', () => {
   it('sets `id` if given', () => {
