@@ -4,4 +4,5 @@
 --check-leaks
 --full-trace
 --timeout 3000
+--require babel-polyfill
 --require isomorphic-fetch
