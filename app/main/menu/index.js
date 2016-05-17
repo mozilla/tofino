@@ -70,7 +70,7 @@ export function build(data = {}) {
  * the click handler if the accelerator matches a currently active menu item.
  *
  * Does not analyze the accelerator for the 'true' command used, for example,
- * it just crudly maps "CmdOrCtrl+T" to "CmdOrCtrl+T" -- it would not match
+ * it just crudely maps "CmdOrCtrl+T" to "CmdOrCtrl+T" -- it would not match
  * "CommandOrControl+T" or "Command+T" on OSX, etc. This is fine as we're just using
  * these in tests.
  *
