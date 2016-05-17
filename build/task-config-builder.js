@@ -10,7 +10,7 @@ import os from 'os';
 
 import * as BuildUtils from './utils';
 
-const BASE_CONFIG = {
+export const BASE_CONFIG = {
   // System information
   platform: os.platform(),
   arch: 'x64',
@@ -31,7 +31,7 @@ const BASE_CONFIG = {
 
   // The `development` option indicates whether or not the build is
   // using hot reloading and unminified content and other things like that.
-  development: true,
+  development: false,
 
   // Whether or not the build is packaged in an electron distributable
   packaged: false,
