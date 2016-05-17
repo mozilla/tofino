@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes } from 'react';
 
-import Style from '../../browser-style';
+import Style from '../browser-style';
 
 const MIN_WIDTH = '16px';
 const MIN_HEIGHT = '16px';
@@ -33,10 +33,6 @@ const BUTTON_STYLE = Style.registerStyle({
   WebkitAppRegion: 'no-drag',
 });
 
-/**
- * A button for the NavBar.
- * `image` must be a valid CSS path to an image.
- */
 const Btn = (props) => {
   const { id, title, disabled, image, imgWidth, imgHeight, imgPosition } = props;
   const { className, style, children } = props;

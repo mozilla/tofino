@@ -14,7 +14,7 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 
 import Style from '../../browser-style';
-import Btn from './btn';
+import Btn from '../../widgets/btn';
 
 import { fixURL, getCurrentWebView } from '../../browser-util';
 import { SHOW_COMPLETIONS } from '../../constants/ui';

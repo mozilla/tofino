@@ -15,7 +15,7 @@ import React, { PropTypes } from 'react';
 import * as UIConstants from '../../constants/ui';
 import Style from '../../browser-style';
 import VerticalSeparator from './vertical-separator';
-import Btn from './btn';
+import Btn from '../../widgets/btn';
 import Location from './location';
 
 const NAVBAR_STYLE = Style.registerStyle({

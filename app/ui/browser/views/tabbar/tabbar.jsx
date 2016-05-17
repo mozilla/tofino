@@ -14,7 +14,7 @@ import React, { PropTypes } from 'react';
 
 import Style from '../../browser-style';
 import Tab from './tab';
-import Btn from '../navbar/btn';
+import Btn from '../../widgets/btn';
 
 const TABBAR_STYLE = Style.registerStyle({
   alignItems: 'center',
