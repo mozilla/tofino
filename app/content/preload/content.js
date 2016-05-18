@@ -29,13 +29,16 @@ if (document.location.protocol === 'tofino:') {
       const args = [];
       args.push(`q=${encodeURIComponent(string)}`);
       if (since) {
-        args.push(`since=${encodeURIComponent('' + since)}`);
+        since = `${since}`;
+        args.push(`since=${encodeURIComponent(since)}`);
       }
       if (limit) {
-        args.push(`limit=${encodeURIComponent('' + limit)}`);
+        limit = `${limit}`;
+        args.push(`limit=${encodeURIComponent(limit)}`);
       }
       if (snippetSize) {
-        args.push(`snippetSize=${encodeURIComponent('' + snippetSize)}`);
+        snippetSize = `${snippetSize}`;
+        args.push(`snippetSize=${encodeURIComponent(snippetSize)}`);
       }
 
       return (await request(`/query?${args.join('&')}`)).results;
