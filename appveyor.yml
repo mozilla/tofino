@@ -12,6 +12,9 @@ branches:
   only:
     - master
 
+skip_commits:
+  message: /\[ci skip\]/
+
 pull_requests:
   do_not_increment_build_number: true
 
