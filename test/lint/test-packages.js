@@ -35,6 +35,7 @@ const ignored = [
   'eslint-plugin-flow-vars',
   'eslint-plugin-import',
   'eslint-plugin-react',
+  'react-addons-test-utils',
 ];
 
 describe('packages', () => {
