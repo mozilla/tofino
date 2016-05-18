@@ -76,6 +76,16 @@ const NavBar = (props) => {
     );
   }
 
+  const {
+    openMenu,
+    navBack,
+    navForward,
+    navRefresh,
+    minimize,
+    maximize,
+    close,
+  } = props;
+
   return (
     <div id="browser-navbar"
       className={`${NAVBAR_STYLE}`}>
@@ -84,7 +94,7 @@ const NavBar = (props) => {
           className={NAVBAR_APP_MENU_BUTTON_STYLE}
           title="Menu"
           image="glyph-menu-16.svg"
-          clickHandler={props.openMenu} />
+          onClick={openMenu} />
         <VerticalSeparator />
         <Btn id="browser-navbar-back"
           className={`${NAVBAR_NAVIGATION_BACK_BUTTON_STYLE}`}
@@ -93,19 +103,19 @@ const NavBar = (props) => {
           imgWidth="16px"
           imgHeight="16px"
           imgPosition="center"
-          clickHandler={props.navBack}
+          onClick={navBack}
           disabled={!props.page.canGoBack} />
         <Btn id="browser-navbar-forward"
           className={NAVBAR_NAVIGATION_BUTTONS_STYLE}
           title="Forward"
           image="glyph-arrow-nav-forward-16.svg"
-          clickHandler={props.navForward}
+          onClick={navForward}
           disabled={!props.page.canGoForward} />
         <Btn id="browser-navbar-refresh"
           className={NAVBAR_NAVIGATION_BUTTONS_STYLE}
           title="Refresh"
           image="glyph-arrow-reload-16.svg"
-          clickHandler={props.navRefresh}
+          onClick={navRefresh}
           disabled={!props.page.canRefresh} />
       </div>
       <Location { ...props } />
@@ -115,17 +125,17 @@ const NavBar = (props) => {
           className={NAVBAR_WINDOW_CONTROL_BUTTONS_STYLE}
           title="Minimize"
           image="glyph-window-minimize-16.svg"
-          clickHandler={props.minimize} />
+          onClick={minimize} />
         <Btn id="browser-navbar-maximize"
           className={NAVBAR_WINDOW_CONTROL_BUTTONS_STYLE}
           title="Maximize"
           image="glyph-window-maximize-16.svg"
-          clickHandler={props.maximize} />
+          onClick={maximize} />
         <Btn id="browser-navbar-close"
           className={NAVBAR_WINDOW_CONTROL_BUTTONS_STYLE}
           title="Close"
           image="glyph-window-close-16.svg"
-          clickHandler={props.close} />
+          onClick={close} />
       </div>
     </div>
   );

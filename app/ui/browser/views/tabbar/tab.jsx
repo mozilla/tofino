@@ -67,7 +67,7 @@ function Tab(props) {
       </span>
       <Btn className={`tab-close ${TAB_CLOSE_BUTTON_STYLE}`}
         title="Close tab"
-        clickHandler={onClose}>
+        onClick={onClose}>
         <i className="fa fa-close" />
       </Btn>
     </div>

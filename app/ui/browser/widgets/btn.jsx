@@ -38,7 +38,7 @@ const BUTTON_STYLE = Style.registerStyle({
 const Btn = (props) => {
   const { id, title, disabled, image, imgWidth, imgHeight, imgPosition } = props;
   const { className, style, children } = props;
-  const { clickHandler } = props;
+  const { onClick } = props;
 
   const custom = {
     opacity: (disabled ? '0.5' : '1'),
@@ -59,7 +59,7 @@ const Btn = (props) => {
     <button type={"button"}
       className={`${BUTTON_STYLE} ${className || ''}`}
       style={custom}
-      onClick={disabled ? null : clickHandler}
+      onClick={disabled ? null : onClick}
       {...{ id, title, disabled }}>
       {children}
     </button>
@@ -82,7 +82,7 @@ Btn.propTypes = {
     React.PropTypes.arrayOf(React.PropTypes.node),
     React.PropTypes.node,
   ]),
-  clickHandler: PropTypes.func.isRequired,
+  onClick: PropTypes.func.isRequired,
 };
 
 export default Btn;

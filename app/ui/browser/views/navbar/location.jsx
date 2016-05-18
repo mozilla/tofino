@@ -107,7 +107,7 @@ export class Location extends Component {
     this.handleURLBarFocus = this.handleURLBarFocus.bind(this);
     this.handleURLBarBlur = this.handleURLBarBlur.bind(this);
     this.handleURLBarKeyDown = this.handleURLBarKeyDown.bind(this);
-    this.toggleBookmark = this.toggleBookmark.bind(this);
+    this.handleBookmarkClick = this.handleBookmarkClick.bind(this);
   }
 
   componentDidMount() {
@@ -171,7 +171,7 @@ export class Location extends Component {
     this.refs.input.ownerDocument.execCommand('insertText', false, value);
   }
 
-  toggleBookmark(e) {
+  handleBookmarkClick(e) {
     const { isBookmarked, bookmark, unbookmark } = this.props;
     const webview = getCurrentWebView(e.target.ownerDocument);
     const title = webview.getTitle();
@@ -328,7 +328,7 @@ export class Location extends Component {
           <Btn title="Info"
             className={LOCATION_BAR_BUTTONS_STYLE}
             image=""
-            clickHandler={() => {}} />
+            onClick={() => {}} />
           <div id="browser-location-title-bar"
             className={TITLE_BAR_STYLE}
             hidden={this.state.showURLBar}
@@ -344,7 +344,7 @@ export class Location extends Component {
             className={LOCATION_BAR_BUTTONS_STYLE}
             image={this.getBookmarkIcon()}
             disabled={this.props.page.state === Page.PAGE_STATE_LOADING}
-            clickHandler={this.toggleBookmark} />
+            onClick={this.handleBookmarkClick} />
           {completions}
         </div>
       </div>

@@ -49,7 +49,7 @@ const TabBar = ({
 
     <Btn className={`new-tab ${NEW_TAB_BUTTON_STYLE}`}
       title="Add new tab"
-      clickHandler={handleNewTabClick}>
+      onClick={handleNewTabClick}>
       <i className="fa fa-plus" />
     </Btn>
   </div>

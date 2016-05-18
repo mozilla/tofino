@@ -13,7 +13,7 @@ import requireDir from 'require-dir';
 // to warn. They are defined here.
 const RequiredProps = {
   Btn: {
-    clickHandler: () => {},
+    onClick: () => {},
     title: 'my title',
   },
 };
