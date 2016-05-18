@@ -3,15 +3,9 @@
 /* eslint prefer-arrow-callback: 0 */
 
 import expect from 'expect';
-import { quickTest } from '../../build-config';
 import Driver from '../utils/driver';
 
 describe('application launch', function() {
-  if (quickTest) {
-    it.skip('all tests');
-    return;
-  }
-
   this.timeout(Driver.TEST_TIMEOUT_IN_MS);
 
   beforeEach(async function() {

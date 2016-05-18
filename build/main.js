@@ -38,7 +38,6 @@ const handleDepsCheckSucceeded = () => {
     '--run-dev': args => tasks.runDev(args),
     '--package': () => tasks.package(),
     '--test': args => tasks.test(args),
-    '--quicktest': args => tasks.quickTest(args),
     '--lint': args => tasks.lintOnlyTest(args),
     '--build-deps': () => tasks.buildDeps(),
   };
