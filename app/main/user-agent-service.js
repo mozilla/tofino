@@ -23,8 +23,6 @@ import morgan from 'morgan';
 import { ProfileStorage, SnippetSize, StarOp } from '../services/storage';
 import * as profileDiffs from '../shared/profile-diffs';
 
-const PORT = 9090;
-
 const allowCrossDomain = function(req, res, next) {
   res.header('Access-Control-Allow-Origin', 'tofino://');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
@@ -270,7 +268,11 @@ function configure(app: any, storage: ProfileStorage) {
  *
  * @return {Promise<{ port, stop }>}
  */
-export function start(storage: ProfileStorage, port: ?number = PORT, debug: ?boolean = false) {
+export function start(storage: ProfileStorage,
+                      port: number,
+                      options: ?Object = {}) {
+  const { debug, allowReuse } = options;
+
   let server;
   function stop() {
     return new Promise((res, rej) => {
@@ -286,7 +288,7 @@ export function start(storage: ProfileStorage, port: ?number = PORT, debug: ?boo
 
   return new Promise((resolve, reject) => {
     const app = express();
-    expressWs(app);
+    const { getWss } = expressWs(app);
 
     configure(app, storage);
 
@@ -294,12 +296,27 @@ export function start(storage: ProfileStorage, port: ?number = PORT, debug: ?boo
       storage.db.db.on('trace', console.log);
     }
 
-    server = app.listen(port, (err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve({ port, stop });
-      }
+    // Sadly, app.listen does not return the HTTP server just yet.
+    // Therefore, we extract it manually below.
+    app.listen(port, () => {
+      resolve({ app, getWss, reused: false });
     });
+    server = getWss()._server;
+
+    if (allowReuse) {
+      // Let's assume we're already running our service.
+      server.on('error', (e) => {
+        if (e.code !== 'EADDRINUSE') {
+          throw e;
+        }
+      });
+
+      getWss().on('error', (e) => {
+        if (e.code !== 'EADDRINUSE') {
+          throw e;
+        }
+        resolve({ app, getWss, reused: true });
+      });
+    }
   });
 }
