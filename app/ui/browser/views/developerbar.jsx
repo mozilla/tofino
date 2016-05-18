@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 
 import BUILD_CONFIG from '../../../../build-config';
 import Style from '../browser-style';
@@ -41,6 +41,9 @@ class DeveloperBar extends Component {
 
     this.state = {
       isRecording: false,
+      buildConfig: props.buildConfig || BUILD_CONFIG,
+      doPerfStart: props.perfStart || perfStart,
+      doPerfStop: props.perfStop || perfStop,
     };
   }
 
@@ -49,14 +52,14 @@ class DeveloperBar extends Component {
     this.setState({ isRecording: !isCurrentlyRecording });
 
     if (isCurrentlyRecording) {
-      perfStop();
+      this.state.doPerfStop();
     } else {
-      perfStart();
+      this.state.doPerfStart();
     }
   }
 
   render() {
-    if (!BUILD_CONFIG.development) {
+    if (!this.state.buildConfig.development) {
       return null;
     }
 
@@ -73,5 +76,11 @@ class DeveloperBar extends Component {
 }
 
 DeveloperBar.displayName = 'DeveloperBar';
+
+DeveloperBar.propTypes = {
+  buildConfig: PropTypes.object,
+  perfStart: PropTypes.func,
+  perfStop: PropTypes.func,
+};
 
 export default DeveloperBar;
