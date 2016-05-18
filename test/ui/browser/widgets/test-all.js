@@ -34,6 +34,18 @@ describe('widgets', () => {
   }
 
   for (const Widget of components) {
+    it(`${Widget.displayName} should pass in the id and/or className if given`, () => {
+      const wrapper = shallow(
+        <Widget {...RequiredProps[Widget.displayName]}
+          id="foo-id"
+          className="bar-class" />);
+
+      expect(wrapper.prop('id')).toEqual('foo-id');
+      expect(wrapper.prop('className')).toMatch(/bar-class/);
+    });
+  }
+
+  for (const Widget of components) {
     it(`${Widget.displayName} should extend style if given`, () => {
       const wrapper = shallow(
         <Widget {...RequiredProps[Widget.displayName]}
