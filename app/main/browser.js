@@ -219,7 +219,18 @@ let ws = undefined;
 const menuData = {};
 
 profileStoragePromise.then(async function(profileStorage) {
-  await userAgentService.start(profileStorage, endpoints.UA_SERVICE_PORT, false);
+  const { reused } = await userAgentService.start(profileStorage,
+                                                  endpoints.UA_SERVICE_PORT,
+                                                  { debug: false, allowReuse: true });
+
+  if (reused) {
+    // In the future, let's do something like test a /status or /heartbeat endpoint for a version
+    // and well-known string to be sure that we're actually connecting to a UA service.
+    console.log('Using an already running User Agent service ' +
+                `(running on ${endpoints.UA_SERVICE_PORT}).`);
+  } else {
+    console.log(`Started a new User Agent service (running on ${endpoints.UA_SERVICE_PORT}).`);
+  }
 
   ws = new WebSocket(`${endpoints.UA_SERVICE_WS}/diffs`);
 
