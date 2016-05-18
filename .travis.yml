@@ -21,10 +21,8 @@ install:
   - node --version
   - npm --version
   - npm install --progress false --depth 0
-  - npm install -g flow-bin
 
 script:
-  - flow check
   - npm test
 
 after_success:
