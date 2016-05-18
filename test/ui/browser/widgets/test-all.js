@@ -13,7 +13,7 @@ import requireDir from 'require-dir';
 // to warn. They are defined here.
 const RequiredProps = {
   Btn: {
-    clickHandler: () => {},
+    onClick: () => {},
     title: 'my title',
   },
 };
@@ -30,6 +30,18 @@ describe('widgets', () => {
     it(`${Widget.displayName} should be a default export and properly render`, () => {
       const wrapper = shallow(<Widget {...RequiredProps[Widget.displayName]} />);
       expect(wrapper.unrendered.type.displayName).toEqual(Widget.displayName);
+    });
+  }
+
+  for (const Widget of components) {
+    it(`${Widget.displayName} should pass in the id and/or className if given`, () => {
+      const wrapper = shallow(
+        <Widget {...RequiredProps[Widget.displayName]}
+          id="foo-id"
+          className="bar-class" />);
+
+      expect(wrapper.prop('id')).toEqual('foo-id');
+      expect(wrapper.prop('className')).toMatch(/bar-class/);
     });
   }
 

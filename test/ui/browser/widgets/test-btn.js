@@ -11,35 +11,35 @@ describe('Btn', () => {
   it('sets `id` if given', () => {
     const wrapper = shallow(
       <Btn id="my-btn"
-        clickHandler={() => {}}
+        onClick={() => {}}
         title="my title" />);
     expect(wrapper.prop('id')).toEqual('my-btn');
   });
   it('sets `className` if given', () => {
     const wrapper = shallow(
       <Btn className="my-btn-cls"
-        clickHandler={() => {}}
+        onClick={() => {}}
         title="my title" />);
     expect(wrapper.prop('className')).toMatch(/my-btn-cls/);
   });
   it('has `disabled` prop if given', () => {
     const wrapper = shallow(
       <Btn disabled
-        clickHandler={() => {}}
+        onClick={() => {}}
         title="my title" />);
     expect(wrapper.prop('disabled')).toEqual(true);
   });
   it('does not have `disabled` if not given', () => {
     const wrapper = shallow(
       <Btn title="my title"
-        clickHandler={() => {}} />
+        onClick={() => {}} />
     );
     expect(wrapper.prop('disabled')).toEqual(void 0);
   });
   it('sets `title`', () => {
     const wrapper = shallow(
       <Btn title="my title"
-        clickHandler={() => {}} />
+        onClick={() => {}} />
     );
     expect(wrapper.prop('title')).toEqual('my title');
   });
@@ -47,7 +47,7 @@ describe('Btn', () => {
     const spy = expect.createSpy();
     const wrapper = shallow(
       <Btn title="my title"
-        clickHandler={spy} />
+        onClick={spy} />
     );
     expect(spy).toNotHaveBeenCalled();
     wrapper.simulate('click');
@@ -58,7 +58,7 @@ describe('Btn', () => {
     const wrapper = shallow(
       <Btn disabled
         title="my title"
-        clickHandler={spy} />
+        onClick={spy} />
     );
     expect(spy).toNotHaveBeenCalled();
     wrapper.simulate('click');
@@ -67,7 +67,7 @@ describe('Btn', () => {
   it('sets `image` if given', () => {
     const wrapper = shallow(
       <Btn image="some-file.svg"
-        clickHandler={() => {}}
+        onClick={() => {}}
         title="my title" />
     );
     expect(wrapper.prop('style')).toContain({
@@ -80,7 +80,7 @@ describe('Btn', () => {
   it('sets a default `image` if given a falsy prop', () => {
     const wrapper = shallow(
       <Btn image=""
-        clickHandler={() => {}}
+        onClick={() => {}}
         title="my title" />
     );
     expect(wrapper.prop('style')).toContain({
@@ -96,7 +96,7 @@ describe('Btn', () => {
         imgWidth="100px"
         imgHeight="200px"
         imgPosition="center"
-        clickHandler={() => {}}
+        onClick={() => {}}
         title="my title" />
     );
     expect(wrapper.prop('style')).toContain({

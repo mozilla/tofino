@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 
 import BUILD_CONFIG from '../../../../build-config';
 import Style from '../browser-style';
@@ -37,26 +37,33 @@ class DeveloperBar extends Component {
   constructor(props) {
     super(props);
 
-    this.onRecordingClick = this.onRecordingClick.bind(this);
+    this.handleRecordingClick = this.handleRecordingClick.bind(this);
 
     this.state = {
       isRecording: false,
+      buildConfig: props.buildConfig || BUILD_CONFIG,
+      doPerfStart: props.perfStart || perfStart,
+      doPerfStop: props.perfStop || perfStop,
     };
   }
 
-  onRecordingClick() {
+  handleRecordingClick() {
     const isCurrentlyRecording = this.state.isRecording;
     this.setState({ isRecording: !isCurrentlyRecording });
 
     if (isCurrentlyRecording) {
-      perfStop();
+      this.state.doPerfStop();
     } else {
-      perfStart();
+      this.state.doPerfStart();
+    }
+
+    if (this.props.onProfileToggle) {
+      this.props.onProfileToggle();
     }
   }
 
   render() {
-    if (!BUILD_CONFIG.development) {
+    if (!this.state.buildConfig.development) {
       return null;
     }
 
@@ -64,14 +71,22 @@ class DeveloperBar extends Component {
 
     return (
       <div className={DEVELOPER_BAR_STYLE}>
-        <Btn title={isRecording ? 'Stop Recording' : 'Start Recording'}
+        <Btn id="record-button"
+          title={isRecording ? 'Stop Recording' : 'Start Recording'}
           image={isRecording ? 'tool-profiler-active.svg' : 'tool-profiler.svg'}
-          clickHandler={this.onRecordingClick} />
+          onClick={this.handleRecordingClick} />
       </div>
     );
   }
 }
 
 DeveloperBar.displayName = 'DeveloperBar';
+
+DeveloperBar.propTypes = {
+  buildConfig: PropTypes.object,
+  onProfileToggle: PropTypes.func,
+  perfStart: PropTypes.func,
+  perfStop: PropTypes.func,
+};
 
 export default DeveloperBar;
