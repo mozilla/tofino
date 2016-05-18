@@ -37,14 +37,14 @@ class DeveloperBar extends Component {
   constructor(props) {
     super(props);
 
-    this.onRecordingClick = this.onRecordingClick.bind(this);
+    this.handleRecordingClick = this.handleRecordingClick.bind(this);
 
     this.state = {
       isRecording: false,
     };
   }
 
-  onRecordingClick() {
+  handleRecordingClick() {
     const isCurrentlyRecording = this.state.isRecording;
     this.setState({ isRecording: !isCurrentlyRecording });
 
@@ -66,7 +66,7 @@ class DeveloperBar extends Component {
       <div className={DEVELOPER_BAR_STYLE}>
         <Btn title={isRecording ? 'Stop Recording' : 'Start Recording'}
           image={isRecording ? 'tool-profiler-active.svg' : 'tool-profiler.svg'}
-          clickHandler={this.onRecordingClick} />
+          onClick={this.handleRecordingClick} />
       </div>
     );
   }
