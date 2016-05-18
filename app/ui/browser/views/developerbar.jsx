@@ -56,6 +56,10 @@ class DeveloperBar extends Component {
     } else {
       this.state.doPerfStart();
     }
+
+    if (this.props.onProfileToggle) {
+      this.props.onProfileToggle();
+    }
   }
 
   render() {
@@ -67,7 +71,8 @@ class DeveloperBar extends Component {
 
     return (
       <div className={DEVELOPER_BAR_STYLE}>
-        <Btn title={isRecording ? 'Stop Recording' : 'Start Recording'}
+        <Btn id="record-button"
+          title={isRecording ? 'Stop Recording' : 'Start Recording'}
           image={isRecording ? 'tool-profiler-active.svg' : 'tool-profiler.svg'}
           onClick={this.handleRecordingClick} />
       </div>
@@ -79,6 +84,7 @@ DeveloperBar.displayName = 'DeveloperBar';
 
 DeveloperBar.propTypes = {
   buildConfig: PropTypes.object,
+  onProfileToggle: PropTypes.func,
   perfStart: PropTypes.func,
   perfStop: PropTypes.func,
 };
