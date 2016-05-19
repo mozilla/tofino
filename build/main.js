@@ -14,8 +14,9 @@
 
 require('babel-polyfill');
 require('babel-register')();
-
+const semver = require('semver');
 const checkDependencies = require('check-dependencies');
+const VALID_NODE_VERSION_RANGE = require('../package.json').engines.node;
 
 const handleDepsCheckFailed = result => {
   console.error('Dependency checks failed.');
@@ -27,6 +28,22 @@ const handleTaskFailed = err => {
   console.error('Build failed.');
   console.error(err);
   process.exit(1);
+};
+
+const checkNodeVersion = version => {
+  // Strip out the 'v' in version, since `process.version`
+  // returns `v5.8.0`.
+  version = version.replace(/v/g, '');
+
+  if (!semver.satisfies(version, VALID_NODE_VERSION_RANGE)) {
+    console.error(`*****\n` +
+                  `You are currently running node v${version}. Your version of node ` +
+                  `must satisfy ${VALID_NODE_VERSION_RANGE}, or else strange things ` +
+                  `could happen. Please upgrade your version of node, or use a ` +
+                  `node version manager, like nvm:\n` +
+                  `https://github.com/creationix/nvm\n` +
+                  `*****\n`);
+  }
 };
 
 const handleDepsCheckSucceeded = () => {
@@ -55,6 +72,8 @@ function main(argv, tasks, handlers, catcher) {
       outstanding.push(runner(args));
     }
   }
+
+  checkNodeVersion(process.version);
 
   return Promise.all(outstanding).then(null, catcher);
 }
