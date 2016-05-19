@@ -183,7 +183,7 @@ export class Location extends Component {
   selectAutocompleteItem(url) {
     this.setInputValue(url);
     this.props.navigateTo(url);
-    this.handleURLBarBlur();
+    this.refs.input.blur();
   }
 
   handleBookmarkClick(e) {
