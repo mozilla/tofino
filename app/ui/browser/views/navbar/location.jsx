@@ -19,7 +19,7 @@ import Btn from '../../widgets/btn';
 import { fixURL, getCurrentWebView } from '../../browser-util';
 import { SHOW_COMPLETIONS } from '../../constants/ui';
 import { Page } from '../../model';
-import { getUserTypedLocation } from '../../selectors';
+import { getUserTypedLocation, showCompletions } from '../../selectors';
 
 const LOCATION_BAR_CONTAINER_STYLE = Style.registerStyle({
   flex: 1,
@@ -140,7 +140,7 @@ export class Location extends Component {
     // This happens when userTypedLocation changed outside of a 'normal' input
     // change i.e., on location change.  Need to make sure the input is actually set.
     // No tests for this right now, since shallow rendering doesn't support 'refs'.
-    const nextLocation = this.getRenderURL();
+    const nextLocation = this.getRenderLocation();
     if (this.refs.input &&
         this.state.showURLBar &&    // This focuses the element, so don't do if hidden!
         nextLocation &&
@@ -149,7 +149,7 @@ export class Location extends Component {
     }
   }
 
-  getRenderURL() {
+  getRenderLocation() {
     return this.props.userTypedLocation === null ?
             this.props.page.location : this.props.userTypedLocation;
   }
@@ -163,6 +163,17 @@ export class Location extends Component {
       return 'glyph-bookmark-filled-16.svg';
     }
     return 'glyph-bookmark-hollow-16.svg';
+  }
+
+  getVisibleCompletionsForLocation() {
+    const { profile } = this.props;
+    const completionsForLocation = profile.completions.get(this.getRenderLocation());
+    if (SHOW_COMPLETIONS && this.props.showCompletions &&
+       this.state.focusedURLBar && completionsForLocation) {
+      return completionsForLocation;
+    }
+
+    return null;
   }
 
   setInputValue(value) {
@@ -203,8 +214,8 @@ export class Location extends Component {
     this.setState({ focusedURLBar: false });
   }
 
-  handleURLBarKeyDown(ev, completionsForURL) {
-    const maxCompletions = completionsForURL ? completionsForURL.length : -1;
+  handleURLBarKeyDown(ev, completionsForLocation) {
+    const maxCompletions = completionsForLocation ? completionsForLocation.length : -1;
 
     if (ev.key === 'Enter') {
       // When you hit enter, stop editing the URL bar. This avoids us
@@ -215,13 +226,18 @@ export class Location extends Component {
       if (this.state.focusedResultIndex >= 0 &&
           this.state.focusedResultIndex < maxCompletions) {
         ev.preventDefault();
-        this.setInputValue(completionsForURL[this.state.focusedResultIndex].uri);
+        this.setInputValue(completionsForLocation[this.state.focusedResultIndex].uri);
       } else {
         this.props.navigateTo(fixURL(ev.target.value));
       }
     } else if (ev.key === 'Escape') {
-      this.props.onLocationReset();
-      ev.target.select();
+      if (this.getVisibleCompletionsForLocation()) {
+        // If there are visible completions, then close them.
+        this.props.onClearCompletions();
+      } else {
+        // Otherwise, reset the input value to the page location
+        this.props.onLocationReset();
+      }
     } else if (ev.key === 'ArrowDown' && maxCompletions > 0) {
       const focusedResultIndex =
         this.state.focusedResultIndex >= maxCompletions - 1 ? 0 : this.state.focusedResultIndex + 1;
@@ -236,10 +252,10 @@ export class Location extends Component {
   }
 
   render() {
-    const { profile, pages, page } = this.props;
-    const urlValue = this.getRenderURL();
+    const { pages, page } = this.props;
     let completions = null;
-    const completionsForURL = profile.completions.get(urlValue);
+    const completionsForLocation = this.getVisibleCompletionsForLocation();
+    const urlValue = this.getRenderLocation();
 
     const renderRow = (completion, i) => {
       // We get safe, decorated (<b>foo</b>) HTML from the database.
@@ -264,7 +280,7 @@ export class Location extends Component {
             onMouseDown={(ev) => { ev.preventDefault(); }}
             onMouseOver={() => { this.setState({ focusedResultIndex: i }); }}
             onClick={() => {
-              this.setInputValue(completionsForURL[i].uri);
+              this.setInputValue(completionsForLocation[i].uri);
             }}
             style={this.state.focusedResultIndex === i ? { background: 'red' } : null}>
             <span>{completion.title}</span>&nbsp;—&nbsp;<span>{completion.uri}</span>
@@ -274,8 +290,8 @@ export class Location extends Component {
       );
     };
 
-    if (SHOW_COMPLETIONS && completionsForURL && this.state.focusedURLBar) {
-      const results = completionsForURL.map(renderRow);
+    if (completionsForLocation) {
+      const results = completionsForLocation.map(renderRow);
 
       completions = (
         <div id="autocomplete-results"
@@ -284,8 +300,8 @@ export class Location extends Component {
 
       // Don't show the completion box if there aren't any, or if there's
       // only one that matches the URL exactly.
-      if (completionsForURL.length === 0 ||
-           (completionsForURL.length === 1 && completionsForURL[0].uri === urlValue)) {
+      if (completionsForLocation.length === 0 ||
+           (completionsForLocation.length === 1 && completionsForLocation[0].uri === urlValue)) {
         completions = null;
       }
     }
@@ -308,9 +324,17 @@ export class Location extends Component {
           ref="input"
           onFocus={this.handleURLBarFocus}
           onBlur={this.handleURLBarBlur}
-          onChange={this.props.onLocationChange}
+          onChange={(e) => {
+            // There's a case here where the location can be reset from an action which
+            // causes a react change event to fire.  In this case, there's no need to
+            // notify about it.  Otherwise, pressing ESC will cause the location to
+            // reset *and* trigger onChange, which makes the autocomplete popup open.
+            if (this.getRenderLocation() !== e.target.value) {
+              this.props.onLocationChange(e);
+            }
+          }}
           onKeyDown={(e) =>
-            this.handleURLBarKeyDown(e, completionsForURL)
+            this.handleURLBarKeyDown(e, completionsForLocation)
           }
           onContextMenu={this.props.onLocationContextMenu} />);
       }
@@ -360,6 +384,7 @@ Location.propTypes = {
   page: PropTypes.object.isRequired,
   pages: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired,
+  onClearCompletions: PropTypes.func.isRequired,
   onLocationChange: PropTypes.func.isRequired,
   onLocationContextMenu: PropTypes.func.isRequired,
   onLocationReset: PropTypes.func.isRequired,
@@ -369,11 +394,13 @@ Location.propTypes = {
   ipcRenderer: PropTypes.object.isRequired,
   navigateTo: PropTypes.func.isRequired,
   userTypedLocation: PropTypes.string.isRequired,
+  showCompletions: PropTypes.bool.isRequired,
 };
 
 function mapStateToProps(state, ownProps) {
   return {
     userTypedLocation: getUserTypedLocation(state, ownProps.page.id),
+    showCompletions: showCompletions(state),
   };
 }
 
