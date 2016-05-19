@@ -24,15 +24,19 @@ const DEVELOPER_BAR_STYLE = Style.registerStyle({
   zIndex: 1,
   padding: '2px 10px',
   borderTopLeftRadius: '3px',
-  border: '1px solid #999',
-  backgroundColor: '#eee',
+  border: '1px solid var(--theme-splitter-color)',
+  borderBottomWidth: 0,
+  borderRightWidth: 0,
+  backgroundColor: 'var(--theme-body-color)',
+  color: 'var(--theme-content-color)',
   alignItems: 'center',
 });
 
 /**
- * A developer bar positioned at the bottom of browser chrome to provide
+ * A developer bar positioned at the bottom of the browser UI to provide
  * utilities in development mode.
  */
+
 class DeveloperBar extends Component {
   constructor(props) {
     super(props);
