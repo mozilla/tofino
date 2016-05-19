@@ -180,6 +180,12 @@ export class Location extends Component {
     this.refs.input.ownerDocument.execCommand('insertText', false, value);
   }
 
+  selectAutocompleteItem(url) {
+    this.setInputValue(url);
+    this.props.navigateTo(url);
+    this.handleURLBarBlur();
+  }
+
   handleBookmarkClick(e) {
     const { isBookmarked, bookmark, unbookmark } = this.props;
     const webview = getCurrentWebView(e.target.ownerDocument);
@@ -222,7 +228,7 @@ export class Location extends Component {
       if (this.props.focusedResultIndex >= 0 &&
           this.props.focusedResultIndex < maxCompletions) {
         ev.preventDefault();
-        this.setInputValue(completionsForLocation[this.props.focusedResultIndex].uri);
+        this.selectAutocompleteItem(completionsForLocation[this.props.focusedResultIndex].uri);
       } else {
         this.props.navigateTo(fixURL(ev.target.value));
       }
@@ -276,7 +282,7 @@ export class Location extends Component {
             onMouseDown={(ev) => { ev.preventDefault(); }}
             onMouseOver={() => { this.props.dispatch(actions.setFocusedResultIndex(i)); }}
             onClick={() => {
-              this.setInputValue(completionsForLocation[i].uri);
+              this.selectAutocompleteItem(completionsForLocation[i].uri);
             }}
             style={this.props.focusedResultIndex === i ? { background: 'red' } : null}>
             <span>{completion.title}</span>&nbsp;—&nbsp;<span>{completion.uri}</span>
