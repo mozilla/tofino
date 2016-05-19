@@ -294,7 +294,7 @@ export function start(storage: ProfileStorage, port: ?number = PORT, debug: ?boo
       storage.db.db.on('trace', console.log);
     }
 
-    server = app.listen(port, (err) => {
+    server = app.listen(port, '127.0.0.1', (err) => {
       if (err) {
         reject(err);
       } else {
