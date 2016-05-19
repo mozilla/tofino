@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 */
 
 import React from 'react';
-import { ipcRenderer } from '../../../shared/electron';
 
 import Style from '../browser-style';
 import BrowserWindow from './browser';
@@ -24,7 +23,7 @@ const APP_STYLE = Style.registerStyle({
 const App = function() {
   return (
     <div className={APP_STYLE}>
-      <BrowserWindow ipcRenderer={ipcRenderer} />
+      <BrowserWindow />
       <Style.Element />
     </div>
   );

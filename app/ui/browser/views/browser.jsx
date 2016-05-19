@@ -12,10 +12,10 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
+import { ipcRenderer } from '../../../shared/electron';
 
 import Style from '../browser-style';
 import * as SharedPropTypes from '../model/shared-prop-types';
-
 import BrowserChrome from './browser-chrome';
 import BrowserContent from './browser-content';
 import DeveloperBar from './developerbar';
@@ -60,7 +60,7 @@ class BrowserWindow extends Component {
 
   render() {
     const {
-      currentPage, ipcRenderer, dispatch, profile, pages, currentPageIndex,
+      currentPage, dispatch, profile, pages, currentPageIndex,
     } = this.props;
 
     const webViewController = this.webViewController;
@@ -145,7 +145,6 @@ BrowserWindow.displayName = 'BrowserWindow';
 
 BrowserWindow.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  ipcRenderer: PropTypes.object.isRequired,
   pages: SharedPropTypes.Pages.isRequired,
   currentPage: SharedPropTypes.Page.isRequired,
   currentPageIndex: PropTypes.number.isRequired,
@@ -164,8 +163,8 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps)(BrowserWindow);
 
 function attachIPCRendererListeners(browserView) {
-  const { dispatch, ipcRenderer } = browserView.props;
   const { webViewController } = browserView;
+  const { dispatch } = browserView.props;
 
   ipcRenderer.on('select-tab-index', (_, index) => {
     const page = browserView.props.pages.get(index);
