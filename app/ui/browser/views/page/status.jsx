@@ -34,27 +34,18 @@ const STATUS_STYLE = Style.registerStyle({
  * A status bar at the bottom of the browser UI.
  */
 
-const Status = ({ page, statusText }) => {
-  let contents;
-
-  if (statusText) {
-    contents = statusText;
-  } else if (page.isLoading) {
-    contents = 'Loading...';
-  }
-
+export function Status({ statusText }) {
   return (
     <div className={STATUS_STYLE}
-      hidden={!contents}>
-      {contents}
+      hidden={!statusText}>
+      {statusText}
     </div>
   );
-};
+}
 
 Status.displayName = 'Status';
 
 Status.propTypes = {
-  page: PropTypes.object.isRequired,
   statusText: PropTypes.string.isRequired,
 };
 
