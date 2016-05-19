@@ -89,7 +89,7 @@ describe('Location', () => {
         <Location {...props} />
       );
 
-      wrapper.setState({ showURLBar: true, focusedURLBar: true });
+      wrapper.setProps({ showURLBar: true, focusedURLBar: true });
       expect(wrapper.find('#autocomplete-results').length).toEqual(1);
       expect(wrapper.find('#autocomplete-results').childAt(0).text()).toEqual('Mozilla.com — https://mozilla.com/');
       expect(wrapper.find('#autocomplete-results').childAt(1).text()).toEqual('Mozilla.org — https://mozilla.org/');
@@ -102,7 +102,10 @@ describe('Location', () => {
         <Location {...props} />
       );
       props.userTypedLocation = 'mo';
-      wrapper.setState({ showURLBar: true, focusedURLBar: true, focusedResultIndex: 1 });
+      props.showURLBar = true;
+      props.focusedURLBar = true;
+      props.focusedResultIndex = 1;
+      // wrapper.setState({ showURLBar: true, focusedURLBar: true, focusedResultIndex: 1 });
       wrapper.setProps(props);
       expect(wrapper.state('focusedResultIndex')).toEqual(-1);
     });

@@ -274,7 +274,7 @@ export class Location extends Component {
           <div
             key={completion.uri}
             onMouseDown={(ev) => { ev.preventDefault(); }}
-            onMouseOver={() => { this.props.dispatch(actions.setFocusedResultIndex(i)) }}
+            onMouseOver={() => { this.props.dispatch(actions.setFocusedResultIndex(i)); }}
             onClick={() => {
               this.setInputValue(completionsForLocation[i].uri);
             }}
