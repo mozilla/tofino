@@ -3,7 +3,7 @@
 
 import expect from 'expect';
 import fs from 'fs-promise';
-import { autoFailingAsyncTest } from '../utils/async';
+import { autoFailingAsyncTest } from '../../utils/async';
 
 describe('dependecies', () => {
   it('should be pinned', autoFailingAsyncTest(async function() {

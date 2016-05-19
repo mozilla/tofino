@@ -5,17 +5,20 @@
 import path from 'path';
 import { spawn, getElectronPath } from './utils';
 
-const MOCHA_TEST_DIRS = ['unit', 'lint', 'webdriver'];
-const TEST_DIR = path.join(__dirname, '..', 'test');
-const DEFAULT_MOCHA_TESTS = path.join(TEST_DIR, `+(${MOCHA_TEST_DIRS.join('|')})`, '**', '*.js');
-const DEFAULT_RENDERER_TESTS = path.join(TEST_DIR, 'renderer', '**', '*.js');
+const DEFAULT_UNIT_TESTS = path.join(__dirname, '..', 'test', 'unit');
+const DEFAULT_RENDERER_TESTS = path.join(__dirname, '..', 'test', 'renderer');
+const DEFAULT_WEBDRIVER_TESTS = path.join(__dirname, '..', 'test', 'webdriver');
+const MOCHA = path.join(__dirname, '..', 'node_modules', '.bin', 'mocha');
+const ELECTRON_MOCHA = path.join(__dirname, '..', 'node_modules', '.bin', 'electron-mocha');
+const PATH_TO_ELECTRON_MOCHA_OPTS = path.join(__dirname, '..', 'test', 'renderer', 'mocha.opts');
 
 export default async function(args) {
   // If no arguments passed in, we must run all tests; both mocha
   // and electron-mocha.
   if (!args.length) {
-    await runMochaTests();
-    await runRendererTests();
+    await runMochaTests(DEFAULT_UNIT_TESTS);
+    await runRendererTests(DEFAULT_RENDERER_TESTS);
+    await runMochaTests(DEFAULT_WEBDRIVER_TESTS);
   } else {
     // If we get a path passed in, crudely check if we should run
     // our renderer tests, or normal mocha tests. This will fail for complex
@@ -29,21 +32,16 @@ export default async function(args) {
   }
 }
 
-function runMochaTests(pathToTests = DEFAULT_MOCHA_TESTS) {
-  const command = path.join(__dirname, '..', 'node_modules', '.bin', 'mocha');
-
-  return spawn(command, [pathToTests], {
+function runMochaTests(pathToTests) {
+  return spawn(MOCHA, [pathToTests], {
     stdio: 'inherit',
   });
 }
 
-function runRendererTests(pathToTests = DEFAULT_RENDERER_TESTS) {
-  const command = path.join(__dirname, '..', 'node_modules', '.bin', 'electron-mocha');
-  const pathToOptions = path.join(__dirname, '..', 'test', 'renderer', 'mocha.opts');
-
-  return spawn(command, [
+function runRendererTests(pathToTests) {
+  return spawn(ELECTRON_MOCHA, [
     '--renderer',
-    '--opts', pathToOptions,
+    '--opts', PATH_TO_ELECTRON_MOCHA_OPTS,
     pathToTests,
   ], {
     stdio: 'inherit',

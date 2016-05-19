@@ -4,7 +4,7 @@
 import expect from 'expect';
 import fs from 'fs-promise';
 import difference from 'lodash/difference';
-import { autoFailingAsyncTest } from '../utils/async';
+import { autoFailingAsyncTest } from '../../utils/async';
 import { REQUIRES_REGEX, IMPORTS_REGEX, globMany, regexFiles } from './shared.js';
 
 const all = '/**/';
