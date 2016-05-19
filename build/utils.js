@@ -86,7 +86,7 @@ export async function spawn(command, args, options = {}) {
     child.on('error', reject);
     child.on('exit', (code) => {
       if (code !== 0) {
-        reject(new Error(`Exited with exit code ${code}`));
+        reject(new Error(`Child process ${command} exited with exit code ${code}`));
       } else {
         resolve();
       }
