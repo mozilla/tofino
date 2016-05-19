@@ -36,6 +36,7 @@ const checkNodeVersion = version => {
   version = version.replace(/v/g, '');
 
   if (!semver.satisfies(version, VALID_NODE_VERSION_RANGE)) {
+    /* eslint-disable quotes */
     console.error(`*****\n` +
                   `You are currently running node v${version}. Your version of node ` +
                   `must satisfy ${VALID_NODE_VERSION_RANGE}, or else strange things ` +
@@ -43,6 +44,8 @@ const checkNodeVersion = version => {
                   `node version manager, like nvm:\n` +
                   `https://github.com/creationix/nvm\n` +
                   `*****\n`);
+
+    /* eslint-enable quotes */
   }
 };
 
