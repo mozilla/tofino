@@ -14,7 +14,6 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import Style from '../../browser-style';
-
 import { getStatusText } from '../../selectors';
 
 const STATUS_STYLE = Style.registerStyle({
@@ -24,13 +23,15 @@ const STATUS_STYLE = Style.registerStyle({
   zIndex: 1,
   padding: '2px 10px',
   borderTopRightRadius: '3px',
-  border: '1px solid #eee',
-  backgroundColor: '#fff',
-  color: '#555',
+  border: '1px solid var(--theme-splitter-color)',
+  borderBottomWidth: 0,
+  borderLeftWidth: 0,
+  backgroundColor: 'var(--theme-body-color)',
+  color: 'var(--theme-content-color)',
 });
 
 /**
- * The old status bar at the bottom of the page
+ * A status bar at the bottom of the browser UI.
  */
 
 const Status = ({ page, statusText }) => {
