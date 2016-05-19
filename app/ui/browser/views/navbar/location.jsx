@@ -74,6 +74,7 @@ const LOCATION_BAR_BUTTONS_STYLE = Style.registerStyle({
 const TITLE_BAR_STYLE = Style.registerStyle({
   flex: 1,
   alignItems: 'center',
+  alignSelf: 'stretch',
   justifyContent: 'center',
   overflow: 'hidden',
   '*': {
@@ -85,6 +86,7 @@ const TITLE_BAR_STYLE = Style.registerStyle({
 
 const INPUT_BAR_STYLE = Style.registerStyle({
   flex: 1,
+  alignSelf: 'stretch',
   overflow: 'hidden',
   border: 'none',
 });
