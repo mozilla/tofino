@@ -5,8 +5,8 @@ import expect from 'expect';
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import DeveloperBar from '../../../../../app/ui/browser/views/developerbar.jsx';
-import Btn from '../../../../../app/ui/browser/widgets/btn';
+import DeveloperBar from '../../../../../../app/ui/browser/views/developerbar.jsx';
+import Btn from '../../../../../../app/ui/browser/widgets/btn';
 
 describe('components - DeveloperBar', () => {
   it('should not render when in production mode', () => {
