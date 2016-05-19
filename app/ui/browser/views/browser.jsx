@@ -21,11 +21,8 @@ import BrowserContent from './browser-content';
 import DeveloperBar from './developerbar';
 import WebViewController from '../lib/webview-controller';
 
-import {
-  menuTabContext, menuLocationContext, menuBrowser, maximize, minimize, close,
-} from '../actions/external';
-
 import * as actions from '../actions/main-actions';
+import * as external from '../actions/external';
 import * as selectors from '../selectors';
 
 const BROWSER_WINDOW_STYLE = Style.registerStyle({
@@ -60,79 +57,56 @@ class BrowserWindow extends Component {
   }
 
   render() {
-    const {
-      currentPage, dispatch, profile, pages, currentPageIndex,
-    } = this.props;
-
+    const { dispatch, currentPage, currentPageIndex, profile } = this.props;
     const webViewController = this.webViewController;
-    const currentPageId = currentPage.id;
 
-    const navBack = () => webViewController.navigateBack(currentPageId);
-    const navForward = () => webViewController.navigateForward(currentPageId);
-    const navRefresh = () => webViewController.navigateRefresh(currentPageId);
-    const navigateTo = loc => webViewController.navigateTo(currentPageId, loc);
+    const browserChromeMethods = {
+      // Window methods.
+      minimize: external.minimize,
+      maximize: external.maximize,
+      close: external.close,
+      openMenu: external.menuBrowser,
 
-    const openMenu = () => menuBrowser();
-    const isBookmarked = (url) => profile.bookmarks.has(url);
-    const bookmark = (title, url) => {
-      dispatch(actions.bookmark(currentPage.sessionId, url, title));
-    };
-    const unbookmark = (url) => {
-      dispatch(actions.unbookmark(currentPage.sessionId, url));
-    };
-    const onLocationChange = e => {
-      const text = e.target.value;
-      dispatch(actions.setUserTypedLocation(currentPageId, {
-        text,
-      }));
-    };
-    const onLocationContextMenu = e => menuLocationContext(e.target, currentPageId, dispatch);
-    const onClearCompletions = () => dispatch(actions.clearCompletions());
-    const onLocationReset = () => {
-      dispatch(actions.locationChanged(currentPageId, { text: null }));
-    };
+      // Location & navigation methods.
+      navBack: () => webViewController.navigateBack(currentPage.id),
+      navForward: () => webViewController.navigateForward(currentPage.id),
+      navRefresh: () => webViewController.navigateRefresh(currentPage.id),
+      navigateTo: location => webViewController.navigateTo(currentPage.id, location),
 
-    /**
-     * TabBar functions
-     */
-    const handleTabContextMenu = pageId => () => menuTabContext(pageId, dispatch);
-    const handleNewTabClick = () => dispatch(actions.createTab());
-    const handleTabClick = pageId => e =>
-      dispatch(e.button === 1 ? actions.closeTab(pageId) : actions.setCurrentTab(pageId));
-    const handleTabClose = pageId => e => {
-      e.preventDefault();
-      e.stopPropagation();
-      dispatch(actions.closeTab(pageId));
+      // Boorkmark handling methods.
+      bookmark: (title, url) => dispatch(actions.bookmark(currentPage.sessionId, url, title)),
+      unbookmark: url => dispatch(actions.unbookmark(currentPage.sessionId, url)),
+      isBookmarked: url => profile.bookmarks.has(url),
+
+      // NavBar methods.
+      onClearCompletions: () => dispatch(actions.clearCompletions()),
+      onLocationChange: e => {
+        dispatch(actions.setUserTypedLocation(currentPage.id, { text: e.target.value }));
+      },
+      onLocationReset: () => dispatch(actions.locationChanged(currentPage.id, { text: null })),
+      onLocationContextMenu: e => external.menuLocationContext(e.target, currentPage.id, dispatch),
+
+      // TabBar methods.
+      handleNewTabClick: () => dispatch(actions.createTab()),
+      handleTabContextMenu: pageId => () => external.menuTabContext(pageId, dispatch),
+      handleTabClick: pageId => e => {
+        dispatch(e.button === 1
+          ? actions.closeTab(pageId)
+          : actions.setCurrentTab(pageId));
+      },
+      handleTabClose: pageId => e => {
+        e.preventDefault();
+        e.stopPropagation();
+        dispatch(actions.closeTab(pageId));
+      },
     };
 
     return (
       <div className={BROWSER_WINDOW_STYLE}>
         <BrowserChrome page={currentPage}
-          handleTabClick={handleTabClick}
-          handleTabClose={handleTabClose}
-          handleTabContextMenu={handleTabContextMenu}
-          handleNewTabClick={handleNewTabClick}
-          {...this.props }
-          {...{
-            navBack,
-            navForward,
-            navRefresh,
-            navigateTo,
-            minimize,
-            maximize,
-            close,
-            pages,
-            openMenu,
-            onClearCompletions,
-            onLocationChange,
-            onLocationContextMenu,
-            onLocationReset,
-            isBookmarked,
-            bookmark,
-            unbookmark,
-            ipcRenderer,
-            profile,
-          }} />
+          {...this.props}
+          {...browserChromeMethods}
+          {...{ ipcRenderer }} />
         <BrowserContent currentPageIndex={currentPageIndex}
           webViewController={webViewController}
           {...this.props} />
@@ -165,7 +139,7 @@ export default connect(mapStateToProps)(BrowserWindow);
 
 function attachIPCRendererListeners(browserView) {
   const { webViewController } = browserView;
-  const { dispatch } = browserView.props;
+  const { props: { dispatch } } = browserView;
 
   ipcRenderer.on('select-tab-index', (_, index) => {
     const page = browserView.props.pages.get(index);
@@ -179,8 +153,7 @@ function attachIPCRendererListeners(browserView) {
 
   ipcRenderer.on('profile-diff', (_, args) => dispatch(args));
   ipcRenderer.on('new-tab', () => dispatch(actions.createTab()));
-  ipcRenderer.on('close-tab', () =>
-    dispatch(actions.closeTab(browserView.props.currentPage.id)));
+  ipcRenderer.on('close-tab', () => dispatch(actions.closeTab(browserView.props.currentPage.id)));
 
   // @TODO main process should be sending an id to refresh a tab
   // most likely, not just whatever tab is currently open
