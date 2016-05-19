@@ -21,7 +21,7 @@ export default async function(args) {
     // our renderer tests, or normal mocha tests. This will fail for complex
     // globbing, but this is more than fine for now.
     const pathToTests = args[0];
-    if (pathToTests.indexOf('test/renderer') !== -1) {
+    if (pathToTests.indexOf(path.join('test', 'renderer')) !== -1) {
       await runRendererTests(pathToTests);
     } else {
       await runMochaTests(pathToTests);
