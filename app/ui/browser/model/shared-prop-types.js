@@ -16,3 +16,6 @@ import * as Model from './index';
 
 export const Page = PropTypes.instanceOf(Model.Page);
 export const Pages = ImmutablePropTypes.listOf(Page.isRequired);
+
+export const Profile = PropTypes.instanceOf(Model.Profile);
+export const Profiles = ImmutablePropTypes.listOf(Profile.isRequired);
