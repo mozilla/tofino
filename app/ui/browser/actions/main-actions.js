@@ -107,6 +107,24 @@ export function clearCompletions(): Action {
   };
 }
 
+export function setShowURLBar(visible) {
+  return (dispatch) => {
+    dispatch({ type: types.SET_URL_INPUT_VISIBLE, payload: { visible } });
+  };
+}
+
+export function setFocusedURLBar(focused) {
+  return (dispatch) => {
+    dispatch({ type: types.SET_URL_INPUT_FOCUSED, payload: { focused } });
+  };
+}
+
+export function setFocusedResultIndex(index) {
+  return (dispatch) => {
+    dispatch({ type: types.SET_URL_INPUT_AUTOCOMPLETE_INDEX, payload: { index } });
+  };
+}
+
 export function setUserTypedLocation(pageId: string, payload: Object): Action {
   return (dispatch) => {
     // Update this window's state before telling the profile service.

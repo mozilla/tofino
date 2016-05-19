@@ -40,6 +40,18 @@ export function showCompletions(state) {
   return state.uiState.showCompletions;
 }
 
+export function focusedURLBar(state) {
+  return state.uiState.focusedURLBar;
+}
+
+export function showURLBar(state) {
+  return state.uiState.showURLBar;
+}
+
+export function focusedResultIndex(state) {
+  return state.uiState.focusedResultIndex;
+}
+
 export function getPageById(state, id) {
   return state.pages.pages.find(page => page.id === id);
 }

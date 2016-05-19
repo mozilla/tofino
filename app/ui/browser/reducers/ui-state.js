@@ -34,6 +34,15 @@ export default function uiState(state = initialState, action) {
     case types.CLEAR_COMPLETIONS:
       return state.set('showCompletions', false);
 
+    case types.SET_URL_INPUT_VISIBLE:
+      return state.set('showURLBar', action.payload.visible);
+
+    case types.SET_URL_INPUT_FOCUSED:
+      return state.set('focusedURLBar', action.payload.focused);
+
+    case types.SET_URL_INPUT_AUTOCOMPLETE_INDEX:
+      return state.set('focusedResultIndex', action.payload.index);
+
     default:
       return state;
   }
