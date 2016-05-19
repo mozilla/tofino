@@ -21,6 +21,7 @@ const ignored = [
   'electron-rebuild',
 
   // Test modules not imported anywhere, but used at the CLI.
+  'electron-mocha',
   'mocha',
   'coveralls',
   'nyc',
