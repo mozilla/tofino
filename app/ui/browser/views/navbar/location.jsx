@@ -19,7 +19,8 @@ import Btn from '../../widgets/btn';
 import { fixURL, getCurrentWebView } from '../../browser-util';
 import { SHOW_COMPLETIONS } from '../../constants/ui';
 import { Page } from '../../model';
-import { getUserTypedLocation, showCompletions } from '../../selectors';
+import * as selectors from '../../selectors';
+import * as actions from '../../actions/main-actions';
 
 const LOCATION_BAR_CONTAINER_STYLE = Style.registerStyle({
   flex: 1,
@@ -98,12 +99,6 @@ export class Location extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      showURLBar: false,
-      focusedURLBar: false,
-      focusedResultIndex: -1,
-    };
-
     this.handleTitleClick = this.handleTitleClick.bind(this);
     this.handleTitleFocus = this.handleTitleFocus.bind(this);
     this.handleURLBarFocus = this.handleURLBarFocus.bind(this);
@@ -115,7 +110,8 @@ export class Location extends Component {
   componentDidMount() {
     this.props.ipcRenderer.on('focus-url-bar', () => {
       this.refs.input.select();
-      this.setState({ showURLBar: true });
+
+      this.props.dispatch(actions.setShowURLBar(true));
     });
   }
 
@@ -125,7 +121,7 @@ export class Location extends Component {
     // focusedResultIndex may want to be moved to redux a la userTypedLocation,
     // depending on the eventual UX and if anywhere else would want to change it.
     if (this.props.userTypedLocation !== nextProps.userTypedLocation) {
-      this.setState({ focusedResultIndex: -1 });
+      this.props.dispatch(actions.setFocusedResultIndex(-1));
     }
   }
 
@@ -133,7 +129,7 @@ export class Location extends Component {
     // If we're showing the URL bar, it should be focused. The scenario
     // where this isn't true is immediately after displaying the URL bar,
     // so give it focus.
-    if (this.state.showURLBar && document.activeElement !== this.refs.input) {
+    if (this.props.showURLBar && document.activeElement !== this.refs.input) {
       this.refs.input.focus();
     }
 
@@ -142,7 +138,7 @@ export class Location extends Component {
     // No tests for this right now, since shallow rendering doesn't support 'refs'.
     const nextLocation = this.getRenderLocation();
     if (this.refs.input &&
-        this.state.showURLBar &&    // This focuses the element, so don't do if hidden!
+        this.props.showURLBar &&    // This focuses the element, so don't do if hidden!
         nextLocation &&
         this.refs.input.value !== nextLocation) {
       this.setInputValue(nextLocation);
@@ -169,7 +165,7 @@ export class Location extends Component {
     const { profile } = this.props;
     const completionsForLocation = profile.completions.get(this.getRenderLocation());
     if (SHOW_COMPLETIONS && this.props.showCompletions &&
-       this.state.focusedURLBar && completionsForLocation) {
+       this.props.focusedURLBar && completionsForLocation) {
       return completionsForLocation;
     }
 
@@ -197,21 +193,21 @@ export class Location extends Component {
   }
 
   handleTitleClick() {
-    this.setState({ showURLBar: true });
+    this.props.dispatch(actions.setShowURLBar(true));
   }
 
   handleTitleFocus() {
-    this.setState({ showURLBar: true });
+    this.props.dispatch(actions.setShowURLBar(true));
   }
 
   handleURLBarFocus() {
     this.refs.input.select();
-    this.setState({ focusedURLBar: true });
+    this.props.dispatch(actions.setFocusedURLBar(true));
   }
 
   handleURLBarBlur() {
-    this.setState({ showURLBar: false });
-    this.setState({ focusedURLBar: false });
+    this.props.dispatch(actions.setShowURLBar(false));
+    this.props.dispatch(actions.setFocusedURLBar(false));
   }
 
   handleURLBarKeyDown(ev, completionsForLocation) {
@@ -223,10 +219,10 @@ export class Location extends Component {
       // web content.
       getCurrentWebView(ev.target.ownerDocument).focus();
 
-      if (this.state.focusedResultIndex >= 0 &&
-          this.state.focusedResultIndex < maxCompletions) {
+      if (this.props.focusedResultIndex >= 0 &&
+          this.props.focusedResultIndex < maxCompletions) {
         ev.preventDefault();
-        this.setInputValue(completionsForLocation[this.state.focusedResultIndex].uri);
+        this.setInputValue(completionsForLocation[this.props.focusedResultIndex].uri);
       } else {
         this.props.navigateTo(fixURL(ev.target.value));
       }
@@ -240,13 +236,13 @@ export class Location extends Component {
       }
     } else if (ev.key === 'ArrowDown' && maxCompletions > 0) {
       const focusedResultIndex =
-        this.state.focusedResultIndex >= maxCompletions - 1 ? 0 : this.state.focusedResultIndex + 1;
-      this.setState({ focusedResultIndex });
+        this.props.focusedResultIndex >= maxCompletions - 1 ? 0 : this.props.focusedResultIndex + 1;
+      this.props.dispatch(actions.setFocusedResultIndex(focusedResultIndex));
       ev.preventDefault();
     } else if (ev.key === 'ArrowUp' && maxCompletions > 0) {
       const focusedResultIndex =
-        this.state.focusedResultIndex <= 0 ? maxCompletions - 1 : this.state.focusedResultIndex - 1;
-      this.setState({ focusedResultIndex });
+        this.props.focusedResultIndex <= 0 ? maxCompletions - 1 : this.props.focusedResultIndex - 1;
+      this.props.dispatch(actions.setFocusedResultIndex(focusedResultIndex));
       ev.preventDefault();
     }
   }
@@ -278,11 +274,11 @@ export class Location extends Component {
           <div
             key={completion.uri}
             onMouseDown={(ev) => { ev.preventDefault(); }}
-            onMouseOver={() => { this.setState({ focusedResultIndex: i }); }}
+            onMouseOver={() => { this.props.dispatch(actions.setFocusedResultIndex(i)); }}
             onClick={() => {
               this.setInputValue(completionsForLocation[i].uri);
             }}
-            style={this.state.focusedResultIndex === i ? { background: 'red' } : null}>
+            style={this.props.focusedResultIndex === i ? { background: 'red' } : null}>
             <span>{completion.title}</span>&nbsp;—&nbsp;<span>{completion.uri}</span>
           </div>
           {snippet}
@@ -316,10 +312,10 @@ export class Location extends Component {
           style={{
             // Need to keep this in the DOM so it can be focused in setInputValue.
             // This won't be a problem if we decide to get rid of the hidden URL UI state.
-            position: !this.state.showURLBar ? 'absolute' : null,
-            top: !this.state.showURLBar ? '-1000px' : null,
+            position: !this.props.showURLBar ? 'absolute' : null,
+            top: !this.props.showURLBar ? '-1000px' : null,
           }}
-          disabled={!this.state.showURLBar}
+          disabled={!this.props.showURLBar}
           type="url"
           ref="input"
           onFocus={this.handleURLBarFocus}
@@ -357,7 +353,7 @@ export class Location extends Component {
             onClick={() => {}} />
           <div id="browser-location-title-bar"
             className={TITLE_BAR_STYLE}
-            hidden={this.state.showURLBar}
+            hidden={this.props.showURLBar}
             tabIndex={0}
             onClick={this.handleTitleClick}
             onFocus={this.handleTitleFocus}>
@@ -381,6 +377,7 @@ export class Location extends Component {
 Location.displayName = 'Location';
 
 Location.propTypes = {
+  dispatch: PropTypes.func.isRequired,
   page: PropTypes.object.isRequired,
   pages: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired,
@@ -395,12 +392,18 @@ Location.propTypes = {
   navigateTo: PropTypes.func.isRequired,
   userTypedLocation: PropTypes.string.isRequired,
   showCompletions: PropTypes.bool.isRequired,
+  showURLBar: PropTypes.bool.isRequired,
+  focusedURLBar: PropTypes.bool.isRequired,
+  focusedResultIndex: PropTypes.number.isRequired,
 };
 
 function mapStateToProps(state, ownProps) {
   return {
-    userTypedLocation: getUserTypedLocation(state, ownProps.page.id),
-    showCompletions: showCompletions(state),
+    userTypedLocation: selectors.getUserTypedLocation(state, ownProps.page.id),
+    showCompletions: selectors.showCompletions(state),
+    showURLBar: selectors.showURLBar(state),
+    focusedURLBar: selectors.focusedURLBar(state),
+    focusedResultIndex: selectors.focusedResultIndex(state),
   };
 }
 

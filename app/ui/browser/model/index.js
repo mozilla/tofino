@@ -69,6 +69,15 @@ export const UIState = Immutable.Record({
 
   // Should the autocomplete popup be visible
   showCompletions: true,
+
+  // Should the URL input be visible (or the page title)
+  showURLBar: false,
+
+  // Is the URL input focused
+  focusedURLBar: false,
+
+  // Which autocomplete result is selected
+  focusedResultIndex: -1,
 }, 'UIState');
 
 /**
