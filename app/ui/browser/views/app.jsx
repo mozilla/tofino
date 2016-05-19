@@ -10,10 +10,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
 import { ipcRenderer } from '../../../shared/electron';
-import * as selectors from '../selectors';
 
 import Style from '../browser-style';
 import BrowserWindow from './browser';
@@ -23,15 +21,10 @@ const APP_STYLE = Style.registerStyle({
   height: '100%',
 });
 
-const App = function({ pages, profile, currentPageIndex, currentPage, dispatch }) {
+const App = function() {
   return (
     <div className={APP_STYLE}>
-      <BrowserWindow ipcRenderer={ipcRenderer}
-        dispatch={dispatch}
-        pages={pages}
-        profile={profile}
-        currentPageIndex={currentPageIndex}
-        currentPage={currentPage} />
+      <BrowserWindow ipcRenderer={ipcRenderer} />
       <Style.Element />
     </div>
   );
@@ -39,21 +32,4 @@ const App = function({ pages, profile, currentPageIndex, currentPage, dispatch }
 
 App.displayName = 'App';
 
-App.propTypes = {
-  pages: PropTypes.object.isRequired,
-  profile: PropTypes.object.isRequired,
-  currentPageIndex: PropTypes.number.isRequired,
-  currentPage: PropTypes.object.isRequired,
-  dispatch: PropTypes.func.isRequired,
-};
-
-function mapStateToProps(state) {
-  return {
-    pages: selectors.getPages(state),
-    profile: selectors.getProfile(state),
-    currentPageIndex: selectors.getCurrentPageIndex(state),
-    currentPage: selectors.getCurrentPage(state),
-  };
-}
-
-export default connect(mapStateToProps)(Style.component(App));
+export default Style.component(App);

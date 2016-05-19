@@ -11,8 +11,11 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 
 import Style from '../browser-style';
+import * as SharedPropTypes from '../model/shared-prop-types';
+
 import BrowserChrome from './browser-chrome';
 import BrowserContent from './browser-content';
 import DeveloperBar from './developerbar';
@@ -23,6 +26,7 @@ import {
 } from '../actions/external';
 
 import * as actions from '../actions/main-actions';
+import * as selectors from '../selectors';
 
 const BROWSER_WINDOW_STYLE = Style.registerStyle({
   flex: 1,
@@ -140,15 +144,24 @@ class BrowserWindow extends Component {
 BrowserWindow.displayName = 'BrowserWindow';
 
 BrowserWindow.propTypes = {
-  pages: PropTypes.object.isRequired,
-  currentPage: PropTypes.object.isRequired,
-  currentPageIndex: PropTypes.number.isRequired,
   dispatch: PropTypes.func.isRequired,
   ipcRenderer: PropTypes.object.isRequired,
-  profile: PropTypes.object.isRequired,
+  pages: SharedPropTypes.Pages.isRequired,
+  currentPage: SharedPropTypes.Page.isRequired,
+  currentPageIndex: PropTypes.number.isRequired,
+  profile: SharedPropTypes.Profile.isRequired,
 };
 
-export default BrowserWindow;
+function mapStateToProps(state) {
+  return {
+    pages: selectors.getPages(state),
+    currentPage: selectors.getCurrentPage(state),
+    currentPageIndex: selectors.getCurrentPageIndex(state),
+    profile: selectors.getProfile(state),
+  };
+}
+
+export default connect(mapStateToProps)(BrowserWindow);
 
 function attachIPCRendererListeners(browserView) {
   const { dispatch, ipcRenderer } = browserView.props;
