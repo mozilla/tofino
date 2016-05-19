@@ -1,9 +1,0 @@
---ui bdd
---reporter spec
---recursive
---check-leaks
---full-trace
---timeout 10000
---require isomorphic-fetch
---require ./test/renderer/setup.js
---preload ./test/renderer/head.js
