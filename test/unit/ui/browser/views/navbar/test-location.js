@@ -7,10 +7,12 @@ import { shallow } from 'enzyme';
 
 import { Location } from '../../../../../../app/ui/browser/views/navbar/location';
 import { Page, Profile } from '../../../../../../app/ui/browser/model/index';
+import configureStore from '../../../../../../app/ui/browser/store/store';
 import Immutable from 'immutable';
 
-function createSpyProps() {
+function createSpyProps(store) {
   const props = {
+    dispatch: store.dispatch,
     page: new Page(),
     userTypedLocation: '',
     showCompletions: true,
@@ -29,11 +31,18 @@ function createSpyProps() {
 }
 
 describe('Location', () => {
+  let store;
+  let spyProps;
+
+  beforeEach(() => {
+    store = configureStore();
+    spyProps = createSpyProps(store);
+  });
+
   describe('Location', () => {
     it('should render the empty case', () => {
-      const props = createSpyProps();
       const wrapper = shallow(
-        <Location {...props} />
+        <Location {...spyProps} />
       );
 
       expect(wrapper.find('#browser-location-bar').length).toEqual(1);
@@ -44,41 +53,38 @@ describe('Location', () => {
 
   describe('Completions', () => {
     it('should not render when there are no matching completions', () => {
-      const props = createSpyProps();
-      props.page.set('location', 'https://mozilla.com');
-      props.userTypedLocation = 'moz';
-      props.profile = props.profile.set('completions', Immutable.Map({
+      spyProps.page.set('location', 'https://mozilla.com');
+      spyProps.userTypedLocation = 'moz';
+      spyProps.profile = spyProps.profile.set('completions', Immutable.Map({
         moz: [],
       }));
 
       const wrapper = shallow(
-        <Location {...props} />
+        <Location {...spyProps} />
       );
 
-      wrapper.setState({ showURLBar: true, focusedURLBar: true });
+      wrapper.setProps({ showURLBar: true, focusedURLBar: true });
       expect(wrapper.find('#autocomplete-results').length).toEqual(0);
     });
 
     it('should not render when the location is exactly the same as the URL', () => {
-      const props = createSpyProps();
-      props.page.set('location', 'https://mozilla.com/');
-      props.userTypedLocation = 'https://mozilla.com/';
-      props.profile = props.profile.set('completions', Immutable.Map({
+      spyProps.page.set('location', 'https://mozilla.com/');
+      spyProps.userTypedLocation = 'https://mozilla.com/';
+      spyProps.profile = spyProps.profile.set('completions', Immutable.Map({
         'https://mozilla.com': [{ title: 'Mozilla.com', uri: 'https://mozilla.com/' }],
       }));
 
       const wrapper = shallow(
-        <Location {...props} />
+        <Location {...spyProps} />
       );
 
-      wrapper.setState({ showURLBar: true, focusedURLBar: true });
+      wrapper.setProps({ showURLBar: true, focusedURLBar: true });
       expect(wrapper.find('#autocomplete-results').length).toEqual(0);
     });
 
     it('should render completions', () => {
-      const props = createSpyProps();
-      props.userTypedLocation = 'moz';
-      props.profile = props.profile.set('completions', Immutable.Map({
+      spyProps.userTypedLocation = 'moz';
+      spyProps.profile = spyProps.profile.set('completions', Immutable.Map({
         moz: [
           { title: 'Mozilla.com', uri: 'https://mozilla.com/' },
           { title: 'Mozilla.org', uri: 'https://mozilla.org/' },
@@ -86,7 +92,7 @@ describe('Location', () => {
       }));
 
       const wrapper = shallow(
-        <Location {...props} />
+        <Location {...spyProps} />
       );
 
       wrapper.setProps({ showURLBar: true, focusedURLBar: true });
@@ -96,18 +102,16 @@ describe('Location', () => {
     });
 
     it('should reset the selected index when input changes', () => {
-      const props = createSpyProps();
-      props.userTypedLocation = 'm';
+      spyProps.userTypedLocation = 'm';
       const wrapper = shallow(
-        <Location {...props} />
+        <Location {...spyProps} />
       );
-      props.userTypedLocation = 'mo';
-      props.showURLBar = true;
-      props.focusedURLBar = true;
-      props.focusedResultIndex = 1;
-      // wrapper.setState({ showURLBar: true, focusedURLBar: true, focusedResultIndex: 1 });
-      wrapper.setProps(props);
-      expect(wrapper.state('focusedResultIndex')).toEqual(-1);
+      spyProps.userTypedLocation = 'mo';
+      spyProps.showURLBar = true;
+      spyProps.focusedURLBar = true;
+      spyProps.focusedResultIndex = 1;
+      wrapper.setProps(spyProps);
+      expect(store.getState().uiState.focusedResultIndex).toEqual(-1);
     });
 
     // Pending test due to not being able to use refs in shallow rendering
