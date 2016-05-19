@@ -19,7 +19,7 @@ import Btn from '../../widgets/btn';
 import { fixURL, getCurrentWebView } from '../../browser-util';
 import { SHOW_COMPLETIONS } from '../../constants/ui';
 import { Page } from '../../model';
-import { getUserTypedLocation } from '../../selectors';
+import { getUserTypedLocation, showCompletions } from '../../selectors';
 
 const LOCATION_BAR_CONTAINER_STYLE = Style.registerStyle({
   flex: 1,
@@ -400,7 +400,7 @@ Location.propTypes = {
 function mapStateToProps(state, ownProps) {
   return {
     userTypedLocation: getUserTypedLocation(state, ownProps.page.id),
-    showCompletions: state.uiState.showCompletions,
+    showCompletions: showCompletions(state),
   };
 }
 
