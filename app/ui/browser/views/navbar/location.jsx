@@ -44,6 +44,7 @@ const LOCATION_BAR_STYLE = Style.registerStyle({
   '@media (max-width: 1024px)': {
     margin: '12px 0',
   },
+  cursor: 'default',
 });
 
 const LOCATION_BAR_AUTOCOMPLETE_STYLE = Style.registerStyle({
@@ -55,6 +56,7 @@ const LOCATION_BAR_AUTOCOMPLETE_STYLE = Style.registerStyle({
   right: 0,
   top: '100%',
   zIndex: 2,
+  cursor: 'default',
 });
 
 const LOCATION_BAR_RESULTS_SNIPPET_STYLE = Style.registerStyle({

@@ -27,6 +27,7 @@ const TAB_STYLE = Style.registerStyle({
     background: '#fff',
     color: '#555',
   },
+  cursor: 'default',
 });
 
 const TAB_TITLE_STYLE = Style.registerStyle({
