@@ -27,14 +27,18 @@ const ignored = [
   'nyc',
 
   // Modules used only for configuration.
-  'babel-preset-es2015-node5',
+  'babel-plugin-transform-async-to-generator',
+  'babel-plugin-transform-es2015-destructuring',
+  'babel-plugin-transform-es2015-modules-commonjs',
+  'babel-plugin-transform-es2015-parameters',
+  'babel-plugin-transform-object-rest-spread',
   'babel-preset-react',
-  'babel-preset-stage-2',
   'babel-eslint',
   'eslint',
   'eslint-config-airbnb',
   'eslint-plugin-flow-vars',
   'eslint-plugin-import',
+  'eslint-plugin-jsx-a11y',
   'eslint-plugin-react',
   'react-addons-test-utils',
 ];

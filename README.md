@@ -35,19 +35,19 @@ Project Tofino currently requires Node 5 (5.11.0 being the current release); it 
 
 ### Windows
 
-* Install Node 5: https://nodejs.org/en/
+* Install Node 6: https://nodejs.org/en/
 * Install Visual Studio 2013: https://www.visualstudio.com/news/vs2013-community-vs
   * Make sure you use the VS command line or otherwise have your environment variables set correctly.
 
 ### Linux
 
-Install Node 5 through the package manager of your Linux distribution. If not available, see https://nodejs.org/en/download/.
+Install Node 6 through the package manager of your Linux distribution. If not available, see https://nodejs.org/en/download/.
 
 ### OSX
 
 ```
 brew install nvm
-nvm install 5
+nvm install 6
 ```
 
 Every time you update from the git repository you may need to install or update any new node dependencies:

@@ -9,6 +9,7 @@
 /* eslint-disable strict */
 /* eslint-disable import/no-commonjs */
 /* eslint-disable no-console */
+/* eslint-disable global-require */
 
 'use strict';
 

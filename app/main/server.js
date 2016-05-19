@@ -1,6 +1,6 @@
+import path from 'path';
 import * as service from './user-agent-service';
 import { ProfileStorage } from '../services/storage';
-import path from 'path';
 
 process.on('uncaughtException', console.error);
 process.on('unhandledRejection', console.error);

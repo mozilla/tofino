@@ -4,11 +4,12 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import expect from 'expect';
+import fetchMock from 'fetch-mock';
+
 import configureStore from '../../../../../app/ui/browser/store/store';
 import * as actions from '../../../../../app/ui/browser/actions/main-actions';
 import * as selectors from '../../../../../app/ui/browser/selectors';
 
-import fetchMock from 'fetch-mock';
 import * as endpoints from '../../../../../app/shared/constants/endpoints';
 
 const HOME_PAGE = 'tofino://mozilla';

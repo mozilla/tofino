@@ -11,8 +11,6 @@
  */
 
 import request from './request';
-import * as endpoints from '../../../shared/constants/endpoints';
-import { getPageById } from '../selectors/index';
 
 /**
  * A mapping from a page id to a promise that
@@ -29,11 +27,10 @@ async function waitForSession(page) {
   // this was an explicit choice.
   if (page.sessionId) {
     return page.sessionId;
-  }
-  // If we have a promise to the session for this page, and the page
-  // does not have its own sessionId, we probably hit a race condition,
-  // so wait until the page has its sessionId by listening for this promise.
-  else if (PAGE_TO_SESSION.has(page.id)) {
+  } else if (PAGE_TO_SESSION.has(page.id)) {
+    // If we have a promise to the session for this page, and the page
+    // does not have its own sessionId, we probably hit a race condition,
+    // so wait until the page has its sessionId by listening for this promise.
     return PAGE_TO_SESSION.get(page.id);
   }
 
@@ -77,7 +74,7 @@ export async function createPage(page, { url, readerResult }) {
     json: {
       session,
       page: readerResult,
-    }
+    },
   });
 }
 
@@ -120,4 +117,3 @@ export async function query({ text }) {
     method: 'GET',
   });
 }
-

@@ -6,7 +6,7 @@ image: Visual Studio 2013
 os: unstable
 
 environment:
-  nodejs_version: "5.10"
+  nodejs_version: "6.1"
 
 branches:
   only:
@@ -19,6 +19,7 @@ pull_requests:
   do_not_increment_build_number: true
 
 cache:
+  - .electron
   - node_modules
   - '%APPDATA%\npm-cache'
 

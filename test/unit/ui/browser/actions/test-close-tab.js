@@ -4,13 +4,13 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import expect from 'expect';
+import fetchMock from 'fetch-mock';
+
 import configureStore from '../../../../../app/ui/browser/store/store';
 import * as actions from '../../../../../app/ui/browser/actions/main-actions';
 import * as selectors from '../../../../../app/ui/browser/selectors';
 import * as endpoints from '../../../../../app/shared/constants/endpoints';
 import * as utils from '../../../../utils/async';
-
-import fetchMock from 'fetch-mock';
 
 describe('Action - CLOSE_TAB', () => {
   beforeEach(function() {

@@ -2,8 +2,9 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import expect from 'expect';
-import Readability from '../../../../../app/content/preload/readability.js';
 import jsdom from 'jsdom';
+
+import Readability from '../../../../../app/content/preload/readability.js';
 
 describe('Readability', () => {
   it('Is barely functional', (done) => {

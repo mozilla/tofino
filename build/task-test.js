@@ -1,8 +1,8 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-import { spawn } from './utils';
 import path from 'path';
+import { spawn } from './utils';
 
 /* eslint no-console: 0 */
 

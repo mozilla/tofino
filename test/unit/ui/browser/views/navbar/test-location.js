@@ -4,11 +4,11 @@
 import expect from 'expect';
 import React from 'react';
 import { shallow } from 'enzyme';
+import Immutable from 'immutable';
 
 import { Location } from '../../../../../../app/ui/browser/views/navbar/location';
 import { Page, Profile } from '../../../../../../app/ui/browser/model/index';
 import configureStore from '../../../../../../app/ui/browser/store/store';
-import Immutable from 'immutable';
 
 function createSpyProps(store) {
   const props = {

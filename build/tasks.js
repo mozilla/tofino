@@ -1,6 +1,8 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
+/* eslint global-require: 0 */
+
 /**
  * Use need to allow lazy loading of modules for all tasks. Generally,
  * we assume `build-config.js` exists, however *during* the build process

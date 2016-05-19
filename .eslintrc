@@ -22,6 +22,10 @@
   ],
 
   "settings": {
+    "import/extensions": [
+      ".js",
+      ".jsx"
+    ],
     "import/resolver": {
       "node": {
         "extensions": [
@@ -44,6 +48,7 @@
       "argsIgnorePattern": "^_",
       "varsIgnorePattern": "^_"
     }],
+    "no-underscore-dangle": ["off"],
     "no-use-before-define": ["off"],
     "eqeqeq": ["error", "allow-null"],
     "lines-around-comment": ["error", {
@@ -63,6 +68,7 @@
     "react/jsx-indent-props": ["error", 2],
     "react/jsx-max-props-per-line": ["error", { "maximum": 1 }],
     "react/jsx-equals-spacing": ["error", "never"],
+    "react/jsx-first-prop-new-line": ["off"],
     "react/jsx-curly-spacing": ["error", "never"],
     "react/jsx-handler-names": ["error"],
     "react/prefer-es6-class": ["off"],

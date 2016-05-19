@@ -38,5 +38,5 @@ export default function() {
     const pageName = request.url.substr(ABOUT_PROTOCOL_PREFIX.length + 3);
     const pagePath = path.join(ABOUT_DIR, `${pageName}.html`);
     callback(ABOUT_PAGES.has(pageName) ? pagePath : NOT_FOUND_ERROR);
-  }, e => { if (e) { throw e; }});
+  }, e => { if (e) { throw e; } });
 }

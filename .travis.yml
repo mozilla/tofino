@@ -8,16 +8,17 @@ dist: trusty
 
 cache:
   directories:
+    - .electron
     - node_modules
 
 before_install:
   - "export DISPLAY=:99.0"
-  - scripts/bootstrap.py
+  - source scripts/bootstrap.sh
   - sleep 3
 
 install:
   - nvm --version
-  - nvm install 5.9
+  - nvm install 6.1
   - node --version
   - npm --version
   - npm install --progress false --depth 0

@@ -1,4 +1,4 @@
-/* eslint no-console: 0 */
+/* eslint no-console: 0, global-require: 0 */
 /*
 Copyright 2016 Mozilla
 

@@ -51,8 +51,7 @@ export class DB {
 
   prepare(sql, params) {
     return new Promise((resolve, reject) => {
-      let statement;
-      statement = this.db.prepare(sql, params, (err) => {
+      const statement = this.db.prepare(sql, params, (err) => {
         if (err) {
           reject(err);
         } else {
@@ -88,8 +87,7 @@ export class DB {
    */
   static open(filename, mode = sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE) {
     return new Promise((resolve, reject) => {
-      let sq;
-      sq = new sqlite3.Database(filename, mode, (err) => {
+      const sq = new sqlite3.Database(filename, mode, (err) => {
         if (err) {
           reject(err);
         } else {
