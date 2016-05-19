@@ -31,6 +31,7 @@ import * as selectors from '../selectors';
 const BROWSER_WINDOW_STYLE = Style.registerStyle({
   flex: 1,
   flexDirection: 'column',
+  width: '100%',
 });
 
 class BrowserWindow extends Component {
