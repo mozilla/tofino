@@ -18,29 +18,33 @@ import Style from '../../browser-style';
 import Btn from '../../widgets/btn';
 
 const TAB_STYLE = Style.registerStyle({
-  alignSelf: 'stretch',
   alignItems: 'center',
   overflow: 'hidden',
   width: `${UIConstants.TAB_DEFAULT_WIDTH}vw`,
-  background: 'var(--theme-tab-inactive-background)',
-  color: 'var(--theme-content-inactive-color)',
+  border: '1px solid var(--theme-tab-border-color)',
+  borderTopWidth: 0,
+  borderBottomWidth: 0,
+  marginLeft: '-1px',
+  padding: '0 8px',
+  backgroundColor: 'var(--theme-tab-inactive-background)',
+  color: 'var(--theme-tab-inactive-color)',
+  opacity: 'var(--theme-tab-inactive-opacity)',
   '&.active': {
-    background: 'var(--theme-tab-background)',
-    color: 'var(--theme-content-color)',
+    backgroundColor: 'var(--theme-tab-background)',
+    color: 'var(--theme-tab-color)',
+    opacity: 'var(--theme-tab-opacity)',
   },
   cursor: 'default',
 });
 
 const TAB_TITLE_STYLE = Style.registerStyle({
   flex: '1',
-  marginLeft: '12px',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
 });
 
 const TAB_CLOSE_BUTTON_STYLE = Style.registerStyle({
-  marginRight: '8px',
   color: 'var(--theme-content-color)',
 });
 

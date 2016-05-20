@@ -14,15 +14,13 @@ import React, { PropTypes } from 'react';
 
 import * as UIConstants from '../../constants/ui';
 import Style from '../../browser-style';
-import VerticalSeparator from './vertical-separator';
 import Btn from '../../widgets/btn';
 import Location from './location';
 
 const NAVBAR_STYLE = Style.registerStyle({
-  alignItems: 'stretch',
   position: 'relative',
   minHeight: `${UIConstants.NAVBAR_EXPANDED_HEIGHT}px`,
-  background: 'var(--theme-navbar-color)',
+  backgroundColor: 'var(--theme-navbar-color)',
   padding: '0 10px',
   WebkitAppRegion: 'drag',
 });
@@ -46,16 +44,17 @@ const NAVBAR_SIDE_SECTION_RIGHT_STYLE = Style.registerStyle({
 });
 
 const NAVBAR_APP_MENU_BUTTON_STYLE = Style.registerStyle({
-  margin: '0 6px',
+  marginLeft: '8px',
+  marginRight: '24px',
 });
 
 const NAVBAR_NAVIGATION_BUTTONS_STYLE = Style.registerStyle({
-  margin: '0 12px',
+  margin: '0 10px',
 });
 
 const NAVBAR_NAVIGATION_BACK_BUTTON_STYLE = Style.registerStyle({
   borderRadius: '100px',
-  border: '1px solid',
+  border: 'var(--theme-back-button-border-width) solid',
   backgroundColor: 'var(--theme-back-button-background)',
   borderColor: 'var(--theme-back-button-color)',
   marginRight: '4px',
@@ -64,7 +63,7 @@ const NAVBAR_NAVIGATION_BACK_BUTTON_STYLE = Style.registerStyle({
 });
 
 const NAVBAR_WINDOW_CONTROL_BUTTONS_STYLE = Style.registerStyle({
-  margin: '0 7px',
+  margin: '0 8px',
 });
 
 const NavBar = (props) => {
@@ -93,14 +92,15 @@ const NavBar = (props) => {
           className={NAVBAR_APP_MENU_BUTTON_STYLE}
           title="Menu"
           image="glyph-menu-16.svg"
+          imgWidth="22px"
+          imgHeight="22px"
           onClick={openMenu} />
-        <VerticalSeparator />
         <Btn id="browser-navbar-back"
           className={`${NAVBAR_NAVIGATION_BACK_BUTTON_STYLE}`}
           title="Back"
           image="glyph-arrow-nav-back-16.svg"
-          imgWidth="16px"
-          imgHeight="16px"
+          imgWidth="22px"
+          imgHeight="22px"
           imgPosition="center"
           onClick={navBack}
           disabled={!props.page.canGoBack} />
@@ -108,32 +108,44 @@ const NavBar = (props) => {
           className={NAVBAR_NAVIGATION_BUTTONS_STYLE}
           title="Forward"
           image="glyph-arrow-nav-forward-16.svg"
+          imgWidth="22px"
+          imgHeight="22px"
           onClick={navForward}
           disabled={!props.page.canGoForward} />
         <Btn id="browser-navbar-refresh"
           className={NAVBAR_NAVIGATION_BUTTONS_STYLE}
           title="Refresh"
+          imgWidth="22px"
+          imgHeight="22px"
           image="glyph-arrow-reload-16.svg"
           onClick={navRefresh}
           disabled={!props.page.canRefresh} />
       </div>
       <Location { ...props } />
       <div className={`${NAVBAR_SIDE_SECTIONS_STYLE} ${NAVBAR_SIDE_SECTION_RIGHT_STYLE}`}>
-        <VerticalSeparator />
         <Btn id="browser-navbar-minimize"
           className={NAVBAR_WINDOW_CONTROL_BUTTONS_STYLE}
           title="Minimize"
           image="glyph-window-minimize-16.svg"
+          imgWidth="18px"
+          imgHeight="18px"
+          imgPosition="center 3px"
           onClick={minimize} />
         <Btn id="browser-navbar-maximize"
           className={NAVBAR_WINDOW_CONTROL_BUTTONS_STYLE}
           title="Maximize"
           image="glyph-window-maximize-16.svg"
+          imgWidth="18px"
+          imgHeight="18px"
+          imgPosition="center bottom"
           onClick={maximize} />
         <Btn id="browser-navbar-close"
           className={NAVBAR_WINDOW_CONTROL_BUTTONS_STYLE}
           title="Close"
           image="glyph-window-close-16.svg"
+          imgWidth="18px"
+          imgHeight="18px"
+          imgPosition="center bottom"
           onClick={close} />
       </div>
     </div>

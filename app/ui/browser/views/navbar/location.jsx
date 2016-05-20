@@ -32,22 +32,21 @@ const LOCATION_BAR_STYLE = Style.registerStyle({
   flex: 1,
   alignItems: 'center',
   overflow: 'hidden',
+  margin: '10px 4vw',
   padding: '0 10px',
-  backgroundColor: '#fff',
-  borderRadius: '2px',
-  border: '1px solid',
-  borderColor: '#e5e5e5',
+  border: 'var(--theme-locationbar-border-width) solid',
+  borderColor: 'var(--theme-locationbar-border-color)',
+  backgroundColor: 'var(--theme-locationbar-background)',
+  color: 'var(--theme-content-color)',
   transition: `margin 0.3s ease-in-out,
                border-color 0.3s ease-in-out`,
 
   WebkitAppRegion: 'no-drag',
-
-  margin: '12px 4vw',
+  cursor: 'default',
 
   '@media (max-width: 1024px)': {
     margin: '12px 0',
   },
-  cursor: 'default',
 });
 
 const LOCATION_BAR_AUTOCOMPLETE_STYLE = Style.registerStyle({
@@ -91,6 +90,12 @@ const INPUT_BAR_STYLE = Style.registerStyle({
   alignSelf: 'stretch',
   overflow: 'hidden',
   border: 'none',
+  background: 'transparent',
+  color: 'var(--theme-content-color)',
+  '&::selection': {
+    background: 'var(--theme-selection-color)',
+    color: 'var(--theme-content-selected-color)',
+  },
 });
 
 /**

@@ -1,14 +1,32 @@
 :root {
-  --theme-body-color: #fff;
-  --theme-content-color: #555;
-  --theme-content-inactive-color: #777;
-  --theme-navbar-color: #fcfcfc;
-  --theme-tabbar-color: #f6f6f6;
-  --theme-back-button-background: #fff;
-  --theme-back-button-color: #888;
-  --theme-tab-background: #fff;
-  --theme-tab-inactive-background: #eee;
-  --theme-splitter-color: #eee;
-  --theme-separator-color: #d6d6d6;
+  --theme-body-color: #2d9cdb;
+  --theme-content-color: #fff;
+  --theme-content-selected-color: #fff;
+  --theme-selection-color: rgba(47,128,237,0.5);
+
+  --theme-navbar-color: transparent;
+  --theme-tabbar-color: rgba(47,128,237,0.5);
+
+  --theme-locationbar-background: rgba(255,255,255,0.25);
+  --theme-locationbar-border-color: rgba(255,255,255,0.75);
+  --theme-locationbar-border-width: 2px;
+
+  --theme-back-button-background: transparent;
+  --theme-back-button-color: #fff;
+  --theme-back-button-border-width: 2px;
+
+  --theme-tab-background: rgba(255,255,255,0.1);
+  --theme-tab-color: #fff;
+  --theme-tab-opacity: 1;
+
+  --theme-tab-inactive-background: transparent;
+  --theme-tab-inactive-color: #fff;
+  --theme-tab-inactive-opacity: 0.5;
+
+  --theme-tab-border-color: rgba(255,255,255,0.75);
+
+  --theme-splitter-color: #2f80ed;
+  --theme-separator-color: #fff;
+
   --theme-default-roundness: 3px;
 }

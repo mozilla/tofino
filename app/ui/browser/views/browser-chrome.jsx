@@ -18,6 +18,9 @@ import NavBar from './navbar/navbar';
 
 const CHROME_AREA_STYLE = Style.registerStyle({
   flexDirection: 'column',
+  backgroundColor: 'var(--theme-body-color)',
+  backgroundImage: 'url(assets/chrome-background.png)',
+  backgroundSize: '28px',
 });
 
 const BrowserChrome = function(props) {

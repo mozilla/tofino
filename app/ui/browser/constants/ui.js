@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 export const NAVBAR_EXPANDED_HEIGHT = 55; // px
-export const TABBAR_HEIGHT = 25; // px
+export const TABBAR_HEIGHT = 30; // px
 export const TAB_DEFAULT_WIDTH = 20; // vw;
 
 // Show autocompletions when typing in location bar
