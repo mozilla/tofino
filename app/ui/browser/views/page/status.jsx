@@ -22,7 +22,7 @@ const STATUS_STYLE = Style.registerStyle({
   left: 0,
   zIndex: 1,
   padding: '2px 10px',
-  borderTopRightRadius: '3px',
+  borderTopRightRadius: 'var(--theme-default-roundness)',
   border: '1px solid var(--theme-splitter-color)',
   borderBottomWidth: 0,
   borderLeftWidth: 0,

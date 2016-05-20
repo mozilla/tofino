@@ -12,30 +12,29 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes } from 'react';
 
+import * as UIConstants from '../../constants/ui';
 import Style from '../../browser-style';
 import Tab from './tab';
 import Btn from '../../widgets/btn';
 
 const TABBAR_STYLE = Style.registerStyle({
   alignItems: 'center',
-  minHeight: '25px',
-  background: '#fff',
-  borderBottom: '1px solid #fff',
+  minHeight: `${UIConstants.TABBAR_HEIGHT}px`,
+  background: 'var(--theme-tabbar-color)',
+  borderBottom: '1px solid var(--theme-splitter-color)',
   opacity: 0.9,
 });
 
 const NEW_TAB_BUTTON_STYLE = Style.registerStyle({
   marginLeft: '8px',
-  color: '#555',
+  color: 'var(--theme-content-color)',
 });
 
 const TabBar = ({
   pages, currentPageIndex,
   handleTabContextMenu, handleNewTabClick, handleTabClick, handleTabClose,
 }) => (
-  <div id="browser-tabbar"
-    className={TABBAR_STYLE}>
-
+  <div className={TABBAR_STYLE}>
     {pages.map((page, i) => (
       <Tab key={`browser-tab-${i}`}
         className={`browser-tab-${i}`}
@@ -46,8 +45,8 @@ const TabBar = ({
         onClose={handleTabClose(page.id)} />
       )
     )}
-
-    <Btn className={`new-tab ${NEW_TAB_BUTTON_STYLE}`}
+    <Btn id="new-tab"
+      className={NEW_TAB_BUTTON_STYLE}
       title="Add new tab"
       onClick={handleNewTabClick}>
       <i className="fa fa-plus" />

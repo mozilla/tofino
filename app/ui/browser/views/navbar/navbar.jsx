@@ -20,19 +20,17 @@ import Location from './location';
 
 const NAVBAR_STYLE = Style.registerStyle({
   alignItems: 'stretch',
-  background: '#fcfcfc',
-  padding: '0 10px',
   position: 'relative',
-
-  WebkitAppRegion: 'drag',
   minHeight: `${UIConstants.NAVBAR_EXPANDED_HEIGHT}px`,
+  background: 'var(--theme-navbar-color)',
+  padding: '0 10px',
+  WebkitAppRegion: 'drag',
 });
 
 const NAVBAR_SIDE_SECTIONS_STYLE = Style.registerStyle({
+  alignItems: 'center',
   minWidth: '260px',
   flexShrink: 0,
-  alignItems: 'center',
-  overflow: 'hidden',
 
   '@media (max-width: 1024px)': {
     minWidth: 'initial',
@@ -58,8 +56,8 @@ const NAVBAR_NAVIGATION_BUTTONS_STYLE = Style.registerStyle({
 const NAVBAR_NAVIGATION_BACK_BUTTON_STYLE = Style.registerStyle({
   borderRadius: '100px',
   border: '1px solid',
-  borderColor: '#4c4c4c',
-  backgroundColor: '#fff',
+  backgroundColor: 'var(--theme-back-button-background)',
+  borderColor: 'var(--theme-back-button-color)',
   marginRight: '4px',
   width: `${UIConstants.NAVBAR_EXPANDED_HEIGHT - 10}px`,
   height: `${UIConstants.NAVBAR_EXPANDED_HEIGHT - 10}px`,

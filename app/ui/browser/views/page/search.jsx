@@ -27,8 +27,8 @@ const SEARCH_STYLE = Style.registerStyle({
 const INPUT_STYLE = Style.registerStyle({
   flex: '1',
   padding: '2px 4px',
-  border: '1px solid #eee',
-  borderRadius: '3px',
+  border: '1px solid var(--theme-splitter-color)',
+  borderRadius: 'var(--theme-default-roundness)',
 });
 
 const Search = ({ hidden }) => (

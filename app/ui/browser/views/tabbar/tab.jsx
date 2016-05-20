@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes } from 'react';
 
+import * as UIConstants from '../../constants/ui';
 import { Page } from '../../model';
 import Style from '../../browser-style';
 import Btn from '../../widgets/btn';
@@ -20,12 +21,12 @@ const TAB_STYLE = Style.registerStyle({
   alignSelf: 'stretch',
   alignItems: 'center',
   overflow: 'hidden',
-  width: '20vw',
-  background: '#eee',
-  color: '#777',
+  width: `${UIConstants.TAB_DEFAULT_WIDTH}vw`,
+  background: 'var(--theme-tab-inactive-background)',
+  color: 'var(--theme-content-inactive-color)',
   '&.active': {
-    background: '#fff',
-    color: '#555',
+    background: 'var(--theme-tab-background)',
+    color: 'var(--theme-content-color)',
   },
   cursor: 'default',
 });
@@ -40,7 +41,7 @@ const TAB_TITLE_STYLE = Style.registerStyle({
 
 const TAB_CLOSE_BUTTON_STYLE = Style.registerStyle({
   marginRight: '8px',
-  color: '#555',
+  color: 'var(--theme-content-color)',
 });
 
 /**

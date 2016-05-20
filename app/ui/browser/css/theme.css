@@ -1,5 +1,14 @@
 :root {
   --theme-body-color: #fff;
   --theme-content-color: #555;
+  --theme-content-inactive-color: #777;
+  --theme-navbar-color: #fcfcfc;
+  --theme-tabbar-color: #f6f6f6;
+  --theme-back-button-background: #fff;
+  --theme-back-button-color: #888;
+  --theme-tab-background: #fff;
+  --theme-tab-inactive-background: #eee;
   --theme-splitter-color: #eee;
+  --theme-separator-color: #d6d6d6;
+  --theme-default-roundness: 3px;
 }

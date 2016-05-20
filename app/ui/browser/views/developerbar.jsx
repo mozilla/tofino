@@ -23,7 +23,7 @@ const DEVELOPER_BAR_STYLE = Style.registerStyle({
   right: 0,
   zIndex: 1,
   padding: '2px 10px',
-  borderTopLeftRadius: '3px',
+  borderTopLeftRadius: 'var(--theme-default-roundness)',
   border: '1px solid var(--theme-splitter-color)',
   borderBottomWidth: 0,
   borderRightWidth: 0,

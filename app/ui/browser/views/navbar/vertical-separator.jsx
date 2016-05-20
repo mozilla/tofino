@@ -18,7 +18,7 @@ const VERTICAL_SEPARATOR_STYLE = Style.registerStyle({
   alignSelf: 'stretch',
   width: '1px',
   margin: '4px 10px',
-  background: '#d6d6d6',
+  background: 'var(--theme-separator-color)',
 });
 
 const VerticalSeparator = () =>
