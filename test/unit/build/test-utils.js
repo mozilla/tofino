@@ -4,8 +4,11 @@
 import expect from 'expect';
 import path from 'path';
 import os from 'os';
+import fs from 'fs';
 import { autoFailingAsyncTest } from '../../utils/async.js';
 import * as utils from '../../../build/utils.js';
+
+const cwd = fs.realpathSync(process.cwd());
 
 describe('build utils', () => {
   it('should export `IS_TRAVIS` and `IS_APPVEYOR`', () => {
@@ -30,7 +33,7 @@ describe('build utils', () => {
 
   it('should export `getRoot`', () => {
     const root = utils.getRoot();
-    expect(root).toEqual(process.cwd());
+    expect(root).toEqual(cwd);
   });
 
   it('should export `getBuildConfig`', () => {
@@ -66,7 +69,7 @@ describe('build utils', () => {
 
   it('should export `getElectronRoot`', () => {
     const root = utils.getElectronRoot();
-    expect(root).toEqual(path.join(process.cwd(), '.electron'));
+    expect(root).toEqual(path.join(cwd, '.electron'));
   });
 
   it('should export `getElectronPath`', () => {

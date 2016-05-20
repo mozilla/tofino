@@ -3,10 +3,13 @@
 
 import expect from 'expect';
 import path from 'path';
+import fs from 'fs';
 import * as Const from '../../../build/const.js';
+
+const cwd = fs.realpathSync(process.cwd());
 
 describe('build constants', () => {
   it('should export `DIST_DIR`', () => {
-    expect(Const.DIST_DIR).toEqual(path.join(process.cwd(), 'dist'));
+    expect(Const.DIST_DIR).toEqual(path.join(cwd, 'dist'));
   });
 });
