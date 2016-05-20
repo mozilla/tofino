@@ -14,28 +14,53 @@ import request from './request';
 import * as endpoints from '../../../shared/constants/endpoints';
 import { getPageById } from '../selectors/index';
 
-export function createPage({ url, session, page }) {
-  return request(`/pages/${encodeURIComponent(url)}`, {
-    method: 'POST',
-    json: {
-      session,
-      page,
-    }
-  });
+/**
+ * A mapping from a page id to a promise that
+ * will resolve to a session id. When we initiate the session,
+ * we immediately store a promise that will resolve to the session id
+ * so that future requests using the page id can hook into the initial promise
+ * even before we have the session.
+ */
+const PAGE_TO_SESSION = new Map();
+
+async function waitForSession(page) {
+  // If we have a session id, use it; this could have been generated
+  // this browsing session, or from a previous session, but either way
+  // this was an explicit choice.
+  if (page.sessionId) {
+    return page.sessionId;
+  }
+  // If we have a promise to the session for this page, and the page
+  // does not have its own sessionId, we probably hit a race condition,
+  // so wait until the page has its sessionId by listening for this promise.
+  else if (PAGE_TO_SESSION.has(page.id)) {
+    return PAGE_TO_SESSION.get(page.id);
+  }
+
+  // If we have neither promise nor sessionId, then something
+  // terrible has happened.
+  throw new Error(`No session mapping for page ${page.id}.`);
 }
 
-export function createSession({ scope = 0, ancestor, reason }) {
-  return request('/session/start', {
+export function createSession(pageId, { scope = 0, ancestor, reason }) {
+  const requestPromise = request('/session/start', {
     method: 'POST',
     json: {
       scope,
       ancestor,
       reason,
     },
-  })
+  });
+
+  // Set the map from the page to a promise resolving to the session ID
+  // immediately for future requests.
+  PAGE_TO_SESSION.set(pageId, requestPromise.then(res => res.session));
+
+  return requestPromise;
 }
 
-export function destroySession({ session, reason }) {
+export async function destroySession(page, { reason }) {
+  const session = await waitForSession(page);
   return request('/session/end', {
     method: 'POST',
     json: {
@@ -45,7 +70,19 @@ export function destroySession({ session, reason }) {
   });
 }
 
-export function createStar({ url, session, title }) {
+export async function createPage(page, { url, readerResult }) {
+  const session = await waitForSession(page);
+  return request(`/pages/${encodeURIComponent(url)}`, {
+    method: 'POST',
+    json: {
+      session,
+      page: readerResult,
+    }
+  });
+}
+
+export async function createStar(page, { url, title }) {
+  const session = await waitForSession(page);
   return request(`/stars/${encodeURIComponent(url)}`, {
     // @TODO Shouldn't this be a POST, in terms of creating
     // a new resource?
@@ -54,20 +91,16 @@ export function createStar({ url, session, title }) {
   });
 }
 
-export function destroyStar({ url, session }) {
+export async function destroyStar(page, { url }) {
+  const session = await waitForSession(page);
   return request(`/stars/${encodeURIComponent(url)}`, {
     method: 'DELETE',
     json: { session },
   });
 }
 
-export function query({ text }) {
-  return request(`/query?q=${encodeURIComponent(text)}`, {
-    method: 'GET',
-  });
-}
-
-export function createHistory({ url, title, session }) {
+export async function createHistory(page, { url, title }) {
+  const session = await waitForSession(page);
   return request('/visits', {
     method: 'POST',
     json: {
@@ -75,6 +108,16 @@ export function createHistory({ url, title, session }) {
       title,
       session,
     },
+  });
+}
+
+/**
+ * Requests that do not require a session.
+ */
+
+export async function query({ text }) {
+  return request(`/query?q=${encodeURIComponent(text)}`, {
+    method: 'GET',
   });
 }
 

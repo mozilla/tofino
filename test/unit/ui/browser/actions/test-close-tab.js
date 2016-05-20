@@ -8,6 +8,7 @@ import configureStore from '../../../../../app/ui/browser/store/store';
 import * as actions from '../../../../../app/ui/browser/actions/main-actions';
 import * as selectors from '../../../../../app/ui/browser/selectors';
 import * as endpoints from '../../../../../app/shared/constants/endpoints';
+import * as utils from '../../../../utils/async';
 
 import fetchMock from 'fetch-mock';
 
@@ -142,7 +143,7 @@ describe('Action - CLOSE_TAB', () => {
     expect(getPages().get(0).location).toEqual('tofino://mozilla');
   });
 
-  it('Should send a message to the main process', function() {
+  it('Should send a message to the main process', async function() {
     const { dispatch, getPages } = this;
 
     // Fake session ID for first tab, and make second tab a descendant of the first tab.
@@ -150,9 +151,13 @@ describe('Action - CLOSE_TAB', () => {
     dispatch(actions.didStartSession(getPages().get(1).id, 22, 11));
 
     const URL = `^${endpoints.UA_SERVICE_HTTP}`; // Observe leading caret ^ (caret)!
+    const expectedURL = `${endpoints.UA_SERVICE_HTTP}/session/end`;
+
     fetchMock.mock(URL, 200);
 
     dispatch(actions.closeTab(getPages().get(1).id));
+
+    await utils.waitUntil(() => fetchMock.lastUrl(URL) === expectedURL);
 
     expect(fetchMock.lastUrl(URL)).toEqual(`${endpoints.UA_SERVICE_HTTP}/session/end`);
     expect(fetchMock.lastOptions(URL).method).toEqual('POST');

@@ -74,8 +74,8 @@ class BrowserWindow extends Component {
       navigateTo: location => webViewController.navigateTo(currentPage.id, location),
 
       // Boorkmark handling methods.
-      bookmark: (title, url) => dispatch(actions.bookmark(currentPage.sessionId, url, title)),
-      unbookmark: url => dispatch(actions.unbookmark(currentPage.sessionId, url)),
+      bookmark: (title, url) => dispatch(actions.bookmark(currentPage.id, url, title)),
+      unbookmark: url => dispatch(actions.unbookmark(currentPage.id, url)),
       isBookmarked: url => profile.bookmarks.has(url),
 
       // NavBar methods.
