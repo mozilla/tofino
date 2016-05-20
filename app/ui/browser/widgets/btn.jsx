@@ -37,6 +37,7 @@ const BUTTON_STYLE = Style.registerStyle({
 
 const Btn = (props) => {
   const { id, title, disabled, image, imgWidth, imgHeight, imgPosition } = props;
+  const { minWidth, minHeight } = props;
   const { className, style, children } = props;
   const { onClick } = props;
 
@@ -44,6 +45,18 @@ const Btn = (props) => {
     opacity: (disabled ? '0.5' : '1'),
     ...style,
   };
+
+  if (minWidth) {
+    custom.minWidth = minWidth;
+  } else if (imgWidth) {
+    custom.minWidth = `${Math.max(parseInt(imgWidth, 10), parseInt(MIN_WIDTH, 10))}px`;
+  }
+
+  if (minHeight) {
+    custom.minHeight = minHeight;
+  } else if (imgHeight) {
+    custom.minHeight = `${Math.max(parseInt(imgHeight, 10), parseInt(MIN_HEIGHT, 10))}px`;
+  }
 
   // Check for null or undefined here, so that we can use a default background
   // when an asset is intended, but not supplied yet. Simply checking for a
@@ -75,6 +88,8 @@ Btn.propTypes = {
   imgWidth: PropTypes.string,
   imgHeight: PropTypes.string,
   imgPosition: PropTypes.string,
+  minWidth: PropTypes.string,
+  minHeight: PropTypes.string,
   id: PropTypes.string,
   className: PropTypes.string,
   style: PropTypes.object,
