@@ -30,6 +30,7 @@ const NAVBAR_STYLE = Style.registerStyle({
 
 const NAVBAR_SIDE_SECTIONS_STYLE = Style.registerStyle({
   minWidth: '260px',
+  flexShrink: 0,
   alignItems: 'center',
   overflow: 'hidden',
 

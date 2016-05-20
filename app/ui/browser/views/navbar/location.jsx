@@ -25,6 +25,7 @@ import * as actions from '../../actions/main-actions';
 
 const LOCATION_BAR_CONTAINER_STYLE = Style.registerStyle({
   flex: 1,
+  overflow: 'hidden',
 });
 
 const LOCATION_BAR_STYLE = Style.registerStyle({
