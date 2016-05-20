@@ -11,6 +11,7 @@ import * as actions from '../../../../../app/ui/browser/actions/main-actions';
 import * as selectors from '../../../../../app/ui/browser/selectors';
 import * as endpoints from '../../../../../app/shared/constants/endpoints';
 import * as utils from '../../../../utils/async';
+import { HOME_PAGE } from '../../../../../app/ui/browser/constants/ui';
 
 describe('Action - CLOSE_TAB', () => {
   beforeEach(function() {
@@ -40,7 +41,7 @@ describe('Action - CLOSE_TAB', () => {
 
     dispatch(actions.closeTab(ids.get(1)));
     expect(getPages().size).toEqual(3);
-    expect(getPages().get(0).location).toEqual('tofino://mozilla');
+    expect(getPages().get(0).location).toEqual(HOME_PAGE);
     expect(getPages().get(1).location).toEqual('https://moz.org/2');
     expect(getPages().get(2).location).toEqual('https://moz.org/3');
     expect(getCurrentPageIndex()).toEqual(2,
@@ -140,7 +141,7 @@ describe('Action - CLOSE_TAB', () => {
     dispatch(actions.closeTab(ids.get(0)));
     expect(getCurrentPageIndex()).toEqual(0);
     expect(getPages().size).toEqual(1);
-    expect(getPages().get(0).location).toEqual('tofino://mozilla');
+    expect(getPages().get(0).location).toEqual(HOME_PAGE);
   });
 
   it('Should send a message to the main process', async function() {

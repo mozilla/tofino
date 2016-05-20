@@ -15,14 +15,10 @@ import 'babel-polyfill';
 
 import Immutable from 'immutable';
 import * as types from '../constants/action-types';
+import { HOME_PAGE } from '../constants/ui';
 import { Pages, Page } from '../model';
 import { isUUID } from '../browser-util';
 import { getPageIndexById, getPageIndexBySessionId } from '../selectors';
-
-/**
- * Fairly sure we should hard code this
- */
-const HOME_PAGE = 'tofino://history';
 
 const initialState = new Pages({
   pages: Immutable.List.of(),

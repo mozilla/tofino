@@ -4,6 +4,7 @@
 
 import expect from 'expect';
 import Driver from '../utils/driver';
+import { HOME_PAGE } from '../../app/ui/browser/constants/ui';
 
 describe('application launch', function() {
   this.timeout(Driver.TEST_TIMEOUT_IN_MS);
@@ -43,6 +44,6 @@ describe('application launch', function() {
     await app.client.window(webviewHandle);
 
     ({ value: url } = await app.client.url());
-    expect(url.startsWith('tofino://mozilla')).toBe(true);
+    expect(url.startsWith(HOME_PAGE)).toBe(true);
   });
 });

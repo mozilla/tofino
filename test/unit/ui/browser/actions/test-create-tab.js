@@ -10,9 +10,8 @@ import configureStore from '../../../../../app/ui/browser/store/store';
 import * as actions from '../../../../../app/ui/browser/actions/main-actions';
 import * as selectors from '../../../../../app/ui/browser/selectors';
 
+import { HOME_PAGE } from '../../../../../app/ui/browser/constants/ui';
 import * as endpoints from '../../../../../app/shared/constants/endpoints';
-
-const HOME_PAGE = 'tofino://mozilla';
 
 describe('Action - CREATE_TAB', () => {
   beforeEach(function() {
