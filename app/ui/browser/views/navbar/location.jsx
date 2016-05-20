@@ -53,6 +53,7 @@ const LOCATION_BAR_AUTOCOMPLETE_STYLE = Style.registerStyle({
   flexDirection: 'column',
   position: 'absolute',
   background: '#fcfcfc',
+  color: 'var(--theme-body-color)',
   padding: 10,
   left: 0,
   right: 0,
@@ -292,7 +293,10 @@ export class Location extends Component {
             onClick={() => {
               this.selectAutocompleteItem(completionsForLocation[i].uri);
             }}
-            style={this.props.focusedResultIndex === i ? { background: 'red' } : null}>
+            style={this.props.focusedResultIndex === i ? {
+              background: 'var(--theme-selection-color)',
+              color: 'var(--theme-content-selected-color)',
+            } : null}>
             <span>{completion.title}</span>&nbsp;—&nbsp;<span>{completion.uri}</span>
           </div>
           {snippet}
