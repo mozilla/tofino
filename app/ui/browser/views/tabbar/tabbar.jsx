@@ -30,7 +30,8 @@ const TabBar = ({
   pages, currentPageIndex,
   handleTabContextMenu, handleNewTabClick, handleTabClick, handleTabClose,
 }) => (
-  <div className={TABBAR_STYLE}>
+  <div id="browser-tabbar"
+    className={TABBAR_STYLE}>
     {pages.map((page, i) => (
       <Tab key={`browser-tab-${i}`}
         className={`browser-tab-${i}`}

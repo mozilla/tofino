@@ -39,17 +39,25 @@ import WebSocket from 'ws';
 
 const store = configureStore();
 
-// Make the store accessible from the ipcRenderer singleton
-// so we can easily access in tests
-if (BUILD_CONFIG.test) {
-  ipcRenderer.store = store;
-}
-
 const chrome = (
   <Provider store={store}>
     <App />
   </Provider>
 );
+
+// The `app` object gets exposed via `window` in tests. Attach
+// objects to app if and only if they should be accessible in tests.
+const app = {
+  store,
+};
+
+if (BUILD_CONFIG.test) {
+  window.app = app;
+
+  // Make the store accessible from the ipcRenderer singleton
+  // so we can easily access in tests
+  ipcRenderer.store = store;
+}
 
 const container = document.getElementById('browser-container');
 

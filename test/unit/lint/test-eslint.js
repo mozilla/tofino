@@ -8,7 +8,7 @@ import path from 'path';
 const valid = '*.@(js|jsx)';
 
 // Load the ignore list
-let paths = fs.readFileSync(path.join(__dirname, '..', '..', '.eslintignore'), {
+let paths = fs.readFileSync(path.join(__dirname, '..', '..', '..', '.eslintignore'), {
   encoding: 'utf8',
 }).split('\n');
 

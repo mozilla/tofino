@@ -5,5 +5,5 @@
 --full-trace
 --timeout 10000
 --require isomorphic-fetch
---require ./test/renderer/setup.js
---preload ./test/renderer/head.js
+--require ./lib/ui/browser/index.js
+--preload ./test/utils/renderer-setup.js

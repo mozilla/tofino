@@ -66,7 +66,10 @@ export function getElectronVersion() {
   return version.trim().substring(1);
 }
 
-export async function spawn(command, args, options = {}) {
+/**
+ * Use a widnows `.cmd` command if available.
+ */
+export async function normalizeCommand(command) {
   if (os.type() === 'Windows_NT') {
     try {
       // Prefer a cmd version if available
@@ -79,7 +82,11 @@ export async function spawn(command, args, options = {}) {
       // Ignore missing files.
     }
   }
+  return command;
+}
 
+export async function spawn(command, args, options = {}) {
+  command = await normalizeCommand(command);
   return new Promise((resolve, reject) => {
     const child = childProcess.spawn(command, args, options);
 
