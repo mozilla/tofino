@@ -6,14 +6,14 @@
   <style>
     path#head {
       fill: none;
-      stroke: #4c4c4c;
+      stroke: #fff;
       stroke-linecap: round;
       stroke-linejoin: round;
       stroke-width: 2px;
     }
 
     path#tail {
-      fill: #4c4c4c;
+      fill: #fff;
     }
   </style>
 

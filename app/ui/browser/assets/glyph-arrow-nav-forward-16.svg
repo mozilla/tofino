@@ -6,13 +6,13 @@
   <style>
     path {
       fill: none;
-      stroke: #4c4c4c;
+      stroke: #fff;
       stroke-linecap: round;
       stroke-linejoin: round;
       stroke-width: 2px;
     }
   </style>
-  
+
   <g id="glyph-arrow-nav-back">
     <path id="tail" d="M14,8H2"/>
     <path id="head" d="M9,2l6,6L9,14"/>
