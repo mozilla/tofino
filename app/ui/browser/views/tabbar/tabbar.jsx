@@ -18,15 +18,11 @@ import Tab from './tab';
 import Btn from '../../widgets/btn';
 
 const TABBAR_STYLE = Style.registerStyle({
-  alignItems: 'center',
   minHeight: `${UIConstants.TABBAR_HEIGHT}px`,
   background: 'var(--theme-tabbar-color)',
-  borderBottom: '1px solid var(--theme-splitter-color)',
-  opacity: 0.9,
 });
 
 const NEW_TAB_BUTTON_STYLE = Style.registerStyle({
-  marginLeft: '8px',
   color: 'var(--theme-content-color)',
 });
 
@@ -48,9 +44,12 @@ const TabBar = ({
     <Btn id="new-tab"
       className={NEW_TAB_BUTTON_STYLE}
       title="Add new tab"
-      onClick={handleNewTabClick}>
-      <i className="fa fa-plus" />
-    </Btn>
+      image="glyph-addNew-24.svg"
+      imgWidth="10px"
+      imgHeight="10px"
+      imgPosition="center"
+      minWidth={`${UIConstants.TABBAR_HEIGHT}px`}
+      onClick={handleNewTabClick} />
   </div>
 );
 
