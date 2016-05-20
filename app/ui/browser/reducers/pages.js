@@ -22,7 +22,7 @@ import { getPageIndexById, getPageIndexBySessionId } from '../selectors';
 /**
  * Fairly sure we should hard code this
  */
-const HOME_PAGE = 'tofino://mozilla';
+const HOME_PAGE = 'tofino://history';
 
 const initialState = new Pages({
   pages: Immutable.List.of(),
