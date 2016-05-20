@@ -25,15 +25,18 @@ import * as userAgent from '../../lib/user-agent';
 
 const PAGE_STYLE = Style.registerStyle({
   // Mark this as the relative anchor for floating children (e.g. search bar).
-  position: 'relative',
-  flex: 1,
+  position: 'absolute',
+  top: 0,
+  bottom: 0,
+  right: 0,
+  left: 0,
+  backgroundColor: 'white',
 
-  // See the discussion about hiding <webview> elements at:
-  // https://github.com/electron/electron/blob/master/docs/api/web-view-tag.md#css-styling-notes
-  '&:not(.active-browser-page)': {
-    flex: '0 1',
-    width: '0px',
-    height: '0px',
+  // Simply hiding webviews isn't recommended (see the discussion at:
+  // https://github.com/electron/electron/blob/master/docs/api/web-view-tag.md#css-styling-notes)
+  // Instead just layer the active page over the top of the others.
+  '&.active-browser-page': {
+    zIndex: 1,
   },
 });
 

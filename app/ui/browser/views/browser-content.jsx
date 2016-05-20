@@ -18,6 +18,8 @@ import * as SharedPropTypes from '../model/shared-prop-types';
 
 const CONTENT_AREA_STYLE = Style.registerStyle({
   flex: 1,
+  position: 'relative',
+  zIndex: 0,
 });
 
 const BrowserContent = function(props) {
