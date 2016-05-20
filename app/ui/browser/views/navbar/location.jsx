@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
+import { ipcRenderer } from '../../../../shared/electron';
 
 import Style from '../../browser-style';
 import Btn from '../../widgets/btn';
@@ -110,9 +111,8 @@ export class Location extends Component {
   }
 
   componentDidMount() {
-    this.props.ipcRenderer.on('focus-url-bar', () => {
+    ipcRenderer.on('focus-url-bar', () => {
       this.refs.input.select();
-
       this.props.dispatch(actions.setShowURLBar(true));
     });
   }
@@ -396,7 +396,6 @@ Location.propTypes = {
   isBookmarked: PropTypes.func.isRequired,
   bookmark: PropTypes.func.isRequired,
   unbookmark: PropTypes.func.isRequired,
-  ipcRenderer: PropTypes.object.isRequired,
   navigateTo: PropTypes.func.isRequired,
   userTypedLocation: PropTypes.string.isRequired,
   showCompletions: PropTypes.bool.isRequired,

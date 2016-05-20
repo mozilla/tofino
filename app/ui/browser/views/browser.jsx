@@ -105,8 +105,7 @@ class BrowserWindow extends Component {
       <div className={BROWSER_WINDOW_STYLE}>
         <BrowserChrome page={currentPage}
           {...this.props}
-          {...browserChromeMethods}
-          {...{ ipcRenderer }} />
+          {...browserChromeMethods} />
         <BrowserContent currentPageIndex={currentPageIndex}
           webViewController={webViewController}
           {...this.props} />

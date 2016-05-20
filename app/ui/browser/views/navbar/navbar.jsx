@@ -146,7 +146,6 @@ NavBar.displayName = 'NavBar';
 NavBar.propTypes = {
   page: PropTypes.object,
   pages: PropTypes.object.isRequired,
-  ipcRenderer: PropTypes.object.isRequired,
   navBack: PropTypes.func.isRequired,
   navForward: PropTypes.func.isRequired,
   navRefresh: PropTypes.func.isRequired,
