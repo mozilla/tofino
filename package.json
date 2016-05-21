@@ -13,6 +13,7 @@
     "package": "node build/main.js --package",
     "test": "nyc -s node build/main.js --test",
     "lint": "nyc node build/main.js --lint",
+    "clobber": "node build/main.js --clobber",
     "report": "nyc report",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "install": "node build/main.js --build-deps",
