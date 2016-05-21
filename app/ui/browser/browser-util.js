@@ -10,6 +10,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
+import URLUtil from '../shared/url-util';
+
 /**
  * Given a search query, format it into a search engine's URL
  */
@@ -23,12 +25,18 @@ export function getSearchURL(query) {
  * Convert whatever the user typed into the URL bar into an actual URL
  */
 export function fixURL(typed) {
-  if (typed.includes('://') || typed.trim().startsWith('data:')) {
+  if (URLUtil.isDataURL(typed)) {
     return typed;
   }
 
-  if (!typed.includes(' ') && typed.includes('.')) {
-    return `http://${typed}`;
+  // @TODO: The %20 here is to handle 'www.blah.com foo' as a search,
+  // but it doesn't handle cases where spaces are included in GET params
+  const isURL = URLUtil.isURL(typed) && (
+                  typed.includes('%20') ||
+                  !URLUtil.getURL(typed).path.includes('%20'));
+
+  if (isURL) {
+    return URLUtil.fixupURLString(typed);
   }
 
   return getSearchURL(typed);
