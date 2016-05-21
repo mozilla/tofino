@@ -31,7 +31,7 @@ We hang out on Slack here: https://project-tofino.slack.com (you can get an invi
 
 ## Build
 
-Project Tofino currently requires Node 5 (5.11.0 being the current release); it won't build on Node 6.
+Project Tofino currently requires Node 6 (v6.2.0 being the current release).
 
 ### Windows
 
@@ -57,14 +57,13 @@ npm install
 
 ## Developing
 
-* `npm start` - Runs the build. Builds the client/renderer code via webpack in `production` mode. Should be rather similar to a packaged build.
-* `npm run dev` - Runs the build in `development` with hot module reloading via webpack.
+* `npm start` - Runs the build in `production` mode. Should be similar to a packaged build.
+* `npm run dev` - Runs the build in `development` mode with hot module reloading.
 * `npm run package` - Creates a distributable package.
-
 
 ## Testing
 
-Currently runs eslint and ui tests with mocha.
+Currently runs linting, unit and webdriver tests with mocha.
 
 ```
 npm test
