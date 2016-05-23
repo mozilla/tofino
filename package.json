@@ -84,7 +84,7 @@
     "mocha-eslint": "2.0.2",
     "nyc": "6.4.0",
     "react-addons-perf": "15.0.1",
-    "react-addons-test-utils": "15.0.1",
+    "react-addons-test-utils": "15.1.0",
     "require-dir": "0.3.0",
     "rimraf": "2.5.2",
     "semver": "5.1.0",
