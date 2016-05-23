@@ -23,7 +23,11 @@ export default class AddPageMutation extends Relay.Mutation {
   getFatQuery() {
     return Relay.QL`
       fragment on _BookmarkPayload {
-        changedBookmarkEdge,
+        changedBookmarkEdge {
+          node {
+            uri
+          }
+        },
         viewer {
           id,
           allBookmarks {

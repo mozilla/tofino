@@ -20,7 +20,7 @@ import Btn from '../../widgets/btn';
 import BookmarkButton from './bookmark-button';
 
 // @TODO remove. temporary hack
-import MainRoute from '../../main-route';
+import PageRoute from '../../page-route';
 
 import { fixURL, getCurrentWebView } from '../../browser-util';
 import { SHOW_COMPLETIONS } from '../../constants/ui';
@@ -357,13 +357,7 @@ export class Location extends Component {
         type="url" />);
     });
 
-    // @TODO remove. temporary hack to pass location into button.
-    const renderRelay = (data) => {
-      return (
-        <BookmarkButton {...data} location={this.props.page.location} />
-      );
-    }
-
+    let routeProps = {location: this.props.page.location};
     return (
       <div className={LOCATION_BAR_CONTAINER_STYLE}>
         <div id="browser-location-bar"
@@ -385,8 +379,7 @@ export class Location extends Component {
           {allInputs}
           <Relay.RootContainer
             Component={BookmarkButton}
-            route={new MainRoute()}
-            renderFetched={renderRelay}/>
+            route={new PageRoute(routeProps)} />
           {completions}
         </div>
       </div>

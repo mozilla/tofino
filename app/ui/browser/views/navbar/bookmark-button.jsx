@@ -35,14 +35,6 @@ const BUTTON_STYLE = Style.registerStyle({
  * The star in the location bar.
  */
 class BookmarkButton extends Component {
-  // @TODO this probably shouldn't be happening here
-  componentDidMount() {
-    this.props.relay.setVariables({location: this.props.location});
-  }
-  componentWillReceiveProps() {
-    this.props.relay.setVariables({location: this.props.location});
-  }
-
   getBookmarkIcon = (isBookmarked) => {
     if (isBookmarked) {
       return 'glyph-bookmark-filled-16.svg';
@@ -57,10 +49,11 @@ class BookmarkButton extends Component {
         viewer: this.props.viewer
       }),
     );
+    this.props.relay.forceFetch();
   }
 
   render() {
-    let isBookmarked = this.props.viewer.allBookmarks.count !== 0;
+    let isBookmarked = !!this.props.bookmark;
     return (<Btn title="Bookmark"
       className={BUTTON_STYLE}
       image={this.getBookmarkIcon(isBookmarked)}
@@ -71,22 +64,17 @@ class BookmarkButton extends Component {
 BookmarkButton.displayName = 'BookmarkButton';
 
 export default Relay.createContainer(BookmarkButton, {
-  prepareVariables: prevVariables => {
-    // Transform property passed in into a query filter.
-    return {
-      location: {
-        eq: prevVariables.location
-      }
-    };
-  },
   fragments: {
     viewer: () => {
       return Relay.QL`
       fragment on ReindexViewer {
-        allBookmarks(uri: $location) {
-          count
-        }
         ${AddBookmarkMutation.getFragment('viewer')},
+      }
+    `},
+    bookmark: () => {
+      return Relay.QL`
+      fragment on Bookmark {
+        uri
       }
     `},
   },
