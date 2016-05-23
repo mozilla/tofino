@@ -69,6 +69,14 @@ Currently runs linting, unit and webdriver tests with mocha.
 npm test
 ```
 
+## Clobbering
+
+If you have problems building, it might be worth deleting some generated files and then trying again.  For example:
+
+    rm -r .electron
+    rm -r node_modules
+    rm build-config.json
+
 ## Contributing
 
 Please note that this project is released with a Contributor Code of Conduct.
