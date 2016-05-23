@@ -286,7 +286,7 @@ export function start(storage: ProfileStorage,
     });
   }
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const app = express();
     const { getWss } = expressWs(app);
 
@@ -299,7 +299,7 @@ export function start(storage: ProfileStorage,
     // Sadly, app.listen does not return the HTTP server just yet.
     // Therefore, we extract it manually below.
     app.listen(port, '127.0.0.1', () => {
-      resolve({ app, getWss, reused: false });
+      resolve({ app, getWss, stop, reused: false });
     });
     server = getWss()._server;
 
