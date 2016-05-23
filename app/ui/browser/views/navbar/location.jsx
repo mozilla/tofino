@@ -11,11 +11,16 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes, Component } from 'react';
+import Relay from 'react-relay';
 import { connect } from 'react-redux';
 import { ipcRenderer } from '../../../../shared/electron';
 
 import Style from '../../browser-style';
 import Btn from '../../widgets/btn';
+import BookmarkButton from './bookmark-button';
+
+// @TODO remove. temporary hack
+import MainRoute from '../../main-route';
 
 import { fixURL, getCurrentWebView } from '../../browser-util';
 import { SHOW_COMPLETIONS } from '../../constants/ui';
@@ -159,17 +164,6 @@ export class Location extends Component {
             this.props.page.location : this.props.userTypedLocation;
   }
 
-  getBookmarkIcon() {
-    const { page, isBookmarked } = this.props;
-    if (page.state === Page.PAGE_STATE_LOADING) {
-      return 'glyph-bookmark-unknown-16.svg';
-    }
-    if (isBookmarked(page.location)) {
-      return 'glyph-bookmark-filled-16.svg';
-    }
-    return 'glyph-bookmark-hollow-16.svg';
-  }
-
   getVisibleCompletionsForLocation() {
     const { profile } = this.props;
     const completionsForLocation = profile.completions.get(this.getRenderLocation());
@@ -196,6 +190,8 @@ export class Location extends Component {
   }
 
   handleBookmarkClick(e) {
+    var mutation = new AddBookmarkMutation({uri: 'http://gmail.com'});
+    var query = Relay.Store.commitUpdate(mutation);
     const { isBookmarked, bookmark, unbookmark } = this.props;
     const webview = getCurrentWebView(e.target.ownerDocument);
     const title = webview.getTitle();
@@ -361,6 +357,13 @@ export class Location extends Component {
         type="url" />);
     });
 
+    // @TODO remove. temporary hack to pass location into button.
+    const renderRelay = (data) => {
+      return (
+        <BookmarkButton {...data} location={this.props.page.location} />
+      );
+    }
+
     return (
       <div className={LOCATION_BAR_CONTAINER_STYLE}>
         <div id="browser-location-bar"
@@ -380,11 +383,10 @@ export class Location extends Component {
             </span>
           </div>
           {allInputs}
-          <Btn title="Bookmark"
-            className={LOCATION_BAR_BUTTONS_STYLE}
-            image={this.getBookmarkIcon()}
-            disabled={this.props.page.state === Page.PAGE_STATE_LOADING}
-            onClick={this.handleBookmarkClick} />
+          <Relay.RootContainer
+            Component={BookmarkButton}
+            route={new MainRoute()}
+            renderFetched={renderRelay}/>
           {completions}
         </div>
       </div>

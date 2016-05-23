@@ -14,7 +14,6 @@ import React, { Component } from 'react';
 import Relay from 'react-relay';
 
 import BookmarkList from './bookmark-list';
-import TempBookmarksButtons from './temp-bookmarks-buttons';
 
 import Style from '../../browser-style';
 
@@ -32,7 +31,6 @@ class BookmarksPane extends Component {
     return (
       <div className={BOOKMARKS_PANE_STYLE}>
         <BookmarkList bookmarks={this.props.viewer.allBookmarks} viewer={this.props.viewer} />
-        <TempBookmarksButtons viewer={this.props.viewer}/>
       </div>
     );
   }
@@ -56,7 +54,6 @@ export default Relay.createContainer(BookmarksPane, {
           ${BookmarkList.getFragment('bookmarks')}
         }
         ${BookmarkList.getFragment('viewer')},
-        ${TempBookmarksButtons.getFragment('viewer')},
       }
     `},
   },
