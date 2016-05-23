@@ -17,14 +17,11 @@ function setStatus(status) {
 }
 
 window.addEventListener('mouseover', e => {
-  // Watch for mouseovers of anchor elements
+  // Watch for mouseovers of anchor elements.
   let el = e.target;
   while (el) {
     if (el.tagName === 'A') {
-      // Set to title or href
-      if (el.getAttribute('title')) {
-        setStatus(el.getAttribute('title'));
-      } else if (el.href) {
+      if (el.href) {
         setStatus(el.href);
       }
       return;
