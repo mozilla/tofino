@@ -13,6 +13,7 @@ specific language governing permissions and limitations under the License.
 import React, { Component } from 'react';
 import Relay from 'react-relay';
 
+import BookmarkList from './bookmark-list';
 import TempBookmarksButtons from './temp-bookmarks-buttons';
 
 import Style from '../../browser-style';
@@ -28,11 +29,10 @@ const BOOKMARKS_PANE_STYLE = Style.registerStyle({
  */
 class BookmarksPane extends Component {
   render() {
+    debugger
     return (
       <div className={BOOKMARKS_PANE_STYLE}>
-        <ul>
-          {this.props.viewer.allBookmarks.edges.map(edge => <li>{edge.node.uri}</li>)}
-        </ul>
+        <BookmarkList bookmarks={this.props.viewer.allBookmarks} viewer={this.props.viewer} />
         <TempBookmarksButtons viewer={this.props.viewer}/>
       </div>
     );
@@ -53,8 +53,9 @@ export default Relay.createContainer(BookmarksPane, {
             node {
               id,
               uri
-            },
-          },
+            }
+          }
+          ${BookmarkList.getFragment('bookmarks')}
         }
       }
     `},
