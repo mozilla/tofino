@@ -26,8 +26,7 @@ import * as userAgent from '../../lib/user-agent';
 // @TODO remove. temporary hack
 import Relay from 'react-relay';
 import BookmarksPane from './bookmarks-pane';
-import Reindex from './Reindex';
-Relay.injectNetworkLayer(Reindex.getRelayNetworkLayer());
+import MainRoute from '../../main-route';
 
 const PAGE_STYLE = Style.registerStyle({
   // Mark this as the relative anchor for floating children (e.g. search bar).
@@ -89,11 +88,6 @@ class Page extends Component {
       const { offsetX: x, offsetY: y } = event.nativeEvent;
       this.refs.webview.send('get-contextmenu-data', { x, y });
     };
-
-    // @TODO This is a temporary hack to integrate Relay. Should be handled differently.
-    class MainRoute extends Relay.Route {}
-    MainRoute.queries = { viewer: () => Relay.QL`query { viewer }` };
-    MainRoute.routeName = 'MainRoute';
 
     return (
       <div className={`page ${PAGE_STYLE} ${this.props.isActive ? 'active-browser-page' : ''}`}

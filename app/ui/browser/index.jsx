@@ -39,6 +39,11 @@ import WebSocket from 'ws';
 
 const store = configureStore();
 
+// @TODO remove. temporary hack
+import Relay from 'react-relay';
+import Reindex from './Reindex';
+Relay.injectNetworkLayer(Reindex.getRelayNetworkLayer());
+
 // Make the store accessible from the ipcRenderer singleton
 // so we can easily access in tests
 if (BUILD_CONFIG.test) {
