@@ -64,23 +64,41 @@ function configure(app: any, storage: ProfileStorage) {
     return { stars, recentStars };
   }
 
-  const diffsClients = [];
-  router.ws('/diffs', async function(ws, _req) {
-    diffsClients.push(ws);
+  const wsClients = [];
+  router.ws('/ws', async function(ws, _req) {
+    wsClients.push(ws);
 
-    ws.send(JSON.stringify({ type: 'initial', payload: await initial() }));
+    ws.send(JSON.stringify({
+      message: 'protocol',
+      version: 'v1',
+      clientCount: wsClients.length,
+    }));
+
+    ws.send(JSON.stringify({
+      message: 'diff',
+      type: 'initial',
+      payload: await initial(),
+    }));
 
     ws.on('close', () => {
-      const index = diffsClients.indexOf(ws);
+      const index = wsClients.indexOf(ws);
       if (index > -1) {
-        diffsClients.splice(index, 1);
+        wsClients.splice(index, 1);
+      }
+
+      if (wsClients.length === 0) {
+        // When there are no more clients close the service.
+        stop();
       }
     });
   });
 
   function sendDiff(diff) {
-    diffsClients.forEach((ws) => {
-      ws.send(JSON.stringify(diff));
+    wsClients.forEach((ws) => {
+      ws.send(JSON.stringify({
+        message: 'diff',
+        ...diff,
+      }));
     });
   }
 
@@ -93,7 +111,7 @@ function configure(app: any, storage: ProfileStorage) {
   }
 
   router.post('/session/start', wrap(async function(req, res) {
-    req.checkBody('scope').notEmpty().isInt();
+    req.checkBody('scope').optional().isInt();
     req.checkBody('ancestor').optional().isInt();
 
     const errors = req.validationErrors();
@@ -258,6 +276,19 @@ function configure(app: any, storage: ProfileStorage) {
   });
 }
 
+let server;
+function stop() {
+  return new Promise((res, rej) => {
+    server.close(err => {
+      if (err) {
+        rej(err);
+      } else {
+        res();
+      }
+    });
+  });
+}
+
 /**
  * Exposes a function that starts up an Express static server
  * to the `./fixtures` directory on port 8080.
@@ -269,20 +300,7 @@ function configure(app: any, storage: ProfileStorage) {
 export function start(storage: ProfileStorage,
                       port: number,
                       options: ?Object = {}) {
-  const { debug, allowReuse } = options;
-
-  let server;
-  function stop() {
-    return new Promise((res, rej) => {
-      server.close(err => {
-        if (err) {
-          rej(err);
-        } else {
-          res();
-        }
-      });
-    });
-  }
+  const { debug } = options;
 
   return new Promise((resolve) => {
     const app = express();
@@ -297,24 +315,8 @@ export function start(storage: ProfileStorage,
     // Sadly, app.listen does not return the HTTP server just yet.
     // Therefore, we extract it manually below.
     app.listen(port, '127.0.0.1', () => {
-      resolve({ app, getWss, stop, reused: false });
+      server = getWss()._server;
+      resolve();
     });
-    server = getWss()._server;
-
-    if (allowReuse) {
-      // Let's assume we're already running our service.
-      server.on('error', (e) => {
-        if (e.code !== 'EADDRINUSE') {
-          throw e;
-        }
-      });
-
-      getWss().on('error', (e) => {
-        if (e.code !== 'EADDRINUSE') {
-          throw e;
-        }
-        resolve({ app, getWss, reused: true });
-      });
-    }
   });
 }

@@ -33,10 +33,9 @@ import configureStore from './store/store';
 import * as actions from './actions/main-actions';
 import * as profileDiffs from '../../shared/profile-diffs';
 import BUILD_CONFIG from '../../../build-config';
-import * as endpoints from '../../shared/constants/endpoints';
+import userAgentClient from '../../shared/user-agent-client';
 
-import WebSocket from 'ws';
-
+const userAgentPromise = userAgentClient.connect();
 const store = configureStore();
 
 const chrome = (
@@ -74,35 +73,24 @@ store.dispatch(actions.createTab());
 // that if an error occurs while we connect, we at least have some UI in place.
 ReactDOM.render(chrome, container);
 
-const ws = new WebSocket(`${endpoints.UA_SERVICE_WS}/diffs`);
+userAgentPromise.then((userAgent) => {
+  userAgent.on('diff', (command) => {
+    if (command.type === 'initial') {
+      if (command.payload.stars) {
+        store.dispatch(profileDiffs.bookmarks(command.payload.stars));
+      }
 
-ws.on('open', () => {
-  // Nothing for now.
-});
+      // We've connected to the UA service, received the initial state, and (synchronously)
+      // rendered the initial UI.  This window is ready to display!
+      onWindowReady();
 
-ws.on('message', (data, flags) => {
-  // flags.binary will be set if a binary data is received.
-  // flags.masked will be set if the data was masked.
-  if (flags.binary) {
-    return;
-  }
-  const command = JSON.parse(data);
-  if (!command) {
-    return;
-  }
-
-  if (command.type === 'initial') {
-    if (command.payload.stars) {
-      store.dispatch(profileDiffs.bookmarks(command.payload.stars));
+      return;
     }
 
-    // We've connected to the UA service, received the initial state, and (synchronously)
-    // rendered the initial UI.  This window is ready to display!
-    onWindowReady();
-
-    return;
-  }
-
-  // It's dangerous to trust the service in this way, but good enough for now.
-  store.dispatch(command);
+    // It's dangerous to trust the service in this way, but good enough for now.
+    store.dispatch(command);
+  });
+}, (err) => {
+  console.error(err);
+  onWindowReady(true);
 });

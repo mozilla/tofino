@@ -12,7 +12,7 @@ export default async function(args = []) {
 
   console.log(`Executing command: ${command}`);
 
-  await BuildUtils.spawn(command, [script, ...args], {
+  await BuildUtils.spawn(command, [script, '--enable-logging', ...args], {
     stdio: 'inherit',
   });
 }

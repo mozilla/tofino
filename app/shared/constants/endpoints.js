@@ -12,4 +12,4 @@
 
 export const UA_SERVICE_PORT = 9090;
 export const UA_SERVICE_HTTP = `http://localhost:${UA_SERVICE_PORT}/v1`;
-export const UA_SERVICE_WS = `ws://localhost:${UA_SERVICE_PORT}/v1`;
+export const UA_SERVICE_WS = `ws://localhost:${UA_SERVICE_PORT}/v1/ws`;
