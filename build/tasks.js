@@ -61,6 +61,10 @@ export default {
     await require('./task-test').default([...args, 'test/lint']);
   },
 
+  async clobber() {
+    await require('./task-clobber').default();
+  },
+
   async clean() {
     await require('./task-clean-package').default();
   },

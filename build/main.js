@@ -60,6 +60,7 @@ const handleDepsCheckSucceeded = () => {
     '--package': () => tasks.package(),
     '--test': args => tasks.test(args),
     '--lint': args => tasks.lintOnlyTest(args),
+    '--clobber': () => tasks.clobber(),
     '--build-deps': () => tasks.buildDeps(),
   };
   main(argv, tasks, handlers, handleTaskFailed);
