@@ -21,7 +21,6 @@ pull_requests:
 cache:
   - .electron
   - node_modules
-  - '%APPDATA%\npm-cache'
 
 install:
   - ps: Install-Product node $env:nodejs_version $env:PLATFORM
