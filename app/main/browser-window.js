@@ -32,11 +32,11 @@ const browserWindows = [];
  * UA service is in its own process. Also takes an onload callback --
  * currently used for the first window created to record load times.
  */
-export async function createBrowserWindow(profileStoragePromise, onload) {
-  const profileStorage = await profileStoragePromise;
+export async function createBrowserWindow(userAgentPromise, onload) {
+  const userAgent = await userAgentPromise;
 
   // TODO: don't abuse the storage layer's session ID generation to produce scopes.
-  const scope = await profileStorage.startSession();
+  const scope = await userAgent.startSession();
 
   // Create the browser window.
   const browser = new BrowserWindow({

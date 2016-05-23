@@ -30,7 +30,6 @@ process.on('unhandledRejection', (reason, p) => {
   process.exit(2);
 });
 
-import path from 'path';
 import electron from 'electron';
 
 import * as hotkeys from './hotkeys';
@@ -38,16 +37,14 @@ import * as menu from './menu/index';
 import * as instrument from '../services/instrument';
 import registerAboutPages from './about-pages';
 import * as BW from './browser-window';
-import { ProfileStorage } from '../services/storage';
-import * as userAgentService from './user-agent-service';
-const profileStoragePromise = ProfileStorage.open(path.join(__dirname, '..', '..'));
+import userAgentClient from '../shared/user-agent-client';
 
-import WebSocket from 'ws';
 import * as endpoints from '../shared/constants/endpoints';
 
 const app = electron.app; // control application life.
 const ipc = electron.ipcMain;
 const globalShortcut = electron.globalShortcut;
+const userAgentPromise = userAgentClient.connect();
 
 const appStartupTime = Date.now();
 instrument.event('app', 'STARTUP');
@@ -64,7 +61,7 @@ app.on('ready', async function() {
   // Register `about:*` protocols after app's 'ready' event
   registerAboutPages();
 
-  await BW.createBrowserWindow(profileStoragePromise, () => {
+  await BW.createBrowserWindow(userAgentPromise, () => {
     instrument.event('browser', 'READY', 'ms', Date.now() - browserStartTime);
   });
 });
@@ -89,12 +86,12 @@ app.on('activate', async function() {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (electron.BrowserWindow.getAllWindows().length === 0) {
-    await BW.createBrowserWindow(profileStoragePromise, () => menu.buildAppMenu(menuData));
+    await BW.createBrowserWindow(userAgentPromise, () => menu.buildAppMenu(menuData));
   }
 });
 
 ipc.on('new-browser-window', async function() {
-  await BW.createBrowserWindow(profileStoragePromise, () => menu.buildAppMenu(menuData));
+  await BW.createBrowserWindow(userAgentPromise, () => menu.buildAppMenu(menuData));
 });
 
 ipc.on('close-browser-window', BW.onlyWhenFromBrowserWindow(async function(bw) {
@@ -120,41 +117,18 @@ ipc.on('instrument-event', (event, args) => {
   instrument.event(args.name, args.method, args.label, args.value);
 });
 
-let ws = undefined;
-
 const menuData = {};
 
-profileStoragePromise.then(async function(profileStorage) {
-  const { reused } = await userAgentService.start(profileStorage,
-                                                  endpoints.UA_SERVICE_PORT,
-                                                  { debug: false, allowReuse: true });
-
-  if (reused) {
-    // In the future, let's do something like test a /status or /heartbeat endpoint for a version
-    // and well-known string to be sure that we're actually connecting to a UA service.
+userAgentPromise.then(async function(userAgent) {
+  if (userAgent.clientCount > 1) {
     console.log('Using an already running User Agent service ' +
-                `(running on ${endpoints.UA_SERVICE_PORT}).`);
+                `(running on ${endpoints.UA_SERVICE_PORT} with ` +
+                `${userAgent.clientCount} active clients).`);
   } else {
     console.log(`Started a new User Agent service (running on ${endpoints.UA_SERVICE_PORT}).`);
   }
 
-  ws = new WebSocket(`${endpoints.UA_SERVICE_WS}/diffs`);
-
-  ws.on('open', () => {
-    // Nothing for now.
-  });
-
-  ws.on('message', (data, flags) => {
-    // flags.binary will be set if a binary data is received.
-    // flags.masked will be set if the data was masked.
-    if (flags.binary) {
-      return;
-    }
-    const command = JSON.parse(data);
-    if (!command) {
-      return;
-    }
-
+  userAgent.on('diff', (command) => {
     if (command.type === 'initial') {
       menuData.recentBookmarks = command.payload.recentStars;
       menu.buildAppMenu(menuData);
@@ -166,4 +140,4 @@ profileStoragePromise.then(async function(profileStorage) {
       menu.buildAppMenu(menuData);
     }
   });
-});
+}, console.error);
