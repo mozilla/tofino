@@ -71,7 +71,7 @@ npm test
 
 ## Clobbering
 
-If you have problems building, it might be worth deleting some generated files and then trying again.  For example:
+If you have problems building, it might be worth deleting some generated files and then building or running again.  For example:
 
     rm -r .electron
     rm -r node_modules
