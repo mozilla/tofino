@@ -37,10 +37,10 @@ const BUTTON_STYLE = Style.registerStyle({
 class BookmarkButton extends Component {
   // @TODO this probably shouldn't be happening here
   componentDidMount() {
-    this.props.relay.forceFetch({location: this.props.location});
+    this.props.relay.setVariables({location: this.props.location});
   }
   componentWillReceiveProps() {
-    this.props.relay.forceFetch({location: this.props.location});
+    this.props.relay.setVariables({location: this.props.location});
   }
 
   getBookmarkIcon = (isBookmarked) => {
