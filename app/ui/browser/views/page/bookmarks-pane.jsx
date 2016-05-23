@@ -29,7 +29,6 @@ const BOOKMARKS_PANE_STYLE = Style.registerStyle({
  */
 class BookmarksPane extends Component {
   render() {
-    debugger
     return (
       <div className={BOOKMARKS_PANE_STYLE}>
         <BookmarkList bookmarks={this.props.viewer.allBookmarks} viewer={this.props.viewer} />
@@ -46,7 +45,6 @@ export default Relay.createContainer(BookmarksPane, {
     viewer: () => {
       return Relay.QL`
       fragment on ReindexViewer {
-        ${TempBookmarksButtons.getFragment('viewer')},
         allBookmarks(first: 1000) {
           count,
           edges {
@@ -57,6 +55,8 @@ export default Relay.createContainer(BookmarksPane, {
           }
           ${BookmarkList.getFragment('bookmarks')}
         }
+        ${BookmarkList.getFragment('viewer')},
+        ${TempBookmarksButtons.getFragment('viewer')},
       }
     `},
   },

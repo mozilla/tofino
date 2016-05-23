@@ -46,6 +46,11 @@ export default Relay.createContainer(BookmarkList, {
           }
         }
       }
-    `
+    `,
+    viewer: () => Relay.QL`
+      fragment on ReindexViewer {
+        ${Bookmark.getFragment('viewer')}
+      }
+    `,
   },
 });

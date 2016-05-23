@@ -13,15 +13,25 @@ specific language governing permissions and limitations under the License.
 import React, { Component } from 'react';
 import Relay from 'react-relay';
 
+import DeleteBookmarkMutation from '../../mutations/DeleteBookmarkMutation';
+
 /**
  * A bookmark.
  */
 class Bookmark extends Component {
+  handleDelete = () => {
+    Relay.Store.commitUpdate(
+      new DeleteBookmarkMutation({
+        id: this.props.bookmark.id,
+        viewer: this.props.viewer,
+      }),
+    );
+  }
+
   render() {
-    debugger
     const bookmark = this.props.bookmark;
     return (
-      <li>{bookmark.uri} <button>Delete</button></li>
+      <li>{bookmark.uri} <button onClick={this.handleDelete}>Delete</button></li>
     );
   }
 }
@@ -34,6 +44,11 @@ export default Relay.createContainer(Bookmark, {
       fragment on Bookmark {
         id,
         uri
+      }
+    `,
+    viewer: () => Relay.QL`
+      fragment on ReindexViewer {
+        ${DeleteBookmarkMutation.getFragment('viewer')}
       }
     `
   }
