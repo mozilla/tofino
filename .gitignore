@@ -11,3 +11,4 @@ build-config.json
 /browser.db
 .electron
 .cache
+.vscode
