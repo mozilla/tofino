@@ -29,7 +29,8 @@
       },
       {
         name: "uri",
-        type: "String"
+        type: "String",
+        unique: true
       },
     ]
   }

@@ -592,6 +592,33 @@ export default {
               },
               "isDeprecated": false,
               "deprecationReason": null
+            },
+            {
+              "name": "bookmarkByUri",
+              "description": "Get an object of type `Bookmark` by `uri`",
+              "args": [
+                {
+                  "name": "uri",
+                  "description": "`uri` of `Bookmark`",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Bookmark",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
             }
           ],
           "inputFields": null,
@@ -1060,6 +1087,16 @@ export default {
                   "type": {
                     "kind": "SCALAR",
                     "name": "Cursor",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "uri",
+                  "description": "Filter the connection based on `uri`",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "_BookmarkUriFilter",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -3848,6 +3885,47 @@ export default {
           ],
           "inputFields": null,
           "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "INPUT_OBJECT",
+          "name": "_BookmarkUriFilter",
+          "description": "Filter by the `uri`",
+          "fields": null,
+          "inputFields": [
+            {
+              "name": "eq",
+              "description": "equal (case sensitive for strings)",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "neq",
+              "description": "not-equal (case sensitive for strings)",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "isNull",
+              "description": "value is null if `true`, is not null if `false`",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              },
+              "defaultValue": null
+            }
+          ],
+          "interfaces": null,
           "enumValues": null,
           "possibleTypes": null
         },
