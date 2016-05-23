@@ -10,27 +10,33 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
 import Relay from 'react-relay';
+
+import TempBookmarksButtons from './temp-bookmarks-buttons';
 
 import Style from '../../browser-style';
 
 const BOOKMARKS_PANE_STYLE = Style.registerStyle({
   backgroundColor: 'var(--theme-body-color)',
-  width: "20%",
+  display: 'block',
+  width: '20%',
 });
 
 /**
  * A pane containing bookmarks.
  */
-export function BookmarksPane(props) {
-  return (
-    <div className={BOOKMARKS_PANE_STYLE}>
-      <ul>
-        {props.viewer.allBookmarks.edges.map(edge => <li>{edge.node.uri}</li>)}
-      </ul>
-    </div>
-  );
+class BookmarksPane extends Component {
+  render() {
+    return (
+      <div className={BOOKMARKS_PANE_STYLE}>
+        <ul>
+          {this.props.viewer.allBookmarks.edges.map(edge => <li>{edge.node.uri}</li>)}
+        </ul>
+        <TempBookmarksButtons viewer={this.props.viewer}/>
+      </div>
+    );
+  }
 }
 
 BookmarksPane.displayName = 'BookmarksPane';
@@ -40,6 +46,7 @@ export default Relay.createContainer(BookmarksPane, {
     viewer: () => {
       return Relay.QL`
       fragment on ReindexViewer {
+        ${TempBookmarksButtons.getFragment('viewer')},
         allBookmarks(first: 1000) {
           count,
           edges {
