@@ -46,7 +46,7 @@ Install Node 6 through the package manager of your Linux distribution. If not av
 ### OSX
 
 ```
-brew install nvm
+brew install python openssl sqlite nvm
 nvm install 6
 ```
 
