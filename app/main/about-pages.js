@@ -19,7 +19,7 @@ const ABOUT_PROTOCOL_PREFIX = 'tofino';
 const ABOUT_DIR = path.join(UI_DIR, 'about');
 const ABOUT_PAGES = new Set([
   'history',
-  'mozilla',
+  'newtab',
   'stars',
 ]);
 

@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-export const HOME_PAGE = 'tofino://history';
+export const HOME_PAGE = 'tofino://newtab';
 
 export const NAVBAR_EXPANDED_HEIGHT = 55; // px
 export const TABBAR_HEIGHT = 30; // px
