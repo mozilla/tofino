@@ -30,14 +30,14 @@ export default {
   },
 
   async run(args = []) {
-    await this.build(args);
+    await this.build([...args, '--force']);
     await require('./task-run').default(args);
   },
 
   async runDev(args = []) {
     const chokidar = require('chokidar');
 
-    await this.buildDev(args);
+    await this.buildDev([...args, '--force']);
 
     const { buildFile, appDir } = require('./task-build');
     const watcher = chokidar.watch(appDir, {
@@ -67,7 +67,7 @@ export default {
 
   async package(args) {
     await this.clean();
-    await this.build(args);
+    await this.build([...args, '--force']);
     await this.config({ packaged: true });
     await require('./task-package').default();
   },
