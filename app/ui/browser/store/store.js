@@ -28,7 +28,7 @@ const instrumenter = _store => next => action => {
 export default function configureStore(initialState) {
   const middleware = [instrumenter, thunk];
 
-  if (!BUILD_CONFIG.test) {
+  if (BUILD_CONFIG.development) {
     middleware.unshift(createLogger({
       predicate: (getState, action) => typeof action !== 'function',
       duration: true,
