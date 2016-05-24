@@ -39,13 +39,18 @@ import WebSocket from 'ws';
 
 const store = configureStore();
 
+// @TODO remove. temporary hack
+import Relay from 'react-relay';
+import Reindex from './Reindex';
+Relay.injectNetworkLayer(Reindex.getRelayNetworkLayer());
+
 // Make the store accessible from the ipcRenderer singleton
 // so we can easily access in tests
 if (BUILD_CONFIG.test) {
   ipcRenderer.store = store;
 }
 
-const chrome = (
+const ui = (
   <Provider store={store}>
     <App />
   </Provider>
@@ -64,7 +69,7 @@ store.dispatch(actions.createTab());
 
 // We start rendering before we connect to the UA service and before we receive the initial state so
 // that if an error occurs while we connect, we at least have some UI in place.
-ReactDOM.render(chrome, container);
+ReactDOM.render(ui, container);
 
 const ws = new WebSocket(`${endpoints.UA_SERVICE_WS}/diffs`);
 

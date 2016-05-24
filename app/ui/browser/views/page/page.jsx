@@ -23,6 +23,11 @@ import { menuWebViewContext } from '../../actions/external';
 import * as actions from '../../actions/main-actions';
 import * as userAgent from '../../lib/user-agent';
 
+// @TODO remove. temporary hack
+import Relay from 'react-relay';
+import BookmarksPane from './bookmarks-pane';
+import MainRoute from '../../main-route';
+
 const PAGE_STYLE = Style.registerStyle({
   // Mark this as the relative anchor for floating children (e.g. search bar).
   position: 'absolute',
@@ -88,6 +93,9 @@ class Page extends Component {
       <div className={`page ${PAGE_STYLE} ${this.props.isActive ? 'active-browser-page' : ''}`}
         data-page-state={this.props.page.state}>
         <Search hidden={!this.props.page.isSearching} />
+        <Relay.RootContainer
+          Component={BookmarksPane}
+          route={new MainRoute()} />
         <webview is="webview"
           ref="webview"
           class={`webview-${this.props.page.id} ${WEB_VIEW_STYLE}`}
