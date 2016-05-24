@@ -56,6 +56,7 @@
     }],
     "no-underscore-dangle": ["off"],
     "no-use-before-define": ["off"],
+    "dot-notation": ["off"],
     "eqeqeq": ["error", "allow-null"],
     "lines-around-comment": ["error", {
       "beforeBlockComment": true,

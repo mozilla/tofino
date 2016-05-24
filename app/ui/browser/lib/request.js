@@ -19,7 +19,7 @@ export default function(url: string, options: ?Object) {
   if (!newOptions.headers) {
     newOptions.headers = {};
   }
-  newOptions.headers['Accept'] = 'application/json'; // eslint-disable-line
+  newOptions.headers['Accept'] = 'application/json';
   newOptions.headers['Content-Type'] = 'application/json';
 
   if (!newOptions.body && newOptions.json instanceof Object) {
