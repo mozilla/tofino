@@ -21,10 +21,11 @@ const APP_STYLE = Style.registerStyle({
 });
 
 const App = function() {
+  const Element = Style.Element;
   return (
     <div className={APP_STYLE}>
       <BrowserWindow />
-      <Style.Element />
+      <Element />
     </div>
   );
 };
