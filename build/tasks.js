@@ -19,7 +19,7 @@ export default {
     await require('./task-build-deps').default();
   },
 
-  async build(config = {}, args = []) {
+  async build(args = [], config = {}) {
     await this.config(config);
     await require('./task-build').default(args);
   },
@@ -30,34 +30,34 @@ export default {
   },
 
   async run(args = []) {
-    await this.build();
+    await this.build(args);
     await require('./task-run').default(args);
   },
 
   async runDev(args = []) {
     const chokidar = require('chokidar');
 
-    await this.buildDev();
+    await this.buildDev(args);
 
     const { buildFile, appDir } = require('./task-build');
     const watcher = chokidar.watch(appDir, {
       ignoreInitial: true,
     });
 
-    watcher.on('add', buildFile);
-    watcher.on('change', buildFile);
+    watcher.on('add', (f, s) => buildFile(f, s, args));
+    watcher.on('change', (f, s) => buildFile(f, s, args));
 
     await require('./task-run').default(args);
     watcher.close();
   },
 
   async test(args = []) {
-    await this.build({ development: false, test: true });
+    await this.build(args, { development: false, test: true });
     await require('./task-test').default(args);
   },
 
   async lintOnlyTest(args = []) {
-    await this.build({ development: false, test: true });
+    await this.build(args, { development: false, test: true });
     await require('./task-test').default([...args, 'test/lint']);
   },
 
@@ -65,9 +65,9 @@ export default {
     await require('./task-clean-package').default();
   },
 
-  async package() {
+  async package(args) {
     await this.clean();
-    await this.build();
+    await this.build(args);
     await this.config({ development: false, packaged: true });
     await require('./task-package').default();
   },
