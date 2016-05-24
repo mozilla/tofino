@@ -16,8 +16,6 @@
  * @module SQLite
  */
 
-/* eslint no-console: 0 */
-
 import sqlite3 from 'sqlite3';
 import thenifyAll from 'thenify-all';
 

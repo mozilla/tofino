@@ -1,4 +1,3 @@
-/* eslint no-console: 0, global-require: 0 */
 /*
 Copyright 2016 Mozilla
 
@@ -10,6 +9,8 @@ under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
+
+/* eslint global-require: 0 */
 
 import BUILD_CONFIG from '../../../../build-config';
 
