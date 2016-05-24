@@ -21,7 +21,7 @@ describe('renderer - sanity checks', function() {
 
   it('renders basic components', function() {
     expect($('#browser-container')).toExist();
-    expect($('#browser-location-title-bar').hasAttribute('hidden')).toBe(false);
+    expect($('#browser-location-title-bar').hasAttribute('hidden')).toBe(true);
     expect($$('#browser-tabbar .tab').length).toBe(1);
     expect($$('webview').length).toBeGreaterThan(0);
   });

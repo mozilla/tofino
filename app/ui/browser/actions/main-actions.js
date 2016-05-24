@@ -33,8 +33,18 @@ export function createTab(location: ?string = undefined,
     // We use the Page ID to associate the User Agent allocated session ID with the Page.
     const id = uuid.v4();
 
-    // Start loading a tab while asking the User Agent to start its browsing session.
+    // Start loading a tab while asking the User Agent to start its browsing session.  It's safe to
+    // dispatch sequentially, since these are "plain actions".  It's unfortunate to render multiple
+    // times, but c'est la vie.  If the actions change to also dispatch on future ticks, we might
+    // race to set focus across user interactions.
     dispatch({ type: types.CREATE_TAB, id, ancestorId, location, options, instrument: true });
+    // New tabs are opened with the URL bar focused, ready to enter a new location.
+    dispatch(setShowURLBar(id, true));
+    dispatch(setFocusedURLBar(id, true));
+
+    if (options.selected) {
+      dispatch(resetUIState()); // Reset global UI state when displaying the new tab immediately.
+    }
 
     // TODO: properly track window scope.
     userAgent.createSession(id, { ancestor: ancestorId, reason }).then(({ session }) =>
@@ -101,21 +111,27 @@ export function locationChanged(pageId: string, payload: Object): Action {
   };
 }
 
+export function resetUIState(): Action {
+  return (dispatch) => {
+    dispatch({ type: types.RESET_UI_STATE, instrument: false });
+  };
+}
+
 export function clearCompletions(): Action {
   return (dispatch) => {
     dispatch({ type: types.CLEAR_COMPLETIONS, instrument: false });
   };
 }
 
-export function setShowURLBar(visible) {
+export function setShowURLBar(pageId: string, visible: boolean) {
   return (dispatch) => {
-    dispatch({ type: types.SET_URL_INPUT_VISIBLE, payload: { visible } });
+    dispatch({ type: types.SET_URL_INPUT_VISIBLE, pageId, payload: { visible } });
   };
 }
 
-export function setFocusedURLBar(focused) {
+export function setFocusedURLBar(pageId: string, focused) {
   return (dispatch) => {
-    dispatch({ type: types.SET_URL_INPUT_FOCUSED, payload: { focused } });
+    dispatch({ type: types.SET_URL_INPUT_FOCUSED, pageId, payload: { focused } });
   };
 }
 

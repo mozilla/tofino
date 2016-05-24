@@ -120,7 +120,7 @@ export class Location extends Component {
   componentDidMount() {
     ipcRenderer.on('focus-url-bar', () => {
       this.refs.input.select();
-      this.props.dispatch(actions.setShowURLBar(true));
+      this.props.dispatch(actions.setShowURLBar(this.props.page.id, true));
     });
   }
 
@@ -208,21 +208,21 @@ export class Location extends Component {
   }
 
   handleTitleClick() {
-    this.props.dispatch(actions.setShowURLBar(true));
+    this.props.dispatch(actions.setShowURLBar(this.props.page.id, true));
   }
 
   handleTitleFocus() {
-    this.props.dispatch(actions.setShowURLBar(true));
+    this.props.dispatch(actions.setShowURLBar(this.props.page.id, true));
   }
 
   handleURLBarFocus() {
     this.refs.input.select();
-    this.props.dispatch(actions.setFocusedURLBar(true));
+    this.props.dispatch(actions.setFocusedURLBar(this.props.page.id, true));
   }
 
   handleURLBarBlur() {
-    this.props.dispatch(actions.setShowURLBar(false));
-    this.props.dispatch(actions.setFocusedURLBar(false));
+    this.props.dispatch(actions.setShowURLBar(this.props.page.id, false));
+    this.props.dispatch(actions.setFocusedURLBar(this.props.page.id, false));
   }
 
   handleURLBarKeyDown(ev, completionsForLocation) {
@@ -417,8 +417,8 @@ function mapStateToProps(state, ownProps) {
   return {
     userTypedLocation: selectors.getUserTypedLocation(state, ownProps.page.id),
     showCompletions: selectors.showCompletions(state),
-    showURLBar: selectors.showURLBar(state),
-    focusedURLBar: selectors.focusedURLBar(state),
+    showURLBar: selectors.showURLBar(state, ownProps.page.id),
+    focusedURLBar: selectors.focusedURLBar(state, ownProps.page.id),
     focusedResultIndex: selectors.focusedResultIndex(state),
   };
 }

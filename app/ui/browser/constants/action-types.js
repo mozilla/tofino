@@ -13,9 +13,9 @@ specific language governing permissions and limitations under the License.
 export const ATTACH_TAB = 'ATTACH_TAB';
 export const CLOSE_TAB = 'CLOSE_TAB';
 export const CREATE_TAB = 'CREATE_TAB';
-export const DUPLICATE_TAB = 'DUPLICATE_TAB';
 export const LOCATION_CHANGED = 'LOCATION_CHANGE';
 export const SET_USER_TYPED_LOCATION = 'SET_USER_TYPED_LOCATION';
+export const RESET_UI_STATE = 'RESET_UI_STATE';
 export const CLEAR_COMPLETIONS = 'CLEAR_COMPLETIONS';
 export const SET_URL_INPUT_VISIBLE = 'SET_URL_INPUT_VISIBLE';
 export const SET_URL_INPUT_FOCUSED = 'SET_URL_INPUT_FOCUSED';

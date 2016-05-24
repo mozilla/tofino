@@ -28,5 +28,5 @@ window.addEventListener('mouseover', e => {
     }
     el = el.parentNode;
   }
-  setStatus(false);
+  setStatus(null);
 });
