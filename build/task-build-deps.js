@@ -1,8 +1,6 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-/* eslint no-console: 0 */
-
 import path from 'path';
 import fs from 'fs-promise';
 import os from 'os';

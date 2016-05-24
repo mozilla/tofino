@@ -13,7 +13,6 @@ specific language governing permissions and limitations under the License.
 */
 
 /* eslint import/imports-first: "off" */
-/* eslint no-console: 0 */
 
 // Must go before any require statements.
 const browserStartTime = Date.now();

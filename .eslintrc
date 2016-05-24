@@ -38,10 +38,17 @@
 
   "rules": {
     "new-cap": ["error", {
-      "capIsNewExceptions": ["Immutable.List", "Immutable.Map", "Immutable.Record", "Immutable.Set"]
+      "capIsNewExceptions": [
+        "Router",
+        "Immutable.List",
+        "Immutable.Map",
+        "Immutable.Record",
+        "Immutable.Set"
+      ]
     }],
     "func-names": ["off"],
     "space-before-function-paren": ["error", "never"],
+    "no-confusing-arrow": ["off"],
     "no-param-reassign": ["off"],
     "no-return-assign": ["off"],
     "no-unused-vars": ["error", {
@@ -50,16 +57,8 @@
     }],
     "no-underscore-dangle": ["off"],
     "no-use-before-define": ["off"],
+    "dot-notation": ["off"],
     "eqeqeq": ["error", "allow-null"],
-    "lines-around-comment": ["error", {
-      "beforeBlockComment": true,
-      "afterBlockComment": false,
-      "beforeLineComment": true,
-      "afterLineComment": false,
-      "allowBlockStart": true,
-      "allowObjectStart": true,
-      "allowArrayStart": true
-    }],
     "flow-vars/define-flow-type": 1,
     "flow-vars/use-flow-type": 1,
     "react/display-name": ["error", { "ignoreTranspilerName": true }],

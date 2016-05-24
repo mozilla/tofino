@@ -10,8 +10,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-/* eslint no-console: 0 */
-
 import * as actions from './main-actions';
 import { getCurrentWebView } from '../browser-util';
 import { remote, clipboard, ipcRenderer } from '../../../shared/electron';

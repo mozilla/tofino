@@ -1,6 +1,7 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
-/* eslint object-shorthand: 0, global-require: 0 */
+
+/* eslint global-require: 0 */
 
 import expect from 'expect';
 import { Application } from 'spectron';
@@ -30,7 +31,7 @@ const Driver = {
   fixturesURL: null,
   port: null,
 
-  start: async function() {
+  async start() {
     expect(this.app).toBe(null, 'Attempting to start an already activated Electron instance');
 
     const server = startFixtureServer();
@@ -68,7 +69,7 @@ const Driver = {
     return this.app;
   },
 
-  stop: async function() {
+  async stop() {
     if (this.app && this.app.isRunning()) {
       await this.app.stop();
     }
@@ -86,7 +87,7 @@ const Driver = {
    *
    * @return Promise<Object>
    */
-  getReduxState: async function() {
+  async getReduxState() {
     const oldHandle = await this.setTargetToBrowserWindow();
 
     try {
@@ -109,7 +110,7 @@ const Driver = {
    * @param {Function} predicate
    * @return Promise
    */
-  waitUntilReduxState: async function(predicate) {
+  async waitUntilReduxState(predicate) {
     let result = false;
     do {
       const state = await this.getReduxState();
@@ -128,7 +129,7 @@ const Driver = {
   /**
    * Sets the webdriver target to the main browser window.
    */
-  setTargetToBrowserWindow: async function() {
+  async setTargetToBrowserWindow() {
     const { value: oldHandle } = await this.app.client.windowHandle();
     await this.app.client.window(this._bwHandle);
     return oldHandle;
@@ -141,7 +142,7 @@ const Driver = {
    *
    * @param {String} url
    */
-  setTargetByURL: async function(url) {
+  async setTargetByURL(url) {
     const { value: handles } = await this.app.client.windowHandles();
 
     for (const handle of handles) {
@@ -155,7 +156,7 @@ const Driver = {
     throw new Error(`No valid webdriver handles found for ${url}`);
   },
 
-  waitForCurrentTabLoaded: async function() {
+  async waitForCurrentTabLoaded() {
     await this.setTargetToBrowserWindow();
     return await this.app.client
       .waitForVisible('.active-browser-page[data-page-state="loaded"]');
@@ -165,7 +166,7 @@ const Driver = {
    * Clicks the `selector` via waiting for its existence, moving and finally
    * left clicking.
    */
-  click: async function(selector) {
+  async click(selector) {
     await this.app.client
       .waitForVisible(selector)
       .moveToObject(selector)
@@ -173,7 +174,7 @@ const Driver = {
     return this;
   },
 
-  navigate: async function(loc) {
+  async navigate(loc) {
     await this.setTargetToBrowserWindow();
     await this.click('#browser-location-title-bar');
     await this.app.client
@@ -181,24 +182,24 @@ const Driver = {
       .setValue('#urlbar-input', `${loc}${RETURN}`);
   },
 
-  navigateBack: async function() {
+  async navigateBack() {
     await this.setTargetToBrowserWindow();
     return await this.click('#browser-navbar-back');
   },
 
-  navigateForward: async function() {
+  async navigateForward() {
     await this.setTargetToBrowserWindow();
     return await this.click('#browser-navbar-forward');
   },
 
-  getURLValue: async function() {
+  async getURLValue() {
     const { value } = await Driver.client.execute(() =>
       document.querySelector('#urlbar-input').value
     );
     return value;
   },
 
-  waitForURLValue: async function(val) {
+  async waitForURLValue(val) {
     await Driver.client.waitUntil(() =>
       this.getURLValue().then(value => value === val),
     2000, 10);
@@ -207,7 +208,7 @@ const Driver = {
   /**
    * A bit hacky, but ensures we don't have the url bar focused
    */
-  blur: async function() {
+  async blur() {
     await this.setTargetToBrowserWindow();
 
     // If our URL bar is visible, send a tab event

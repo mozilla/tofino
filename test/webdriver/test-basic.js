@@ -1,6 +1,5 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
-/* eslint prefer-arrow-callback: 0 */
 
 import expect from 'expect';
 import Driver from '../utils/driver';

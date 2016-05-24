@@ -12,8 +12,6 @@
  specific language governing permissions and limitations under the License.
  */
 
-/* eslint no-console: 0 */
-
 /**
  * The storage module that makes up the majority of the profile service.
  *
@@ -543,4 +541,3 @@ export class ProfileStorage {
                .then((row) => Promise.resolve(row.user_version));
   }
 }
-

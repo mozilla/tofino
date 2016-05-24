@@ -4,8 +4,6 @@
 import path from 'path';
 import { spawn } from './utils';
 
-/* eslint no-console: 0 */
-
 export default async function(args) {
   const command = path.join(__dirname, '..', 'node_modules', '.bin', 'mocha');
 

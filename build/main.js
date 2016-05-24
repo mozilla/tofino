@@ -8,7 +8,7 @@
  */
 /* eslint-disable strict */
 /* eslint-disable import/no-commonjs */
-/* eslint-disable no-console */
+
 /* eslint-disable global-require */
 
 'use strict';
@@ -45,7 +45,6 @@ const checkNodeVersion = version => {
                   `node version manager, like nvm:\n` +
                   `https://github.com/creationix/nvm\n` +
                   `*****\n`);
-
     /* eslint-enable quotes */
   }
 };

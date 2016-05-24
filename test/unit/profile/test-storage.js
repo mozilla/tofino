@@ -1,8 +1,6 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-/* eslint no-console: 0 */
-
 import expect from 'expect';
 
 import fs from 'fs';
@@ -22,7 +20,7 @@ describe('Utility tests', () => {
 });
 
 describe('DB.open', () => {
-  it('Should create the DB file.', (done) => {
+  it('Should create the DB file.', function(done) {
     (async function () {
       try {
         const tempPath = tmp.tmpNameSync();
