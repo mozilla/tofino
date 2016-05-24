@@ -38,7 +38,13 @@
 
   "rules": {
     "new-cap": ["error", {
-      "capIsNewExceptions": ["Immutable.List", "Immutable.Map", "Immutable.Record", "Immutable.Set"]
+      "capIsNewExceptions": [
+        "Router",
+        "Immutable.List",
+        "Immutable.Map",
+        "Immutable.Record",
+        "Immutable.Set"
+      ]
     }],
     "func-names": ["off"],
     "space-before-function-paren": ["error", "never"],

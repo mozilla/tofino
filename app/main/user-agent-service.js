@@ -12,8 +12,6 @@
  specific language governing permissions and limitations under the License.
  */
 
-/* eslint no-console: 0 */
-
 import express from 'express';
 import expressWs from 'express-ws';
 import expressValidator from 'express-validator';
@@ -40,7 +38,7 @@ function configure(app: any, storage: ProfileStorage) {
 
   app.use(allowCrossDomain);
 
-  const router = express.Router(); // eslint-disable-line new-cap
+  const router = express.Router();
 
   /**
    * Catch errors from the given async function and forward them to `next` for handling.  This
