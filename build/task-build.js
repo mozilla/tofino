@@ -61,6 +61,16 @@ export async function buildFile(sourceFile, sourceStats, args = []) {
     const results = await transpile(sourceFile, {
       sourceMaps: development,
       sourceFileName: fileUrl(sourceFile),
+      presets: development ? [
+        // No development-only presets yet.
+      ] : [
+        'react-optimize',
+      ],
+      plugins: development ? [
+        // No development-only plugins yet.
+      ] : [
+        'transform-runtime',
+      ],
     });
 
     if (development) {

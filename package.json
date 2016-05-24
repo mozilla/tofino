@@ -21,6 +21,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "babel-polyfill": "6.7.4",
+    "babel-runtime": "6.9.0",
     "body-parser": "1.15.1",
     "electron-localshortcut": "0.6.0",
     "express": "4.13.4",
@@ -56,7 +57,9 @@
     "babel-plugin-transform-es2015-modules-commonjs": "6.8.0",
     "babel-plugin-transform-es2015-parameters": "6.9.0",
     "babel-plugin-transform-object-rest-spread": "6.8.0",
+    "babel-plugin-transform-runtime": "6.9.0",
     "babel-preset-react": "6.5.0",
+    "babel-preset-react-optimize": "1.0.1",
     "babel-register": "6.9.0",
     "check-dependencies": "0.12.0",
     "chokidar": "1.5.1",
