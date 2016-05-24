@@ -22,7 +22,7 @@ describe('Utility tests', () => {
 });
 
 describe('DB.open', () => {
-  it('Should create the DB file.', (done) => {
+  it('Should create the DB file.', function(done) {
     (async function () {
       try {
         const tempPath = tmp.tmpNameSync();
