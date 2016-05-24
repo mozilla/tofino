@@ -77,6 +77,7 @@ const menus = {
     label: 'Tools',
     submenu: [
       items.reloadApp,
+      items.toggleBrowserToolbox,
       items.toggleDevTools,
     ],
   },

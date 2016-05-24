@@ -59,6 +59,15 @@ class Page extends Component {
     webViewController.on(`navigate-to:${id}`,
       (_, loc) => webview.setAttribute('src', fixURL(loc)));
 
+    webViewController.on(`toggle-devtools:${id}`, () => {
+      if (!webview.isDevToolsOpened()) {
+        // Per-WebView devtools are always detached, regardless of 'detached' and 'mode' options.
+        webview.openDevTools();
+      } else {
+        webview.closeDevTools();
+      }
+    });
+
     webViewController.on(`capture-page:${id}`, () => {
       const script = 'window._readerify(window.document)';
       webview.executeJavaScript(script, false, readerResult => {

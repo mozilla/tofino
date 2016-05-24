@@ -80,6 +80,15 @@ class WebViewController extends EventEmitter {
     this.emit('capture-page', pageId);
     this.emit(`capture-page:${pageId}`, pageId);
   }
+
+  toggleDevtools(pageId) {
+    const index = getPageIndexById(this.getPages(), pageId);
+    assert(index >= 0, `Page ${pageId} not found in current state.`);
+    assert(isUUID(pageId), `Invalid page id: ${pageId}`);
+
+    this.emit('toggle-devtools', pageId);
+    this.emit(`toggle-devtools:${pageId}`, pageId);
+  }
 }
 
 export default WebViewController;

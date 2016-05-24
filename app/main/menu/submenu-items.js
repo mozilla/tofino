@@ -144,9 +144,9 @@ items.reloadApp = {
   },
 };
 
-items.toggleDevTools = {
-  label: 'Toggle Developer Tools',
-  accelerator: (process.platform === 'darwin') ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+items.toggleBrowserToolbox = {
+  label: 'Toggle Browser Toolbox',
+  accelerator: 'Alt+CmdOrCtrl+Shift+I',
   click(item, focusedWindow) {
     if (focusedWindow) {
       if (focusedWindow.isDevToolsOpened()) {
@@ -154,6 +154,16 @@ items.toggleDevTools = {
       } else {
         focusedWindow.openDevTools({ detach: true });
       }
+    }
+  },
+};
+
+items.toggleDevTools = {
+  label: 'Toggle Developer Tools',
+  accelerator: (process.platform === 'darwin') ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+  click(item, focusedWindow) {
+    if (focusedWindow) {
+      focusedWindow.webContents.send('toggle-devtools');
     }
   },
 };

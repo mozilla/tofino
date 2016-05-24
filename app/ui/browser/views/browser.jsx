@@ -167,4 +167,6 @@ function attachIPCRendererListeners(browserView) {
 
   ipcRenderer.on('capture-page', () =>
     webViewController.capturePage(browserView.props.currentPage.id));
+  ipcRenderer.on('toggle-devtools', () =>
+    webViewController.toggleDevtools(browserView.props.currentPage.id));
 }
