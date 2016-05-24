@@ -98,6 +98,9 @@ async function makeBrowserWindow(): Promise<electron.BrowserWindow> {
   browser.loadURL(fileUrl(path.join(UI_DIR, 'browser', 'browser.html')));
 
   hotkeys.bindBrowserWindowHotkeys(browser);
+  browser.once('closed', () => {
+    hotkeys.unbindBrowserWindowHotkeys(browser);
+  });
 
   return browser;
 }

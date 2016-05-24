@@ -43,6 +43,10 @@ export function bindBrowserWindowHotkeys(browserWindow) {
   });
 }
 
+export function unbindBrowserWindowHotkeys(browserWindow) {
+  shortcut.unregisterAll(browserWindow);
+}
+
 /**
  * To be used in responding to IPC 'synthesize-accelerator' messages, by looking
  * through hotkeys defined and firing the message to the active browser window if found.
