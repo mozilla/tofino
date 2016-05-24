@@ -64,17 +64,17 @@ export const UIState = Immutable.Record({
   // The url of the currently hovered-over link
   statusText: null,
 
-  // What the user has typed into the location bar, stored by page id
+  // What the user has typed into the location bar, stored by page ID.
   userTypedLocation: Immutable.Map(),
 
   // Should the autocomplete popup be visible
   showCompletions: false,
 
-  // Should the URL input be visible (or the page title)
-  showURLBar: false,
+  // Should the URL input be visible (or the page title), stored by page ID.
+  showURLBar: Immutable.Map(),
 
-  // Is the URL input focused
-  focusedURLBar: false,
+  // Should the URL input be focused, stored by page ID.
+  focusedURLBar: Immutable.Map(),
 
   // Which autocomplete result is selected
   focusedResultIndex: -1,

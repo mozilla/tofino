@@ -18,6 +18,9 @@ describe('Action - CREATE_TAB', () => {
     this.store = configureStore();
     this.getPages = () => selectors.getPages(this.store.getState());
     this.getCurrentPageIndex = () => selectors.getCurrentPageIndex(this.store.getState());
+    this.getCurrentPageId = () => selectors.getCurrentPage(this.store.getState()).id;
+    this.showURLBar = (pageId) => selectors.showURLBar(this.store.getState(), pageId);
+    this.focusedURLBar = (pageId) => selectors.focusedURLBar(this.store.getState(), pageId);
     this.dispatch = this.store.dispatch;
   });
 
@@ -58,6 +61,49 @@ describe('Action - CREATE_TAB', () => {
     expect(getCurrentPageIndex()).toEqual(1,
                                           'CREATE_TAB updates `currentPageIndex` when creating a' +
                                           ' new tab with location');
+  });
+
+  it('Should create a new tab and focus it if selected', function() {
+    const { getCurrentPageIndex, getCurrentPageId, showURLBar, focusedURLBar, dispatch } = this;
+    dispatch(actions.createTab());
+    dispatch(actions.setShowURLBar(getCurrentPageId(), false));
+    dispatch(actions.setFocusedURLBar(getCurrentPageId(), false));
+
+    // Assert initial conditions.
+    expect(getCurrentPageIndex()).toEqual(0);
+    expect(showURLBar(getCurrentPageId())).toEqual(false);
+    expect(focusedURLBar(getCurrentPageId())).toEqual(false);
+
+    dispatch(actions.createTab('https://github.com/'));
+
+    expect(getCurrentPageIndex()).toEqual(
+      1,
+      'CREATE_TAB updates `currentPageIndex` when creating a new tab');
+    expect(showURLBar(getCurrentPageId())).toEqual(
+      true,
+      'CREATE_TAB does show URL bar when tab is selected');
+    expect(focusedURLBar(getCurrentPageId())).toEqual(
+      true,
+      'CREATE_TAB does focus URL bar when tab is selected');
+  });
+
+  it('Should create a new tab but not focus it if not selected', function() {
+    const { getCurrentPageIndex, getCurrentPageId, showURLBar, focusedURLBar, dispatch } = this;
+    dispatch(actions.createTab());
+    dispatch(actions.setShowURLBar(getCurrentPageId(), false));
+    dispatch(actions.setFocusedURLBar(getCurrentPageId(), false));
+
+    dispatch(actions.createTab('https://github.com/', undefined, { selected: false }));
+
+    expect(getCurrentPageIndex()).toEqual(
+      0,
+      'CREATE_TAB does not update `currentPageIndex` when creating a new tab but not selecting it');
+    expect(showURLBar(getCurrentPageId())).toEqual(
+      false,
+      'CREATE_TAB does not show URL bar when tab is not selected');
+    expect(focusedURLBar(getCurrentPageId())).toEqual(
+      false,
+      'CREATE_TAB does not focus URL bar when tab is not selected');
   });
 
   it('Should send a message to the main process', function() {

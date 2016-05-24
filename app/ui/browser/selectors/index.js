@@ -40,12 +40,12 @@ export function showCompletions(state) {
   return state.uiState.showCompletions;
 }
 
-export function focusedURLBar(state) {
-  return state.uiState.focusedURLBar;
+export function focusedURLBar(state, pageId) {
+  return !!state.uiState.focusedURLBar.get(pageId);
 }
 
-export function showURLBar(state) {
-  return state.uiState.showURLBar;
+export function showURLBar(state, pageId) {
+  return !!state.uiState.showURLBar.get(pageId);
 }
 
 export function focusedResultIndex(state) {
