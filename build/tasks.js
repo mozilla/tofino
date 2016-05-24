@@ -52,12 +52,12 @@ export default {
   },
 
   async test(args = []) {
-    await this.build(args, { development: false, test: true });
+    await this.build(args, { test: true });
     await require('./task-test').default(args);
   },
 
   async lintOnlyTest(args = []) {
-    await this.build(args, { development: false, test: true });
+    await this.build(args, { test: true });
     await require('./task-test').default([...args, 'test/lint']);
   },
 
@@ -68,7 +68,7 @@ export default {
   async package(args) {
     await this.clean();
     await this.build(args);
-    await this.config({ development: false, packaged: true });
+    await this.config({ packaged: true });
     await require('./task-package').default();
   },
 };
