@@ -65,7 +65,7 @@ const LOCATION_BAR_AUTOCOMPLETE_STYLE = Style.registerStyle({
 const LOCATION_BAR_RESULTS_SNIPPET_STYLE = Style.registerStyle({
   color: 'rgba(100, 100, 100, 1)',
   padding: '0.5em',
-  'white-space': 'pre-wrap',           // So that spaces show up in snippets.
+  whiteSpace: 'pre-wrap',           // So that spaces show up in snippets.
   zIndex: 2,
 });
 
@@ -283,8 +283,7 @@ export class Location extends Component {
         <div style={{
           // We're nesting multi-line items inside a flexbox, so
           // we need to mark these children as columnar.
-          'flex-flow': 'column',
-          display: 'flex',
+          flexDirection: 'column',
         }}>
           <div
             key={completion.uri}
