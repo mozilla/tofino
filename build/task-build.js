@@ -35,6 +35,14 @@ const transpile = (filename, options = {}) => new Promise((resolve, reject) => {
 export async function buildFile(sourceFile, sourceStats, force = false) {
   let targetFile = getTargetPath(sourceFile);
 
+  const extension = path.extname(sourceFile);
+  const baseFile = targetFile.substring(0, targetFile.length - extension.length);
+  const isJS = extension === '.js' || extension === '.jsx';
+
+  if (isJS) {
+    targetFile = `${baseFile}.js`;
+  }
+
   if (!force) {
     try {
       const targetStats = await fs.stat(targetFile);
@@ -42,15 +50,14 @@ export async function buildFile(sourceFile, sourceStats, force = false) {
         return;
       }
     } catch (e) {
-      // The target may not exist. For whatever reason just go and try to build it
+      // The target may not exist.
+      // For whatever reason just go and try to build it.
     }
   }
 
-  const extension = path.extname(sourceFile);
-  if (extension === '.js' || extension === '.jsx') {
-    const baseFile = targetFile.substring(0, targetFile.length - extension.length);
-    targetFile = `${baseFile}.js`;
+  if (isJS) {
     const mapFile = `${baseFile}.map`;
+
     const results = await transpile(sourceFile, {
       sourceMaps: development,
       sourceFileName: fileUrl(sourceFile),
