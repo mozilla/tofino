@@ -1,12 +1,6 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-/**
- * Disable eslint "import" rules, since it cannot handle importing directly
- * from .json files, which we do in fact support through node.
- */
-/* eslint-disable import/namespace, import/default, import/no-named-as-default */
-
 import os from 'os';
 import path from 'path';
 import fs from 'fs-promise';
