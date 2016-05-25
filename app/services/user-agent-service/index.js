@@ -19,9 +19,10 @@ process.on('uncaughtException', console.error);
 process.on('unhandledRejection', console.error);
 
 ProfileStorage.open(path.join(__dirname, '..', '..')).then(async function (profileStorage) {
-  await userAgentService.start(profileStorage,
-                               endpoints.UA_SERVICE_PORT,
-                               { debug: true, allowReuse: false });
+  await userAgentService.start({
+    storage: profileStorage,
+    options: { debug: false },
+  });
 
   console.log(`Started a User Agent service running on ${endpoints.UA_SERVICE_PORT}.`);
 });

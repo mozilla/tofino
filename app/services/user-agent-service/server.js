@@ -13,6 +13,7 @@
 import { makeServer, autoCaughtRouteError } from '../common';
 import { SnippetSize, StarOp } from './storage';
 import * as profileDiffs from '../../shared/profile-diffs';
+import * as endpoints from '../../shared/constants/endpoints';
 
 const allowCrossDomain = function(req, res, next) {
   res.header('Access-Control-Allow-Origin', 'tofino://');
@@ -203,8 +204,11 @@ function configure(app, router, storage) {
   }));
 }
 
-export async function start(storage, port, options) {
-  const { setup, stop } = makeServer('v1', '127.0.0.1', port);
+export async function start({ storage, options }) {
+  const { setup, stop } = makeServer(
+    endpoints.UA_SERVICE_VERSION,
+    endpoints.UA_SERVICE_ADDR,
+    endpoints.UA_SERVICE_PORT);
 
   await setup((app, router) => {
     configure(app, router, storage);
