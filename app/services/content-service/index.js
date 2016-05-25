@@ -10,20 +10,16 @@
  specific language governing permissions and limitations under the License.
  */
 
-import path from 'path';
-
-import * as userAgentService from './server';
-import { ProfileStorage } from './storage';
+import * as contentService from '../content-service/server';
 import * as endpoints from '../../shared/constants/endpoints';
 
 process.on('uncaughtException', console.error);
 process.on('unhandledRejection', console.error);
 
-ProfileStorage.open(path.join(__dirname, '..', '..')).then(async function (profileStorage) {
-  await userAgentService.start({
-    storage: profileStorage,
-    options: { debug: false },
-  });
-
-  console.log(`Started a User Agent service running on ${endpoints.UA_SERVICE_PORT}.`);
+// Start the content service, serving `tofino://` pages.
+// XXX: We're not actually registering a `tofino` http protocol just yet,
+// due to a possible bug in electron. See https://github.com/electron/electron/issues/5714
+// Currently we're just pointing the webview directly at the server address.
+contentService.start().then(() => {
+  console.log(`Started a new User Content service running on ${endpoints.CONTENT_SERVER_PORT}.`);
 });
