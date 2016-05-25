@@ -10,12 +10,7 @@
  specific language governing permissions and limitations under the License.
  */
 
-import express from 'express';
-import expressWs from 'express-ws';
-import expressValidator from 'express-validator';
-import bodyParser from 'body-parser';
-import morgan from 'morgan';
-
+import { makeServer, autoCaughtRouteError } from '../common';
 import { SnippetSize, StarOp } from './storage';
 import * as profileDiffs from '../../shared/profile-diffs';
 
@@ -27,34 +22,8 @@ const allowCrossDomain = function(req, res, next) {
   next();
 };
 
-function configure(app, storage) {
-  app.use(morgan('combined'));
-
-  // These need to be register before our routes.
-  app.use(bodyParser.json());
-  app.use(expressValidator()); // Keep this immediately after express.bodyParser().
-
+function configure(app, router, storage) {
   app.use(allowCrossDomain);
-
-  const router = express.Router();
-
-  /**
-   * Catch errors from the given async function and forward them to `next` for handling.  This
-   * allows to write "loose" handling code and still opt-in to Express's error handling backstop.
-   *
-   * @param fun: async function(req, res, next)
-   * @returns {function(req, res, next)}
-   */
-  function wrap(fun) {
-    return async function(...args) {
-      try {
-        await fun(...args);
-      } catch (e) {
-        const next = args[2];
-        next(e);
-      }
-    };
-  }
 
   async function initial() {
     const stars = await storage.starredURLs();
@@ -63,6 +32,7 @@ function configure(app, storage) {
   }
 
   const wsClients = [];
+
   router.ws('/ws', async function(ws, _req) {
     wsClients.push(ws);
 
@@ -104,215 +74,145 @@ function configure(app, storage) {
     // TODO: only send add/remove starredness for `url`, rather than grabbing the whole set.
     const stars = await storage.starredURLs();
     sendDiff(profileDiffs.bookmarks(stars));
-
     sendDiff({ type: '/stars/recent', payload: await storage.recentlyStarred() });
   }
 
-  router.post('/session/start', wrap(async function(req, res) {
-    req.checkBody('scope').optional().isInt();
-    req.checkBody('ancestor').optional().isInt();
-
-    const errors = req.validationErrors();
-    if (errors) {
-      console.warn(errors);
-      res.status(401).json(errors);
-      return;
-    }
-
-    const { scope, ancestor } = req.body;
-    const session = await storage.startSession(scope, ancestor);
-    res.json({ session });
+  router.post('/session/start', autoCaughtRouteError({
+    validator(req) {
+      req.checkBody('scope').optional().isInt();
+      req.checkBody('ancestor').optional().isInt();
+    },
+    async method(req, res) {
+      const { scope, ancestor } = req.body;
+      const session = await storage.startSession(scope, ancestor);
+      res.json({ session });
+    },
   }));
 
-  router.post('/session/end', wrap(async function(req, res) {
-    req.checkBody('session').isInt().notEmpty();
-
-    const errors = req.validationErrors();
-    if (errors) {
-      res.status(401).json(errors);
-      return;
-    }
-
-    const { session } = req.body;
-    await storage.endSession(session);
-    res.json({});
+  router.post('/session/end', autoCaughtRouteError({
+    validator(req) {
+      req.checkBody('session').isInt().notEmpty();
+    },
+    async method(req, res) {
+      const { session } = req.body;
+      await storage.endSession(session);
+      res.json({});
+    },
   }));
 
-  router.post('/visits', wrap(async function(req, res) {
-    req.checkBody('url').notEmpty();
-    req.checkBody('title').optional();
-    req.checkBody('session').notEmpty().isInt();
-
-    const errors = req.validationErrors();
-    if (errors) {
-      res.status(401).json(errors);
-      return;
-    }
-
-    // TODO: include visit types.
-    const { url, session, title } = req.body;
-    await storage.visit(url, session, title);
-    res.json({});
+  router.post('/visits', autoCaughtRouteError({
+    validator(req) {
+      req.checkBody('url').notEmpty();
+      req.checkBody('title').optional();
+      req.checkBody('session').notEmpty().isInt();
+    },
+    async method(req, res) {
+      // TODO: include visit types.
+      const { url, session, title } = req.body;
+      await storage.visit(url, session, title);
+      res.json({});
+    },
   }));
 
-  router.get('/visits', wrap(async function(req, res) {
-    req.checkQuery('limit').isInt().notEmpty();
-    const errors = req.validationErrors();
-    if (errors) {
-      res.status(401).json(errors);
-      return;
-    }
-
-    const limit = parseInt(req.query.limit, 10) || Number.MAX_SAFE_INTEGER;
-
-    // TODO: this should return full-fledged page objects.
-    const pages = await storage.visited(0, limit);
-    res.json({ pages });
+  router.get('/visits', autoCaughtRouteError({
+    validator(req) {
+      req.checkQuery('limit').isInt().notEmpty();
+    },
+    async method(req, res) {
+      // TODO: this should return full-fledged page objects.
+      const limit = parseInt(req.query.limit, 10) || Number.MAX_SAFE_INTEGER;
+      const pages = await storage.visited(0, limit);
+      res.json({ pages });
+    },
   }));
 
-  router.get('/query', wrap(async function(req, res) {
-    req.checkQuery('q').notEmpty();
-    req.checkQuery('limit').optional().isInt();
-    req.checkQuery('since').optional().isInt();
-    req.checkQuery('snippetSize').optional();
-
-    const errors = req.validationErrors();
-    if (errors) {
-      res.status(401).json(errors);
-      return;
-    }
-
-    const snippetSize = SnippetSize[req.query.snippetSize] || SnippetSize.medium;
-    const { q } = req.query;
-    const results = await storage.query(q, req.query.since, req.query.limit, snippetSize);
-    res.json({ results });
+  router.get('/query', autoCaughtRouteError({
+    validator(req) {
+      req.checkQuery('q').notEmpty();
+      req.checkQuery('limit').optional().isInt();
+      req.checkQuery('since').optional().isInt();
+      req.checkQuery('snippetSize').optional();
+    },
+    async method(req, res) {
+      const snippetSize = SnippetSize[req.query.snippetSize] || SnippetSize.medium;
+      const { q } = req.query;
+      const results = await storage.query(q, req.query.since, req.query.limit, snippetSize);
+      res.json({ results });
+    },
   }));
 
-  router.put('/stars/:url', wrap(async function(req, res) {
-    req.checkParams('url').notEmpty();
-    req.checkBody('title').optional();
-    req.checkBody('session').isInt().notEmpty();
+  router.put('/stars/:url', autoCaughtRouteError({
+    validator(req) {
+      req.checkParams('url').notEmpty();
+      req.checkBody('title').optional();
+      req.checkBody('session').isInt().notEmpty();
+    },
+    async method(req, res) {
+      const { session, _title } = req.body;
+      await storage.starPage(req.params.url, session, StarOp.star);
+      res.json({});
 
-    const errors = req.validationErrors();
-    if (errors) {
-      res.status(401).json(errors);
-      return;
-    }
-
-    const { session, _title } = req.body;
-    await storage.starPage(req.params.url, session, StarOp.star);
-    res.json({});
-
-    dispatchBookmarkDiffs(); // Spawn, but don't await.
+      dispatchBookmarkDiffs(); // Spawn, but don't await.
+    },
   }));
 
-  router.delete('/stars/:url', wrap(async function(req, res) {
-    req.checkParams('url').notEmpty();
-    req.checkBody('session').isInt().notEmpty();
+  router.delete('/stars/:url', autoCaughtRouteError({
+    validator(req) {
+      req.checkParams('url').notEmpty();
+      req.checkBody('session').isInt().notEmpty();
+    },
+    async method(req, res) {
+      const { session, _title } = req.body;
+      await storage.starPage(req.params.url, session, StarOp.unstar);
+      res.json({});
 
-    const errors = req.validationErrors();
-    if (errors) {
-      res.status(401).json(errors);
-      return;
-    }
-
-    const { session, _title } = req.body;
-    await storage.starPage(req.params.url, session, StarOp.unstar);
-    res.json({});
-
-    dispatchBookmarkDiffs(); // Spawn, but don't await.
+      dispatchBookmarkDiffs(); // Spawn, but don't await.
+    },
   }));
 
-  router.get('/stars', wrap(async function(req, res) {
-    const errors = req.validationErrors();
-    if (errors) {
-      res.status(401).json(errors);
-      return;
-    }
-
-    const stars = await storage.starredURLs();
-    res.json({ stars });
+  router.get('/stars', autoCaughtRouteError({
+    async method(req, res) {
+      const stars = await storage.starredURLs();
+      res.json({ stars });
+    },
   }));
 
-  router.get('/recentStars', wrap(async function(req, res) {
-    req.checkQuery('limit').isInt().notEmpty();
-    const errors = req.validationErrors();
-    if (errors) {
-      res.status(401).json(errors);
-      return;
-    }
-
-    const limit = parseInt(req.query.limit, 10) || Number.MAX_SAFE_INTEGER;
-    const stars = await storage.recentlyStarred(limit);
-    res.json({ stars });
+  router.get('/recentStars', autoCaughtRouteError({
+    validator(req) {
+      req.checkQuery('limit').isInt().notEmpty();
+    },
+    async method(req, res) {
+      const limit = parseInt(req.query.limit, 10) || Number.MAX_SAFE_INTEGER;
+      const stars = await storage.recentlyStarred(limit);
+      res.json({ stars });
+    },
   }));
 
-  router.post('/pages/:url', wrap(async function(req, res) {
-    req.checkParams('url').notEmpty();
-    req.checkBody(['page', 'textContent']).notEmpty();
-    req.checkBody('session').isInt().notEmpty();
-
-    const errors = req.validationErrors();
-    if (errors) {
-      res.status(401).json(errors);
-      return;
-    }
-
-    const { page, session } = req.body;
-    page.uri = req.params.url;
-    await storage.savePage(page, session);
-    res.json({});
+  router.post('/pages/:url', autoCaughtRouteError({
+    validator(req) {
+      req.checkParams('url').notEmpty();
+      req.checkBody(['page', 'textContent']).notEmpty();
+      req.checkBody('session').isInt().notEmpty();
+    },
+    async method(req, res) {
+      const { page, session } = req.body;
+      page.uri = req.params.url;
+      await storage.savePage(page, session);
+      res.json({});
+    },
   }));
-
-  // Version namespace!
-  app.use('/v1', router);
-
-  // Must follow route definitions!
-  app.use((error, req, res, _next) => {
-    console.error(error.stack);
-    res.status(500).json({ error, stack: error.stack });
-  });
 }
 
-let server;
-function stop() {
-  return new Promise((res, rej) => {
-    server.close(err => {
-      if (err) {
-        rej(err);
-      } else {
-        res();
-      }
-    });
-  });
-}
+export async function start(storage, port, options) {
+  const { setup, stop } = makeServer('v1', '127.0.0.1', port);
 
-/**
- * Exposes a function that starts up an Express static server
- * to the `./fixtures` directory on port 8080.
- * Returns a promise that resolves to an object containing
- * both `port` and `stop` function to stop the server.
- *
- * @return {Promise<{ port, stop }>}
- */
-export function start(storage, port, options = {}) {
-  const { debug } = options;
+  await setup((app, router) => {
+    configure(app, router, storage);
 
-  return new Promise((resolve) => {
-    const app = express();
-    const { getWss } = expressWs(app);
-
-    configure(app, storage);
-
-    if (debug) {
+    if (options.debug) {
       storage.db.db.on('trace', console.log);
     }
-
-    // Sadly, app.listen does not return the HTTP server just yet.
-    // Therefore, we extract it manually below.
-    app.listen(port, '127.0.0.1', () => {
-      server = getWss()._server;
-      resolve();
-    });
   });
+
+  return { stop };
 }
