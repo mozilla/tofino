@@ -16,5 +16,5 @@ container.setAttribute('id', 'browser-container');
 document.body.appendChild(container);
 
 // Require these so we can transpile the client code on the fly
-// require('babel-polyfill');
-// require('babel-register')();
+require('babel-polyfill');
+require('babel-register')();
