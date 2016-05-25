@@ -18,9 +18,17 @@ export default async function(args) {
   // If no arguments passed in, we must run all tests; both mocha
   // and electron-mocha.
   if (!args.length) {
-    await runMochaTests(DEFAULT_UNIT_TESTS);
-    await runRendererTests(DEFAULT_RENDERER_TESTS);
-    await runMochaTests(DEFAULT_WEBDRIVER_TESTS);
+    // Catch all errors from each suite so we can continue
+    // running in the event of failure, because we still want to run
+    // all tests in series, but reject if any suite fails after
+    // we're done.
+    const errors = [];
+    await runMochaTests(DEFAULT_UNIT_TESTS).catch(e => errors.push(e));
+    await runRendererTests(DEFAULT_RENDERER_TESTS).catch(e => errors.push(e));
+    await runMochaTests(DEFAULT_WEBDRIVER_TESTS).catch(e => errors.push(e));
+    if (errors.length) {
+      throw errors[0];
+    }
   } else {
     // If we get a path passed in, crudely check if we should run
     // our renderer tests, or normal mocha tests. This will fail for complex
