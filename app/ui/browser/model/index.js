@@ -62,13 +62,13 @@ export const Profile = Immutable.Record({
  */
 export const UIState = Immutable.Record({
   // The url of the currently hovered-over link
-  statusText: false,
+  statusText: null,
 
   // What the user has typed into the location bar, stored by page id
   userTypedLocation: Immutable.Map(),
 
   // Should the autocomplete popup be visible
-  showCompletions: true,
+  showCompletions: false,
 
   // Should the URL input be visible (or the page title)
   showURLBar: false,
