@@ -6,7 +6,7 @@
 import expect from 'expect';
 import fetchMock from 'fetch-mock';
 
-import configureStore from '../../../../../app/ui/browser/store/store';
+import { createBrowserStore } from '../../../../../app/ui/browser/store';
 import * as actions from '../../../../../app/ui/browser/actions/main-actions';
 import * as selectors from '../../../../../app/ui/browser/selectors';
 import * as utils from '../../../../utils/async';
@@ -16,7 +16,7 @@ describe('Action - bookmark', () => {
   const session = 1;
 
   beforeEach(function() {
-    this.store = configureStore();
+    this.store = createBrowserStore();
     this.getProfile = () => selectors.getProfile(this.store.getState());
     this.getPages = () => selectors.getPages(this.store.getState());
     this.dispatch = this.store.dispatch;

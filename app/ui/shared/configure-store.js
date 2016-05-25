@@ -12,11 +12,9 @@ specific language governing permissions and limitations under the License.
 
 import { applyMiddleware, createStore } from 'redux';
 import createLogger from 'redux-logger';
-import rootReducer from '../reducers';
-import thunk from '../../../shared/thunk';
-import * as model from '../model/index';
-import * as instrument from '../../shared/instrument';
-import BUILD_CONFIG from '../../../../build-config';
+import thunk from '../../shared/thunk';
+import * as instrument from './instrument';
+import BUILD_CONFIG from '../../../build-config';
 
 const instrumenter = _store => next => action => {
   if (action.instrument) {
@@ -25,29 +23,17 @@ const instrumenter = _store => next => action => {
   return next(action);
 };
 
-export default function configureStore(initialState) {
+export default function(rootReducer, initialState) {
   const middleware = [instrumenter, thunk];
 
   if (BUILD_CONFIG.development) {
     middleware.unshift(createLogger({
-      predicate: (getState, action) => typeof action !== 'function',
       duration: true,
       collapsed: true,
-      stateTransformer(state) {
-        return state.toJS();
-      },
+      predicate: (getState, action) => typeof action !== 'function',
+      stateTransformer: (state) => state.toJS(),
     }));
   }
 
-  if (!initialState) {
-    // This gets a "blank" state that may not be renderable.
-    initialState = rootReducer(undefined, { type: null });
-  }
-
-  // We want a Record, not just a Map.  Upgrade!
-  initialState = new model.State(initialState);
-
-  const store = createStore(rootReducer, initialState, applyMiddleware(...middleware));
-
-  return store;
+  return createStore(rootReducer, initialState, applyMiddleware(...middleware));
 }

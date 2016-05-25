@@ -8,7 +8,7 @@ import Immutable from 'immutable';
 
 import { Location } from '../../../../../../app/ui/browser/views/navbar/location';
 import { Page, Profile } from '../../../../../../app/ui/browser/model/index';
-import configureStore from '../../../../../../app/ui/browser/store/store';
+import { createBrowserStore } from '../../../../../../app/ui/browser/store';
 
 function createSpyProps(store) {
   const props = {
@@ -35,7 +35,7 @@ describe('Location', () => {
   let spyProps;
 
   beforeEach(() => {
-    store = configureStore();
+    store = createBrowserStore();
     spyProps = createSpyProps(store);
   });
 

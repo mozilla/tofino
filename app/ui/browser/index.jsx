@@ -29,15 +29,14 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
 import App from './views/app';
-import configureStore from './store/store';
+import { createBrowserStore } from './store';
 import * as actions from './actions/main-actions';
 import * as profileDiffs from '../../shared/profile-diffs';
 import BUILD_CONFIG from '../../../build-config';
 import UserAgentClient from '../../shared/user-agent-client';
 
 const userAgentClient = new UserAgentClient();
-
-const store = configureStore();
+const store = createBrowserStore();
 
 const chrome = (
   <Provider store={store}>

@@ -6,7 +6,7 @@
 import expect from 'expect';
 import fetchMock from 'fetch-mock';
 
-import configureStore from '../../../../../app/ui/browser/store/store';
+import { createBrowserStore } from '../../../../../app/ui/browser/store';
 import * as actions from '../../../../../app/ui/browser/actions/main-actions';
 import * as selectors from '../../../../../app/ui/browser/selectors';
 
@@ -14,7 +14,7 @@ import * as endpoints from '../../../../../app/shared/constants/endpoints';
 
 describe('Action - SET_USER_TYPED_LOCATION', () => {
   beforeEach(function() {
-    this.store = configureStore();
+    this.store = createBrowserStore();
     this.getPages = () => selectors.getPages(this.store.getState());
     this.getUserTypedLocation =
       pageId => selectors.getUserTypedLocation(this.store.getState(), pageId);
