@@ -2,9 +2,8 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 /* eslint prefer-arrow-callback: 0 */
 /* eslint no-undef: 0 */
-/* eslint-disable import/no-commonjs */
 
-const expect = require('expect');
+import expect from 'expect';
 
 describe('renderer - sanity checks', function() {
   it('has access to expected globals', function() {
