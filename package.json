@@ -84,7 +84,7 @@
     "glob": "7.0.3",
     "gulp-vinyl-zip": "1.2.2",
     "jsdom": "9.2.0",
-    "mocha": "2.5.2",
+    "mocha": "2.5.3",
     "mocha-eslint": "2.0.2",
     "nyc": "6.4.0",
     "react-addons-perf": "15.1.0",
