@@ -25,7 +25,7 @@
     "body-parser": "1.15.1",
     "electron-localshortcut": "0.6.0",
     "express": "4.13.4",
-    "express-validator": "2.20.4",
+    "express-validator": "2.20.5",
     "express-ws": "2.0.0-rc.1",
     "immutable": "3.7.6",
     "less-mkdirp": "1.0.1",
