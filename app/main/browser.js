@@ -37,73 +37,17 @@ import * as hotkeys from './hotkeys';
 import * as menu from './menu/index';
 import * as instrument from '../services/instrument';
 import registerAboutPages from './about-pages';
+import * as BW from './browser-window';
 import { ProfileStorage } from '../services/storage';
 import * as userAgentService from './user-agent-service';
 const profileStoragePromise = ProfileStorage.open(path.join(__dirname, '..', '..'));
-import { UI_DIR, fileUrl } from './util';
-import BUILD_CONFIG from '../../build-config';
 
 import WebSocket from 'ws';
 import * as endpoints from '../shared/constants/endpoints';
 
-const BrowserWindow = electron.BrowserWindow;  // create native browser window.
 const app = electron.app; // control application life.
 const ipc = electron.ipcMain;
 const globalShortcut = electron.globalShortcut;
-
-/**
- * Top-level list of Browser Windows.
- */
-const browserWindowIds = [];
-
-async function makeBrowserWindow(): Promise<electron.BrowserWindow> {
-  const profileStorage = await profileStoragePromise;
-
-  // TODO: don't abuse the storage layer's session ID generation to produce scopes.
-  const scope = await profileStorage.startSession();
-
-  // Create the browser window.
-  const browser = new BrowserWindow({
-    center: false,
-    width: 1366,
-    height: 768,
-    minWidth: 512,
-    minHeight: 128,
-    frame: false,
-    show: false,
-  });
-  browser.scope = scope;
-
-  browser.didFinishLoadPromise = new Promise((resolve, _reject) => {
-    browser.webContents.once('did-finish-load', () => {
-      const browserDidFinishLoadTime = Date.now();
-      instrument.event('browser', 'READY', 'ms', browserDidFinishLoadTime - browserStartTime);
-      menu.buildAppMenu(menuData);
-
-      resolve();
-    });
-  });
-
-  browser.once('window-ready', (error) => {
-    // Show this BW (and a devtools window on error).
-    if (!browser.isDestroyed()) {
-      browser.show();
-      if (BUILD_CONFIG.development && error) {
-        browser.openDevTools({ detach: true });
-      }
-    }
-  });
-
-  // Start loading browser chrome.
-  browser.loadURL(fileUrl(path.join(UI_DIR, 'browser', 'browser.html')));
-
-  hotkeys.bindBrowserWindowHotkeys(browser);
-  browser.once('closed', () => {
-    hotkeys.unbindBrowserWindowHotkeys(browser);
-  });
-
-  return browser;
-}
 
 const appStartupTime = Date.now();
 instrument.event('app', 'STARTUP');
@@ -120,7 +64,9 @@ app.on('ready', async function() {
   // Register `about:*` protocols after app's 'ready' event
   registerAboutPages();
 
-  await newBrowserWindow();
+  await BW.createBrowserWindow(profileStoragePromise, () => {
+    instrument.event('browser', 'READY', 'ms', Date.now() - browserStartTime);
+  });
 });
 
 // Unregister all shortcuts.
@@ -142,78 +88,36 @@ app.on('window-all-closed', () => {
 app.on('activate', async function() {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (browserWindowIds.length === 0) {
-    await newBrowserWindow();
+  if (electron.BrowserWindow.getAllWindows().length === 0) {
+    await BW.createBrowserWindow(profileStoragePromise, () => menu.buildAppMenu(menuData));
   }
 });
 
-async function newBrowserWindow(tabInfo: ?Object) {
-  const bw = await makeBrowserWindow(tabInfo);
-  browserWindowIds.push(bw.id);
-  if (BUILD_CONFIG.development) {
-    // In development, we'll always show the window and devtools immediately, rather than waiting
-    // for 'window-ready' (in both success and error cases).  This leads to a bit of paint flicker,
-    // but allows to debug index.jsx errors that prevent the onerror handling registering and
-    // firing.  Such errors might include import and parse errors.
-    bw.openDevTools({ detach: true });
-    bw.show();
-  }
-  return bw;
-}
-
-async function closeBrowserWindow(id: number) {
-  const index = browserWindowIds.indexOf(id);
-  if (index < 0) {
-    return;
-  }
-  browserWindowIds.splice(index, 1);
-
-  const bw = BrowserWindow.fromId(id);
-  if (bw) {
-    bw.close();
-  }
-}
-
-ipc.on('new-browser-window', async function(_event, args) {
-  await newBrowserWindow(args);
+ipc.on('new-browser-window', async function() {
+  await BW.createBrowserWindow(profileStoragePromise, () => menu.buildAppMenu(menuData));
 });
 
-ipc.on('close-browser-window', async function (event, _args) {
-  if (!event || !event.sender) {
-    return;
-  }
-  const bw = BrowserWindow.fromWebContents(event.sender);
-  if (!bw) {
-    return;
-  }
-  await closeBrowserWindow(bw.id);
-});
+ipc.on('close-browser-window', BW.onlyWhenFromBrowserWindow(async function(bw) {
+  await BW.closeBrowserWindow(bw);
+}));
 
-ipc.on('instrument-event', (event, args) => {
-  // Until we transpile app/, we can't destructure in the argument list or inline here.
-  instrument.event(args.name, args.method, args.label, args.value);
-});
-
-ipc.on('window-ready', (event, ...args) => {
+ipc.on('window-ready', BW.onlyWhenFromBrowserWindow((bw, ...args) => {
   // Pass through to the BrowserWindow instance.  This just makes it easier to do things per-BW.
-  const bw = BrowserWindow.fromWebContents(event.sender);
-  if (bw) {
-    bw.emit('window-ready', ...args);
-  }
-});
+  bw.emit('window-ready', ...args);
+}));
+
+ipc.on('open-menu', BW.onlyWhenFromBrowserWindow(bw => {
+  menu.buildWindowMenu(menuData).popup(bw);
+}));
 
 ipc.on('synthesize-accelerator', (...args) => {
   hotkeys.handleIPCAcceleratorCommand(...args);
   menu.handleIPCAcceleratorCommand(...args);
 });
 
-ipc.on('open-menu', (event) => {
-  const bw = BrowserWindow.fromWebContents(event.sender);
-  if (!bw) {
-    return;
-  }
-
-  menu.buildWindowMenu(menuData).popup(bw);
+ipc.on('instrument-event', (event, args) => {
+  // Until we transpile app/, we can't destructure in the argument list or inline here.
+  instrument.event(args.name, args.method, args.label, args.value);
 });
 
 let ws = undefined;
