@@ -10,13 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import * as contentURLs from '../../../shared/constants/content-pages-locations';
+import * as endpoints from './endpoints';
 
-export const HOME_PAGE = contentURLs.HISTORY_PAGE;
-
-export const NAVBAR_EXPANDED_HEIGHT = 55; // px
-export const TABBAR_HEIGHT = 30; // px
-export const TAB_DEFAULT_WIDTH = 20; // vw;
-
-// Show autocompletions when typing in location bar
-export const SHOW_COMPLETIONS = true;
+export const HISTORY_PAGE = `${endpoints.CONTENT_SERVER_HTTP}/history.html`;
+export const STARS_PAGE = `${endpoints.CONTENT_SERVER_HTTP}/stars.html`;
