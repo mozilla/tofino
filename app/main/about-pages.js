@@ -12,12 +12,11 @@ specific language governing permissions and limitations under the License.
 
 import path from 'path';
 import { protocol } from 'electron';
-import { UI_DIR } from './util';
+import { CONTENT_UI_DIR } from '../shared/paths-util';
 
 const NOT_FOUND_ERROR = 404;
-const ABOUT_PROTOCOL_PREFIX = 'tofino';
-const ABOUT_DIR = path.join(UI_DIR, 'about');
-const ABOUT_PAGES = new Set([
+const CONTENT_PROTOCOL_PREFIX = 'tofino';
+const CONTENT_PAGES = new Set([
   'history',
   'mozilla',
   'stars',
@@ -34,9 +33,9 @@ const ABOUT_PAGES = new Set([
  *   https://github.com/electron/electron/issues/2618
  */
 export default function() {
-  protocol.registerFileProtocol(ABOUT_PROTOCOL_PREFIX, (request, callback) => {
-    const pageName = request.url.substr(ABOUT_PROTOCOL_PREFIX.length + 3);
-    const pagePath = path.join(ABOUT_DIR, `${pageName}.html`);
-    callback(ABOUT_PAGES.has(pageName) ? pagePath : NOT_FOUND_ERROR);
+  protocol.registerFileProtocol(CONTENT_PROTOCOL_PREFIX, (request, callback) => {
+    const pageName = request.url.substr(CONTENT_PROTOCOL_PREFIX.length + 3);
+    const pagePath = path.join(CONTENT_UI_DIR, `${pageName}.html`);
+    callback(CONTENT_PAGES.has(pageName) ? pagePath : NOT_FOUND_ERROR);
   }, e => { if (e) { throw e; } });
 }
