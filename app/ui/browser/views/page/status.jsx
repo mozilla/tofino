@@ -46,7 +46,7 @@ export function Status({ statusText }) {
 Status.displayName = 'Status';
 
 Status.propTypes = {
-  statusText: PropTypes.string.isRequired,
+  statusText: PropTypes.string,
 };
 
 function mapStateToProps(state) {
