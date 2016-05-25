@@ -14,11 +14,19 @@ import { spawn } from 'child_process';
 import path from 'path';
 
 const UA_SERVICE_PATH = path.join(__dirname, '..', 'services', 'user-agent-service', 'index');
+const CONTENT_SERVICE_PATH = path.join(__dirname, '..', 'services', 'content-service', 'index');
 
 // @TODO Use something like `forever` or `pm2` to ensure that this
 // process remains running
+
 export function userAgentService() {
   spawn('node', [UA_SERVICE_PATH], {
+    detached: true,
+  });
+}
+
+export function contentService() {
+  spawn('node', [CONTENT_SERVICE_PATH], {
     detached: true,
   });
 }

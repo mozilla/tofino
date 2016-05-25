@@ -46,7 +46,8 @@ const userAgentClient = new UserAgentClient();
 const appStartupTime = Date.now();
 instrument.event('app', 'STARTUP');
 
-// Start the UA service running on a different process
+// Start the content and UA services running on a different process
+spawn.contentService();
 spawn.userAgentService();
 
 // This method will be called when Electron has finished
