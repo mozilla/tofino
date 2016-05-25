@@ -31,28 +31,7 @@ We hang out on Slack here: https://project-tofino.slack.com (you can get an invi
 
 ## Build
 
-Project Tofino currently requires Node 6 (v6.2.0 being the current release).
-
-### Windows
-
-* Install Node 6: https://nodejs.org/en/
-* Install Visual Studio 2013: https://www.visualstudio.com/news/vs2013-community-vs
-  * Make sure you use the VS command line or otherwise have your environment variables set correctly.
-
-### Linux
-
-Install Node 6 through the package manager of your Linux distribution. If not available, see https://nodejs.org/en/download/.
-
-### OSX
-
-```
-brew install node python
-```
-
-Every time you update from the git repository you may need to install or update any new node dependencies:
-```
-npm install
-```
+Documentation for building can be found in [docs/building.md](/docs/building.md).
 
 ## Developing
 
