@@ -12,7 +12,7 @@
     "dev": "cross-env NODE_ENV=\"development\" node build/main.js --run-dev",
     "package": "cross-env NODE_ENV=\"production\" node build/main.js --package",
     "test": "cross-env NODE_ENV=\"production\" nyc -s node build/main.js --test",
-    "lint": "cross-env NODE_ENV=\"production\" nyc -s node build/main.js --lint",
+    "lint": "npm test test/unit/lint",
     "report": "nyc report",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "install": "node build/main.js --build-deps",
