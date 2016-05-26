@@ -119,3 +119,15 @@ export function onlyWhenFromBrowserWindow(handler) {
     handler(bw, ...args);
   };
 }
+
+/**
+ * Broadcasts the passed in event and arguments
+ * to all active BrowserWindows.
+ */
+export function broadcast(event, ...args) {
+  const windows = BrowserWindow.getAllWindows();
+
+  for (const window of windows) {
+    window.webContents.send(event, ...args);
+  }
+}

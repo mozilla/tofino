@@ -3,6 +3,7 @@
 
 /* eslint global-require: 0 */
 
+import path from 'path';
 import expect from 'expect';
 import { Application } from 'spectron';
 import { getRoot, getElectronPath } from '../../build/utils';
@@ -55,8 +56,10 @@ const Driver = {
     // http://www.seleniumhq.org/docs/04_webdriver_advanced.jsp.
     await this.client.timeouts('implicit', WEBDRIVER_TIMEOUT_IN_MS);
 
-    // Wait for both BrowserWindow and first tab webview to exist
-    await this.client.waitUntil(() => this.client.getWindowCount().then(count => count === 2));
+    // Wait for both hidden window, BrowserWindow, and first tab webview to exist
+    await this.client.waitUntil(() => this.client.getWindowCount().then(count => count === 3));
+
+    await this.setTargetByURL(`file://${path.join(__dirname, '..', '..', 'lib', 'ui', 'browser', 'browser.html')}`);
 
     const { value: bwHandle } = await this.client.windowHandle();
     const { stop, port } = await server;

@@ -38,6 +38,7 @@ import * as menu from './menu/index';
 import * as instrument from '../services/instrument';
 import registerAboutPages from './about-pages';
 import * as BW from './browser-window';
+import hiddenWindow from '../services/hidden-window';
 import { ProfileStorage } from '../services/storage';
 import * as userAgentService from './user-agent-service';
 const profileStoragePromise = ProfileStorage.open(path.join(__dirname, '..', '..'));
@@ -119,6 +120,10 @@ ipc.on('instrument-event', (event, args) => {
   // Until we transpile app/, we can't destructure in the argument list or inline here.
   instrument.event(args.name, args.method, args.label, args.value);
 });
+
+// Broadcast online status to all open BrowserWindows
+hiddenWindow.on('online-status-changed', isOnline =>
+  BW.broadcast('online-status-changed', isOnline));
 
 let ws = undefined;
 

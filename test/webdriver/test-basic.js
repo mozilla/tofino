@@ -25,23 +25,20 @@ describe('application launch', function() {
     expect(url.endsWith('browser.html')).toBe(true);
 
     // BrowserWindows and <webview>s are considered to be windows by spectron.
-    // Since we always open an initial tab there should be two windows.
+    // Since we always open an initial tab, and we have a hidden window service,
+    // there should be three windows.
     const count = await app.client.getWindowCount();
-    expect(count).toEqual(2);
+    expect(count).toEqual(3);
 
     const { value: handle } = await app.client.windowHandle();
     const { value: handles } = await app.client.windowHandles();
 
-    expect(handles.length).toEqual(2);
+    expect(handles.length).toEqual(3);
     const pos = handles.indexOf(handle);
     expect(pos).toBeGreaterThanOrEqualTo(0);
 
-    // There doesn't appear to be a way to identify windows in spectron, so we
-    // just assume that the window that isn't the BrowserWindow is the first
-    // <webview>
-    const webviewHandle = handles[1 - pos];
-    await app.client.window(webviewHandle);
-
+    // Ensure we can find a webview window
+    await Driver.setTargetByURL(HOME_PAGE);
     ({ value: url } = await app.client.url());
     expect(url.startsWith(HOME_PAGE)).toBe(true);
   });
