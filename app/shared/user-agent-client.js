@@ -10,18 +10,16 @@
  specific language governing permissions and limitations under the License.
  */
 
-import path from 'path';
 import EventEmitter from 'events';
 import WebSocket from 'ws';
 import request from 'request';
-import { setTimeout } from 'timers';
-import childProcess from 'child_process';
+import backoff from 'backoff';
 import * as endpoints from './constants/endpoints';
 
-function uaRequest(service, options) {
+function uaRequest(url, service, options) {
   return new Promise((resolve, reject) => {
     request[options.method.toLowerCase()]({
-      url: `${endpoints.UA_SERVICE_HTTP}${service}`,
+      url: `${url}${service}`,
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -37,12 +35,47 @@ function uaRequest(service, options) {
   });
 }
 
-class UserAgent extends EventEmitter {
-  constructor(ws, clientCount) {
+class UserAgentClient extends EventEmitter {
+  constructor(url = endpoints.UA_SERVICE_WS) {
     super();
+    this.url = url;
+  }
 
-    this.ws = ws;
-    this.clientCount = clientCount;
+  startSession(url = endpoints.UA_SERVICE_HTTP) {
+    return uaRequest(url, '/session/start', {
+      method: 'POST',
+    });
+  }
+
+  /**
+   * Connects to the remote User Agent Service, and resolves a promise
+   * upon completion. Can be called multiple times and caches the connection
+   * promise so consumers can always call `await client.connect()` safely.
+   *
+   * @TODO what happens if this never connects?
+   */
+  async connect() {
+    if (this._connect) {
+      return this._connect;
+    }
+
+    this._connect = new Promise((resolve) => {
+      const call = backoff.call(this._connectAttempt, this.url, (err, ws) => {
+        if (err) {
+          console.error(`UserAgentClient: ${err}`);
+        } else if (ws) {
+          this.ws = ws;
+          resolve(this);
+        }
+      });
+      call.setStrategy(new backoff.ExponentialStrategy({
+        initialDelay: 50,
+        maxDelay: 10000,
+      }));
+      call.start();
+    });
+
+    await this._connect;
 
     this.ws.on('message', (data) => {
       data = JSON.parse(data);
@@ -50,85 +83,33 @@ class UserAgent extends EventEmitter {
       delete data.message;
       this.emit(message, data);
     });
+
+    return this._connect;
   }
 
-  startSession() {
-    return uaRequest('/session/start', {
-      method: 'POST',
-    });
-  }
-}
+  _connectAttempt(url, callback) {
+    // Use promises here so we only get one firing over the callback
+    // per attempt, but pipe into the callback for compatibility with
+    // `backoff` module.
+    const attempt = new Promise((resolve, reject) => {
+      const ws = new WebSocket(url);
+      ws.on('error', reject);
+      ws.on('open', () => {
+        // The first message should be protocol information
+        ws.once('message', (data) => {
+          data = JSON.parse(data);
 
-const timeout = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-function startService() {
-  // Start a UA service
-  const exec = 'node';
-  const args = ['server.js'];
-
-  console.log('Starting UA process');
-  childProcess.spawn(exec, args, {
-    detached: true,
-    cwd: path.join(__dirname, '..', 'main'),
-  });
-}
-
-function attemptConnect() {
-  return new Promise((resolve, reject) => {
-    const ws = new WebSocket(`${endpoints.UA_SERVICE_WS}`);
-
-    ws.on('open', () => {
-      console.log('Connected to UA process');
-
-      // The first message should be protocol information
-      ws.once('message', (data) => {
-        data = JSON.parse(data);
-
-        if (data.message !== 'protocol' || data.version !== 'v1') {
-          console.error(`Incorrect message ${JSON.stringify(data)}`);
-          reject();
-          return;
-        }
-        resolve(new UserAgent(ws, data.clientCount));
+          if (data.message !== 'protocol' || data.version !== 'v1') {
+            reject(new Error(`Incorrect message ${JSON.stringify(data)}`));
+            return;
+          }
+          resolve(ws);
+        });
       });
     });
 
-    ws.on('error', (e) => {
-      reject(e);
-    });
-  });
-}
-
-async function backoffConnect() {
-  let timedout = false;
-  const timer = setTimeout(() => timedout = true, 5000);
-  let delay = 200;
-
-  while (!timedout) {
-    try {
-      const ua = await attemptConnect();
-      clearTimeout(timer);
-      return ua;
-    } catch (e) {
-      await timeout(delay);
-      delay *= 2;
-    }
+    attempt.then(callback.bind(null, null), callback);
   }
-
-  throw new Error('Unable to connect to the UA service.');
 }
 
-export default {
-  async connect() {
-    console.log('Attempting to connect');
-    try {
-      return await attemptConnect();
-    } catch (e) {
-      if (e.code === 'ECONNREFUSED') {
-        startService();
-        return await backoffConnect();
-      }
-      throw e;
-    }
-  },
-};
+export default UserAgentClient;
