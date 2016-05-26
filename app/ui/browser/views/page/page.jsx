@@ -87,12 +87,12 @@ class Page extends Component {
     }
   }
 
-  render() {
-    const requestContextData = (event) => {
-      const { offsetX: x, offsetY: y } = event.nativeEvent;
-      this.refs.webview.send('get-contextmenu-data', { x, y });
-    };
+  handleContextMenu = (event) => {
+    const { offsetX: x, offsetY: y } = event.nativeEvent;
+    this.refs.webview.send('get-contextmenu-data', { x, y });
+  }
 
+  render() {
     return (
       <div className={`page ${PAGE_STYLE} ${this.props.isActive ? 'active-browser-page' : ''}`}
         data-page-state={this.props.page.state}>
@@ -102,7 +102,7 @@ class Page extends Component {
           class={`webview-${this.props.page.id} ${WEB_VIEW_STYLE}`}
           preload={'../../content/preload/content.js'}
           guestInstanceId={this.props.page.guestInstanceId}
-          onContextMenu={requestContextData} />
+          onContextMenu={this.handleContextMenu} />
         <Status page={this.props.page} />
       </div>
     );
