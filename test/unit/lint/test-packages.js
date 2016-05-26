@@ -29,6 +29,7 @@ const ignored = [
 
   // Modules used only for configuration.
   'babel-plugin-transform-async-to-generator',
+  'babel-plugin-transform-class-properties',
   'babel-plugin-transform-es2015-destructuring',
   'babel-plugin-transform-es2015-modules-commonjs',
   'babel-plugin-transform-es2015-parameters',
