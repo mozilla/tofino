@@ -25,11 +25,11 @@ import path from 'path';
 import thenify from 'thenify';
 import escaper from 'true-html-escape';
 
-import { Bookmark } from '../model/index';
+import { Bookmark } from '../../model/index';
 import { ProfileStorageSchemaV5 } from './profile-schema';
 import { DB, verbose } from './sqlite';
 
-import type { AwesomebarMatch, ReadabilityResult } from '../shared/types';
+import type { AwesomebarMatch, ReadabilityResult } from '../../shared/types';
 
 const mkdirp = thenify(cbmkdirp);
 

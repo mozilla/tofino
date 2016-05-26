@@ -36,18 +36,20 @@ import * as hotkeys from './hotkeys';
 import * as menu from './menu/index';
 import * as instrument from '../services/instrument';
 import registerAboutPages from './about-pages';
+import * as spawn from './spawn';
 import * as BW from './browser-window';
-import userAgentClient from '../shared/user-agent-client';
-
-import * as endpoints from '../shared/constants/endpoints';
+import UserAgentClient from '../shared/user-agent-client';
 
 const app = electron.app; // control application life.
 const ipc = electron.ipcMain;
 const globalShortcut = electron.globalShortcut;
-const userAgentPromise = userAgentClient.connect();
+const userAgentClient = new UserAgentClient();
 
 const appStartupTime = Date.now();
 instrument.event('app', 'STARTUP');
+
+// Start the UA service running on a different process
+spawn.userAgentService();
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -61,7 +63,7 @@ app.on('ready', async function() {
   // Register `about:*` protocols after app's 'ready' event
   registerAboutPages();
 
-  await BW.createBrowserWindow(userAgentPromise, () => {
+  await BW.createBrowserWindow(userAgentClient, () => {
     instrument.event('browser', 'READY', 'ms', Date.now() - browserStartTime);
   });
 });
@@ -86,12 +88,12 @@ app.on('activate', async function() {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (electron.BrowserWindow.getAllWindows().length === 0) {
-    await BW.createBrowserWindow(userAgentPromise, () => menu.buildAppMenu(menuData));
+    await BW.createBrowserWindow(userAgentClient, () => menu.buildAppMenu(menuData));
   }
 });
 
 ipc.on('new-browser-window', async function() {
-  await BW.createBrowserWindow(userAgentPromise, () => menu.buildAppMenu(menuData));
+  await BW.createBrowserWindow(userAgentClient, () => menu.buildAppMenu(menuData));
 });
 
 ipc.on('close-browser-window', BW.onlyWhenFromBrowserWindow(async function(bw) {
@@ -119,25 +121,17 @@ ipc.on('instrument-event', (event, args) => {
 
 const menuData = {};
 
-userAgentPromise.then(async function(userAgent) {
-  if (userAgent.clientCount > 1) {
-    console.log('Using an already running User Agent service ' +
-                `(running on ${endpoints.UA_SERVICE_PORT} with ` +
-                `${userAgent.clientCount} active clients).`);
-  } else {
-    console.log(`Started a new User Agent service (running on ${endpoints.UA_SERVICE_PORT}).`);
+// Connect UA client to the UA service
+userAgentClient.connect();
+userAgentClient.on('diff', (command) => {
+  if (command.type === 'initial') {
+    menuData.recentBookmarks = command.payload.recentStars;
+    menu.buildAppMenu(menuData);
+    return;
   }
 
-  userAgent.on('diff', (command) => {
-    if (command.type === 'initial') {
-      menuData.recentBookmarks = command.payload.recentStars;
-      menu.buildAppMenu(menuData);
-      return;
-    }
-
-    if (command.type === '/stars/recent') {
-      menuData.recentBookmarks = command.payload;
-      menu.buildAppMenu(menuData);
-    }
-  });
-}, console.error);
+  if (command.type === '/stars/recent') {
+    menuData.recentBookmarks = command.payload;
+    menu.buildAppMenu(menuData);
+  }
+});
