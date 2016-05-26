@@ -33,9 +33,10 @@ import configureStore from './store/store';
 import * as actions from './actions/main-actions';
 import * as profileDiffs from '../../shared/profile-diffs';
 import BUILD_CONFIG from '../../../build-config';
-import userAgentClient from '../../shared/user-agent-client';
+import UserAgentClient from '../../shared/user-agent-client';
 
-const userAgentPromise = userAgentClient.connect();
+const userAgentClient = new UserAgentClient();
+
 const store = configureStore();
 
 const chrome = (
@@ -73,24 +74,20 @@ store.dispatch(actions.createTab());
 // that if an error occurs while we connect, we at least have some UI in place.
 ReactDOM.render(chrome, container);
 
-userAgentPromise.then((userAgent) => {
-  userAgent.on('diff', (command) => {
-    if (command.type === 'initial') {
-      if (command.payload.stars) {
-        store.dispatch(profileDiffs.bookmarks(command.payload.stars));
-      }
-
-      // We've connected to the UA service, received the initial state, and (synchronously)
-      // rendered the initial UI.  This window is ready to display!
-      onWindowReady();
-
-      return;
+userAgentClient.connect().then(() => onWindowReady(true));
+userAgentClient.on('diff', (command) => {
+  if (command.type === 'initial') {
+    if (command.payload.stars) {
+      store.dispatch(profileDiffs.bookmarks(command.payload.stars));
     }
 
-    // It's dangerous to trust the service in this way, but good enough for now.
-    store.dispatch(command);
-  });
-}, (err) => {
-  console.error(err);
-  onWindowReady(true);
+    // We've connected to the UA service, received the initial state, and (synchronously)
+    // rendered the initial UI.  This window is ready to display!
+    onWindowReady();
+
+    return;
+  }
+
+  // It's dangerous to trust the service in this way, but good enough for now.
+  store.dispatch(command);
 });

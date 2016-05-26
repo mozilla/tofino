@@ -28,15 +28,13 @@ const BrowserWindow = electron.BrowserWindow;  // create native browser window.
 const browserWindows = [];
 
 /**
- * Take a promise to `ProfileStorage`. Remove this once
- * UA service is in its own process. Also takes an onload callback --
+ * Takes a UserAgentClient to create scopes and also takes an onload callback --
  * currently used for the first window created to record load times.
  */
-export async function createBrowserWindow(userAgentPromise, onload) {
-  const userAgent = await userAgentPromise;
-
+export async function createBrowserWindow(userAgentClient, onload) {
+  await userAgentClient.connect();
   // TODO: don't abuse the storage layer's session ID generation to produce scopes.
-  const scope = await userAgent.startSession();
+  const scope = await userAgentClient.startSession();
 
   // Create the browser window.
   const browser = new BrowserWindow({
