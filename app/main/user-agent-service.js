@@ -300,7 +300,7 @@ function stop() {
 export function start(storage: ProfileStorage,
                       port: number,
                       options: ?Object = {}) {
-  const { debug } = options;
+  const { debug } = options || {};
 
   return new Promise((resolve) => {
     const app = express();

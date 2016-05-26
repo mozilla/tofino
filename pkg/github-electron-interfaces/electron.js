@@ -49,6 +49,7 @@ declare module 'electron' {
 
     static fromId(id: number): ?BrowserWindow;
     static fromWebContents(webContents: WebContents): ?BrowserWindow;
+    static getAllWindows(): BrowserWindow[];
 
 		/**
 		 * Get the unique ID of this window.
