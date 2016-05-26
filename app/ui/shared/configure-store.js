@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import { applyMiddleware, createStore } from 'redux';
 import createLogger from 'redux-logger';
-import thunk from '../../shared/thunk';
+import thunk from './thunk';
 import * as instrument from './instrument';
 import BUILD_CONFIG from '../../../build-config';
 
