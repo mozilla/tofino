@@ -66,7 +66,7 @@
     "coveralls": "2.11.9",
     "cross-env": "1.0.8",
     "electron-download": "2.1.2",
-    "electron-ipc-mock": "0.0.1",
+    "electron-ipc-mock": "0.0.2",
     "electron-mocha": "2.1.0",
     "electron-packager": "7.0.0",
     "electron-rebuild": "1.1.4",
