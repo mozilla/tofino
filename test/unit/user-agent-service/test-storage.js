@@ -9,8 +9,8 @@ import microtime from 'microtime-fast';
 import path from 'path';
 import tmp from 'tmp';
 
-import { DB } from '../../../app/services/sqlite';
-import { ProfileStorage, VisitType } from '../../../app/services/storage';
+import { DB } from '../../../app/services/user-agent-service/sqlite';
+import { ProfileStorage, VisitType } from '../../../app/services/user-agent-service/storage';
 
 describe('Utility tests', () => {
   it('Compares sets correctly.', (done) => {
