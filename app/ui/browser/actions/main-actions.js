@@ -42,7 +42,7 @@ export function createTab(location: ?string = undefined,
     dispatch(setShowURLBar(id, true));
     dispatch(setFocusedURLBar(id, true));
 
-    if (options.selected) {
+    if (options && options.selected) {
       dispatch(resetUIState()); // Reset global UI state when displaying the new tab immediately.
     }
 
@@ -123,19 +123,19 @@ export function clearCompletions(): Action {
   };
 }
 
-export function setShowURLBar(pageId: string, visible: boolean) {
+export function setShowURLBar(pageId: string, visible: boolean): Action {
   return (dispatch) => {
     dispatch({ type: types.SET_URL_INPUT_VISIBLE, pageId, payload: { visible } });
   };
 }
 
-export function setFocusedURLBar(pageId: string, focused) {
+export function setFocusedURLBar(pageId: string, focused: boolean): Action {
   return (dispatch) => {
     dispatch({ type: types.SET_URL_INPUT_FOCUSED, pageId, payload: { focused } });
   };
 }
 
-export function setFocusedResultIndex(index) {
+export function setFocusedResultIndex(index: Number): Action {
   return (dispatch) => {
     dispatch({ type: types.SET_URL_INPUT_AUTOCOMPLETE_INDEX, payload: { index } });
   };
