@@ -16,10 +16,11 @@ import { readerify } from './reader';
 import Readability from './readability';
 import './scroll';
 import request from '../../ui/browser/lib/request';
+import * as endpoints from '../../shared/constants/endpoints';
 
 window._readerify = readerify.bind(null, Readability);
 
-if (document.location.protocol === 'tofino:') {
+if (document.origin === endpoints.CONTENT_SERVER_ORIGIN) {
   window._browser = {
     async visited(limit) {
       return (await request(`/visits?limit=${limit}`)).pages;
