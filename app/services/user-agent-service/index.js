@@ -11,9 +11,9 @@
  */
 
 import path from 'path';
-import * as userAgentService from './user-agent-service';
-import { ProfileStorage } from '../services/storage';
-import * as endpoints from '../shared/constants/endpoints';
+import * as userAgentService from './server';
+import { ProfileStorage } from './storage';
+import * as endpoints from '../../shared/constants/endpoints';
 
 process.on('uncaughtException', console.error);
 process.on('unhandledRejection', console.error);

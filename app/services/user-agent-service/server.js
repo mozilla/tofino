@@ -18,8 +18,8 @@ import expressValidator from 'express-validator';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 
-import { ProfileStorage, SnippetSize, StarOp } from '../services/storage';
-import * as profileDiffs from '../shared/profile-diffs';
+import { ProfileStorage, SnippetSize, StarOp } from './storage';
+import * as profileDiffs from '../../shared/profile-diffs';
 
 const allowCrossDomain = function(req, res, next) {
   res.header('Access-Control-Allow-Origin', 'tofino://');

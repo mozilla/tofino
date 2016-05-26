@@ -25,7 +25,7 @@ import path from 'path';
 import thenify from 'thenify';
 import escaper from 'true-html-escape';
 
-import { Bookmark } from '../model/index';
+import { Bookmark } from '../../model/index';
 import { ProfileStorageSchemaV5 } from './profile-schema';
 import { DB, verbose } from './sqlite';
 
