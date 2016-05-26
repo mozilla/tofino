@@ -1,5 +1,3 @@
-/* @flow */
-
 /*
 Copyright 2016 Mozilla
 
@@ -15,18 +13,12 @@ specific language governing permissions and limitations under the License.
 import * as uuid from 'uuid';
 import * as userAgent from '../lib/user-agent';
 
-import * as model from '../model/index';
 import * as types from '../constants/action-types';
 import * as profileDiffs from '../../../shared/profile-diffs';
 import { getPageById } from '../selectors/index';
 
-// Order matters!  Flow will try the earliest first.
-type Action = ((dispatch: (action: Action) => any, getState: () => Object) => any) |
-              ({ type: string });
-
-export function createTab(location: ?string = undefined,
-                          ancestorId: ?number = undefined,
-                          options: ?Object = { selected: true }): Action {
+export function createTab(location = undefined, ancestorId = undefined,
+                          options = { selected: true }) {
   const reason = undefined;
 
   return (dispatch) => {
@@ -52,11 +44,11 @@ export function createTab(location: ?string = undefined,
   };
 }
 
-export function attachTab(page: model.Page): Action {
+export function attachTab(page) {
   return { type: types.ATTACH_TAB, page, instrument: true };
 }
 
-export function closeTab(pageId: string): Action {
+export function closeTab(pageId) {
   const reason = undefined;
 
   return (dispatch, getState) => {
@@ -82,54 +74,54 @@ export function closeTab(pageId: string): Action {
   };
 }
 
-export function setPageDetails(pageId: string, payload: Object): Action {
+export function setPageDetails(pageId, payload) {
   return { type: types.SET_PAGE_DETAILS, pageId, payload, instrument: false };
 }
 
-export function setCurrentTab(pageId: string): Action {
+export function setCurrentTab(pageId) {
   return { type: types.SET_CURRENT_TAB, pageId, instrument: true };
 }
 
-export function setCurrentTabPrevious(): Action {
+export function setCurrentTabPrevious() {
   return { type: types.SET_CURRENT_TAB_PREVIOUS, instrument: true };
 }
 
-export function setCurrentTabNext(): Action {
+export function setCurrentTabNext() {
   return { type: types.SET_CURRENT_TAB_NEXT, instrument: true };
 }
 
-export function setStatusText(text: string): Action {
+export function setStatusText(text) {
   return { type: types.SET_STATUS_TEXT, text };
 }
 
 // Just like setUserTypedLocation, but the user didn't type it, so we
 // don't trigger a search.
-export function locationChanged(pageId: string, payload: Object): Action {
+export function locationChanged(pageId, payload) {
   return (dispatch) => {
     // Update this window's state.
     dispatch({ type: types.LOCATION_CHANGED, pageId, payload, instrument: false });
   };
 }
 
-export function resetUIState(): Action {
+export function resetUIState() {
   return (dispatch) => {
     dispatch({ type: types.RESET_UI_STATE, instrument: false });
   };
 }
 
-export function clearCompletions(): Action {
+export function clearCompletions() {
   return (dispatch) => {
     dispatch({ type: types.CLEAR_COMPLETIONS, instrument: false });
   };
 }
 
-export function setShowURLBar(pageId: string, visible: boolean) {
+export function setShowURLBar(pageId, visible) {
   return (dispatch) => {
     dispatch({ type: types.SET_URL_INPUT_VISIBLE, pageId, payload: { visible } });
   };
 }
 
-export function setFocusedURLBar(pageId: string, focused) {
+export function setFocusedURLBar(pageId, focused) {
   return (dispatch) => {
     dispatch({ type: types.SET_URL_INPUT_FOCUSED, pageId, payload: { focused } });
   };
@@ -141,7 +133,7 @@ export function setFocusedResultIndex(index) {
   };
 }
 
-export function setUserTypedLocation(pageId: string, payload: Object): Action {
+export function setUserTypedLocation(pageId, payload) {
   return (dispatch) => {
     // Update this window's state before telling the profile service.
     dispatch({ type: types.SET_USER_TYPED_LOCATION, pageId, payload, instrument: false });
@@ -156,7 +148,7 @@ export function setUserTypedLocation(pageId: string, payload: Object): Action {
   };
 }
 
-export function bookmark(pageId: number, url: string, title: ?string = undefined): Action {
+export function bookmark(pageId, url, title = undefined) {
   return (dispatch, getState) => {
     // Update this window's state before telling the profile service.
     dispatch({ type: types.SET_BOOKMARK_STATE, url, isBookmarked: true, title });
@@ -166,7 +158,7 @@ export function bookmark(pageId: number, url: string, title: ?string = undefined
   };
 }
 
-export function unbookmark(pageId: number, url: string): Action {
+export function unbookmark(pageId, url) {
   return (dispatch, getState) => {
     // Update this window's state before telling the profile service.
     dispatch({ type: types.SET_BOOKMARK_STATE, url, isBookmarked: false });
@@ -176,6 +168,6 @@ export function unbookmark(pageId: number, url: string): Action {
   };
 }
 
-export function didStartSession(pageId: string, sessionId: number, ancestorId: ?number) {
+export function didStartSession(pageId, sessionId, ancestorId) {
   return { type: types.DID_START_SESSION, pageId, sessionId, ancestorId };
 }

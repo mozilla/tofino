@@ -1,5 +1,3 @@
-/* @flow */
-
 /*
  Copyright 2016 Mozilla
 
@@ -13,16 +11,15 @@
  */
 
 import * as profileDiffTypes from './constants/profile-diff-types';
-import type { AwesomebarMatch } from '../shared/types';
 
-export function bookmarks(bookmarkSet: string[]) {
+export function bookmarks(bookmarkSet) {
   return {
     type: profileDiffTypes.BOOKMARKS,
     payload: bookmarkSet,
   };
 }
 
-export function completions(text: string, completionList: AwesomebarMatch[]) {
+export function completions(text, completionList) {
   return {
     type: profileDiffTypes.COMPLETIONS,
     payload: {

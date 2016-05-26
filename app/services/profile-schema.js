@@ -1,5 +1,3 @@
-/* @flow */
-
 /*
  Copyright 2016 Mozilla
 
@@ -11,8 +9,6 @@
  CONDITIONS OF ANY KIND, either express or implied. See the License for the
  specific language governing permissions and limitations under the License.
  */
-
-import { ProfileStorage } from './storage';
 
 const debug = false;
 
@@ -130,8 +126,6 @@ const materializedHistoryV5 = `CREATE TABLE mHistory (
 )`;
 
 export class ProfileStorageSchemaV5 {
-  version: number;
-
   constructor() {
     this.version = 5;
   }
@@ -140,7 +134,7 @@ export class ProfileStorageSchemaV5 {
    * Take a newly opened ProfileStorage and make sure it reaches v5.
    * @param storage an open storage instance.
    */
-  async createOrUpdate(storage: ProfileStorage): Promise<number> {
+  async createOrUpdate(storage) {
     const v = await storage.userVersion();
 
     if (v === this.version) {
@@ -167,7 +161,7 @@ export class ProfileStorageSchemaV5 {
     throw new Error(`Target version ${this.version} lower than DB version ${v}!`);
   }
 
-  async update(storage: ProfileStorage, from: number): Promise<number> {
+  async update(storage, from) {
     async function migrateSessionsToV5() {
       await storage.db.run(`
         ALTER TABLE sessionStarts
@@ -269,7 +263,7 @@ export class ProfileStorageSchemaV5 {
     return storage.userVersion();
   }
 
-  async create(storage: ProfileStorage): Promise<number> {
+  async create(storage) {
     // Tables.
     await storage.db.run(tablePlacesV5);
     await storage.db.run(tableTitlesV5);

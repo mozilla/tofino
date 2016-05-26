@@ -1,5 +1,3 @@
-/* @flow */
-
 /*
  Copyright 2016 Mozilla
 
@@ -18,7 +16,7 @@ import expressValidator from 'express-validator';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 
-import { ProfileStorage, SnippetSize, StarOp } from '../services/storage';
+import { SnippetSize, StarOp } from '../services/storage';
 import * as profileDiffs from '../shared/profile-diffs';
 
 const allowCrossDomain = function(req, res, next) {
@@ -29,7 +27,7 @@ const allowCrossDomain = function(req, res, next) {
   next();
 };
 
-function configure(app: any, storage: ProfileStorage) {
+function configure(app, storage) {
   app.use(morgan('combined'));
 
   // These need to be register before our routes.
@@ -45,7 +43,7 @@ function configure(app: any, storage: ProfileStorage) {
    * allows to write "loose" handling code and still opt-in to Express's error handling backstop.
    *
    * @param fun: async function(req, res, next)
-   * @returns {function(req, res, next): (Promise.<T>)}
+   * @returns {function(req, res, next)}
    */
   function wrap(fun) {
     return async function(...args) {
@@ -297,9 +295,7 @@ function stop() {
  *
  * @return {Promise<{ port, stop }>}
  */
-export function start(storage: ProfileStorage,
-                      port: number,
-                      options: ?Object = {}) {
+export function start(storage, port, options = {}) {
   const { debug } = options;
 
   return new Promise((resolve) => {

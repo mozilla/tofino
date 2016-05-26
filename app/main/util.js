@@ -1,5 +1,3 @@
-/* @flow */
-
 /*
 Copyright 2016 Mozilla
 
@@ -16,7 +14,7 @@ import path from 'path';
 
 export const UI_DIR = path.join(__dirname, '..', 'ui');
 
-export function fileUrl(str: string): string {
+export function fileUrl(str) {
   let pathName = path.resolve(str).replace(/\\/g, '/');
 
   // Windows drive letter must be prefixed with a slash

@@ -116,7 +116,7 @@ export function menuTabContext(pageIndex, dispatch) {
 /**
  * Right click on the page itself
  */
-export function menuWebViewContext(webview, e, dispatch, pageSessionId: number) {
+export function menuWebViewContext(webview, e, dispatch, pageSessionId) {
   const menu = new Menu();
 
   if (e.href) {

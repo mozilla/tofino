@@ -45,6 +45,6 @@ function setBookmarks(state, bookmarks) {
   return state.set('bookmarks', bookmarks);
 }
 
-function setCompletion(state, text: string, completionList: [string]) {
+function setCompletion(state, text, completionList) {
   return state.set('completions', state.completions.set(text, completionList));
 }

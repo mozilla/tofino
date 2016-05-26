@@ -1,5 +1,3 @@
-/* @flow */
-
 /*
  Copyright 2016 Mozilla
 
@@ -14,7 +12,7 @@
 
 import * as endpoints from '../../../shared/constants/endpoints';
 
-export default function(url: string, options: ?Object) {
+export default function(url, options) {
   const newOptions = Object.assign({}, options);
   if (!newOptions.headers) {
     newOptions.headers = {};
