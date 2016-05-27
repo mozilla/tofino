@@ -33,7 +33,11 @@ export function startUserAgentService() {
 }
 
 export function startContentService() {
-  spawn('node', [CONTENT_SERVICE_PATH], {
+  const child = spawn('node', [CONTENT_SERVICE_PATH], {
     detached: true,
+  });
+
+  process.on('exit', () => {
+    child.kill('SIGKILL');
   });
 }
