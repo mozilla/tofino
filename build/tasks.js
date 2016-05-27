@@ -14,7 +14,8 @@ import chokidar from 'chokidar';
 const Lazy = {
   buildDeps: () => require('./task-build-deps').default(),
   config: options => require('./task-config-builder').default(options),
-  build: args => require('./task-build').default(args),
+  buildBrowser: args => require('./task-build-browser').default(args),
+  buildContent: args => require('./task-build-content').default(args),
   run: args => require('./task-run').default(args),
   test: args => require('./task-test').default(args),
   package: () => require('./task-package').default(),
@@ -28,15 +29,17 @@ export default {
 
   async run(args = []) {
     await Lazy.config();
-    await Lazy.build([...args, '--force']);
+    await Lazy.buildBrowser([...args, '--force']);
+    await Lazy.buildContent();
     await Lazy.run(args);
   },
 
   async runDev(args = []) {
     await Lazy.config({ development: true });
-    await Lazy.build([...args, '--force']);
+    await Lazy.buildBrowser([...args, '--force']);
+    await Lazy.buildContent();
 
-    const { buildFile, appDir } = require('./task-build');
+    const { buildFile, appDir } = require('./task-build-content');
     const watcher = chokidar.watch(appDir, {
       ignoreInitial: true,
     });
@@ -50,14 +53,16 @@ export default {
 
   async test(args = []) {
     await Lazy.config({ test: true });
-    await Lazy.build(args);
+    await Lazy.buildBrowser(args);
+    await Lazy.buildContent();
     await Lazy.test(args);
   },
 
   async package(args) {
     await Lazy.clean();
     await Lazy.config({ packaged: true });
-    await Lazy.build([...args, '--force']);
+    await Lazy.buildBrowser([...args, '--force']);
+    await Lazy.buildContent();
     await Lazy.package();
   },
 };
