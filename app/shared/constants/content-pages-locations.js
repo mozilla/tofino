@@ -10,17 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import path from 'path';
+import * as endpoints from './endpoints';
 
-export const UI_DIR = path.join(__dirname, '..', 'ui');
-
-export function fileUrl(str) {
-  let pathName = path.resolve(str).replace(/\\/g, '/');
-
-  // Windows drive letter must be prefixed with a slash
-  if (pathName[0] !== '/') {
-    pathName = `/${pathName}`;
-  }
-
-  return encodeURI(`file://${pathName}`);
-}
+export const HISTORY_PAGE = `${endpoints.CONTENT_SERVER_HTTP}/history.html`;
+export const STARS_PAGE = `${endpoints.CONTENT_SERVER_HTTP}/stars.html`;

@@ -10,20 +10,21 @@
  specific language governing permissions and limitations under the License.
  */
 
-import path from 'path';
-
-import * as userAgentService from './server';
-import { ProfileStorage } from './storage';
+import express from 'express';
+import { makeServer } from '../common';
 import * as endpoints from '../../shared/constants/endpoints';
+import { CONTENT_UI_DIR } from '../../shared/paths-util';
 
-process.on('uncaughtException', console.error);
-process.on('unhandledRejection', console.error);
+function configure(app, router) {
+  router.use(express.static(CONTENT_UI_DIR));
+}
 
-ProfileStorage.open(path.join(__dirname, '..', '..')).then(async function (profileStorage) {
-  await userAgentService.start({
-    storage: profileStorage,
-    options: { debug: false },
-  });
+export async function start() {
+  const { setup, stop } = await makeServer(
+    endpoints.CONTENT_SERVER_VERSION,
+    endpoints.CONTENT_SERVER_ADDR,
+    endpoints.CONTENT_SERVER_PORT);
 
-  console.log(`Started a User Agent service running on ${endpoints.UA_SERVICE_PORT}.`);
-});
+  await setup(configure);
+  return { stop };
+}

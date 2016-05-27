@@ -10,13 +10,15 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import * as contentURLs from '../../../shared/constants/content-pages-locations';
+import rootReducer from '../reducers';
+import * as model from '../model/index';
 
-export const HOME_PAGE = contentURLs.HISTORY_PAGE;
+import configureStore from '../../shared/configure-store';
 
-export const NAVBAR_EXPANDED_HEIGHT = 55; // px
-export const TABBAR_HEIGHT = 30; // px
-export const TAB_DEFAULT_WIDTH = 20; // vw;
+export function createBrowserStore() {
+  // This creates a "blank" state that may not be renderable.
+  // We want a Record, not just a Map.
+  const initialState = new model.State(rootReducer(undefined, { type: null }));
 
-// Show autocompletions when typing in location bar
-export const SHOW_COMPLETIONS = true;
+  return configureStore(rootReducer, initialState);
+}

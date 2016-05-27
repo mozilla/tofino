@@ -33,7 +33,6 @@ import electron from 'electron';
 import * as hotkeys from './hotkeys';
 import * as menu from './menu/index';
 import * as instrument from '../services/instrument';
-import registerAboutPages from './about-pages';
 import * as spawn from './spawn';
 import * as BW from './browser-window';
 import UserAgentClient from '../shared/user-agent-client';
@@ -46,7 +45,8 @@ const userAgentClient = new UserAgentClient();
 const appStartupTime = Date.now();
 instrument.event('app', 'STARTUP');
 
-// Start the UA service running on a different process
+// Start the content and UA services running on a different process
+spawn.contentService();
 spawn.userAgentService();
 
 // This method will be called when Electron has finished
@@ -57,9 +57,6 @@ app.on('ready', async function() {
 
   // Force the menu to be built at least once on startup
   menu.buildAppMenu(menuData);
-
-  // Register `about:*` protocols after app's 'ready' event
-  registerAboutPages();
 
   await BW.createBrowserWindow(userAgentClient, () => {
     instrument.event('browser', 'READY', 'ms', Date.now() - browserStartTime);

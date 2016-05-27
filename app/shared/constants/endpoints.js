@@ -10,6 +10,17 @@
  specific language governing permissions and limitations under the License.
  */
 
+export const UA_SERVICE_ADDR = 'localhost';
 export const UA_SERVICE_PORT = 9090;
-export const UA_SERVICE_HTTP = `http://localhost:${UA_SERVICE_PORT}/v1`;
-export const UA_SERVICE_WS = `ws://localhost:${UA_SERVICE_PORT}/v1/ws`;
+export const UA_SERVICE_VERSION = 'v1';
+
+export const UA_SERVICE_ORIGIN = `http://${UA_SERVICE_ADDR}:${UA_SERVICE_PORT}`;
+export const UA_SERVICE_HTTP = `${UA_SERVICE_ORIGIN}/${UA_SERVICE_VERSION}`;
+export const UA_SERVICE_WS = `ws://${UA_SERVICE_ADDR}:${UA_SERVICE_PORT}/${UA_SERVICE_VERSION}/ws`;
+
+export const CONTENT_SERVER_ADDR = 'localhost';
+export const CONTENT_SERVER_PORT = 9191;
+export const CONTENT_SERVER_VERSION = 'v1';
+
+export const CONTENT_SERVER_ORIGIN = `http://${CONTENT_SERVER_ADDR}:${CONTENT_SERVER_PORT}`;
+export const CONTENT_SERVER_HTTP = `${CONTENT_SERVER_ORIGIN}/${CONTENT_SERVER_VERSION}`;

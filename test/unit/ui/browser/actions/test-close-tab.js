@@ -6,7 +6,7 @@
 import expect from 'expect';
 import fetchMock from 'fetch-mock';
 
-import configureStore from '../../../../../app/ui/browser/store/store';
+import { createBrowserStore } from '../../../../../app/ui/browser/store';
 import * as actions from '../../../../../app/ui/browser/actions/main-actions';
 import * as selectors from '../../../../../app/ui/browser/selectors';
 import * as endpoints from '../../../../../app/shared/constants/endpoints';
@@ -15,7 +15,7 @@ import { HOME_PAGE } from '../../../../../app/ui/browser/constants/ui';
 
 describe('Action - CLOSE_TAB', () => {
   beforeEach(function() {
-    this.store = configureStore();
+    this.store = createBrowserStore();
     this.getPages = () => selectors.getPages(this.store.getState());
     this.getCurrentPageIndex = () => selectors.getCurrentPageIndex(this.store.getState());
     this.dispatch = this.store.dispatch;

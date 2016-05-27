@@ -14,7 +14,7 @@ import path from 'path';
 import electron from 'electron';
 
 import * as hotkeys from './hotkeys';
-import { UI_DIR, fileUrl } from './util';
+import { UI_DIR, fileUrl } from '../shared/paths-util';
 import BUILD_CONFIG from '../../build-config';
 
 const BROWSER_CHROME_URL = fileUrl(path.join(UI_DIR, 'browser', 'browser.html'));
