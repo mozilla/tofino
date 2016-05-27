@@ -17,6 +17,10 @@ const paths = [
 ];
 
 const ignored = [
+  // Temporary: these aren't yet referenced by the main app.
+  'datascript',
+  'datascript-mori',
+
   // Build modules not imported anywhere, but used at the CLI.
   'electron-rebuild',
   'cross-env',
