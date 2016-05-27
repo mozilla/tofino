@@ -1,9 +1,16 @@
 #!/usr/bin/env node
 
 var UserAgentService = require('../').UserAgentService;
+var repl = require('repl');
 
 var argv = require('yargs')
   .usage('Usage: $0 [options]')
+  .option('r', {
+    alias: 'repl',
+    require: false,
+    describe: 'If provided, start a REPL after launching the user agent service.',
+    type: 'boolean'
+  })
   .option('p', {
     alias: 'port',
     require: true,
@@ -22,3 +29,7 @@ UserAgentService({
   port: argv.port,
   db: argv.db,
 });
+
+if (argv.repl) {
+  repl.start();
+}
