@@ -23,7 +23,7 @@ const allowCrossDomain = function(req, res, next) {
   next();
 };
 
-function configure(app, router, storage) {
+function configure(app, router, storage, stop) {
   app.use(allowCrossDomain);
 
   async function initial() {
@@ -212,12 +212,10 @@ export async function start({ storage, options }) {
   const { setup, stop } = makeServer(version, address, port);
 
   await setup((app, router) => {
-    configure(app, router, storage);
+    configure(app, router, storage, stop);
 
     if (options.debug) {
       storage.db.db.on('trace', console.log);
     }
   });
-
-  return { stop };
 }
