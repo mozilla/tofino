@@ -13,18 +13,17 @@
 import { makeServer, autoCaughtRouteError } from '../common';
 import { SnippetSize, StarOp } from './storage';
 import * as profileDiffs from '../../shared/profile-diffs';
-import * as endpoints from '../../shared/constants/endpoints';
 
-const allowCrossDomain = function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', endpoints.CONTENT_SERVER_ORIGIN);
+const allowCrossDomain = contentServiceOrigin => function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', contentServiceOrigin);
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
 
   next();
 };
 
-function configure(app, router, storage, stop) {
-  app.use(allowCrossDomain);
+function configure(app, router, storage, contentServiceOrigin, stop) {
+  app.use(allowCrossDomain(contentServiceOrigin));
 
   async function initial() {
     const stars = await storage.starredURLs();
@@ -205,14 +204,14 @@ function configure(app, router, storage, stop) {
 }
 
 export async function start({ storage, options }) {
-  const version = options.version || endpoints.UA_SERVICE_VERSION;
-  const address = options.address || endpoints.UA_SERVICE_ADDR;
-  const port = options.port || endpoints.UA_SERVICE_PORT;
+  const version = options.version;
+  const port = options.port;
+  const contentService = options.contentService;
 
-  const { setup, stop } = makeServer(version, address, port);
+  const { setup, stop } = makeServer(version, port);
 
   await setup((app, router) => {
-    configure(app, router, storage, stop);
+    configure(app, router, storage, contentService, stop);
 
     if (options.debug) {
       storage.db.db.on('trace', console.log);

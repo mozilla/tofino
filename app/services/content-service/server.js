@@ -22,7 +22,6 @@ function configure(app, router) {
 export async function start() {
   const { setup } = await makeServer(
     endpoints.CONTENT_SERVER_VERSION,
-    endpoints.CONTENT_SERVER_ADDR,
     endpoints.CONTENT_SERVER_PORT);
 
   await setup(configure);

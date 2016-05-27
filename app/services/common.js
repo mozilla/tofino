@@ -52,7 +52,7 @@ export function autoCaughtRouteError({ validator, method }) {
  * A configuration function can be passed to `setup`, called with the
  * `app` and `routes` objects, to configure additional server behavior.
  */
-export function makeServer(version, addr, port) {
+export function makeServer(version, port) {
   let server;
   let wsserver;
   let app;
@@ -88,7 +88,7 @@ export function makeServer(version, addr, port) {
 
       // Sadly, app.listen does not return the HTTP server just yet.
       // Therefore, we extract it manually below.
-      app.listen(port, addr, resolve);
+      app.listen(port, resolve);
       wsserver = getWss();
       server = wsserver._server;
 

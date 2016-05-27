@@ -27,6 +27,8 @@ export function startUserAgentService() {
   spawn('node', [UA_SERVICE_BIN,
     '--port', endpoints.UA_SERVICE_PORT,
     '--db', DB_PATH,
+    '--version', endpoints.UA_SERVICE_VERSION,
+    '--content-service', endpoints.CONTENT_SERVER_ORIGIN,
   ], {
     detached: true,
     stdio: ['ignore', process.stdout, process.stderr],
