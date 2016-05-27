@@ -72,7 +72,7 @@
     "electron-ipc-mock": "0.0.2",
     "electron-mocha": "2.1.0",
     "electron-packager": "7.0.0",
-    "electron-rebuild": "1.1.4",
+    "electron-rebuild": "1.1.5",
     "enzyme": "2.2.0",
     "eslint": "2.11.0",
     "eslint-config-airbnb": "9.0.1",
