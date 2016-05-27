@@ -5,10 +5,10 @@ import expect from 'expect';
 import fs from 'fs-promise';
 
 import { autoFailingAsyncTest } from '../../utils/async.js';
-import tasks from '../../../build/tasks.js';
+import config, { BASE_CONFIG } from '../../../build/task-config-builder.js';
+import clean from '../../../build/task-clean-package.js';
 import * as utils from '../../../build/utils.js';
 import * as BuildConst from '../../../build/const.js';
-import { BASE_CONFIG } from '../../../build/task-config-builder.js';
 
 const currentExpectedConfig = Object.assign({}, BASE_CONFIG, {
   test: true,
@@ -23,7 +23,7 @@ describe('build tasks', () => {
     const initialConfig = utils.getBuildConfig();
     expect(initialConfig.foo).toNotExist();
 
-    await tasks.config({ foo: 'bar' });
+    await config({ foo: 'bar' });
 
     const loadedConfig = utils.getBuildConfig();
     expect(loadedConfig.foo).toBe('bar');
@@ -39,7 +39,7 @@ describe('build tasks', () => {
     fs.ensureDir(BuildConst.DIST_DIR);
 
     let cleaned = false;
-    await tasks.clean();
+    await clean();
     try {
       await fs.stat(BuildConst.DIST_DIR);
     } catch (err) {
