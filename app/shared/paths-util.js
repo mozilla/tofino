@@ -13,8 +13,8 @@ specific language governing permissions and limitations under the License.
 import path from 'path';
 
 export const UI_DIR = path.join(__dirname, '..', 'ui');
-export const CONTENT_UI_DIR = path.join(UI_DIR, 'about');
 export const BROWSER_UI_DIR = path.join(UI_DIR, 'browser');
+export const CONTENT_UI_DIR = path.join(UI_DIR, 'content');
 
 export function fileUrl(str) {
   let pathName = path.resolve(str).replace(/\\/g, '/');
