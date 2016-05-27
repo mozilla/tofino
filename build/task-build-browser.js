@@ -89,11 +89,18 @@ export async function buildFile(sourceFile, sourceStats, args = []) {
 
 export default async function babelBuild(args = []) {
   const source = path.resolve(path.join(__dirname, '..', 'app'));
-  const paths = await fs.walk(source);
+  let paths = await fs.walk(source);
+
+  // Exclude the `ui/content` dir. This is super ugly here, but we won't
+  // need any of this after we switch our entire build system to webpack.
+  const content = path.resolve(path.join(__dirname, '..', 'app', 'ui', 'content'));
+  const excluded = (await fs.walk(content)).map(p => p.path);
+  paths = paths.filter(p => !~excluded.indexOf(p.path));
 
   // Find all the directories and sort by depth.
-  const dirs = paths.filter(p => p.stats.isDirectory())
-                    .sort((a, b) => a.length - b.length);
+  const dirs = paths
+    .filter(p => p.stats.isDirectory())
+    .sort((a, b) => a.length - b.length);
 
   // Make sure they all exist in the target directory.
   await Promise.all(dirs.map(p => fs.ensureDir(getTargetPath(p.path))));
