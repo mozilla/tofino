@@ -17,17 +17,14 @@
  */
 
 import Immutable from 'immutable';
-import cbmkdirp from 'less-mkdirp';
+import fs from 'fs-promise';
 import microtime from 'microtime-fast';
 import path from 'path';
-import thenify from 'thenify';
 import escaper from 'true-html-escape';
 
 import { Bookmark } from '../../model/index';
 import { ProfileStorageSchemaV5 } from './profile-schema';
 import { DB, verbose } from './sqlite';
-
-const mkdirp = thenify(cbmkdirp);
 
 export const SessionStartReason = {
   newTab: 0,
@@ -81,7 +78,7 @@ export class ProfileStorage {
 
     const filePath = path.join(dir, 'browser.db');
 
-    await mkdirp(dir);
+    await fs.mkdirp(dir);
     const db = await DB.open(filePath);
     return new ProfileStorage(db).init();
   }
