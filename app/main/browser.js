@@ -46,8 +46,8 @@ const appStartupTime = Date.now();
 instrument.event('app', 'STARTUP');
 
 // Start the content and UA services running on a different process
-spawn.contentService();
-spawn.userAgentService();
+spawn.startContentService();
+spawn.startUserAgentService();
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

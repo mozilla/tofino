@@ -48,7 +48,8 @@
     "thenify-all": "1.6.0",
     "true-html-escape": "0.0.2",
     "uuid": "2.0.2",
-    "ws": "1.1.0"
+    "ws": "1.1.0",
+    "yargs": "4.7.1"
   },
   "devDependencies": {
     "babel-core": "6.9.0",
