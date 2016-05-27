@@ -10,20 +10,31 @@
  specific language governing permissions and limitations under the License.
  */
 
-import path from 'path';
-
 import * as userAgentService from './server';
 import { ProfileStorage } from './storage';
-import * as endpoints from '../../shared/constants/endpoints';
 
 process.on('uncaughtException', console.error);
 process.on('unhandledRejection', console.error);
 
-ProfileStorage.open(path.join(__dirname, '..', '..')).then(async function (profileStorage) {
+export async function UserAgentService(options = {}) {
+  if (typeof options.port !== 'number') {
+    throw new Error('UserAgentService requires a `port` number.');
+  }
+  if (typeof options.db !== 'string') {
+    throw new Error('UserAgentService requires a `db` string.');
+  }
+
+  const port = options.port;
+  const db = options.db;
+  const profileStorage = await ProfileStorage.open(db);
+
   await userAgentService.start({
     storage: profileStorage,
-    options: { debug: false },
+    options: {
+      debug: false,
+      port,
+    },
   });
 
-  console.log(`Started a User Agent service running on ${endpoints.UA_SERVICE_PORT}.`);
-});
+  console.log(`Started a User Agent service running on ${port}`);
+}

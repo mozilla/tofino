@@ -27,6 +27,9 @@ const ignored = [
   'coveralls',
   'nyc',
 
+  // Modules called via CLI from main process
+  'yargs',
+
   // Modules used only for configuration.
   'babel-plugin-transform-async-to-generator',
   'babel-plugin-transform-class-properties',

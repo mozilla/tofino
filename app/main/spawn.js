@@ -12,20 +12,27 @@ specific language governing permissions and limitations under the License.
 
 import { spawn } from 'child_process';
 import path from 'path';
+import * as endpoints from '../shared/constants/endpoints';
 
-const UA_SERVICE_PATH = path.join(__dirname, '..', 'services', 'user-agent-service', 'index');
-const CONTENT_SERVICE_PATH = path.join(__dirname, '..', 'services', 'content-service', 'index');
+const DB_PATH = path.join(__dirname, '..', '..');
+const SERVICES_PATH = path.join(__dirname, '..', 'services');
+const UA_SERVICE_BIN = path.join(SERVICES_PATH, 'user-agent-service', 'bin', 'user-agent-service');
+const CONTENT_SERVICE_PATH = path.join(SERVICES_PATH, 'content-service', 'index.js');
 
 // @TODO Use something like `forever` or `pm2` to ensure that this
 // process remains running
-
-export function userAgentService() {
-  spawn('node', [UA_SERVICE_PATH], {
+// @TODO Will `node` be accessible via path on users machines that don't
+// have node installed as an engineer?
+export function startUserAgentService() {
+  spawn('node', [UA_SERVICE_BIN,
+    '--port', endpoints.UA_SERVICE_PORT,
+    '--db', DB_PATH,
+  ], {
     detached: true,
   });
 }
 
-export function contentService() {
+export function startContentService() {
   spawn('node', [CONTENT_SERVICE_PATH], {
     detached: true,
   });

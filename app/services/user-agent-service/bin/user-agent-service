@@ -1,0 +1,24 @@
+#!/usr/bin/env node
+
+var UserAgentService = require('../').UserAgentService;
+
+var argv = require('yargs')
+  .usage('Usage: $0 [options]')
+  .option('p', {
+    alias: 'port',
+    require: true,
+    describe: 'The port that the UserAgentService will run on.',
+    type: 'number'
+  })
+  .option('d', {
+    alias: 'db',
+    require: true,
+    describe: 'The path to the directory containing the browser.db.',
+    type: 'string'
+  })
+  .argv;
+
+UserAgentService({
+  port: argv.port,
+  db: argv.db,
+});

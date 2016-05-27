@@ -205,10 +205,11 @@ function configure(app, router, storage) {
 }
 
 export async function start({ storage, options }) {
-  const { setup, stop } = makeServer(
-    endpoints.UA_SERVICE_VERSION,
-    endpoints.UA_SERVICE_ADDR,
-    endpoints.UA_SERVICE_PORT);
+  const version = options.version || endpoints.UA_SERVICE_VERSION;
+  const address = options.address || endpoints.UA_SERVICE_ADDR;
+  const port = options.port || endpoints.UA_SERVICE_PORT;
+
+  const { setup, stop } = makeServer(version, address, port);
 
   await setup((app, router) => {
     configure(app, router, storage);
