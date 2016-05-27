@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import React from 'react';
 
-import Style from '../browser-style';
+import Style from '../../shared/style';
 import TabBar from './tabbar/tabbar';
 import NavBar from './navbar/navbar';
 

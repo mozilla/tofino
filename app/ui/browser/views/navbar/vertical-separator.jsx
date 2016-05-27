@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import React from 'react';
 
-import Style from '../../browser-style';
+import Style from '../../../shared/style';
 
 const VERTICAL_SEPARATOR_STYLE = Style.registerStyle({
   alignSelf: 'stretch',

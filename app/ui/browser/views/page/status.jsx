@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import Style from '../../browser-style';
+import Style from '../../../shared/style';
 import { getStatusText } from '../../selectors';
 
 const STATUS_STYLE = Style.registerStyle({

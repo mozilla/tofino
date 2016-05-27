@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes } from 'react';
 
-import Style from '../browser-style';
+import Style from '../../shared/style';
 import Page from './page/page';
 import * as SharedPropTypes from '../model/shared-prop-types';
 
