@@ -68,7 +68,7 @@ export function makeServer(version, port) {
       router = express.Router();
       const { getWss } = expressWs(app);
 
-      app.use(morgan('combined'));
+      app.use(morgan('dev'));
 
       // These need to be registered before our routes.
       app.use(bodyParser.json());
