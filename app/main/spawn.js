@@ -29,11 +29,17 @@ export function startUserAgentService() {
     '--db', DB_PATH,
   ], {
     detached: true,
+    stdio: ['ignore', process.stdout, process.stderr],
   });
 }
 
 export function startContentService() {
-  spawn('node', [CONTENT_SERVICE_PATH], {
+  const child = spawn('node', [CONTENT_SERVICE_PATH], {
     detached: true,
+    stdio: ['ignore', process.stdout, process.stderr],
+  });
+
+  process.on('exit', () => {
+    child.kill('SIGKILL');
   });
 }
