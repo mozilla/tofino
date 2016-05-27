@@ -5,6 +5,7 @@ import os from 'os';
 import path from 'path';
 import fs from 'fs-promise';
 import childProcess from 'child_process';
+import webpack from 'webpack';
 
 import manifest from '../package.json';
 
@@ -29,7 +30,9 @@ export function getDownloadOptions() {
   };
 }
 
-export const getAppVersion = () => manifest.version;
+export function getAppVersion() {
+  return manifest.version;
+}
 
 export function getRoot() {
   return path.dirname(__dirname);
@@ -66,9 +69,7 @@ export function getElectronVersion() {
   return version.trim().substring(1);
 }
 
-/**
- * Use a widnows `.cmd` command if available.
- */
+// Use a windows `.cmd` command if available.
 export async function normalizeCommand(command) {
   if (os.type() === 'Windows_NT') {
     try {
@@ -97,6 +98,21 @@ export async function spawn(command, args, options = {}) {
       } else {
         resolve();
       }
+    });
+  });
+}
+
+export function webpackBuild(config) {
+  return new Promise((resolve, reject) => {
+    const compiler = webpack(config);
+    compiler.run((err, stats) => {
+      const hasErrors = stats.hasErrors();
+      const hasWarnings = stats.hasWarnings();
+      if (err || hasErrors || hasWarnings) {
+        console.log(stats.toString({ colors: true }));
+        reject(err);
+      }
+      resolve();
     });
   });
 }
