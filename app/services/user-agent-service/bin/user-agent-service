@@ -2,15 +2,11 @@
 
 var UserAgentService = require('../').UserAgentService;
 var repl = require('repl');
+var meta = require('../meta.json');
+var CONTENT_SERVICE_ORIGIN = 'http://localhost:9191';
 
 var argv = require('yargs')
   .usage('Usage: $0 [options]')
-  .option('r', {
-    alias: 'repl',
-    require: false,
-    describe: 'If provided, start a REPL after launching the user agent service.',
-    type: 'boolean'
-  })
   .option('p', {
     alias: 'port',
     require: true,
@@ -23,11 +19,32 @@ var argv = require('yargs')
     describe: 'The path to the directory containing the browser.db.',
     type: 'string'
   })
+  .option('v', {
+    alias: 'version',
+    describe: 'The version of API to use.',
+    choices: meta.validVersions,
+    default: meta.defaultVersion,
+    type: 'string',
+  })
+  .option('c', {
+    alias: 'content-service',
+    describe: 'The origin of the Content Service so that CORS can be enabled.',
+    default: CONTENT_SERVICE_ORIGIN,
+    type: 'string'
+  })
+  .option('r', {
+    alias: 'repl',
+    require: false,
+    describe: 'If provided, start a REPL after launching the user agent service.',
+    type: 'boolean'
+  })
   .argv;
 
 UserAgentService({
   port: argv.port,
   db: argv.db,
+  version: argv.version,
+  contentService: argv.contentService,
 });
 
 if (argv.repl) {

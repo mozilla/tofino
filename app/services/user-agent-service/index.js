@@ -12,6 +12,7 @@
 
 import * as userAgentService from './server';
 import { ProfileStorage } from './storage';
+import meta from './meta.json';
 
 process.on('uncaughtException', console.error);
 process.on('unhandledRejection', console.error);
@@ -23,9 +24,17 @@ export async function UserAgentService(options = {}) {
   if (typeof options.db !== 'string') {
     throw new Error('UserAgentService requires a `db` string.');
   }
+  if (!meta.validVersions.includes(options.version)) {
+    throw new Error('UserAgentService requires a valid `version`.');
+  }
+  if (typeof options.contentService !== 'string') {
+    throw new Error('UserAgentService requires a `contentService` string.');
+  }
 
   const port = options.port;
   const db = options.db;
+  const version = options.version;
+  const contentService = options.contentService;
   const profileStorage = await ProfileStorage.open(db);
 
   await userAgentService.start({
@@ -33,6 +42,8 @@ export async function UserAgentService(options = {}) {
     options: {
       debug: false,
       port,
+      version,
+      contentService,
     },
   });
 
