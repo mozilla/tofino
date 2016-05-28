@@ -10,8 +10,8 @@
  specific language governing permissions and limitations under the License.
  */
 
-import { bindHistorySearch, fetchRecentHistory } from './history';
-import { fetchRecentBookmarks } from './stars';
+import { bindHistorySearch, fetchRecentHistory } from './views/history';
+import { fetchRecentBookmarks } from './views/stars';
 
 if (~document.location.pathname.indexOf('history')) {
   bindHistorySearch();

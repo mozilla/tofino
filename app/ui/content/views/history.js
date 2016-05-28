@@ -11,7 +11,7 @@
  */
 
 function showHistoryResults(visited) {
-  const ul = document.getElementById('history');
+  const ul = document.getElementById('list');
 
   while (ul.hasChildNodes()) {
     ul.removeChild(ul.lastChild);

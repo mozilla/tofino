@@ -20,7 +20,7 @@ import Location from './location';
 const NAVBAR_STYLE = Style.registerStyle({
   position: 'relative',
   minHeight: `${UIConstants.NAVBAR_EXPANDED_HEIGHT}px`,
-  backgroundColor: 'var(--theme-navbar-color)',
+  backgroundColor: 'var(--theme-navbar-background)',
   padding: '0 10px',
   WebkitAppRegion: 'drag',
 });

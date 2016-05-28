@@ -26,7 +26,7 @@ function configure(app, router) {
       req.checkParams('page').matches(VALID_PAGES);
     },
     async method(req, res) {
-      res.sendFile(path.join(BUILT_UI_DIR, 'content', `${req.params.page}.html`));
+      res.sendFile(path.join(BUILT_UI_DIR, 'content', 'index.html'));
     },
   }));
 }

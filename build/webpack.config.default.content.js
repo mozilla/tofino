@@ -5,19 +5,38 @@ import path from 'path';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import defaultConfig, { root } from './webpack.config.default';
 
+const shared = path.join(root, 'app', 'ui', 'shared');
+const src = path.join(root, 'app', 'ui', 'content');
+const dest = path.join(root, 'lib', 'ui', 'content');
+
 export default {
   ...defaultConfig,
-  entry: path.join(root, 'app', 'ui', 'content', 'index.js'),
+  entry: path.join(src, 'index.js'),
   output: {
-    path: path.join(root, 'lib', 'ui', 'content'),
+    path: dest,
     filename: 'index.js',
     sourceMapFilename: 'index.map',
   },
   plugins: [
     ...defaultConfig.plugins,
     new CopyWebpackPlugin([{
-      from: path.join(root, 'app', 'ui', 'content', '*.html'),
-      to: path.join(root, 'lib', 'ui', 'content'),
+      from: path.join(src, '*.html'),
+      to: dest,
+      flatten: true,
+    }]),
+    new CopyWebpackPlugin([{
+      from: path.join(src, 'css', '*.css'),
+      to: path.join(dest, 'css'),
+      flatten: true,
+    }]),
+    new CopyWebpackPlugin([{
+      from: path.join(shared, 'css', '*.css'),
+      to: path.join(dest, 'css'),
+      flatten: true,
+    }]),
+    new CopyWebpackPlugin([{
+      from: path.join(shared, 'assets'),
+      to: path.join(dest, 'assets'),
       flatten: true,
     }]),
   ],

@@ -19,7 +19,7 @@ import Btn from '../../widgets/btn';
 
 const TABBAR_STYLE = Style.registerStyle({
   minHeight: `${UIConstants.TABBAR_HEIGHT}px`,
-  background: 'var(--theme-tabbar-color)',
+  backgroundColor: 'var(--theme-tabbar-background)',
 });
 
 const NEW_TAB_BUTTON_STYLE = Style.registerStyle({
