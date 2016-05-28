@@ -1,8 +1,8 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-import path from 'path';
 import express from 'express';
+import path from 'path';
 
 const PORT = 8080;
 const FIXTURES_PATH = path.join(__dirname, '..', 'fixtures');

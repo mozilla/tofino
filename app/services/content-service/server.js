@@ -10,14 +10,25 @@
  specific language governing permissions and limitations under the License.
  */
 
-import express from 'express';
 import path from 'path';
-import { makeServer } from '../common';
+import express from 'express';
+import { makeServer, autoCaughtRouteError } from '../common';
 import * as endpoints from '../../shared/constants/endpoints';
 import { BUILT_UI_DIR } from '../../shared/paths-util';
 
+const VALID_PAGES = /(history|stars)/;
+
 function configure(app, router) {
   router.use(express.static(path.join(BUILT_UI_DIR, 'content')));
+
+  router.get('/:page', autoCaughtRouteError({
+    validator(req) {
+      req.checkParams('page').matches(VALID_PAGES);
+    },
+    async method(req, res) {
+      res.sendFile(path.join(BUILT_UI_DIR, 'content', `${req.params.page}.html`));
+    },
+  }));
 }
 
 export async function start() {
