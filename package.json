@@ -21,7 +21,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "babel-polyfill": "6.7.4",
-    "babel-runtime": "6.9.0",
+    "babel-runtime": "6.9.1",
     "backoff": "2.5.0",
     "body-parser": "1.15.1",
     "electron-localshortcut": "0.6.0",
