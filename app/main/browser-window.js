@@ -32,9 +32,18 @@ const browserWindows = [];
  * currently used for the first window created to record load times.
  */
 export async function createBrowserWindow(userAgentClient, onload) {
-  await userAgentClient.connect();
   // TODO: don't abuse the storage layer's session ID generation to produce scopes.
+  // Await for `startSession()` here since that ensures we have a connection to
+  // the UA service at this point.
   const scope = await userAgentClient.startSession();
+
+  // Get the UA service address information from the user agent client
+  // after it has negotiated a connection so we can send it to the client.
+  const { port, host, version } = userAgentClient;
+
+  if (!port || !host || !version) {
+    throw new Error('The host, port, and version must be defined after connecting.');
+  }
 
   // Create the browser window.
   const browser = new BrowserWindow({
@@ -52,8 +61,13 @@ export async function createBrowserWindow(userAgentClient, onload) {
     if (onload) {
       onload();
     }
+    // The client needs to know where the UA service is in order to connect
+    // to it, and subsequently fire its 'window-ready' event.
+    browser.webContents.send('user-agent-service-info', { port, host, version });
   });
 
+  // 'window-ready' is called if an error occurred loading the client, or once
+  // the client has connected to the User Agent Service correctly.
   browser.once('window-ready', (error) => {
     // Show this BW (and a devtools window on error).
     if (!browser.isDestroyed()) {

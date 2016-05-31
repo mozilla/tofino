@@ -23,16 +23,22 @@ const CONTENT_SERVICE_PATH = path.join(SERVICES_PATH, 'content-service', 'index.
 // process remains running
 // @TODO Will `node` be accessible via path on users machines that don't
 // have node installed as an engineer?
-export function startUserAgentService() {
+export function startUserAgentService(userAgentClient) {
+  const port = endpoints.UA_SERVICE_PORT;
+  const host = endpoints.UA_SERVICE_ADDR;
+  const version = endpoints.UA_SERVICE_VERSION;
+
   spawn('node', [UA_SERVICE_BIN,
-    '--port', endpoints.UA_SERVICE_PORT,
+    '--port', port,
     '--db', DB_PATH,
-    '--version', endpoints.UA_SERVICE_VERSION,
+    '--version', version,
     '--content-service', endpoints.CONTENT_SERVER_ORIGIN,
   ], {
     detached: true,
     stdio: ['ignore'],
   });
+
+  userAgentClient.connect({ port, host, version });
 }
 
 export function startContentService() {

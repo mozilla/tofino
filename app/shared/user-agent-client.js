@@ -14,7 +14,6 @@ import EventEmitter from 'events';
 import WebSocket from 'ws';
 import request from 'request';
 import backoff from 'backoff';
-import * as endpoints from './constants/endpoints';
 
 function uaRequest(url, service, options) {
   return new Promise((resolve, reject) => {
@@ -36,12 +35,20 @@ function uaRequest(url, service, options) {
 }
 
 class UserAgentClient extends EventEmitter {
-  constructor(url = endpoints.UA_SERVICE_WS) {
+  constructor() {
     super();
-    this.url = url;
+    this._connected = false;
   }
 
-  startSession(url = endpoints.UA_SERVICE_HTTP) {
+  async startSession() {
+    // Do not use `this._connect` promise in the event we call a subsequent
+    // `connect()` with different port/host/version information during negotiating
+    // the port, for example.
+    if (!this._connected) {
+      await new Promise(resolve => this.once('connected', resolve));
+    }
+
+    const url = `http://${this.host}:${this.port}/${this.version}`;
     return uaRequest(url, '/session/start', {
       method: 'POST',
     });
@@ -50,17 +57,35 @@ class UserAgentClient extends EventEmitter {
   /**
    * Connects to the remote User Agent Service, and resolves a promise
    * upon completion. Can be called multiple times and caches the connection
-   * promise so consumers can always call `await client.connect()` safely.
+   * promise so consumers can always call `await client.connect(ops)` safely.
+   *
+   * Calling with different address information will attempt a new connection.
    *
    * @TODO what happens if this never connects?
    */
-  async connect() {
-    if (this._connect) {
+  async connect({ version, host, port }) {
+    if (!version || !host || !port) {
+      throw new Error('Must have host, port, and version defined.');
+    }
+
+    // If we already connected to this version, host and port,
+    // return the same promise.
+    if (this._connect &&
+        this.version === version &&
+        this.host === host &&
+        this.port === port) {
       return this._connect;
     }
 
+    this._connected = false;
+    this.version = version;
+    this.host = host;
+    this.port = port;
+
+    const url = `ws://${this.host}:${this.port}/${this.version}/ws`;
+
     this._connect = new Promise((resolve) => {
-      const call = backoff.call(this._connectAttempt, this.url, (err, ws) => {
+      const call = backoff.call(this._connectAttempt, url, (err, ws) => {
         if (err) {
           console.error(`UserAgentClient: ${err}`);
         } else if (ws) {
@@ -83,6 +108,8 @@ class UserAgentClient extends EventEmitter {
       delete data.message;
       this.emit(message, data);
     });
+
+    this.emit('connected');
 
     return this._connect;
   }

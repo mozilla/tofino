@@ -47,7 +47,7 @@ instrument.event('app', 'STARTUP');
 
 // Start the content and UA services running on a different process
 spawn.startContentService();
-spawn.startUserAgentService();
+spawn.startUserAgentService(userAgentClient);
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -116,8 +116,6 @@ ipc.on('instrument-event', (event, args) => {
 
 const menuData = {};
 
-// Connect UA client to the UA service
-userAgentClient.connect();
 userAgentClient.on('diff', (command) => {
   if (command.type === 'initial') {
     menuData.recentBookmarks = command.payload.recentStars;
