@@ -31,15 +31,12 @@ export function startUserAgentService() {
     '--content-service', endpoints.CONTENT_SERVER_ORIGIN,
   ], {
     detached: true,
-    stdio: ['ignore', process.stdout, process.stderr],
+    stdio: ['ignore'],
   });
 }
 
 export function startContentService() {
-  const child = spawn('node', [CONTENT_SERVICE_PATH], {
-    detached: true,
-    stdio: ['ignore', process.stdout, process.stderr],
-  });
+  const child = spawn('node', [CONTENT_SERVICE_PATH]);
 
   process.on('exit', () => {
     child.kill('SIGKILL');
