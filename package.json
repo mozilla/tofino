@@ -5,7 +5,7 @@
   "main": "lib/main/browser.js",
   "repository": "https://github.com/mozilla/tofino",
   "_electron": {
-    "version": "1.1.0"
+    "version": "1.2.1"
   },
   "scripts": {
     "start": "cross-env NODE_ENV=\"production\" node build/main.js --run",
