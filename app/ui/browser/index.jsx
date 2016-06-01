@@ -73,7 +73,6 @@ store.dispatch(actions.createTab());
 // that if an error occurs while we connect, we at least have some UI in place.
 ReactDOM.render(chrome, container);
 
-userAgentClient.connect().then(() => onWindowReady(true));
 userAgentClient.on('diff', (command) => {
   if (command.type === 'initial') {
     if (command.payload.stars) {
@@ -90,3 +89,8 @@ userAgentClient.on('diff', (command) => {
   // It's dangerous to trust the service in this way, but good enough for now.
   store.dispatch(command);
 });
+
+// Wait until the main process negotiates an address for the UA service, and
+// then subsequently connect.
+ipcRenderer.on('user-agent-service-info', (_, { port, version, host }) =>
+  userAgentClient.connect({ port, version, host }));
