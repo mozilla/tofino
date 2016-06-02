@@ -14,3 +14,4 @@ import * as endpoints from './endpoints';
 
 export const HISTORY_PAGE = `${endpoints.CONTENT_SERVER_HTTP}/history.html`;
 export const STARS_PAGE = `${endpoints.CONTENT_SERVER_HTTP}/stars.html`;
+export const CREDITS_PAGE = `${endpoints.CONTENT_SERVER_HTTP}/credits.html`;

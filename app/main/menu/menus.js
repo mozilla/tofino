@@ -96,6 +96,7 @@ const menus = {
     role: 'help',
     submenu: [
       items.learnMore,
+      items.credits,
     ],
   },
   osx: {

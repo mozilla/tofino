@@ -196,6 +196,15 @@ items.learnMore = {
   },
 };
 
+items.credits = {
+  label: 'Credits',
+  click(item, focusedWindow) {
+    if (focusedWindow) {
+      focusedWindow.webContents.send('show-credits');
+    }
+  },
+};
+
 items.osx = Object.create(null);
 items.osx.about = {
   label: `About ${APP_NAME}`,

@@ -163,6 +163,7 @@ function attachIPCRendererListeners(browserView) {
   // @TODO write tests for the following actions
   ipcRenderer.on('show-stars', () => dispatch(actions.createTab(contentURLs.STARS_PAGE)));
   ipcRenderer.on('show-history', () => dispatch(actions.createTab(contentURLs.HISTORY_PAGE)));
+  ipcRenderer.on('show-credits', () => dispatch(actions.createTab(contentURLs.CREDITS_PAGE)));
   ipcRenderer.on('focus-url-bar', () => {});
   ipcRenderer.on('open-bookmark', (_, bookmark) => dispatch(actions.createTab(bookmark.location)));
 
