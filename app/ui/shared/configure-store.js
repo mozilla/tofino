@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import { applyMiddleware, createStore } from 'redux';
 import createLogger from 'redux-logger';
+import * as types from '../browser/constants/action-types';
 import thunk from './thunk';
 import * as instrument from './instrument';
 import BUILD_CONFIG from '../../../build-config';
@@ -30,7 +31,9 @@ export default function(rootReducer, initialState) {
     middleware.unshift(createLogger({
       duration: true,
       collapsed: true,
-      predicate: (getState, action) => typeof action !== 'function',
+      predicate: (getState, action) => {
+        return typeof action !== 'function' && action.type !== types.SET_STATUS_TEXT;
+      },
       stateTransformer: (state) => state.toJS(),
     }));
   }
