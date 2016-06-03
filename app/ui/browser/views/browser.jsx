@@ -33,11 +33,6 @@ const BROWSER_WINDOW_STYLE = Style.registerStyle({
 });
 
 class BrowserWindow extends Component {
-  constructor(props) {
-    super(props);
-    this.handleKeyDown = this.handleKeyDown.bind(this);
-  }
-
   componentWillMount() {
     this.webViewController = new WebViewController(() => this.props.pages);
   }
@@ -47,7 +42,7 @@ class BrowserWindow extends Component {
     attachIPCRendererListeners(this);
   }
 
-  handleKeyDown(ev) {
+  handleKeyDown = (ev) => {
     const { dispatch, currentPage } = this.props;
 
     if (ev.metaKey && ev.key === 'KeyF') { // cmd+f

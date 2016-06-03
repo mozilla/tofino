@@ -41,8 +41,6 @@ class DeveloperBar extends Component {
   constructor(props) {
     super(props);
 
-    this.handleRecordingClick = this.handleRecordingClick.bind(this);
-
     this.state = {
       isRecording: false,
       buildConfig: props.buildConfig || BUILD_CONFIG,
@@ -51,7 +49,7 @@ class DeveloperBar extends Component {
     };
   }
 
-  handleRecordingClick() {
+  handleRecordingClick = () => {
     const isCurrentlyRecording = this.state.isRecording;
     this.setState({ isRecording: !isCurrentlyRecording });
 

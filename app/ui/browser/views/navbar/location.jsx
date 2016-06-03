@@ -106,17 +106,6 @@ const INPUT_BAR_STYLE = Style.registerStyle({
  * trivial.
  */
 export class Location extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleTitleClick = this.handleTitleClick.bind(this);
-    this.handleTitleFocus = this.handleTitleFocus.bind(this);
-    this.handleURLBarFocus = this.handleURLBarFocus.bind(this);
-    this.handleURLBarBlur = this.handleURLBarBlur.bind(this);
-    this.handleURLBarKeyDown = this.handleURLBarKeyDown.bind(this);
-    this.handleBookmarkClick = this.handleBookmarkClick.bind(this);
-  }
-
   componentDidMount() {
     ipcRenderer.on('focus-url-bar', () => {
       this.refs.input.select();
@@ -195,7 +184,7 @@ export class Location extends Component {
     this.refs.input.blur();
   }
 
-  handleBookmarkClick(e) {
+  handleBookmarkClick = (e) => {
     const { isBookmarked, bookmark, unbookmark } = this.props;
     const webview = getCurrentWebView(e.target.ownerDocument);
     const title = webview.getTitle();
@@ -207,25 +196,25 @@ export class Location extends Component {
     }
   }
 
-  handleTitleClick() {
+  handleTitleClick = () => {
     this.props.dispatch(actions.setShowURLBar(this.props.page.id, true));
   }
 
-  handleTitleFocus() {
+  handleTitleFocus = () => {
     this.props.dispatch(actions.setShowURLBar(this.props.page.id, true));
   }
 
-  handleURLBarFocus() {
+  handleURLBarFocus = () => {
     this.refs.input.select();
     this.props.dispatch(actions.setFocusedURLBar(this.props.page.id, true));
   }
 
-  handleURLBarBlur() {
+  handleURLBarBlur = () => {
     this.props.dispatch(actions.setShowURLBar(this.props.page.id, false));
     this.props.dispatch(actions.setFocusedURLBar(this.props.page.id, false));
   }
 
-  handleURLBarKeyDown(ev, completionsForLocation) {
+  handleURLBarKeyDown = (ev, completionsForLocation) => {
     const maxCompletions = completionsForLocation ? completionsForLocation.length : -1;
 
     if (ev.key === 'Enter') {
