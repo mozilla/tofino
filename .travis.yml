@@ -21,7 +21,7 @@ addons:
     paths: $(cd dist && ls *.zip | tr "\n" ":")
     working_dir: dist
     target_paths: mozilla/tofino/builds
-    permissions: public
+    permissions: public-read
 
 before_install:
   - "export DISPLAY=:99.0"
