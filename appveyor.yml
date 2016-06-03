@@ -19,7 +19,6 @@ pull_requests:
   do_not_increment_build_number: true
 
 cache:
-  - .electron
   - node_modules
 
 install:
@@ -46,5 +45,5 @@ deploy:
     secure: 8L4sC5l97dY13Jnv/6Gd8Fe//FpnOuMQWu7st2LNLRhX4LjQ9uSLfObqRT0HsBqw
   bucket:
     secure: a/ijSslVXIxT1KRgwK6oWBJiOYD2DS5KCC5JpEDtXaU=
-  set_public: false
+  set_public: true
   folder: mozilla/tofino/builds

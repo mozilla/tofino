@@ -8,7 +8,6 @@ dist: trusty
 
 cache:
   directories:
-    - .electron
     - node_modules
 
 addons:
@@ -22,7 +21,7 @@ addons:
     paths: $(cd dist && ls *.zip | tr "\n" ":")
     working_dir: dist
     target_paths: mozilla/tofino/builds
-    permissions: private
+    permissions: public
 
 before_install:
   - "export DISPLAY=:99.0"

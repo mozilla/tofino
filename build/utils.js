@@ -24,6 +24,8 @@ export function getElectronExecutable() {
 // official Electron builds.
 export function getDownloadOptions() {
   return {
+    mirror: manifest._electron.mirror,
+    customDir: manifest._electron.revision,
     version: manifest._electron.version,
     cache: path.join(__dirname, '..', '.cache'),
     strictSSL: true,
