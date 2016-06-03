@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes } from 'react';
 
-import Style from '../browser-style';
+import Style from '../../shared/style';
 
 export const MIN_WIDTH = '16px';
 export const MIN_HEIGHT = '16px';
@@ -62,7 +62,7 @@ const Btn = (props) => {
   // when an asset is intended, but not supplied yet. Simply checking for a
   // falsy value would render BKG_IMAGE_DEFAULT useless.
   if (image != null) {
-    custom.backgroundImage = image ? `url(assets/${image})` : `url(${BKG_IMAGE_DEFAULT})`;
+    custom.backgroundImage = image ? `url(../shared/assets/${image})` : `url(${BKG_IMAGE_DEFAULT})`;
     custom.backgroundRepeat = BKG_REPEAT_DEFAULT;
     custom.backgroundPosition = imgPosition || BKG_POSIITON_DEFAULT;
     custom.backgroundSize = imgWidth || imgHeight ? `${imgWidth} ${imgHeight}` : BKG_SIZE_DEFAULT;

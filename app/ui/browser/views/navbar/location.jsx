@@ -14,7 +14,7 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { ipcRenderer } from '../../../../shared/electron';
 
-import Style from '../../browser-style';
+import Style from '../../../shared/style';
 import Btn from '../../widgets/btn';
 
 import { fixURL, getCurrentWebView } from '../../browser-util';

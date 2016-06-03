@@ -1,0 +1,21 @@
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  /* Use a default system font in the entire application */
+  font: 11px BlinkMacSystemFont, sans-serif;
+}
+
+div {
+  display: flex;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+:focus {
+  outline-style: none;
+}

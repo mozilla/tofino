@@ -12,14 +12,14 @@ specific language governing permissions and limitations under the License.
 
 import React from 'react';
 
-import Style from '../browser-style';
+import Style from '../../shared/style';
 import TabBar from './tabbar/tabbar';
 import NavBar from './navbar/navbar';
 
 const CHROME_AREA_STYLE = Style.registerStyle({
   flexDirection: 'column',
   backgroundColor: 'var(--theme-body-color)',
-  backgroundImage: 'url(assets/chrome-background.png)',
+  backgroundImage: 'url(../shared/assets/chrome-background.png)',
   backgroundSize: '28px',
 });
 

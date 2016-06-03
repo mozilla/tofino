@@ -14,7 +14,7 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { ipcRenderer } from '../../../shared/electron';
 
-import Style from '../browser-style';
+import Style from '../../shared/style';
 import * as SharedPropTypes from '../model/shared-prop-types';
 import BrowserChrome from './browser-chrome';
 import BrowserContent from './browser-content';

@@ -11,7 +11,7 @@
  */
 
 function showBookmarksResults(stars) {
-  const ul = document.getElementById('bookmarks');
+  const ul = document.getElementById('list');
 
   stars.forEach(item => {
     const li = document.createElement('li');
