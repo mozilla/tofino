@@ -27,17 +27,19 @@ export default {
     await Lazy.buildDeps();
   },
 
-  async run(args = []) {
-    await Lazy.config();
-    await Lazy.buildBrowser([...args, '--force']);
+  async build(args = [], config = {}) {
+    await Lazy.config(config);
+    await Lazy.buildBrowser();
     await Lazy.buildContent();
+  },
+
+  async run(args = []) {
+    this.build([...args, '--force']);
     await Lazy.run(args);
   },
 
   async runDev(args = []) {
-    await Lazy.config({ development: true });
-    await Lazy.buildBrowser([...args, '--force']);
-    await Lazy.buildContent();
+    this.build([...args, '--force'], { development: true });
 
     const { buildFile, appDir } = require('./task-build-content');
     const watcher = chokidar.watch(appDir, {
@@ -52,17 +54,13 @@ export default {
   },
 
   async test(args = []) {
-    await Lazy.config({ test: true });
-    await Lazy.buildBrowser(args);
-    await Lazy.buildContent();
+    this.build(args, { test: true });
     await Lazy.test(args);
   },
 
   async package(args) {
+    this.build([...args, '--force'], { packaged: true });
     await Lazy.clean();
-    await Lazy.config({ packaged: true });
-    await Lazy.buildBrowser([...args, '--force']);
-    await Lazy.buildContent();
     await Lazy.package();
   },
 };

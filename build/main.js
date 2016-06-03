@@ -53,12 +53,12 @@ const handleDepsCheckSucceeded = () => {
   const argv = process.argv;
   const tasks = require('./tasks').default;
   const handlers = {
+    '--build-deps': () => tasks.buildDeps(),
     '--build': args => tasks.build(args),
     '--run': args => tasks.run(args),
     '--run-dev': args => tasks.runDev(args),
     '--package': args => tasks.package(args),
     '--test': args => tasks.test(args),
-    '--build-deps': () => tasks.buildDeps(),
   };
   main(argv, tasks, handlers, handleTaskFailed);
 };
