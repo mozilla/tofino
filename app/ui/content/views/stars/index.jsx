@@ -20,10 +20,6 @@ import * as ContentPropTypes from '../../model/content-prop-types';
 import * as actions from '../../actions/main-actions';
 import * as selectors from '../../selectors';
 
-// TODO: Don't rely on the user agent injecting helpers into our page.
-// Fixed after https://github.com/mozilla/tofino/pull/609
-const UA = window._browser;
-
 const STARS_STYLE = Style.registerStyle({
   flex: 1,
   overflow: 'auto',
@@ -32,7 +28,7 @@ const STARS_STYLE = Style.registerStyle({
 
 class Stars extends Component {
   componentDidMount() {
-    this.props.dispatch(actions.showStars({ UA, limit: 1000 }));
+    this.props.dispatch(actions.showStars({ limit: 1000 }));
   }
 
   render() {

@@ -21,10 +21,6 @@ import * as ContentPropTypes from '../../model/content-prop-types';
 import * as actions from '../../actions/main-actions';
 import * as selectors from '../../selectors';
 
-// TODO: Don't rely on the user agent injecting helpers into our page.
-// Fixed after https://github.com/mozilla/tofino/pull/609
-const UA = window._browser;
-
 const HISTORY_STYLE = Style.registerStyle({
   flex: 1,
   flexDirection: 'column',
@@ -43,13 +39,13 @@ const SEARCH_STYLE = Style.registerStyle({
 
 class History extends Component {
   componentDidMount() {
-    this.props.dispatch(actions.showHistory({ UA, limit: 200 }));
+    this.props.dispatch(actions.showHistory({ limit: 200 }));
   }
 
   handleSearch = e => {
     const query = e.target.value;
     const limit = query ? 20 : 200;
-    this.props.dispatch(actions.showHistory({ UA, query, limit }));
+    this.props.dispatch(actions.showHistory({ query, limit }));
   }
 
   render() {
