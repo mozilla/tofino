@@ -20,6 +20,7 @@ const ignored = [
   // Build modules not imported anywhere, but used at the CLI.
   'electron-rebuild',
   'cross-env',
+  'babel-loader',
 
   // Test modules not imported anywhere, but used at the CLI.
   'electron-mocha',

@@ -11,12 +11,13 @@
  */
 
 import express from 'express';
+import path from 'path';
 import { makeServer } from '../common';
 import * as endpoints from '../../shared/constants/endpoints';
-import { CONTENT_UI_DIR } from '../../shared/paths-util';
+import { BUILT_UI_DIR } from '../../shared/paths-util';
 
 function configure(app, router) {
-  router.use(express.static(CONTENT_UI_DIR));
+  router.use(express.static(path.join(BUILT_UI_DIR, 'content')));
 }
 
 export async function start() {

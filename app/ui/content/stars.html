@@ -32,19 +32,7 @@ Hello, 🌟.
 
 <ul id="bookmarks"></ul>
 
-<script>
-    var ul = document.getElementById('bookmarks');
-    window._browser.recentStars(1000).then(function (stars) {
-        stars.forEach(function (item) {
-            var li = document.createElement('li');
-            var a = document.createElement('a');
-            a.href = item.location;
-            a.title = item.title || item.location;
-            a.appendChild(document.createTextNode(item.title || 'Untitled'));
-            li.appendChild(a);
-            ul.appendChild(li);
-        });
-    });
-</script>
+<script src="index.js"></script>
+
 </body>
 </html>

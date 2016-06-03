@@ -62,47 +62,7 @@
 
 <ul id="history"></ul>
 
-<script>
-    function showResults(visited) {
-        var ul = document.getElementById('history');
-        while (ul.hasChildNodes()) {
-            ul.removeChild(ul.lastChild);
-        }
+<script src="index.js"></script>
 
-        visited.forEach(function (page) {
-            var li = document.createElement('li');
-            var a = document.createElement('a');
-            a.href = page.uri;
-            a.title = page.title || page.uri;
-            a.appendChild(document.createTextNode(page.title || page.uri));
-            li.appendChild(a);
-            li.appendChild(document.createElement('br'));
-            if (page.snippet) {
-                var p = document.createElement('p');
-                p.className = 'excerpt';
-                p.appendChild(document.createTextNode(page.snippet));
-                li.appendChild(p);
-            }
-            ul.appendChild(li);
-        });
-    }
-
-    function fetchRecent() {
-        window._browser.visited(200).then(showResults);
-    }
-
-    function handleQuery(e) {
-        e.preventDefault();
-        var q = document.search.filter.value;
-        if (q) {
-            window._browser.query(q, undefined, 20, 'large').then(showResults);
-        } else {
-            fetchRecent();
-        }
-    }
-
-    document.getElementById('search').addEventListener('keyup', handleQuery);
-    fetchRecent();
-</script>
 </body>
 </html>

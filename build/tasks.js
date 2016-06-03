@@ -1,7 +1,7 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-/* eslint global-require: 0 */
+import chokidar from 'chokidar';
 
 /**
  * Use need to allow lazy loading of modules for all tasks. Generally,
@@ -9,37 +9,37 @@
  * this might not be true, which will break certain native module imports that
  * try to eagerly load this file.
  */
+ /* eslint global-require: 0 */
+
+const Lazy = {
+  buildDeps: () => require('./task-build-deps').default(),
+  config: options => require('./task-config-builder').default(options),
+  buildBrowser: args => require('./task-build-browser').default(args),
+  buildContent: args => require('./task-build-content').default(args),
+  run: args => require('./task-run').default(args),
+  test: args => require('./task-test').default(args),
+  package: () => require('./task-package').default(),
+  clean: () => require('./task-clean-package').default(),
+};
 
 export default {
-  async config(options) {
-    await require('./task-config-builder').default(options);
-  },
-
   async buildDeps() {
-    await require('./task-build-deps').default();
-  },
-
-  async build(args = [], config = {}) {
-    await this.config(config);
-    await require('./task-build').default(args);
-  },
-
-  async buildDev(args = []) {
-    await this.config({ development: true });
-    await require('./task-build').default(args);
+    await Lazy.buildDeps();
   },
 
   async run(args = []) {
-    await this.build([...args, '--force']);
-    await require('./task-run').default(args);
+    await Lazy.config();
+    await Lazy.buildBrowser([...args, '--force']);
+    await Lazy.buildContent();
+    await Lazy.run(args);
   },
 
   async runDev(args = []) {
-    const chokidar = require('chokidar');
+    await Lazy.config({ development: true });
+    await Lazy.buildBrowser([...args, '--force']);
+    await Lazy.buildContent();
 
-    await this.buildDev([...args, '--force']);
-
-    const { buildFile, appDir } = require('./task-build');
+    const { buildFile, appDir } = require('./task-build-content');
     const watcher = chokidar.watch(appDir, {
       ignoreInitial: true,
     });
@@ -47,23 +47,22 @@ export default {
     watcher.on('add', (f, s) => buildFile(f, s, args));
     watcher.on('change', (f, s) => buildFile(f, s, args));
 
-    await require('./task-run').default(args);
+    await Lazy.run(args);
     watcher.close();
   },
 
   async test(args = []) {
-    await this.build(args, { test: true });
-    await require('./task-test').default(args);
-  },
-
-  async clean() {
-    await require('./task-clean-package').default();
+    await Lazy.config({ test: true });
+    await Lazy.buildBrowser(args);
+    await Lazy.buildContent();
+    await Lazy.test(args);
   },
 
   async package(args) {
-    await this.clean();
-    await this.build([...args, '--force']);
-    await this.config({ packaged: true });
-    await require('./task-package').default();
+    await Lazy.clean();
+    await Lazy.config({ packaged: true });
+    await Lazy.buildBrowser([...args, '--force']);
+    await Lazy.buildContent();
+    await Lazy.package();
   },
 };
