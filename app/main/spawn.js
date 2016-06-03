@@ -13,6 +13,7 @@ specific language governing permissions and limitations under the License.
 import { spawn } from 'child_process';
 import path from 'path';
 import * as endpoints from '../shared/constants/endpoints';
+import BUILD_CONFIG from '../../build-config';
 
 const ROOT = path.join(__dirname, '..', '..');
 const DB_PATH = ROOT;
@@ -25,6 +26,8 @@ const CONTENT_SERVICE_PATH = path.join(SERVICES_PATH, 'content-service', 'index.
 // @TODO Will `node` be accessible via path on users machines that don't
 // have node installed as an engineer?
 
+const children = [];
+
 export function startUserAgentService(userAgentClient, options = {}) {
   const port = endpoints.UA_SERVICE_PORT;
   const host = endpoints.UA_SERVICE_ADDR;
@@ -35,7 +38,7 @@ export function startUserAgentService(userAgentClient, options = {}) {
   const detached = !options.attached; // Detach by default
   const stdio = detached ? ['ignore'] : ['ignore', process.stdout, process.stderr];
 
-  const child = spawn('node', [UA_SERVICE_BIN,
+  children.push(spawn('node', [UA_SERVICE_BIN,
     '--port', port,
     '--db', DB_PATH,
     '--version', version,
@@ -43,29 +46,33 @@ export function startUserAgentService(userAgentClient, options = {}) {
   ], {
     detached,
     stdio,
-  });
+  }));
 
   // Connecting to a client immediately is sometimes not necessary,
   // e.g. when starting this service standalone.
   if (userAgentClient) {
     userAgentClient.connect({ port, host, version });
   }
-
-  process.on('exit', () => {
-    child.kill('SIGKILL');
-  });
 }
 
 export function startContentService(options = {}) {
   const detached = !options.attached; // Detach by default
   const stdio = detached ? ['ignore'] : ['ignore', process.stdout, process.stderr];
 
-  const child = spawn('node', [CONTENT_SERVICE_PATH], {
+  children.push(spawn('node', [CONTENT_SERVICE_PATH], {
     detached,
     stdio,
-  });
+  }));
+}
 
-  process.on('exit', () => {
-    child.kill('SIGKILL');
-  });
+// Some builds always kill spawned services for easy debugging.
+// See https://github.com/mozilla/tofino/issues/607 for more background.
+if (!BUILD_CONFIG.keepAliveAppServices) {
+  process.on('exit', () => terminateSpawnedProcesses('SIGTERM'));
+  process.on('SIGINT', () => terminateSpawnedProcesses('SIGTERM'));
+  process.on('SIGTERM', () => terminateSpawnedProcesses('SIGTERM'));
+}
+
+function terminateSpawnedProcesses(code) {
+  children.forEach(c => c.kill(code));
 }

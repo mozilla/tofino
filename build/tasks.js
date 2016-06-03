@@ -35,16 +35,22 @@ export default {
   },
 
   async serve() {
+    await Lazy.config({ keepAliveAppServices: false });
     await Lazy.serve();
   },
 
   async run(args = []) {
-    await this.build([...args, '--force']);
+    await this.build([...args, '--force'], {
+      keepAliveAppServices: args.indexOf('services:keep-alive') !== -1,
+    });
     await Lazy.run(args);
   },
 
   async runDev(args = []) {
-    await this.build([...args, '--force'], { development: true });
+    await this.build([...args, '--force'], {
+      development: true,
+      keepAliveAppServices: args.indexOf('services:keep-alive') !== -1,
+    });
 
     const { buildFile, appDir } = require('./task-build-browser');
     const watcher = chokidar.watch(appDir, {
