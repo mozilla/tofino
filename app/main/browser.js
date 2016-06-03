@@ -30,6 +30,7 @@ process.on('unhandledRejection', (reason, p) => {
 
 import electron from 'electron';
 
+import * as protocols from './protocols';
 import * as hotkeys from './hotkeys';
 import * as menu from './menu/index';
 import * as instrument from '../services/instrument';
@@ -45,6 +46,8 @@ const userAgentClient = new UserAgentClient();
 const appStartupTime = Date.now();
 instrument.event('app', 'STARTUP');
 
+protocols.registerStandardSchemes();
+
 // Start the content and UA services running on a different process
 spawn.startContentService();
 spawn.startUserAgentService(userAgentClient);
@@ -57,6 +60,9 @@ app.on('ready', async function() {
 
   // Force the menu to be built at least once on startup
   menu.buildAppMenu(menuData);
+
+  // Register http content protocols, e.g. for displaying `tofino://` pages.
+  protocols.registerHttpProtocols();
 
   await BW.createBrowserWindow(userAgentClient, () => {
     instrument.event('browser', 'READY', 'ms', Date.now() - browserStartTime);
