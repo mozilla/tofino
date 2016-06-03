@@ -35,7 +35,7 @@ export function startUserAgentService(userAgentClient, options = {}) {
   const detached = !options.attached; // Detach by default
   const stdio = detached ? ['ignore'] : ['ignore', process.stdout, process.stderr];
 
-  spawn('node', [UA_SERVICE_BIN,
+  const child = spawn('node', [UA_SERVICE_BIN,
     '--port', port,
     '--db', DB_PATH,
     '--version', version,
@@ -50,6 +50,10 @@ export function startUserAgentService(userAgentClient, options = {}) {
   if (userAgentClient) {
     userAgentClient.connect({ port, host, version });
   }
+
+  process.on('exit', () => {
+    child.kill('SIGKILL');
+  });
 }
 
 export function startContentService(options = {}) {
