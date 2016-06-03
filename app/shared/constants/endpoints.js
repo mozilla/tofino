@@ -10,6 +10,8 @@
  specific language governing permissions and limitations under the License.
  */
 
+export const TOFINO_PROTOCOL = 'tofino';
+
 export const UA_SERVICE_ADDR = 'localhost';
 export const UA_SERVICE_PORT = 9090;
 export const UA_SERVICE_VERSION = 'v1';

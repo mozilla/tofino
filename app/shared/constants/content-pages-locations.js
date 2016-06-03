@@ -12,6 +12,6 @@ specific language governing permissions and limitations under the License.
 
 import * as endpoints from './endpoints';
 
-export const HISTORY_PAGE = `${endpoints.CONTENT_SERVER_HTTP}/history`;
-export const STARS_PAGE = `${endpoints.CONTENT_SERVER_HTTP}/stars`;
-export const CREDITS_PAGE = `${endpoints.CONTENT_SERVER_HTTP}/credits.html`;
+export const HISTORY_PAGE = `${endpoints.TOFINO_PROTOCOL}://history`;
+export const STARS_PAGE = `${endpoints.TOFINO_PROTOCOL}://stars`;
+export const CREDITS_PAGE = `${endpoints.TOFINO_PROTOCOL}://credits.html`;
