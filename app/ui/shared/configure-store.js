@@ -32,7 +32,11 @@ export default function(rootReducer, initialState) {
       duration: true,
       collapsed: true,
       predicate: (getState, action) => {
-        return typeof action !== 'function' && action.type !== types.SET_STATUS_TEXT;
+        if (action.type === types.SET_STATUS_TEXT) {
+          console.log(types.SET_STATUS_TEXT + " " + action.text);
+          return false;
+        }
+        return typeof action !== 'function';
       },
       stateTransformer: (state) => state.toJS(),
     }));
