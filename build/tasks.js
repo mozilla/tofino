@@ -41,7 +41,7 @@ export default {
   async runDev(args = []) {
     this.build([...args, '--force'], { development: true });
 
-    const { buildFile, appDir } = require('./task-build-content');
+    const { buildFile, appDir } = require('./task-build-browser');
     const watcher = chokidar.watch(appDir, {
       ignoreInitial: true,
     });
