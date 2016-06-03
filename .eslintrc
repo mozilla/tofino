@@ -45,6 +45,7 @@
         "Immutable.Set"
       ]
     }],
+    "arrow-body-style": ["off"],
     "func-names": ["off"],
     "space-before-function-paren": ["error", "never"],
     "no-confusing-arrow": ["off"],
