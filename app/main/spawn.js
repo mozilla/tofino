@@ -14,8 +14,9 @@ import { spawn } from 'child_process';
 import path from 'path';
 import * as endpoints from '../shared/constants/endpoints';
 
-const DB_PATH = path.join(__dirname, '..', '..');
-const SERVICES_PATH = path.join(__dirname, '..', 'services');
+const ROOT = path.join(__dirname, '..', '..');
+const DB_PATH = ROOT;
+const SERVICES_PATH = path.join(ROOT, 'lib', 'services');
 const UA_SERVICE_BIN = path.join(SERVICES_PATH, 'user-agent-service', 'bin', 'user-agent-service');
 const CONTENT_SERVICE_PATH = path.join(SERVICES_PATH, 'content-service', 'index.js');
 
@@ -23,10 +24,16 @@ const CONTENT_SERVICE_PATH = path.join(SERVICES_PATH, 'content-service', 'index.
 // process remains running
 // @TODO Will `node` be accessible via path on users machines that don't
 // have node installed as an engineer?
-export function startUserAgentService(userAgentClient) {
+
+export function startUserAgentService(userAgentClient, options = {}) {
   const port = endpoints.UA_SERVICE_PORT;
   const host = endpoints.UA_SERVICE_ADDR;
   const version = endpoints.UA_SERVICE_VERSION;
+
+  // Careful passing in options.attached as true, as this stops the service from
+  // outliving the its original parent, which we want to allow in the UAS case.
+  const detached = !options.attached; // Detach by default
+  const stdio = detached ? ['ignore'] : ['ignore', process.stdout, process.stderr];
 
   spawn('node', [UA_SERVICE_BIN,
     '--port', port,
@@ -34,15 +41,25 @@ export function startUserAgentService(userAgentClient) {
     '--version', version,
     '--content-service', endpoints.CONTENT_SERVER_ORIGIN,
   ], {
-    detached: true,
-    stdio: ['ignore'],
+    detached,
+    stdio,
   });
 
-  userAgentClient.connect({ port, host, version });
+  // Connecting to a client immediately is sometimes not necessary,
+  // e.g. when starting this service standalone.
+  if (userAgentClient) {
+    userAgentClient.connect({ port, host, version });
+  }
 }
 
-export function startContentService() {
-  const child = spawn('node', [CONTENT_SERVICE_PATH]);
+export function startContentService(options = {}) {
+  const detached = !options.attached; // Detach by default
+  const stdio = detached ? ['ignore'] : ['ignore', process.stdout, process.stderr];
+
+  const child = spawn('node', [CONTENT_SERVICE_PATH], {
+    detached,
+    stdio,
+  });
 
   process.on('exit', () => {
     child.kill('SIGKILL');
