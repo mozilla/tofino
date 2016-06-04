@@ -2,12 +2,10 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import webpack from 'webpack';
-import path from 'path';
-
-export const root = path.join(__dirname, '..');
+import * as BuildUtils from './utils';
 
 export default {
-  context: root,
+  context: BuildUtils.getRoot(),
   module: {
     loaders: [{
       test: /\.jsx?$/,

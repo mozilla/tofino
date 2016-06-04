@@ -36,12 +36,12 @@ describe('build tasks', () => {
   }));
 
   it('should have a working `clean` task', autoFailingAsyncTest(async function() {
-    fs.ensureDir(BuildConst.DIST_DIR);
+    fs.ensureDir(BuildConst.PACKAGED_DIST_DIR);
 
     let cleaned = false;
     await clean();
     try {
-      await fs.stat(BuildConst.DIST_DIR);
+      await fs.stat(BuildConst.PACKAGED_DIST_DIR);
     } catch (err) {
       cleaned = err;
     }

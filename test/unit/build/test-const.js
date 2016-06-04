@@ -9,7 +9,7 @@ import * as Const from '../../../build/const.js';
 const cwd = fs.realpathSync(process.cwd());
 
 describe('build constants', () => {
-  it('should export `DIST_DIR`', () => {
-    expect(Const.DIST_DIR).toEqual(path.join(cwd, 'dist'));
+  it('should export `PACKAGED_DIST_DIR`', () => {
+    expect(Const.PACKAGED_DIST_DIR).toEqual(path.join(cwd, 'dist'));
   });
 });
