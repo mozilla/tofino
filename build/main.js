@@ -27,8 +27,18 @@ const handleDepsCheckFailed = result => {
 
 const handleTaskFailed = err => {
   console.error('Build failed.');
-  console.error(err);
-  process.exit(1);
+
+  // Need log webpack output here because console.log isn't an atomic operation.
+  // Doing this somewhere else before other logging operations will result in
+  // garbled text in stdout. Also, exitting immediately would stop the logging
+  // midway, resulting in incomplete output.
+  if ('webpackStatusOutput' in err) {
+    console.error(err.webpackStatusOutput);
+  } else {
+    console.error(err);
+  }
+
+  process.stdout.once('drain', () => process.exit(1));
 };
 
 const checkNodeVersion = version => {

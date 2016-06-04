@@ -108,11 +108,32 @@ export function webpackBuild(config) {
   return new Promise((resolve, reject) => {
     const compiler = webpack(config);
     compiler.run((err, stats) => {
-      const hasErrors = stats.hasErrors();
-      const hasWarnings = stats.hasWarnings();
-      if (err || hasErrors || hasWarnings) {
-        console.log(stats.toString({ colors: true }));
+      if (err) {
+        // Failed with a fatal error.
         reject(err);
+        return;
+      }
+      if (stats.hasErrors()) {
+        // Failed with a build error.
+        reject({
+          webpackStatusOutput: `\n${stats.toString({
+            colors: true,
+            hash: true,
+            version: true,
+            timings: true,
+            assets: true,
+            chunks: true,
+            chunkModules: false,
+            modules: true,
+            children: true,
+            cached: true,
+            reasons: true,
+            source: true,
+            errorDetails: true,
+            chunkOrigins: true,
+          })}\n`,
+        });
+        return;
       }
       resolve();
     });
