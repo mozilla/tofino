@@ -10,7 +10,7 @@
  specific language governing permissions and limitations under the License.
  */
 
-import request from './request';
+import request from '../../../shared/request';
 
 /**
  * A mapping from a page id to a promise that

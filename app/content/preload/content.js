@@ -15,7 +15,7 @@ import './context-menu';
 import { readerify } from './reader';
 import Readability from './readability';
 import './scroll';
-import request from '../../ui/browser/lib/request';
+import request from '../../shared/request';
 import * as endpoints from '../../shared/constants/endpoints';
 
 window._readerify = readerify.bind(null, Readability);
