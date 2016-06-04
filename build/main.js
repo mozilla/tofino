@@ -55,6 +55,7 @@ const handleDepsCheckSucceeded = () => {
   const handlers = {
     '--build-deps': () => tasks.buildDeps(),
     '--build': args => tasks.build(args),
+    '--serve': () => tasks.serve(),
     '--run': args => tasks.run(args),
     '--run-dev': args => tasks.runDev(args),
     '--package': args => tasks.package(args),

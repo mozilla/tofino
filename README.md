@@ -39,6 +39,12 @@ Documentation for building can be found in [docs/building.md](/docs/building.md)
 * `npm run dev` - Runs the build in `development` mode with hot module reloading.
 * `npm run package` - Creates a distributable package.
 
+Even though the user agent and content services are reused between multiple
+browser instances, they don't outlive their parent process by default when it
+exits in non-packaged builds, to ease development. To have them kept alive even
+when there are no more clients left, pass `-- services:keep-alive` as an argument
+to the `start` and `run dev` npm commands.
+
 ## Testing
 
 Currently runs linting, unit and webdriver tests with mocha.

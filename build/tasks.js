@@ -18,6 +18,7 @@ const Lazy = {
   buildContent: args => require('./task-build-content').default(args),
   run: args => require('./task-run').default(args),
   test: args => require('./task-test').default(args),
+  serve: () => require('./task-serve').default(),
   package: () => require('./task-package').default(),
   clean: () => require('./task-clean-package').default(),
 };
@@ -33,13 +34,23 @@ export default {
     await Lazy.buildContent();
   },
 
+  async serve() {
+    await Lazy.config({ keepAliveAppServices: false });
+    await Lazy.serve();
+  },
+
   async run(args = []) {
-    await this.build([...args, '--force']);
+    await this.build([...args, '--force'], {
+      keepAliveAppServices: args.indexOf('services:keep-alive') !== -1,
+    });
     await Lazy.run(args);
   },
 
   async runDev(args = []) {
-    await this.build([...args, '--force'], { development: true });
+    await this.build([...args, '--force'], {
+      development: true,
+      keepAliveAppServices: args.indexOf('services:keep-alive') !== -1,
+    });
 
     const { buildFile, appDir } = require('./task-build-browser');
     const watcher = chokidar.watch(appDir, {
@@ -59,6 +70,9 @@ export default {
   },
 
   async package(args) {
+    // XXX: All builds (including packaged) currently start their own
+    // UA and Contents services. In the future, we should consider
+    // hosting these somewhere else other than the user's own machine.
     await this.build([...args, '--force'], { packaged: true });
     await Lazy.clean();
     await Lazy.package();

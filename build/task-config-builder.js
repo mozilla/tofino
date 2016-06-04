@@ -39,6 +39,11 @@ export const BASE_CONFIG = {
   // Whether or not the build is being tested
   test: false,
 
+  // By default, user agent and content services are kept alive when the
+  // application exits. Setting this to false will tie their lifetime to
+  // the parent process lifetime.
+  keepAliveAppServices: true,
+
   // The Google Analytics tracking identifier to use when instrumenting.
   googleAnalyticsTrackingID: 'UA-76122102-1',
 };

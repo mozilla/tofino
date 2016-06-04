@@ -22,7 +22,7 @@ const allowCrossDomain = contentServiceOrigin => function(req, res, next) {
   next();
 };
 
-function configure(app, router, storage, contentServiceOrigin, stop) {
+function configure(app, router, storage, contentServiceOrigin) {
   app.use(allowCrossDomain(contentServiceOrigin));
 
   async function initial() {
@@ -52,11 +52,6 @@ function configure(app, router, storage, contentServiceOrigin, stop) {
       const index = wsClients.indexOf(ws);
       if (index > -1) {
         wsClients.splice(index, 1);
-      }
-
-      if (wsClients.length === 0) {
-        // When there are no more clients close the service.
-        stop();
       }
     });
   });
@@ -208,10 +203,10 @@ export async function start({ storage, options }) {
   const port = options.port;
   const contentService = options.contentService;
 
-  const { setup, stop } = makeServer(version, port);
+  const { setup } = makeServer(version, port);
 
   await setup((app, router) => {
-    configure(app, router, storage, contentService, stop);
+    configure(app, router, storage, contentService);
 
     if (options.debug) {
       storage.db.db.on('trace', console.log);

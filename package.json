@@ -10,6 +10,7 @@
     "revision": "ef9515aac9ea"
   },
   "scripts": {
+    "serve": "cross-env NODE_ENV=\"production\" node build/main.js --serve",
     "start": "cross-env NODE_ENV=\"production\" node build/main.js --run",
     "dev": "cross-env NODE_ENV=\"development\" node build/main.js --run-dev",
     "package": "cross-env NODE_ENV=\"production\" node build/main.js --package",
