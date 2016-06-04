@@ -3,11 +3,12 @@
 
 import path from 'path';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import defaultConfig, { root } from './webpack.config.default';
+import defaultConfig from './webpack.config.default';
+import * as Const from './const';
 
-const shared = path.join(root, 'app', 'ui', 'shared');
-const src = path.join(root, 'app', 'ui', 'content');
-const dest = path.join(root, 'lib', 'ui', 'content');
+const shared = path.join(Const.SRC_DIR, 'ui', 'shared');
+const src = path.join(Const.SRC_DIR, 'ui', 'content');
+const dest = path.join(Const.BUILD_DIR, 'ui', 'content');
 
 export default {
   ...defaultConfig,

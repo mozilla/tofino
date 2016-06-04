@@ -81,12 +81,12 @@ export default async function() {
     version: electronVersion,
     dir: ROOT,
     icon: path.join(ROOT, 'branding', 'app-icon'),
-    out: BuildConst.DIST_DIR,
+    out: BuildConst.PACKAGED_DIST_DIR,
     download: downloadOptions,
   });
 
   const packageName = `${manifest.name}-${appVersion}-${PLATFORM}-${ARCH}.zip`;
-  const distPath = path.join(BuildConst.DIST_DIR, packageName);
+  const distPath = path.join(BuildConst.PACKAGED_DIST_DIR, packageName);
 
   packagedApp.pipe(zip.dest(distPath));
 }
