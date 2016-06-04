@@ -34,14 +34,14 @@ export default {
   },
 
   async run(args = []) {
-    this.build([...args, '--force']);
+    await this.build([...args, '--force']);
     await Lazy.run(args);
   },
 
   async runDev(args = []) {
-    this.build([...args, '--force'], { development: true });
+    await this.build([...args, '--force'], { development: true });
 
-    const { buildFile, appDir } = require('./task-build-content');
+    const { buildFile, appDir } = require('./task-build-browser');
     const watcher = chokidar.watch(appDir, {
       ignoreInitial: true,
     });
@@ -54,12 +54,12 @@ export default {
   },
 
   async test(args = []) {
-    this.build(args, { test: true });
+    await this.build(args, { test: true });
     await Lazy.test(args);
   },
 
   async package(args) {
-    this.build([...args, '--force'], { packaged: true });
+    await this.build([...args, '--force'], { packaged: true });
     await Lazy.clean();
     await Lazy.package();
   },
