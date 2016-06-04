@@ -21,6 +21,7 @@ const ignored = [
   'electron-rebuild',
   'cross-env',
   'babel-loader',
+  'json-loader',
 
   // Test modules not imported anywhere, but used at the CLI.
   'electron-mocha',
