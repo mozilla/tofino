@@ -2,14 +2,16 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import webpack from 'webpack';
+import path from 'path';
 import * as BuildUtils from './utils';
 
+const root = BuildUtils.getRoot();
+
 export default {
-  context: BuildUtils.getRoot(),
   module: {
     loaders: [{
       test: /\.jsx?$/,
-      exclude: /node_modules/,
+      include: [path.join(root, 'app')],
       loader: 'babel-loader',
     }, {
       test: /\.json$/,
@@ -17,9 +19,9 @@ export default {
     }],
   },
   resolve: {
+    root,
     extensions: ['', '.js', '.jsx', '.json'],
   },
-  devtool: 'source-map',
   plugins: [
     new webpack.NoErrorsPlugin(),
   ],
