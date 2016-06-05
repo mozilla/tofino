@@ -21,22 +21,36 @@ const semver = require('semver');
 const checkDependencies = require('check-dependencies');
 const VALID_NODE_VERSION_RANGE = require('../package.json').engines.node;
 
+process.on('uncaughtException', (err) => {
+  console.error(err.stack);
+  waitForStdout().then(() => process.exit(1));
+});
+
+process.on('unhandledRejection', (reason, p) => {
+  console.error(`Unhandled Rejection at: Promise ${JSON.stringify(p)}`);
+  console.error(reason.stack);
+  waitForStdout().then(() => process.exit(1));
+});
+
 const handleDepsCheckFailed = result => {
   console.error('Dependency checks failed.');
   result.error.forEach(err => console.error(err));
-  process.exit(1);
+  waitForStdout().then(() => process.exit(1));
 };
 
 const handleTaskFailed = err => {
   console.error('Build failed.');
   console.error(err);
+  waitForStdout().then(() => process.exit(1));
+};
 
+const waitForStdout = () => {
   // Exitting immediately would stop the logging midway,
   // resulting in incomplete output.
-  Promise.all([
+  return Promise.all([
     thenify(process.stdout.once)('drain'),
     thenify(process.stderr.once)('drain'),
-  ]).then(() => process.exit(1));
+  ]);
 };
 
 const checkNodeVersion = version => {
