@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 */
 
 import assert from 'assert';
-import 'babel-polyfill';
 
 import Immutable from 'immutable';
 import * as types from '../constants/action-types';

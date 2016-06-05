@@ -28,10 +28,18 @@ export default {
     await Lazy.buildDeps();
   },
 
-  async build(args = [], config = {}) {
+  async build(args = [], config = {}, options = {}) {
     await Lazy.config(config);
-    await Lazy.buildBrowser();
-    await Lazy.buildContent();
+    const watchers = [
+      await Lazy.buildBrowser(),
+      await Lazy.buildContent(),
+    ];
+    if (!options.watch) {
+      await Promise.all(watchers.map(w => w.close()));
+      return [];
+    }
+    console.log('Now watching the filesystem for changes...');
+    return watchers;
   },
 
   async serve() {
@@ -40,16 +48,21 @@ export default {
   },
 
   async run(args = []) {
-    await this.build([...args, '--force'], {
+    const watchers = await this.build([...args, '--force'], {
       keepAliveAppServices: args.indexOf('services:keep-alive') !== -1,
+    }, {
+      watch: true,
     });
     await Lazy.run(args);
+    await Promise.all(watchers.map(w => w.close()));
   },
 
   async runDev(args = []) {
-    await this.build([...args, '--force'], {
+    const watchers = await this.build([...args, '--force'], {
       development: true,
       keepAliveAppServices: args.indexOf('services:keep-alive') !== -1,
+    }, {
+      watch: true,
     });
 
     const { buildFile, appDir } = require('./task-build-browser');
@@ -61,6 +74,7 @@ export default {
     watcher.on('change', (f, s) => buildFile(f, s, args));
 
     await Lazy.run(args);
+    await Promise.all(watchers.map(w => w.close()));
     watcher.close();
   },
 

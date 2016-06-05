@@ -6,6 +6,7 @@ import webpackDevConfig from './webpack.config.content.dev';
 import { webpackBuild, getBuildConfig } from './utils';
 
 export default async function() {
+  console.log('Building content...');
   const { development } = getBuildConfig();
-  await webpackBuild(development ? webpackDevConfig : webpackProdConfig);
+  return await webpackBuild(development ? webpackDevConfig : webpackProdConfig);
 }

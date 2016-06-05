@@ -4,8 +4,17 @@
 import { transformFile } from 'babel-core';
 import fs from 'fs-promise';
 import path from 'path';
+import webpackProdConfig from './webpack.config.browser.prod';
+import webpackDevConfig from './webpack.config.browser.dev';
+import { webpackBuild, getBuildConfig } from './utils';
 
-import { development } from '../build-config';
+export default async function(args) {
+  console.log('Building browser...');
+  const { development } = getBuildConfig();
+  const watcher = await webpackBuild(development ? webpackDevConfig : webpackProdConfig);
+  await babelBuild(args);
+  return watcher;
+}
 
 export const appDir = path.resolve(path.join(__dirname, '..', 'app'));
 export const libDir = path.resolve(path.join(__dirname, '..', 'lib'));
@@ -33,6 +42,8 @@ const transpile = (filename, options = {}) => new Promise((resolve, reject) => {
 });
 
 export async function buildFile(sourceFile, sourceStats, args = []) {
+  const { development } = getBuildConfig();
+
   let targetFile = getTargetPath(sourceFile);
   const extension = path.extname(sourceFile);
   const baseFile = targetFile.substring(0, targetFile.length - extension.length);
@@ -61,16 +72,6 @@ export async function buildFile(sourceFile, sourceStats, args = []) {
     const results = await transpile(sourceFile, {
       sourceMaps: development,
       sourceFileName: fileUrl(sourceFile),
-      presets: development ? [
-        // No development-only presets yet.
-      ] : [
-        'react-optimize',
-      ],
-      plugins: development ? [
-        // No development-only plugins yet.
-      ] : [
-        'transform-runtime',
-      ],
     });
 
     if (development) {
@@ -87,14 +88,14 @@ export async function buildFile(sourceFile, sourceStats, args = []) {
   }
 }
 
-export default async function babelBuild(args = []) {
+export async function babelBuild(args) {
   const source = path.resolve(path.join(__dirname, '..', 'app'));
   let paths = await fs.walk(source);
 
-  // Exclude the `ui/content` dir. This is super ugly here, but we won't
+  // Exclude all the `ui` directories. This is super ugly here, but we won't
   // need any of this after we switch our entire build system to webpack.
-  const content = path.resolve(path.join(__dirname, '..', 'app', 'ui', 'content'));
-  const excluded = (await fs.walk(content)).map(p => p.path);
+  const ui = path.resolve(path.join(__dirname, '..', 'app', 'ui'));
+  const excluded = (await fs.walk(ui)).map(p => p.path);
   paths = paths.filter(p => !~excluded.indexOf(p.path));
 
   // Find all the directories and sort by depth.
