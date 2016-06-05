@@ -6,6 +6,7 @@ import contentConfig from './webpack.config.default.content';
 
 export default {
   ...contentConfig,
+  devtool: 'source-map',
   plugins: [
     ...contentConfig.plugins,
     new webpack.DefinePlugin({

@@ -6,6 +6,11 @@ import contentConfig from './webpack.config.default.content';
 
 export default {
   ...contentConfig,
+  output: {
+    ...contentConfig.output,
+    pathinfo: true,
+  },
+  devtool: 'eval',
   plugins: [
     ...contentConfig.plugins,
     new webpack.DefinePlugin({
