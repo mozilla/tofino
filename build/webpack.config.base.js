@@ -23,6 +23,10 @@ export default {
     extensions: ['', '.js', '.jsx', '.json'],
   },
   plugins: [
+    // Need to use webpack's old watcher implementation, because the new one
+    // doesn't remove everything from the node's event loop after closing it,
+    // keeping the owning process running even after the application exits.
+    new webpack.OldWatchingPlugin(),
     new webpack.NoErrorsPlugin(),
   ],
 };
