@@ -2,7 +2,7 @@
   "name": "tofino",
   "version": "0.1.0",
   "description": "Experimental prototype",
-  "main": "lib/main/browser.js",
+  "main": "lib/main/index.js",
   "repository": "https://github.com/mozilla/tofino",
   "_electron": {
     "mirror": "https://mozilla-releng-tofino.s3.amazonaws.com/mozilla/tofino-electron/",

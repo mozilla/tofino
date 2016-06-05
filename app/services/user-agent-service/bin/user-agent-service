@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable */
 
 var UserAgentService = require('../').UserAgentService;
 var repl = require('repl');
