@@ -71,7 +71,7 @@ describe('Btn', () => {
         title="my title" />
     );
     expect(wrapper.prop('style')).toContain({
-      backgroundImage: 'url(../shared/assets/some-file.svg)',
+      backgroundImage: 'url(assets/some-file.svg)',
       backgroundRepeat: Const.BKG_REPEAT_DEFAULT,
       backgroundPosition: Const.BKG_POSIITON_DEFAULT,
       backgroundSize: Const.BKG_SIZE_DEFAULT,

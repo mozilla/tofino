@@ -2,20 +2,16 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import webpack from 'webpack';
-import contentConfig from './webpack.config.content.default';
+import browserConfig from './webpack.config.browser.default';
 
 export default {
-  ...contentConfig,
-  output: {
-    ...contentConfig.output,
-    pathinfo: true,
-  },
-  devtool: 'eval',
+  ...browserConfig,
+  devtool: 'source-map',
   plugins: [
-    ...contentConfig.plugins,
+    ...browserConfig.plugins,
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: JSON.stringify('development'),
+        NODE_ENV: JSON.stringify('production'),
       },
     }),
   ],

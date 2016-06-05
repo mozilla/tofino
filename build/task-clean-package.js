@@ -5,7 +5,7 @@ import rimraf from 'rimraf';
 import * as BuildConst from './const.js';
 
 export default () => new Promise((resolve, reject) => {
-  rimraf(BuildConst.DIST_DIR, err => {
+  rimraf(BuildConst.PACKAGED_DIST_DIR, err => {
     if (err) {
       reject(err);
     }

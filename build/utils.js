@@ -5,8 +5,10 @@ import os from 'os';
 import path from 'path';
 import fs from 'fs-promise';
 import childProcess from 'child_process';
+import chokidar from 'chokidar';
 import webpack from 'webpack';
-
+import { transformFile } from 'babel-core';
+import { SRC_DIR, BUILD_DIR } from './const';
 import manifest from '../package.json';
 
 export const IS_TRAVIS = process.env.TRAVIS === 'true';
@@ -107,14 +109,134 @@ export async function spawn(command, args, options = {}) {
 export function webpackBuild(config) {
   return new Promise((resolve, reject) => {
     const compiler = webpack(config);
-    compiler.run((err, stats) => {
-      const hasErrors = stats.hasErrors();
-      const hasWarnings = stats.hasWarnings();
-      if (err || hasErrors || hasWarnings) {
-        console.log(stats.toString({ colors: true }));
+    const watcher = compiler.watch({}, (err, stats) => {
+      // Per webpack's documentation, this handler can be called multiple times,
+      // e.g. when a build has been completed, or an error or warning has occurred.
+      // It even can occur that handler is called for the same bundle multiple times.
+      // So just keep that in mind.
+      if (err) {
+        // Failed with a fatal error.
         reject(err);
+        return;
       }
-      resolve();
+      if (stats.hasErrors()) {
+        // Failed with a build error.
+        reject({
+          webpackStatusOutput: `\n${stats.toString({
+            colors: true,
+            hash: true,
+            version: true,
+            timings: true,
+            assets: true,
+            chunks: true,
+            chunkModules: false,
+            modules: true,
+            children: true,
+            cached: true,
+            reasons: true,
+            source: true,
+            errorDetails: true,
+            chunkOrigins: true,
+          })}\n`,
+        });
+        return;
+      }
+      /* eslint-disable no-shadow */
+      resolve({
+        close: () => new Promise(resolve => watcher.close(resolve)),
+      });
     });
   });
+}
+
+export async function babelBuild(source) {
+  const paths = await fs.walk(source);
+
+  // Find all the directories, and make sure they all exist in the build path.
+  const dirs = paths.filter(p => p.stats.isDirectory());
+  await Promise.all(dirs.map(p => fs.ensureDir(getBuildPath(p.path))));
+
+  // Build all the files.
+  const files = paths.filter(p => p.stats.isFile());
+  await Promise.all(files.map(p => babelFile(p.path, p.stats)));
+}
+
+export function watchSource(source, handler) {
+  const watcher = chokidar.watch(source, {
+    ignoreInitial: true,
+  });
+
+  watcher.on('add', handler);
+  watcher.on('change', handler);
+
+  return {
+    close: () => watcher.close(),
+  };
+}
+
+export async function babelFile(sourceFile, sourceStats) {
+  const { development } = getBuildConfig();
+
+  const targetFile = getBuildPath(sourceFile);
+  const extension = path.extname(sourceFile);
+  const baseFile = targetFile.substring(0, targetFile.length - extension.length);
+
+  try {
+    const targetStats = await fs.stat(targetFile);
+    if (targetStats.mtime > sourceStats.mtime) {
+      return;
+    }
+  } catch (e) {
+    // The target may not exist.
+    // For whatever reason just go and try to build it.
+  }
+
+  // Transpile js files and write a sourcemap.
+  if (extension === '.js') {
+    const mapFile = `${baseFile}.map`;
+    const results = await transpile(sourceFile, {
+      sourceMaps: development,
+      sourceFileName: normalizeFileURI(sourceFile),
+    });
+    if (development) {
+      // This must be an absolute URL since the devtools can't resolve relative
+      // paths from node modules.
+      results.code += `\n//# sourceMappingURL=${normalizeFileURI(mapFile)}\n`;
+      await fs.writeFile(mapFile, JSON.stringify(results.map));
+    }
+    await fs.writeFile(targetFile, results.code);
+    return;
+  }
+
+  // Copy json and shell scripts.
+  if (extension === '.json' || extension === '') {
+    await fs.copy(sourceFile, targetFile);
+  }
+}
+
+export function transpile(filename, options = {}) {
+  return new Promise((resolve, reject) => {
+    transformFile(filename, options, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+}
+
+export function getBuildPath(sourcePath) {
+  return path.resolve(BUILD_DIR, path.relative(SRC_DIR, sourcePath));
+}
+
+export function normalizeFileURI(str) {
+  let pathName = path.resolve(str).replace(/\\/g, '/');
+
+  // Windows drive letter must be prefixed with a slash
+  if (pathName[0] !== '/') {
+    pathName = `/${pathName}`;
+  }
+
+  return encodeURI(`file://${pathName}`);
 }
