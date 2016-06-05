@@ -115,6 +115,10 @@
       "app/**",
       "build/**"
     ],
+    "exclude": [
+      "lib/**",
+      "test/**"
+    ],
     "extension": [
       ".jsx"
     ]
