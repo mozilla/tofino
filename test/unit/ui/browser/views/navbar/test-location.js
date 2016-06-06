@@ -20,13 +20,17 @@ function createSpyProps(store) {
     onLocationChange: expect.createSpy(),
     onLocationContextMenu: expect.createSpy(),
     onLocationReset: expect.createSpy(),
+    onClearCompletions: expect.createSpy(),
+    showURLBar: false,
+    focusedURLBar: false,
+    focusedResultIndex: 0,
     isBookmarked: expect.createSpy(),
     bookmark: expect.createSpy(),
     unbookmark: expect.createSpy(),
     ipcRenderer: Object.create(null),
     navigateTo: expect.createSpy(),
   };
-  props.pages = [props.page];
+  props.pages = Immutable.List([props.page]);
   return props;
 }
 
