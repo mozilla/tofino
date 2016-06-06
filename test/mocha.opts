@@ -4,5 +4,6 @@
 --check-leaks
 --full-trace
 --timeout 3000
+--require test/unit/head.js
 --require babel-polyfill
 --require isomorphic-fetch

@@ -5,6 +5,9 @@
     },
     "development": {
       "presets": ["react"]
+    },
+    "test": {
+      "presets": ["react"]
     }
   },
   "plugins": [

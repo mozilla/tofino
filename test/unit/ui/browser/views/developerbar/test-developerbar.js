@@ -11,7 +11,7 @@ import Btn from '../../../../../../app/ui/browser/widgets/btn';
 describe('components - DeveloperBar', () => {
   it('should not render when in production mode', () => {
     const wrapper = shallow(
-      <DeveloperBar />
+      <DeveloperBar buildConfig={{ development: false }} />
     );
     expect(wrapper.html()).toEqual(null);
   });

@@ -26,7 +26,7 @@ const instrumenter = _store => next => action => {
 export default function(rootReducer, initialState) {
   const middleware = [instrumenter, thunk];
 
-  if (BUILD_CONFIG.development) {
+  if (BUILD_CONFIG.development && !BUILD_CONFIG.test) {
     middleware.unshift(createLogger({
       duration: true,
       collapsed: true,
