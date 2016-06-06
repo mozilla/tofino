@@ -12,7 +12,6 @@
 
 /**
  * The storage module that makes up the majority of the profile service.
- *
  * @module ProfileStorage
  */
 
@@ -22,7 +21,7 @@ import microtime from 'microtime-fast';
 import path from 'path';
 import escaper from 'true-html-escape';
 
-import { Bookmark } from '../../model/index';
+import { Bookmark } from '../../shared/model';
 import { ProfileStorageSchemaV5 } from './profile-schema';
 import { DB, verbose } from './sqlite';
 

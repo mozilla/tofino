@@ -2,10 +2,11 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import webpack from 'webpack';
-import contentConfig from './webpack.config.default.content';
+import contentConfig from './webpack.config.content.default';
 
 export default {
   ...contentConfig,
+  devtool: 'source-map',
   plugins: [
     ...contentConfig.plugins,
     new webpack.DefinePlugin({

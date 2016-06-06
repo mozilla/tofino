@@ -10,7 +10,7 @@
  specific language governing permissions and limitations under the License.
  */
 
-import * as endpoints from '../../../shared/constants/endpoints';
+import * as endpoints from './constants/endpoints';
 
 export default function(url, options) {
   const newOptions = Object.assign({}, options);

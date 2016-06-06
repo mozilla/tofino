@@ -11,7 +11,6 @@ specific language governing permissions and limitations under the License.
 */
 
 import assert from 'assert';
-import 'babel-polyfill';
 
 import * as types from '../constants/action-types';
 import { UIState } from '../model';

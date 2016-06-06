@@ -20,13 +20,16 @@ const ignored = [
   // Build modules not imported anywhere, but used at the CLI.
   'electron-rebuild',
   'cross-env',
-  'babel-loader',
 
   // Test modules not imported anywhere, but used at the CLI.
   'electron-mocha',
   'mocha',
   'coveralls',
   'nyc',
+
+  // Webpack loaders.
+  'babel-loader',
+  'json-loader',
 
   // Modules called via CLI from main process
   'yargs',

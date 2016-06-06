@@ -15,6 +15,7 @@
 
 require('babel-polyfill');
 require('babel-register')();
+
 const semver = require('semver');
 const checkDependencies = require('check-dependencies');
 const VALID_NODE_VERSION_RANGE = require('../package.json').engines.node;
@@ -27,8 +28,18 @@ const handleDepsCheckFailed = result => {
 
 const handleTaskFailed = err => {
   console.error('Build failed.');
-  console.error(err);
-  process.exit(1);
+
+  // Need log webpack output here because console.log isn't an atomic operation.
+  // Doing this somewhere else before other logging operations will result in
+  // garbled text in stdout. Also, exitting immediately would stop the logging
+  // midway, resulting in incomplete output.
+  if ('webpackStatusOutput' in err) {
+    console.error(err.webpackStatusOutput);
+  } else {
+    console.error(err);
+  }
+
+  process.stdout.once('drain', () => process.exit(1));
 };
 
 const checkNodeVersion = version => {
@@ -54,11 +65,11 @@ const handleDepsCheckSucceeded = () => {
   const tasks = require('./tasks').default;
   const handlers = {
     '--build-deps': () => tasks.buildDeps(),
-    '--build': args => tasks.build(args),
+    '--build': () => tasks.build(),
     '--serve': () => tasks.serve(),
     '--run': args => tasks.run(args),
     '--run-dev': args => tasks.runDev(args),
-    '--package': args => tasks.package(args),
+    '--package': () => tasks.package(),
     '--test': args => tasks.test(args),
   };
   main(argv, tasks, handlers, handleTaskFailed);

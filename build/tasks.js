@@ -1,8 +1,6 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-import chokidar from 'chokidar';
-
 /**
  * Use need to allow lazy loading of modules for all tasks. Generally,
  * we assume `build-config.js` exists, however *during* the build process
@@ -14,8 +12,11 @@ import chokidar from 'chokidar';
 const Lazy = {
   buildDeps: () => require('./task-build-deps').default(),
   config: options => require('./task-config-builder').default(options),
-  buildBrowser: args => require('./task-build-browser').default(args),
-  buildContent: args => require('./task-build-content').default(args),
+  buildShared: () => require('./task-build-shared').default(),
+  buildServices: () => require('./task-build-services').default(),
+  buildMainProcess: () => require('./task-build-main-process').default(),
+  buildBrowser: () => require('./task-build-browser').default(),
+  buildContent: () => require('./task-build-content').default(),
   run: args => require('./task-run').default(args),
   test: args => require('./task-test').default(args),
   serve: () => require('./task-serve').default(),
@@ -28,10 +29,21 @@ export default {
     await Lazy.buildDeps();
   },
 
-  async build(args = [], config = {}) {
+  async build(config = {}, options = {}) {
     await Lazy.config(config);
-    await Lazy.buildBrowser();
-    await Lazy.buildContent();
+    const watchers = [
+      await Lazy.buildShared(),
+      await Lazy.buildServices(),
+      await Lazy.buildMainProcess(),
+      await Lazy.buildBrowser(),
+      await Lazy.buildContent(),
+    ];
+    if (!options.watch) {
+      await Promise.all(watchers.map(w => w.close()));
+      return [];
+    }
+    console.log('Now watching the filesystem for changes...');
+    return watchers;
   },
 
   async serve() {
@@ -40,40 +52,36 @@ export default {
   },
 
   async run(args = []) {
-    await this.build([...args, '--force'], {
+    const watchers = await this.build({
       keepAliveAppServices: args.indexOf('services:keep-alive') !== -1,
+    }, {
+      watch: true,
     });
     await Lazy.run(args);
+    await Promise.all(watchers.map(w => w.close()));
   },
 
   async runDev(args = []) {
-    await this.build([...args, '--force'], {
+    const watchers = await this.build({
       development: true,
       keepAliveAppServices: args.indexOf('services:keep-alive') !== -1,
+    }, {
+      watch: true,
     });
-
-    const { buildFile, appDir } = require('./task-build-browser');
-    const watcher = chokidar.watch(appDir, {
-      ignoreInitial: true,
-    });
-
-    watcher.on('add', (f, s) => buildFile(f, s, args));
-    watcher.on('change', (f, s) => buildFile(f, s, args));
-
     await Lazy.run(args);
-    watcher.close();
+    await Promise.all(watchers.map(w => w.close()));
   },
 
   async test(args = []) {
-    await this.build(args, { test: true });
+    await this.build({ test: true });
     await Lazy.test(args);
   },
 
-  async package(args) {
+  async package() {
     // XXX: All builds (including packaged) currently start their own
     // UA and Contents services. In the future, we should consider
     // hosting these somewhere else other than the user's own machine.
-    await this.build([...args, '--force'], { packaged: true });
+    await this.build({ packaged: true });
     await Lazy.clean();
     await Lazy.package();
   },

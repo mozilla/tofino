@@ -3,15 +3,16 @@
 
 import path from 'path';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import defaultConfig, { root } from './webpack.config.default';
+import defaultConfig from './webpack.config.base';
+import * as Const from './const';
 
-const shared = path.join(root, 'app', 'ui', 'shared');
-const src = path.join(root, 'app', 'ui', 'content');
-const dest = path.join(root, 'lib', 'ui', 'content');
+const shared = path.join(Const.SRC_DIR, 'ui', 'shared');
+const src = path.join(Const.SRC_DIR, 'ui', 'browser');
+const dest = path.join(Const.BUILD_DIR, 'ui', 'browser');
 
 export default {
   ...defaultConfig,
-  entry: path.join(src, 'index.js'),
+  entry: path.join(src, 'index.jsx'),
   output: {
     path: dest,
     filename: 'index.js',
@@ -39,6 +40,11 @@ export default {
       to: path.join(dest, 'assets'),
       flatten: true,
     }]),
+    new CopyWebpackPlugin([{
+      from: path.join(shared, 'fonts'),
+      to: path.join(dest, 'fonts'),
+      flatten: true,
+    }]),
   ],
-  target: 'web',
+  target: 'electron-renderer',
 };

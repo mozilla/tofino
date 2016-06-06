@@ -2,17 +2,17 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import webpack from 'webpack';
-import contentConfig from './webpack.config.content.default';
+import mainProcessConfig from './webpack.config.main.default';
 
 export default {
-  ...contentConfig,
+  ...mainProcessConfig,
   output: {
-    ...contentConfig.output,
+    ...mainProcessConfig.output,
     pathinfo: true,
   },
   devtool: 'eval',
   plugins: [
-    ...contentConfig.plugins,
+    ...mainProcessConfig.plugins,
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify('development'),

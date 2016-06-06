@@ -12,10 +12,10 @@ specific language governing permissions and limitations under the License.
 
 import './hover-status';
 import './context-menu';
+import './scroll';
 import { readerify } from './reader';
 import Readability from './readability';
-import './scroll';
-import request from '../../ui/browser/lib/request';
+import request from '../../shared/request';
 import * as endpoints from '../../shared/constants/endpoints';
 
 window._readerify = readerify.bind(null, Readability);
