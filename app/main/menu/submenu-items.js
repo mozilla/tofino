@@ -129,7 +129,7 @@ items.openBookmark = (bookmark) => ({
   label: bookmark.title || bookmark.location,
   click(item, focusedWindow) {
     if (focusedWindow) {
-      focusedWindow.webContents.send('open-bookmark', bookmark.toJS());
+      focusedWindow.webContents.send('open-bookmark', bookmark);
     }
   },
 });
