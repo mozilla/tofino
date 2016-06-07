@@ -107,13 +107,11 @@ export async function spawn(command, args, options = {}) {
 }
 
 export function webpackBuild(config) {
+  let incremental = false;
+
   return new Promise((resolve, reject) => {
     const compiler = webpack(config);
     const watcher = compiler.watch({}, (err, stats) => {
-      // Per webpack's documentation, this handler can be called multiple times,
-      // e.g. when a build has been completed, or an error or warning has occurred.
-      // It even can occur that handler is called for the same bundle multiple times.
-      // So just keep that in mind.
       if (err) {
         // Failed with a fatal error.
         reject(err);
@@ -121,30 +119,43 @@ export function webpackBuild(config) {
       }
       if (stats.hasErrors()) {
         // Failed with a build error.
-        reject({
-          webpackStatusOutput: `\n${stats.toString({
-            colors: true,
-            hash: true,
-            version: true,
-            timings: true,
-            assets: true,
-            chunks: true,
-            chunkModules: false,
-            modules: true,
-            children: true,
-            cached: true,
-            reasons: true,
-            source: true,
-            errorDetails: true,
-            chunkOrigins: true,
-          })}\n`,
+        const output = stats.toString({
+          colors: true,
+          hash: true,
+          version: true,
+          timings: true,
+          assets: true,
+          chunks: true,
+          chunkModules: false,
+          modules: true,
+          children: true,
+          cached: true,
+          reasons: true,
+          source: true,
+          errorDetails: true,
+          chunkOrigins: true,
         });
+        console.error(`\n${output}\n`);
+        process.stderr.once('drain', () => reject('Compilation unsuccessful.'));
         return;
       }
+
       /* eslint-disable no-shadow */
       resolve({
         close: () => new Promise(resolve => watcher.close(resolve)),
       });
+
+      // Per webpack's documentation, this handler can be called multiple times,
+      // e.g. when a build has been completed, or an error or warning has occurred.
+      // It even can occur that handler is called for the same bundle multiple times.
+      // So just keep that in mind.
+      if (!incremental) {
+        incremental = true;
+        return;
+      }
+
+      const { time } = stats.toJson();
+      console.log(`Incremental build succeeded in ${time} ms.`);
     });
   });
 }
