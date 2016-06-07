@@ -144,6 +144,7 @@ export function webpackBuild(config) {
       resolve({
         close: () => new Promise(resolve => watcher.close(resolve)),
       });
+      /* eslint-enable no-shadow */
 
       // Per webpack's documentation, this handler can be called multiple times,
       // e.g. when a build has been completed, or an error or warning has occurred.
