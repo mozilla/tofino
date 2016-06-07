@@ -23,8 +23,21 @@ const instrumenter = _store => next => action => {
   return next(action);
 };
 
+/**
+ * Record actions in the `history` property on the store
+ * for tests.
+ */
+const history = historyStore => _store => next => action => {
+  if (typeof action !== 'function') {
+    historyStore.push(action);
+  }
+
+  return next(action);
+};
+
 export default function(rootReducer, initialState) {
   const middleware = [instrumenter, thunk];
+  const historyStore = [];
 
   if (BUILD_CONFIG.development && !BUILD_CONFIG.test) {
     middleware.unshift(createLogger({
@@ -35,5 +48,17 @@ export default function(rootReducer, initialState) {
     }));
   }
 
-  return createStore(rootReducer, initialState, applyMiddleware(...middleware));
+  if (BUILD_CONFIG.test) {
+    middleware.unshift(history(historyStore));
+  }
+
+  const store = createStore(rootReducer, initialState, applyMiddleware(...middleware));
+
+  // Store action history on the exposed store
+  // for tests
+  if (BUILD_CONFIG.test) {
+    store.history = historyStore;
+  }
+
+  return store;
 }
