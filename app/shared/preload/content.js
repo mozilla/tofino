@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 import './hover-status';
 import './context-menu';
-import './scroll';
 import { readerify } from './reader';
 import Readability from './readability';
 import request from '../../shared/request';
