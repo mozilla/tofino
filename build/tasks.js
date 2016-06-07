@@ -31,17 +31,28 @@ export default {
 
   async build(config = {}, options = {}) {
     await Lazy.config(config);
-    const watchers = [
-      await Lazy.buildShared(),
-      await Lazy.buildServices(),
-      await Lazy.buildMainProcess(),
-      await Lazy.buildBrowser(),
-      await Lazy.buildContent(),
-    ];
+
+    const watchers = [];
+    const unwatch = () => {
+      console.log('Stopped watching the filesystem for changes.');
+      return Promise.all(watchers.map(w => w.close()));
+    };
+
+    try {
+      watchers.push(await Lazy.buildShared());
+      watchers.push(await Lazy.buildServices());
+      watchers.push(await Lazy.buildMainProcess());
+      watchers.push(await Lazy.buildBrowser());
+      watchers.push(await Lazy.buildContent());
+    } catch (e) {
+      await unwatch();
+      throw e;
+    }
     if (!options.watch) {
-      await Promise.all(watchers.map(w => w.close()));
+      await unwatch();
       return [];
     }
+
     console.log('Now watching the filesystem for changes...');
     return watchers;
   },
