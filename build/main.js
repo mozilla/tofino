@@ -16,7 +16,7 @@
 require('babel-polyfill');
 require('babel-register')();
 
-const thenify = require('thenify');
+const thenify = require('thenify-all').thenify;
 const semver = require('semver');
 const checkDependencies = require('check-dependencies');
 const VALID_NODE_VERSION_RANGE = require('../package.json').engines.node;

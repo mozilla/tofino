@@ -7,7 +7,7 @@ import os from 'os';
 
 import download from 'electron-download';
 import unzip from 'extract-zip';
-import thenify from 'thenify';
+import { thenify } from 'thenify-all';
 
 import * as BuildUtils from './utils';
 
