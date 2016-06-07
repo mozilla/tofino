@@ -86,7 +86,7 @@
     "eslint-plugin-react": "5.1.1",
     "expect": "1.18.0",
     "extract-zip": "1.5.0",
-    "fetch-mock": "4.5.3",
+    "fetch-mock": "4.5.4",
     "glob": "7.0.3",
     "gulp-vinyl-zip": "1.2.2",
     "jsdom": "9.2.1",
