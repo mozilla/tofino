@@ -94,3 +94,7 @@ userAgentClient.on('diff', (command) => {
 // then subsequently connect.
 ipcRenderer.on('user-agent-service-info', (_, { port, version, host }) =>
   userAgentClient.connect({ port, version, host }));
+
+// Set max listeners to Infinity, because each new tab will listen to more
+// events, and we'll intentionally go beyond the 10 listener default.
+ipcRenderer.setMaxListeners(Infinity);
