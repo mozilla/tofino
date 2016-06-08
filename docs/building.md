@@ -11,7 +11,6 @@ Ensure you have the following installed and accessible in your `PATH` environmen
 ### Windows
 
 * Install [Visual Studio 2013](https://www.visualstudio.com/news/vs2013-community-vs)
-* Install [Visual C++ Redistributable for VS2015](https://www.microsoft.com/en-us/download/details.aspx?id=48145), as currently Electron is built with VS2015. After [electron/electron#5528](https://github.com/electron/electron/issues/5528) has been fixed, this is no longer necessary, but we still need to update to Electron 1.1.0 in #517.
 * Use the [VS2013 Developer Command Prompt](http://stackoverflow.com/a/22702405), or otherwise have your environment variables set correctly.
 
 ### Linux
