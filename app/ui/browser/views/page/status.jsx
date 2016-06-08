@@ -28,6 +28,11 @@ const STATUS_STYLE = Style.registerStyle({
   borderLeftWidth: 0,
   backgroundColor: 'var(--theme-body-color)',
   color: 'var(--theme-content-color)',
+  whiteSpace: 'no-wrap',
+  width: '85%',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
+  display: 'block',
 });
 
 /**
