@@ -7,6 +7,7 @@ import { shallow } from 'enzyme';
 import Immutable from 'immutable';
 
 import { Location } from '../../../../../../app/ui/browser/views/navbar/location';
+import { LocationCompletionRow } from '../../../../../../app/ui/browser/views/navbar/location-completion-row';
 import { Page, Profile } from '../../../../../../app/ui/browser/model/index';
 import { createBrowserStore } from '../../../../../../app/ui/browser/store';
 
@@ -101,8 +102,12 @@ describe('Location', () => {
 
       wrapper.setProps({ showURLBar: true, focusedURLBar: true });
       expect(wrapper.find('#autocomplete-results').length).toEqual(1);
-      expect(wrapper.find('#autocomplete-results').childAt(0).text()).toEqual('Mozilla.com — https://mozilla.com/');
-      expect(wrapper.find('#autocomplete-results').childAt(1).text()).toEqual('Mozilla.org — https://mozilla.org/');
+      expect(wrapper.find(LocationCompletionRow).first().shallow()
+        .find('.completion-row')
+        .text()).toEqual('Mozilla.com — https://mozilla.com/');
+      expect(wrapper.find(LocationCompletionRow).last().shallow()
+        .find('.completion-row')
+        .text()).toEqual('Mozilla.org — https://mozilla.org/');
     });
 
     it('should reset the selected index when input changes', () => {

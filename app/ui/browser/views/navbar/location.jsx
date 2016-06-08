@@ -15,7 +15,8 @@ import { connect } from 'react-redux';
 import { ipcRenderer } from '../../../../shared/electron';
 
 import Style from '../../../shared/style';
-import Btn from '../../../shared/widgets/btn';
+import Btn from '../../widgets/btn';
+import LocationCompletionRow from './location-completion-row';
 
 import { fixURL, getCurrentWebView } from '../../browser-util';
 import { SHOW_COMPLETIONS } from '../../constants/ui';
@@ -60,13 +61,6 @@ const LOCATION_BAR_AUTOCOMPLETE_STYLE = Style.registerStyle({
   top: '100%',
   zIndex: 2,
   cursor: 'default',
-});
-
-const LOCATION_BAR_RESULTS_SNIPPET_STYLE = Style.registerStyle({
-  color: 'rgba(100, 100, 100, 1)',
-  padding: '0.5em',
-  whiteSpace: 'pre-wrap',           // So that spaces show up in snippets.
-  zIndex: 2,
 });
 
 const LOCATION_BAR_BUTTONS_STYLE = Style.registerStyle({
@@ -257,43 +251,12 @@ export class Location extends Component {
     const completionsForLocation = this.getVisibleCompletionsForLocation();
     const urlValue = this.getRenderLocation();
 
-    const renderRow = (completion, i) => {
-      // We get safe, decorated (<b>foo</b>) HTML from the database.
-      const snippet = completion.snippet ? (
-        <div
-          className={LOCATION_BAR_RESULTS_SNIPPET_STYLE}
-          dangerouslySetInnerHTML={{          // eslint-disable-line react/no-danger
-            __html: completion.snippet,
-          }}>
-        </div>
-      ) : null;
-
-      return (
-        <div style={{
-          // We're nesting multi-line items inside a flexbox, so
-          // we need to mark these children as columnar.
-          flexDirection: 'column',
-        }}>
-          <div
-            key={completion.uri}
-            onMouseDown={(ev) => { ev.preventDefault(); }}
-            onMouseOver={() => { this.props.dispatch(actions.setFocusedResultIndex(i)); }}
-            onClick={() => {
-              this.selectAutocompleteItem(completionsForLocation[i].uri);
-            }}
-            style={this.props.focusedResultIndex === i ? {
-              background: 'var(--theme-selection-color)',
-              color: 'var(--theme-content-selected-color)',
-            } : null}>
-            <span>{completion.title}</span>&nbsp;—&nbsp;<span>{completion.uri}</span>
-          </div>
-          {snippet}
-        </div>
-      );
-    };
-
     if (completionsForLocation) {
-      const results = completionsForLocation.map(renderRow);
+      const results = completionsForLocation.map((completion, index) => {
+        return (<LocationCompletionRow completion={completion}
+          focusedResultIndex={this.props.focusedResultIndex}
+          index={index} />);
+      });
 
       completions = (
         <div id="autocomplete-results"
