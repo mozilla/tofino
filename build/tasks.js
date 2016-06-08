@@ -58,27 +58,18 @@ export default {
   },
 
   async serve() {
-    await Lazy.config({ keepAliveAppServices: false });
+    await Lazy.config();
     await Lazy.serve();
   },
 
   async run(args = []) {
-    const watchers = await this.build({
-      keepAliveAppServices: args.indexOf('services:keep-alive') !== -1,
-    }, {
-      watch: true,
-    });
+    const watchers = await this.build({}, { watch: true });
     await Lazy.run(args);
     await Promise.all(watchers.map(w => w.close()));
   },
 
   async runDev(args = []) {
-    const watchers = await this.build({
-      development: true,
-      keepAliveAppServices: args.indexOf('services:keep-alive') !== -1,
-    }, {
-      watch: true,
-    });
+    const watchers = await this.build({ development: true }, { watch: true });
     await Lazy.run(args);
     await Promise.all(watchers.map(w => w.close()));
   },
