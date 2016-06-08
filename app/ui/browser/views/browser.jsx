@@ -45,7 +45,7 @@ class BrowserWindow extends Component {
   handleKeyDown = (ev) => {
     const { dispatch, currentPage } = this.props;
 
-    if (ev.metaKey && ev.code === 'KeyF') { // cmd+f
+    if (ev.metaKey && ev.code === 'KeyF' || ev.code === 'Slash') { // cmd+f or "/"
       dispatch(actions.setPageDetails(currentPage.id, { isSearching: true }));
     } else if (ev.code === 'Escape') { // esc
       dispatch(actions.setPageDetails(currentPage.id, { isSearching: false }));
