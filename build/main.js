@@ -16,27 +16,52 @@
 require('babel-polyfill');
 require('babel-register')();
 
-const thenify = require('thenify-all').thenify;
 const semver = require('semver');
 const checkDependencies = require('check-dependencies');
 const VALID_NODE_VERSION_RANGE = require('../package.json').engines.node;
 
+process.on('uncaughtException', (err) => {
+  console.error(err.stack);
+  waitForLogging().then(() => process.exit(1));
+});
+
+process.on('unhandledRejection', (reason, p) => {
+  console.error(`Unhandled Rejection at: Promise ${JSON.stringify(p)}`);
+  console.error(reason.stack);
+  waitForLogging().then(() => process.exit(1));
+});
+
 const handleDepsCheckFailed = result => {
   console.error('Dependency checks failed.');
   result.error.forEach(err => console.error(err));
-  process.exit(1);
+  waitForLogging().then(() => process.exit(1));
 };
 
 const handleTaskFailed = err => {
   console.error('Build failed.');
   console.error(err);
+  waitForLogging().then(() => process.exit(1));
+};
 
+
+const waitForLogging = () => {
   // Exitting immediately would stop the logging midway,
-  // resulting in incomplete output.
-  Promise.all([
-    thenify(process.stdout.once)('drain'),
-    thenify(process.stderr.once)('drain'),
-  ]).then(() => process.exit(1));
+  // resulting in incomplete output. Using thenify would
+  // also introduce even more unhandled rejections.
+  return new Promise(resolve => {
+    let drainedOut = false;
+    let drainedErr = false;
+    const maybeResolve = () => drainedOut && drainedErr ? resolve() : void 0;
+
+    process.stdout.once('drain', () => {
+      drainedOut = true;
+      maybeResolve();
+    });
+    process.stderr.once('drain', () => {
+      drainedErr = true;
+      maybeResolve();
+    });
+  });
 };
 
 const checkNodeVersion = version => {
