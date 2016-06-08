@@ -16,7 +16,18 @@ import Style from '../../../shared/style';
 
 import * as actions from '../../actions/main-actions';
 
-const LOCATION_COMPLETION_ROW_STYLE = Style.registerStyle({
+const ROW_STYLE = Style.registerStyle({
+  // We're nesting multi-line items inside a flexbox, so
+  // we need to mark these children as columnar.
+  flexDirection: 'column',
+});
+
+const FOCUSED_RESULT_STYLE = Style.registerStyle({
+  background: 'var(--theme-selection-color)',
+  color: 'var(--theme-content-selected-color)',
+});
+
+const COMPLETION_TEXT_STYLE = Style.registerStyle({
   color: 'rgba(100, 100, 100, 1)',
   padding: '0.5em',
   whiteSpace: 'pre-wrap',           // So that spaces show up in snippets.
@@ -30,7 +41,7 @@ export function LocationCompletionRow({ completion, focusedResultIndex, index })
   // We get safe, decorated (<b>foo</b>) HTML from the database.
   const snippet = completion.snippet ? (
     <div
-      className={LOCATION_COMPLETION_ROW_STYLE}
+      className={COMPLETION_TEXT_STYLE}
       dangerouslySetInnerHTML={{          // eslint-disable-line react/no-danger
         __html: completion.snippet,
       }}>
@@ -38,22 +49,14 @@ export function LocationCompletionRow({ completion, focusedResultIndex, index })
   ) : null;
 
   return (
-    <div className={"completion-row"}
-    style={{
-      // We're nesting multi-line items inside a flexbox, so
-      // we need to mark these children as columnar.
-      flexDirection: 'column',
-    }}>
+    <div className={`completion-row ${ROW_STYLE}`}>
       <div
         onMouseDown={(ev) => { ev.preventDefault(); }}
         onMouseOver={() => { this.props.dispatch(actions.setFocusedResultIndex(index)); }}
         onClick={() => {
           this.selectAutocompleteItem(completion.uri);
         }}
-        style={focusedResultIndex === index ? {
-          background: 'var(--theme-selection-color)',
-          color: 'var(--theme-content-selected-color)',
-        } : null}>
+        className={focusedResultIndex === index ? FOCUSED_RESULT_STYLE : null}>
         <span>{completion.title}</span>&nbsp;—&nbsp;<span>{completion.uri}</span>
       </div>
       {snippet}
