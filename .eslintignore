@@ -1,3 +1,5 @@
 lib/**
 pkg/**
+dist/**
+node_modules/**
 app/shared/preload/readability.js

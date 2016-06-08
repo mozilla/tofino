@@ -16,9 +16,6 @@ let paths = fs.readFileSync(path.join(__dirname, '..', '..', '..', '.eslintignor
 paths = paths.filter(i => i.length && !i.startsWith('#'))
              .map(i => i.startsWith('!') ? i.substr(1) : `!${i}`);
 
-// ESLint always ignores node_modules
-paths.unshift('!node_modules/**/*');
-
 // Prepend the full set of files
 paths.unshift(`**/${valid}`);
 
