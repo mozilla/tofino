@@ -41,10 +41,9 @@ Documentation for building can be found in [docs/building.md](/docs/building.md)
 
 Even though the user agent and content services are reused between multiple
 browser instances, they don't outlive their parent process by default when it
-exits in non-packaged builds, to ease development. To have them kept alive even
-when there are no more clients left, pass `-- services:keep-alive` as an argument
-to the `npm start` and `npm run dev` npm commands. Alternatively, `npm run serve`
-will start these services standalone for finer lifetime control.
+exits, to ease development. To have them kept alive even when there are no
+more clients left, `npm run serve` will start these services standalone for
+finer lifetime control.
 
 ## Testing
 
