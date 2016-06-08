@@ -6,8 +6,8 @@
   "repository": "https://github.com/mozilla/tofino",
   "_electron": {
     "mirror": "https://mozilla-releng-tofino.s3.amazonaws.com/mozilla/tofino-electron/",
-    "version": "1.2.1",
-    "revision": "ef9515aac9ea"
+    "version": "1.2.2",
+    "revision": "5cd1dc12f984"
   },
   "scripts": {
     "serve": "cross-env NODE_ENV=\"production\" node build/main.js --serve",
