@@ -54,7 +54,7 @@ export default {
     }
 
     console.log('Now watching the filesystem for changes...');
-    return watchers;
+    return unwatch;
   },
 
   async serve() {
@@ -63,15 +63,15 @@ export default {
   },
 
   async run(args = []) {
-    const watchers = await this.build({}, { watch: true });
+    const unwatch = await this.build({}, { watch: true });
     await Lazy.run(args);
-    await Promise.all(watchers.map(w => w.close()));
+    await unwatch();
   },
 
   async runDev(args = []) {
-    const watchers = await this.build({ development: true }, { watch: true });
+    const unwatch = await this.build({ development: true }, { watch: true });
     await Lazy.run(args);
-    await Promise.all(watchers.map(w => w.close()));
+    await unwatch();
   },
 
   async test(args = []) {
