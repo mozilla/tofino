@@ -1,0 +1,63 @@
+/*
+ Copyright 2016 Mozilla
+
+ Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ this file except in compliance with the License. You may obtain a copy of the
+ License at http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, software distributed
+ under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ specific language governing permissions and limitations under the License.
+ */
+
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+
+import Style from '../../../shared/style';
+import StarItem from './star-item';
+import List from '../../../shared/widgets/list';
+import * as ContentPropTypes from '../../model/content-prop-types';
+import * as actions from '../../actions/main-actions';
+import * as selectors from '../../selectors';
+
+// TODO: Don't rely on the user agent injecting helpers into our page.
+// Fixed after https://github.com/mozilla/tofino/pull/609
+const UA = window._browser;
+
+const STARS_STYLE = Style.registerStyle({
+  flex: 1,
+  overflow: 'auto',
+  padding: '20px 10%',
+});
+
+class Stars extends Component {
+  componentDidMount() {
+    this.props.dispatch(actions.showStars({ UA, limit: 1000 }));
+  }
+
+  render() {
+    return (
+      <List className={STARS_STYLE}>
+        {this.props.items.map(star => (
+          <StarItem key={`star-item-${star.location}`}
+            star={star} />
+        ))}
+      </List>
+    );
+  }
+}
+
+Stars.displayName = 'Stars';
+
+Stars.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  items: ContentPropTypes.StarredItems.isRequired,
+};
+
+function mapStateToProps(state) {
+  return {
+    items: selectors.getStarredItems(state),
+  };
+}
+
+export default connect(mapStateToProps)(Stars);

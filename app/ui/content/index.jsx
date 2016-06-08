@@ -10,20 +10,20 @@
  specific language governing permissions and limitations under the License.
  */
 
-function showBookmarksResults(stars) {
-  const ul = document.getElementById('list');
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 
-  stars.forEach(item => {
-    const li = document.createElement('li');
-    const a = document.createElement('a');
-    a.href = item.location;
-    a.title = item.title || item.location;
-    a.appendChild(document.createTextNode(item.title || 'Untitled'));
-    li.appendChild(a);
-    ul.appendChild(li);
-  });
-}
+import App from './views/app';
+import { createContentStore } from './store';
 
-export function fetchRecentBookmarks() {
-  window._browser.recentStars(1000).then(showBookmarksResults);
-}
+const store = createContentStore();
+
+const chrome = (
+  <Provider store={store}>
+    <App />
+  </Provider>
+);
+
+const container = document.getElementById('content-container');
+ReactDOM.render(chrome, container);
