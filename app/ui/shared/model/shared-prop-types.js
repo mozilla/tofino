@@ -12,7 +12,8 @@ specific language governing permissions and limitations under the License.
 
 import { PropTypes } from 'react';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import * as Model from './index';
+
+import * as Model from '../../browser/model';
 
 export const Page = PropTypes.instanceOf(Model.Page);
 export const Pages = ImmutablePropTypes.listOf(Page.isRequired);
