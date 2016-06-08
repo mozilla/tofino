@@ -16,10 +16,10 @@ import Style from '../../../shared/style';
 import { Page as PageModel } from '../../model';
 
 import Status from './status';
-import Search from './search';
+import Search from '../../../shared/widgets/search';
 
 import { fixURL } from '../../browser-util';
-import { menuWebViewContext } from '../../actions/external';
+import { menuWebViewContext, inPageSearch } from '../../actions/external';
 import * as actions from '../../actions/main-actions';
 import * as userAgent from '../../lib/user-agent';
 
@@ -38,6 +38,14 @@ const PAGE_STYLE = Style.registerStyle({
   '&.active-browser-page': {
     zIndex: 1,
   },
+});
+
+const SEARCH_STYLE = Style.registerStyle({
+  zIndex: '1',
+  position: 'absolute',
+  top: '10px',
+  right: '10px',
+  width: '300px',
 });
 
 const WEB_VIEW_STYLE = Style.registerStyle({
@@ -96,7 +104,10 @@ class Page extends Component {
     return (
       <div className={`page ${PAGE_STYLE} ${this.props.isActive ? 'active-browser-page' : ''}`}
         data-page-state={this.props.page.state}>
-        <Search hidden={!this.props.page.isSearching} />
+        <Search id="browser-page-search"
+          className={SEARCH_STYLE}
+          hidden={!this.props.page.isSearching}
+          onKeyUp={inPageSearch} />
         <webview is="webview"
           ref="webview"
           class={`webview-${this.props.page.id} ${WEB_VIEW_STYLE}`}

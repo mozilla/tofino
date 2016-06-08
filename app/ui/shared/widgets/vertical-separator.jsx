@@ -10,9 +10,9 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React from 'react';
+import React, { PropTypes } from 'react';
 
-import Style from '../../../shared/style';
+import Style from '../style';
 
 const VERTICAL_SEPARATOR_STYLE = Style.registerStyle({
   alignSelf: 'stretch',
@@ -21,9 +21,20 @@ const VERTICAL_SEPARATOR_STYLE = Style.registerStyle({
   background: 'var(--theme-separator-color)',
 });
 
-const VerticalSeparator = () =>
-  <div className={VERTICAL_SEPARATOR_STYLE} />;
+const VerticalSeparator = props => {
+  return (
+    <div id={props.id}
+      style={props.style}
+      className={`${VERTICAL_SEPARATOR_STYLE} ${props.className || ''}`} />
+  );
+};
 
 VerticalSeparator.displayName = 'VerticalSeparator';
+
+VerticalSeparator.propTypes = {
+  id: PropTypes.string,
+  className: PropTypes.string,
+  style: PropTypes.object,
+};
 
 export default VerticalSeparator;

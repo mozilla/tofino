@@ -15,7 +15,7 @@ import React, { PropTypes } from 'react';
 import * as UIConstants from '../../constants/ui';
 import Style from '../../../shared/style';
 import Tab from './tab';
-import Btn from '../../widgets/btn';
+import Btn from '../../../shared/widgets/btn';
 
 const TABBAR_STYLE = Style.registerStyle({
   minHeight: `${UIConstants.TABBAR_HEIGHT}px`,

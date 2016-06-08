@@ -16,10 +16,14 @@ const RequiredProps = {
     onClick: () => {},
     title: 'my title',
   },
+  Search: {
+    onKeyUp: () => {},
+    hidden: false,
+  },
 };
 
 describe('widgets', () => {
-  const exports = requireDir('../../../../../app/ui/browser/widgets');
+  const exports = requireDir('../../../../../app/ui/shared/widgets');
   const components = Object.entries(exports).map(([, value]) => value.default);
 
   // Make sure you assign react components to a variable starting with an

@@ -12,16 +12,10 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes } from 'react';
 
-import Style from '../../../shared/style';
-import { inPageSearch } from '../../actions/external';
+import Style from '../style';
 
 const SEARCH_STYLE = Style.registerStyle({
-  zIndex: '1',
-  position: 'absolute',
-  top: '10px',
-  right: '10px',
-  width: '300px',
-  height: '25px',
+  minHeight: '25px',
 });
 
 const INPUT_STYLE = Style.registerStyle({
@@ -31,21 +25,26 @@ const INPUT_STYLE = Style.registerStyle({
   borderRadius: 'var(--theme-default-roundness)',
 });
 
-const Search = ({ hidden }) => (
-  <div id="browser-page-search"
-    className={SEARCH_STYLE}
-    {...{ hidden }}>
+const Search = props => (
+  <div id={props.id}
+    style={props.style}
+    className={`${SEARCH_STYLE} ${props.className || ''}`}
+    hidden={props.hidden}>
     <input className={INPUT_STYLE}
       type="text"
       placeholder="Search..."
-      onKeyDown={inPageSearch} />
+      onKeyUp={props.onKeyUp} />
   </div>
 );
 
 Search.displayName = 'Search';
 
 Search.propTypes = {
+  id: PropTypes.string,
+  style: PropTypes.object,
+  className: PropTypes.string,
   hidden: PropTypes.bool.isRequired,
+  onKeyUp: PropTypes.func.isRequired,
 };
 
 export default Search;
