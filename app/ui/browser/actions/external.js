@@ -43,50 +43,59 @@ export function menuBrowser() {
 /**
  * Right click on the location bar
  */
+export const locationContextFunctions = {
+  copy(input) {
+    clipboard.writeText(input.value);
+  },
+  cut(input, pageId, dispatch) {
+    const value = input.value;
+    clipboard.writeText(value.slice(input.selectionStart, input.selectionEnd));
+    const loc = value.slice(0, input.selectionStart) + value.slice(input.selectionEnd);
+    dispatch(actions.setUserTypedLocation(pageId, {
+      text: loc,
+    }));
+  },
+  paste(input, pageId, dispatch) {
+    const before = input.value.slice(0, input.selectionStart);
+    const after = input.value.slice(input.selectionEnd);
+    dispatch(actions.setUserTypedLocation(pageId, {
+      text: `${before}${clipboard.readText()}${after}`,
+    }));
+  },
+  pasteAndGo(input, pageId, dispatch) {
+    const before = input.value.slice(0, input.selectionStart);
+    const after = input.value.slice(input.selectionEnd);
+    const loc = before + clipboard.readText() + after;
+    dispatch(actions.setUserTypedLocation(pageId, {
+      text: loc,
+    }));
+
+    // TODO this doesn't work anyway, we have to pass in webViewController
+    // dispatch(actions.navigatePageTo(-1, fixURL(loc)));
+  },
+};
+
 export function menuLocationContext(input, pageId, dispatch) {
   const menu = new Menu();
 
   menu.append(new MenuItem({
     label: 'Copy',
-    click: () => clipboard.writeText(input.value),
+    click: () => locationContextFunctions.copy(input),
   }));
 
   menu.append(new MenuItem({
     label: 'Cut',
-    click: () => {
-      const value = input.value;
-      clipboard.writeText(value.slice(input.selectionStart, input.selectionEnd));
-      const loc = value.slice(0, input.selectionStart) + value.slice(input.selectionEnd);
-      dispatch(actions.setUserTypedLocation(pageId, {
-        text: loc,
-      }));
-    },
+    click: () => locationContextFunctions.cut(input, pageId, dispatch),
   }));
 
   menu.append(new MenuItem({
     label: 'Paste',
-    click: () => {
-      const before = input.value.slice(0, input.selectionStart);
-      const after = input.value.slice(input.selectionEnd);
-      dispatch(actions.setUserTypedLocation(pageId, {
-        text: `${before}${clipboard.readText()}${after}`,
-      }));
-    },
+    click: () => locationContextFunctions.paste(input, pageId, dispatch),
   }));
 
   menu.append(new MenuItem({
     label: 'Paste and Go',
-    click: () => {
-      const before = input.value.slice(0, input.selectionStart);
-      const after = input.value.slice(input.selectionEnd);
-      const loc = before + clipboard.readText() + after;
-      dispatch(actions.setUserTypedLocation(pageId, {
-        text: loc,
-      }));
-
-      // TODO this doesn't work anyway, we have to pass in webViewController
-      // dispatch(actions.navigatePageTo(-1, fixURL(loc)));
-    },
+    click: () => locationContextFunctions.pasteAndGo(input, pageId, dispatch),
   }));
 
   menu.popup(remote.getCurrentWindow());
@@ -95,19 +104,28 @@ export function menuLocationContext(input, pageId, dispatch) {
 /**
  * Right click on a tab
  */
-export function menuTabContext(pageIndex, dispatch) {
+export const tabContextFunctions = {
+  newTab(dispatch) {
+    dispatch(actions.createTab());
+  },
+  closeTab(pageId, dispatch) {
+    dispatch(actions.closeTab(pageId));
+  },
+};
+
+export function menuTabContext(pageId, dispatch) {
   const menu = new Menu();
 
   menu.append(new MenuItem({
     label: 'New Tab',
-    click: actions.createTab,
+    click: tabContextFunctions.newTab,
   }));
 
   menu.append(new MenuItem({ type: 'separator' }));
 
   menu.append(new MenuItem({
     label: 'Close Tab',
-    click: () => dispatch(actions.closeTab(pageIndex)),
+    click: () => tabContextFunctions.closeTab(pageId, dispatch),
   }));
 
   menu.popup(remote.getCurrentWindow());
@@ -116,55 +134,80 @@ export function menuTabContext(pageIndex, dispatch) {
 /**
  * Right click on the page itself
  */
+export const webViewContextFunctions = {
+  openLinkInNewTab(e, dispatch, pageSessionId) {
+    dispatch(actions.createTab(e.href, pageSessionId));
+  },
+  copyLinkAddress(e) {
+    clipboard.writeText(e.href);
+  },
+  saveImageAs() {},
+  copyImageURL(e) {
+    clipboard.writeText(e.img);
+  },
+  openImageInNewTab(e, dispatch, pageSessionId) {
+    dispatch(actions.createTab(e.img, pageSessionId));
+  },
+  copy(webview) {
+    webview.copy();
+  },
+  selectAll(webview) {
+    webview.selectAll();
+  },
+  inspectElement(webview, e) {
+    webview.inspectElement(e.x, e.y);
+  },
+};
+
 export function menuWebViewContext(webview, e, dispatch, pageSessionId) {
   const menu = new Menu();
 
   if (e.href) {
     menu.append(new MenuItem({
       label: 'Open Link in New Tab',
-      click: () => dispatch(actions.createTab(e.href, pageSessionId)),
+      click: () => webViewContextFunctions.openLinkInNewTab(e, dispatch, pageSessionId),
     }));
 
     menu.append(new MenuItem({
       label: 'Copy Link Address',
-      click: () => clipboard.writeText(e.href),
+      click: () => webViewContextFunctions.copyLinkAddress(e),
     }));
   }
 
   if (e.img) {
     menu.append(new MenuItem({
       label: 'Save Image As...',
-      click: () => {},
+      click: () => webViewContextFunctions.saveImageAs(e),
     }));
 
     menu.append(new MenuItem({
       label: 'Copy Image URL',
-      click: () => clipboard.writeText(e.img),
+      click: () => webViewContextFunctions.copyImageURL(e),
     }));
 
     menu.append(new MenuItem({
       label: 'Open Image in New Tab',
-      click: () => dispatch(actions.createTab(e.img, pageSessionId)),
+      click: () => webViewContextFunctions.openImageInNewTab(e, dispatch, pageSessionId),
     }));
   }
 
   if (e.hasSelection) {
     menu.append(new MenuItem({
       label: 'Copy',
-      click: () => webview.copy(),
+      click: () => webViewContextFunctions.copy(webview),
     }));
   }
 
   menu.append(new MenuItem({
     label: 'Select All',
-    click: () => webview.selectAll(),
+    click: () => webViewContextFunctions.selectAll(webview),
   }));
 
   menu.append(new MenuItem({ type: 'separator' }));
 
   menu.append(new MenuItem({
     label: 'Inspect Element',
-    click: () => webview.inspectElement(e.x, e.y),
+    click: () => webViewContextFunctions.inspectElement(webview, e),
   }));
 
   menu.popup(remote.getCurrentWindow());
