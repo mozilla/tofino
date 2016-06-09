@@ -16,7 +16,6 @@
 require('babel-polyfill');
 require('babel-register')();
 
-const thenify = require('thenify-all').thenify;
 const semver = require('semver');
 const checkDependencies = require('check-dependencies');
 const VALID_NODE_VERSION_RANGE = require('../package.json').engines.node;
@@ -30,13 +29,7 @@ const handleDepsCheckFailed = result => {
 const handleTaskFailed = err => {
   console.error('Build failed.');
   console.error(err);
-
-  // Exitting immediately would stop the logging midway,
-  // resulting in incomplete output.
-  Promise.all([
-    thenify(process.stdout.once)('drain'),
-    thenify(process.stderr.once)('drain'),
-  ]).then(() => process.exit(1));
+  process.exit(1);
 };
 
 const checkNodeVersion = version => {

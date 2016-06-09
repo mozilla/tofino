@@ -135,6 +135,9 @@ export function webpackBuild(config) {
           errorDetails: true,
           chunkOrigins: true,
         });
+        // Rejecting immediately would result in garbled text if other
+        // logging operations follow. Furthermore, if the process exits,
+        // it will stop the logging midway, resulting in incomplete output.
         console.error(`\n${output}\n`);
         process.stderr.once('drain', () => reject('Compilation unsuccessful.'));
         return;
