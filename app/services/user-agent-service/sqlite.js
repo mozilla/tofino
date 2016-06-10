@@ -44,7 +44,7 @@ function thenifyMethods(source, dest, methods) {
 export class DB {
   constructor(db) {
     this.db = db;
-    thenifyMethods(db, this, ['close', 'get', 'all', 'each', 'exec']);
+    thenifyMethods(db, this, ['close', 'get', 'all', 'exec']);
   }
 
   prepare(sql, params) {
@@ -56,6 +56,48 @@ export class DB {
           resolve(statement);
         }
       });
+    });
+  }
+
+  /**
+   * Invokes the provided `onRow` callback with each result row.
+   * Returns a promise that resolves to the number of returned rows.
+   *
+   * @param sql the query to run.
+   * @param params any parameters to bind.
+   * @param onRow a function of one argument, `(row)`.
+   * @returns {Promise<int>} the number of returned rows.
+   */
+  each(sql, params, onRow) {
+    return new Promise((resolve, reject) => {
+      let done = false;
+
+      const rowCallback = (err, row) => {
+        if (done) {
+          return;
+        }
+
+        if (err) {
+          console.log(`SQL error in row function: ${err} in ${sql}.`);
+          done = true;
+          reject(err);
+          return;
+        }
+
+        onRow(row);
+      };
+
+      const completionCallback = (err, count) => {
+        if (err) {
+          console.log(`SQL error in completion function: ${err} in ${sql}.`);
+          reject(err);
+          return;
+        }
+
+        resolve(count);
+      };
+
+      this.db.each(sql, params, rowCallback, completionCallback);
     });
   }
 
