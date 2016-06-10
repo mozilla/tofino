@@ -23,13 +23,103 @@ import {
 import Immutable from 'immutable';
 import microtime from 'microtime-fast';
 import { Bookmark } from '../../shared/model';
-import { logger } from '../../shared/logging';
 
-import { SessionEndReason, SessionStartReason, SnippetSize, StarOp, VisitType } from './storage';
+import {
+  SessionEndReason,
+  SessionStartReason,
+  SnippetSize,
+  StarOp,
+  // VisitType
+} from './storage';
 
+const { lazySeq, vector, parse, getIn } = mori;
+const { DB_ADD, DB_RETRACT, DB_CURRENT_TX, TEMPIDS } = helpers;
 
-const { hashMap, vector, parse, toJs, equals, isMap, hasKey, isSet, set, getIn, get } = mori;
-const { DB_ADD } = helpers;
+const profileSchema = {
+  'page/url': {
+    ':db/cardinality': ':db.cardinality/one',
+    ':db/unique': ':db.unique/identity',
+    ':db/doc': 'A page\'s URL.',
+    ':db.install/_attribute': ':db.part/db',
+  },
+
+  'page/title': {
+    ':db/ident': ':page/title',
+    ':db/cardinality': ':db.cardinality/one',      // We supersede as we see new titles.
+    ':db/doc': 'A page\'s title.',
+    ':db.install/_attribute': ':db.part/db',
+  },
+
+  'event/visit': {
+    ':db/valueType': ':db.type/ref',
+    ':db/cardinality': ':db.cardinality/many',
+    ':db/doc': 'A visit to the page.',
+  },
+
+  'page/starred': {
+    ':db/cardinality': ':db.cardinality/one',
+    ':db/doc': 'A starring of the page.',
+  },
+
+  // TODO: model sessions.
+  'visit/instant': {
+    ':db/cardinality': ':db.cardinality/one',
+    ':db/doc': 'When the visit occurred.',
+    ':db/index': true,
+    // ':db/valueType': 'db.type/instant',        // Not supported by Datascript.
+  },
+
+  'session/startedFromAncestor': {
+    ':db/valueType': ':db.type/ref',     // To a session.
+    ':db/cardinality': ':db.cardinality/one',
+    ':db/doc': 'The ancestor of a session.',
+  },
+
+  'session/startedInScope': {
+    // ':db/valueType': ':db.type/string',        // Not supported by Datascript.
+    ':db/cardinality': ':db.cardinality/one',
+    ':db/doc': 'The parent scope of a session.',
+  },
+
+  // Numeric for now.
+  'session/startReason': {
+    ':db/cardinality': ':db.cardinality/many',
+    ':db/doc': 'The start reasons of a session.',
+  },
+
+  // Numeric for now.
+  'session/endReason': {
+    ':db/cardinality': ':db.cardinality/many',
+    ':db/doc': 'The end reasons of a session.',
+  },
+
+  'session/startTime': {
+    ':db/cardinality': ':db.cardinality/one',
+  },
+
+  'session/endTime': {
+    ':db/cardinality': ':db.cardinality/one',
+  },
+};
+
+// mapcat is lazy, but it always needs to evaluate the first few elements
+// of its input collection in order to concat. This version does not.
+function lazyMapcat(f, coll) {
+  if (mori.isEmpty(coll)) {
+    return coll;
+  }
+
+  return lazySeq(() => mori.concat(f(mori.first(coll)),
+    lazyMapcat(f, mori.rest(coll))));
+}
+
+function compareDescending(a, b) {
+  return b - a;
+}
+
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 export class ProfileDatomStorage {
   constructor(dir) {
@@ -37,69 +127,19 @@ export class ProfileDatomStorage {
     const schema = this.createSchema();
     this.conn = datascript.core.create_conn(schema);
     this.schema = schema;
+
+    this.pageDetailsQuery = parse(`
+    [:find (max ?timestamp) (pull ?page ["page/url" "page/title"]) ?page
+     :in $ ?visits
+     :where
+     [(ground ?visits) [[?ev]]]
+     [?page "event/visit" ?ev]
+     [?ev _ ?timestamp]]
+    `);
   }
 
   createSchema() {
-    return helpers.schema_to_clj({
-      'page/url': {
-        ':db/cardinality': ':db.cardinality/one',
-        ':db/unique': ':db.unique/identity',
-        ':db/doc': 'A page\'s URL.',
-        ':db.install/_attribute': ':db.part/db',
-      },
-
-      'page/title': {
-        ':db/ident': ':page/title',
-        ':db/cardinality': ':db.cardinality/one',      // We supersede as we see new titles.
-        ':db/doc': 'A page\'s title.',
-        ':db.install/_attribute': ':db.part/db',
-      },
-
-      'event/visit': {
-        ':db/valueType': ':db.type/ref',
-        ':db/cardinality': ':db.cardinality/many',
-        ':db/doc': 'A visit to the page.',
-      },
-
-      // TODO: model sessions.
-      'visit/instant': {
-        ':db/cardinality': ':db.cardinality/one',
-        ':db/doc': 'When the visit occurred.',
-        ':db/index': true,
-        // ':db/valueType': 'db.type/instant',        // Not supported by Datascript.
-      },
-
-      'session/startedFromAncestor': {
-        ':db/valueType': ':db.type/ref',     // To a session.
-        ':db/cardinality': ':db.cardinality/one',
-        ':db/doc': 'The ancestor of a session.',
-      },
-
-      'session/startedInScope': {
-        // ':db/valueType': ':db.type/string',        // Not supported by Datascript.
-        ':db/cardinality': ':db.cardinality/one',
-        ':db/doc': 'The parent scope of a session.',
-      },
-
-      // Numeric for now.
-      'session/startReason': {
-        ':db/cardinality': ':db.cardinality/many',
-        ':db/doc': 'The start reasons of a session.',
-      },
-
-      // Numeric for now.
-      'session/endReason': {
-        ':db/cardinality': ':db.cardinality/many',
-        ':db/doc': 'The end reasons of a session.',
-      },
-
-      'session/startTime': {
-        ':db/cardinality': ':db.cardinality/one',
-      },
-      'session/endTime': {
-        ':db/cardinality': ':db.cardinality/one',
-      },
-    });
+    return helpers.schema_to_clj(profileSchema);
   }
 
   static async open(dir) {
@@ -110,33 +150,61 @@ export class ProfileDatomStorage {
     return true;
   }
 
+  getDB() {
+    return datascript.core.db(this.conn);
+  }
+
+  transact(assertions) {
+    return datascript.core.transact_BANG_(this.conn, assertions);
+  }
+
   async startSession(scope, ancestor, now = microtime.now(), reason = SessionStartReason.newTab) {
-    const result = datascript.core.transact_BANG_(this.conn, vector(
+    let assertions = vector(
       vector(DB_ADD, -1, 'session/startedInScope', `${scope}`),
-      vector(DB_ADD, -1, 'session/startedFromAncestor', ancestor),
       vector(DB_ADD, -1, 'session/startReason', reason),
       vector(DB_ADD, -1, 'session/startTime', now)
-    ));
+    );
 
-    return datascript.core.resolve_tempid(result.tempids, -1);
+    if (ancestor) {
+      assertions = mori.conj(assertions,
+        vector(DB_ADD, -1, 'session/startedFromAncestor', ancestor)
+      );
+    }
+
+    const result = this.transact(assertions);
+    return getIn(result, [TEMPIDS, -1]);
   }
 
   async endSession(session, now = microtime.now(), reason = SessionEndReason.tabClosed) {
-    return datascript.core.transact_BANG_(this.conn, vector(
+    return this.transact(vector(
       vector(DB_ADD, session, 'session/endReason', reason),
       vector(DB_ADD, session, 'session/endTime', now)
     ));
   }
 
   // Chains through place ID.
-  starPage(url, session, action, now = microtime.now()) {
-    const result = datascript.core.transact_BANG_(this.conn, vector(
-      vector(DB_ADD, -1, 'page/url', url)
-    ));
+  // Unlike Datomic, we use microseconds for transaction timestamps.
+  async starPage(url, session, action, now = microtime.now()) {
+    if (action === StarOp.star) {
+      // TODO: session.
+      const result = this.transact(vector(
+        vector(DB_ADD, DB_CURRENT_TX, ':db/txInstant', now),
+        vector(DB_ADD, -1, 'page/url', url),
+        vector(DB_ADD, -1, 'page/starred', true)
+      ));
+      return getIn(result, [TEMPIDS, -1]);
+    }
 
-    // TODO
+    if (action === StarOp.unstar) {
+      // TODO: session.
+      const result = this.transact(vector(
+        vector(DB_ADD, DB_CURRENT_TX, ':db/txInstant', now),
+        vector(DB_RETRACT, vector('page/url', url), 'page/starred', true)
+      ));
+      return undefined;         // TODO?
+    }
 
-    return datascript.core.resolve_tempid(result.tempids, -1);
+    return Promise.reject(new Error(`Unknown action ${action}.`));
   }
 
   /**
@@ -147,58 +215,78 @@ export class ProfileDatomStorage {
    * @returns {Promise} a promise that resolves to the place ID.
    */
   visit(url, session, title, now = microtime.now()) {
-    const result = datascript.core.transact_BANG_(this.conn, vector(
+    let assertions = vector(
       vector(DB_ADD, -1, 'page/url', url),
-      vector(DB_ADD, -1, 'page/title', title),    // TODO: handle no title.
       vector(DB_ADD, -1, 'event/visit', -2),
       vector(DB_ADD, -2, 'visit/instant', now)
-    ));
+    );
+
+    if (title) {
+      assertions = mori.conj(assertions,
+        vector(DB_ADD, -1, 'page/title', title)
+      );
+    }
+
+    const result = this.transact(assertions);
 
     // TODO: session.
 
-    return datascript.core.resolve_tempid(result.tempids, -1);
+    return getIn(result, [TEMPIDS, -1]);
   }
 
   getVisits(since = null) {
-    const db = datascript.core.db(this.conn);
-    return datascript.core.index_range(db, 'visit/instant', since, null);
+    return mori.reverse(
+      datascript.core.index_range(
+        this.getDB(), 'visit/instant', since, null));
+  }
+
+  pageResultToJSON(tuple) {
+    const [ts, details, page] = tuple;
+    return {
+      lastVisited: ts,
+      place: page,
+      uri: mori.get(details, 'page/url'),
+      title: mori.get(details, 'page/title'),
+    };
+  }
+
+  getPageDetails(visits) {
+    const query = this.pageDetailsQuery;
+    const results = datascript.core.q(query, this.getDB(), visits);
+    const sorted = mori.sortBy(mori.first, compareDescending, results);
+    return mori.map(this.pageResultToJSON, sorted);
+  }
+
+  async getVisitedPagesEagerly(visitDatoms) {
+    return this.getPageDetails(visitDatoms);
+  }
+
+  async getVisitedPagesLazily(visitDatoms, chunkSize) {
+    const expandResults = this.getPageDetails.bind(this);
+
+    // We want to find `limit` unique URLs, regardless of how many
+    // visits we need to consume from the potentially huge sequence of
+    // visits. We lazily chunk the visit seq, and walk it running queries
+    // until we have enough.
+    const chunks = mori.partitionAll(chunkSize, visitDatoms);
+    return lazyMapcat(expandResults, chunks);
   }
 
   // Ordered by last visit, descending.
   async visited(since = null, limit = 10) {
     const visitDatoms = this.getVisits(since);
 
-    // Note that the limit applies to *pages*, not *visits*, so we can't limit yet!
-    const query = parse(`
-    [:find ?ep, ?url, ?timestamp :in $ ?visits
-     :where
-     [(ground ?visits) [[?ev]]
-     [?ev _ timestamp]
-     [?ep :event/visit ?ev]
-     [?ep :page/url ?u]]
-    `);
-  }
+    // Fast path: we don't need chunking or laziness, because there are
+    // fewer than `limit` total visits.
+    const count = mori.count(visitDatoms);
+    if (!limit || (count < limit)) {
+      return this.getVisitedPagesEagerly(visitDatoms);
+    }
 
-  someStuff() {
-    datascript.core.transact_BANG_(this.conn, vector(
-      vector(DB_ADD, -1, 'page/url', 'http://foo.com/'),
-      vector(DB_ADD, -1, 'page/title', 'Foo.com')
-    ));
-
-    const query = parse(`
-    [:find ?title :in $ ?url :where [?x "page/url" ?url] [?x "page/title" ?title]]
-    `);
-    let results = datascript.core.q(query, datascript.js.db(this.conn), 'http://foo.com/');
-    logger.info(results);
-
-    datascript.core.transact_BANG_(this.conn, vector(
-      vector(DB_ADD, -1, 'page/url', 'http://foo.com/'),
-      vector(DB_ADD, -1, 'page/title', 'Foo.com Again')
-    ));
-
-    results = datascript.core.q(query, datascript.js.db(this.conn), 'http://foo.com/');
-    logger.info(results);
-    return results;
+    // We add a little padding to make it so that one or two
+    // repeated visits don't push us into the next chunk.
+    const all = await this.getVisitedPagesLazily(visitDatoms, limit + 3);
+    return mori.take(limit, all);
   }
 
   /**
@@ -214,28 +302,55 @@ export class ProfileDatomStorage {
    * @returns {Promise<[AwesomebarMatch]>}
    */
   async query(string, since = 0, limit = 10, snippetSize = SnippetSize.medium) {
+    // TODO
   }
 
+  // Future: free-text indexing.
   async visitedMatches(substring, since = 0, limit = 10) {
+    if (substring === '') {
+      return this.visited(since, limit);
+    }
+
+    const re = new RegExp(escapeRegExp(substring), 'i');
+    function matchesSubstring(result) {
+      return (result.title && re.test(result.title)) ||
+             (re.test(result.uri));
+    }
+
+    const visitDatoms = this.getVisits(since);
+    const all = await this.getVisitedPagesLazily(visitDatoms, 3 * limit);
+
+    return mori.take(limit, mori.filter(matchesSubstring, all));
   }
 
   async getStarredWithOrderByAndLimit(newestFirst, limit) {
+    const starredQuery = parse(`
+    [:find (max ?timestampMicros) (pull ?page ["page/url" "page/title"]) ?page
+     :in $
+     :where
+     [?page "page/starred" true ?t]
+     [?t ":db/txInstant" ?timestampMicros]
+    ]`);
+    const results = datascript.core.q(starredQuery, this.getDB());
+    const sorted = newestFirst ? mori.sortBy(mori.first, compareDescending, results) : results;
+    const limited = limit ? mori.take(limit, sorted) : sorted;
+    return mori.map(this.pageResultToJSON, limited);
   }
 
   async starredURLs(limit = undefined) {
-    // Fetch all places visited, with the latest timestamp for each.
     const rows = await this.getStarredWithOrderByAndLimit(false, limit);
-    return Immutable.Set(rows.map(row => row.url));
+    return mori.set(mori.map(row => row.uri, rows));
   }
 
   async recentlyStarred(limit = 5) {
     const rows = await this.getStarredWithOrderByAndLimit(true, limit);
-    return rows.map(row =>
+    return mori.map(row =>
       new Bookmark({
-        title: row.title, location: row.url, visitedAt: row.ts,
-      }));
+        title: row.title, location: row.uri, visitedAt: row.lastVisited,
+      }), rows);
   }
 
   async savePage(page, session, now = microtime.now()) {
+    // TODO
   }
 }
