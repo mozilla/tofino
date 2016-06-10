@@ -17,9 +17,9 @@ export default {
     return (await request(`/visits?limit=${limit}`)).pages;
   },
 
-  async query({ string, since, limit, snippetSize }) {
+  async query({ query, since, limit, snippetSize }) {
     const args = [];
-    args.push(`q=${encodeURIComponent(string)}`);
+    args.push(`q=${encodeURIComponent(query)}`);
     if (since) {
       since = `${since}`;
       args.push(`since=${encodeURIComponent(since)}`);
