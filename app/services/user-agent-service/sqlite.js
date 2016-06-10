@@ -161,7 +161,8 @@ export class DB {
    *
    * @param filename the file path to open
    * @param mode any mode flags to pass to `sqlite3.Database`.
-   *             Defaults to OPEN_CREATE | OPEN_READWRITE.  Could be OPEN_READONLY.
+   *             Defaults to OPEN_CREATE | OPEN_READWRITE.  May be
+   *             OPEN_READONLY, but be aware of https://www.sqlite.org/wal.html#readonly.
    * @returns Promise that resolves to the opened database.
    */
   static open(filename, mode = OPEN_CREATE | OPEN_READWRITE) {
