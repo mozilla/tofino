@@ -11,7 +11,7 @@
  */
 
 import * as userAgentService from './server';
-import { ProfileStorage } from './storage';
+import { ProfileStorage } from './sqlstorage';
 import meta from './meta.json';
 
 process.on('uncaughtException', console.error);
