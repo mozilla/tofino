@@ -10,7 +10,8 @@ import path from 'path';
 import tmp from 'tmp';
 
 import { DB } from '../../../app/services/user-agent-service/sqlite';
-import { ProfileStorage, VisitType } from '../../../app/services/user-agent-service/storage';
+import { VisitType } from '../../../app/services/user-agent-service/storage';
+import { ProfileStorage } from '../../../app/services/user-agent-service/sqlstorage';
 
 describe('Utility tests', () => {
   it('Compares sets correctly.', (done) => {
