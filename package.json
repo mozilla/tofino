@@ -47,7 +47,7 @@
     "redux-logger": "2.6.1",
     "request": "2.65.0",
     "source-map-support": "ncalexan/node-source-map-support#fileUrls-plus",
-    "sqlite3": "3.1.4",
+    "sqlite3": "mossop/node-sqlite3#v3.1.4.1",
     "thenify-all": "1.6.0",
     "true-html-escape": "0.0.2",
     "uuid": "2.0.2",

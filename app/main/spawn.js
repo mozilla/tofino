@@ -24,8 +24,6 @@ const CONTENT_SERVICE_PATH = path.join(SERVICES_PATH, 'content-service', 'index.
 
 // @TODO Use something like `forever` or `pm2` to ensure that this
 // process remains running
-// @TODO Will `node` be accessible via path on users machines that don't
-// have node installed as an engineer?
 
 const children = new Set();
 function spawnProcess(name, command, args, options) {
@@ -60,8 +58,17 @@ export function startUserAgentService(userAgentClient, options = {}) {
   // outliving the its original parent, which we want to allow in the UAS case.
   const detached = !options.attached; // Detach by default
   const stdio = detached ? ['ignore'] : ['ignore', process.stdout, process.stderr];
+  const env = Object.assign({}, process.env, { ELECTRON_RUN_AS_NODE: 1 });
+  if (detached) {
+    env.ELECTRON_NO_ATTACH_CONSOLE = 1;
+  }
 
-  spawnProcess('UA Service', 'node', [UA_SERVICE_BIN,
+  let command = process.execPath;
+  if (options.command) {
+    command = options.command;
+  }
+
+  spawnProcess('UA Service', command, [UA_SERVICE_BIN,
     '--port', port,
     '--db', DB_PATH,
     '--version', version,
@@ -69,6 +76,7 @@ export function startUserAgentService(userAgentClient, options = {}) {
   ], {
     detached,
     stdio,
+    env,
   });
 
   // Connecting to a client immediately is sometimes not necessary,
@@ -81,10 +89,20 @@ export function startUserAgentService(userAgentClient, options = {}) {
 export function startContentService(options = {}) {
   const detached = !options.attached; // Detach by default
   const stdio = detached ? ['ignore'] : ['ignore', process.stdout, process.stderr];
+  const env = Object.assign({}, process.env, { ELECTRON_RUN_AS_NODE: 1 });
+  if (detached) {
+    env.ELECTRON_NO_ATTACH_CONSOLE = 1;
+  }
 
-  spawnProcess('Content service', 'node', [CONTENT_SERVICE_PATH], {
+  let command = process.execPath;
+  if (options.command) {
+    command = options.command;
+  }
+
+  spawnProcess('Content service', command, [CONTENT_SERVICE_PATH], {
     detached,
     stdio,
+    env,
   });
 }
 
