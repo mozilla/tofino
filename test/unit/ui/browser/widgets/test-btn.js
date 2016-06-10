@@ -5,7 +5,7 @@ import expect from 'expect';
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import Btn, * as Const from '../../../../../app/ui/browser/widgets/btn';
+import Btn, * as Const from '../../../../../app/ui/shared/widgets/btn';
 
 describe('Btn', () => {
   it('sets `id` if given', () => {

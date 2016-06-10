@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes } from 'react';
 
-import Style from '../../shared/style';
+import Style from '../style';
 
 export const MIN_WIDTH = '16px';
 export const MIN_HEIGHT = '16px';

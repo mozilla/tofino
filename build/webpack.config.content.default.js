@@ -12,7 +12,7 @@ const dest = path.join(Const.BUILD_DIR, 'ui', 'content');
 
 export default {
   ...defaultConfig,
-  entry: path.join(src, 'index.js'),
+  entry: path.join(src, 'index.jsx'),
   output: {
     path: dest,
     filename: 'index.js',

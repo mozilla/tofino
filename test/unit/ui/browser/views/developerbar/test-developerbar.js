@@ -6,7 +6,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 
 import DeveloperBar from '../../../../../../app/ui/browser/views/developerbar.jsx';
-import Btn from '../../../../../../app/ui/browser/widgets/btn';
+import Btn from '../../../../../../app/ui/shared/widgets/btn';
 
 describe('components - DeveloperBar', () => {
   it('should not render when in production mode', () => {

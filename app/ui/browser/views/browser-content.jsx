@@ -14,7 +14,7 @@ import React, { PropTypes } from 'react';
 
 import Style from '../../shared/style';
 import Page from './page/page';
-import * as SharedPropTypes from '../model/shared-prop-types';
+import * as SharedPropTypes from '../../shared/model/shared-prop-types';
 
 const CONTENT_AREA_STYLE = Style.registerStyle({
   flex: 1,

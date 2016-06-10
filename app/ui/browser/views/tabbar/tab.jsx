@@ -15,7 +15,7 @@ import React, { PropTypes } from 'react';
 import * as UIConstants from '../../constants/ui';
 import { Page } from '../../model';
 import Style from '../../../shared/style';
-import Btn from '../../widgets/btn';
+import Btn from '../../../shared/widgets/btn';
 
 const TAB_STYLE = Style.registerStyle({
   alignItems: 'center',

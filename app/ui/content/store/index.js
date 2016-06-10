@@ -10,20 +10,11 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React from 'react';
+import rootReducer from '../reducers';
+import * as model from '../model/index';
+import configureStore from '../../shared/configure-store';
 
-import Style from '../../../shared/style';
-
-const VERTICAL_SEPARATOR_STYLE = Style.registerStyle({
-  alignSelf: 'stretch',
-  width: '1px',
-  margin: '4px 10px',
-  background: 'var(--theme-separator-color)',
-});
-
-const VerticalSeparator = () =>
-  <div className={VERTICAL_SEPARATOR_STYLE} />;
-
-VerticalSeparator.displayName = 'VerticalSeparator';
-
-export default VerticalSeparator;
+export function createContentStore() {
+  const initialState = new model.State(rootReducer(undefined, { type: null }));
+  return configureStore(rootReducer, initialState);
+}

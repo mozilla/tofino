@@ -10,14 +10,26 @@
  specific language governing permissions and limitations under the License.
  */
 
-import { bindHistorySearch, fetchRecentHistory } from './views/history';
-import { fetchRecentBookmarks } from './views/stars';
+import React from 'react';
 
-if (~document.location.pathname.indexOf('history')) {
-  bindHistorySearch();
-  fetchRecentHistory();
-}
+import Style from '../../../shared/style';
 
-if (~document.location.pathname.indexOf('stars')) {
-  fetchRecentBookmarks();
-}
+const NO_MATCH_STYLE = Style.registerStyle({
+  flex: 1,
+  paddingTop: '20vh',
+  justifyContent: 'center',
+  color: 'var(--theme-content-color)',
+  fontSize: '500%',
+});
+
+const NoMatch = () => {
+  return (
+    <div className={NO_MATCH_STYLE}>
+      404
+    </div>
+  );
+};
+
+NoMatch.displayName = 'NoMatch';
+
+export default NoMatch;
