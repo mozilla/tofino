@@ -42,7 +42,7 @@ export function startUserAgentService(userAgentClient, options = {}) {
     '--port', port,
     '--db', DB_PATH,
     '--version', version,
-    '--content-service', endpoints.CONTENT_SERVER_ORIGIN,
+    '--content-service-origin', `${endpoints.TOFINO_PROTOCOL}://`,
   ], {
     detached,
     stdio,

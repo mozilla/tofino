@@ -15,9 +15,22 @@ import { SnippetSize, StarOp } from './storage';
 import * as profileDiffs from '../../shared/profile-diffs';
 
 const allowCrossDomain = contentServiceOrigin => function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', contentServiceOrigin);
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  const origin = req.get('origin');
+  if (!origin) {
+    next();
+    return;
+  }
+
+  // For some reason, setting the `Access-Control-Allow-Origin` header to
+  // the `contentServiceOrigin` value doesn't work for our custom `tofino://`
+  // http scheme, when receiving requests from electron. For example, when
+  // allowing origin `tofino://` and the request is from `tofino://history`,
+  // CORS won't work even though it should. As a workaround, whitelist directly.
+  if (origin.startsWith(contentServiceOrigin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+  }
 
   next();
 };
@@ -201,12 +214,13 @@ function configure(app, router, storage, contentServiceOrigin) {
 export async function start({ storage, options }) {
   const version = options.version;
   const port = options.port;
-  const contentService = options.contentService;
+  const contentServiceOrigin = options.contentServiceOrigin;
 
   const { setup } = makeServer(version, port);
 
   await setup((app, router) => {
-    configure(app, router, storage, contentService);
+    console.log(`Enabling CORS for the Content service on ${options.contentServiceOrigin}`);
+    configure(app, router, storage, contentServiceOrigin);
 
     if (options.debug) {
       storage.db.db.on('trace', console.log);

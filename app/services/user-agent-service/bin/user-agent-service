@@ -4,7 +4,7 @@
 var UserAgentService = require('../').UserAgentService;
 var repl = require('repl');
 var meta = require('../meta.json');
-var CONTENT_SERVICE_ORIGIN = 'http://localhost:9191';
+var endpoints = require('../../../shared/constants/endpoints');
 
 var argv = require('yargs')
   .usage('Usage: $0 [options]')
@@ -28,9 +28,9 @@ var argv = require('yargs')
     type: 'string',
   })
   .option('c', {
-    alias: 'content-service',
+    alias: 'content-service-origin',
     describe: 'The origin of the Content Service so that CORS can be enabled.',
-    default: CONTENT_SERVICE_ORIGIN,
+    default: endpoints.TOFINO_PROTOCOL + '://',
     type: 'string'
   })
   .option('r', {
@@ -45,7 +45,7 @@ UserAgentService({
   port: argv.port,
   db: argv.db,
   version: argv.version,
-  contentService: argv.contentService,
+  contentServiceOrigin: argv.contentServiceOrigin,
 });
 
 if (argv.repl) {
