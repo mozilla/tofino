@@ -11,27 +11,26 @@ specific language governing permissions and limitations under the License.
 */
 
 import React from 'react';
-import { Router, Route, browserHistory } from 'react-router';
 
 import History from './history';
 import Stars from './stars';
 import NoMatch from './errors/nomatch';
 
+const VALID_COMPONENTS = {
+  history: History,
+  stars: Stars,
+};
+
 const Routes = () => {
-  return (
-    <Router history={browserHistory}>
-      <Route path="/">
-        <Route path="v1">
-          <Route path="history"
-            component={History} />
-          <Route path="stars"
-            component={Stars} />
-        </Route>
-        <Route path="*"
-          component={NoMatch} />
-      </Route>
-    </Router>
-  );
+  // TODO: We'd like to use `react-router` here, but can't yet because of
+  // custom schemes, which aren't yet supported by the `history` library.
+  // See https://github.com/ReactJSTraining/history/issues/311
+  const page = document.location.hostname;
+  if (page in VALID_COMPONENTS) {
+    const Component = VALID_COMPONENTS[page];
+    return <Component />;
+  }
+  return <NoMatch />;
 };
 
 Routes.displayName = 'Routes';
