@@ -14,4 +14,4 @@ import * as endpoints from './endpoints';
 
 export const HISTORY_PAGE = `${endpoints.TOFINO_PROTOCOL}://history`;
 export const STARS_PAGE = `${endpoints.TOFINO_PROTOCOL}://stars`;
-export const CREDITS_PAGE = `${endpoints.TOFINO_PROTOCOL}://credits.html`;
+export const CREDITS_PAGE = `${endpoints.TOFINO_PROTOCOL}://credits`;
