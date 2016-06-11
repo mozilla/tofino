@@ -29,6 +29,12 @@ function configure(app, router) {
     app.use(`/${route}`, router);
   }
 
+  router.get('/credits', autoCaughtRouteError({
+    async method(req, res) {
+      res.sendFile(path.join(BUILT_UI_DIR, 'content', 'credits.html'));
+    },
+  }));
+
   router.get('/:page', autoCaughtRouteError({
     validator(req) {
       req.checkParams('page').matches(new RegExp(`^${VALID_PAGES.join('|')}$`, 'i'));
