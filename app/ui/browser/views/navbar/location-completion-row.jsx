@@ -14,8 +14,6 @@ import React, { PropTypes } from 'react';
 
 import Style from '../../../shared/style';
 
-import * as actions from '../../actions/main-actions';
-
 const ROW_STYLE = Style.registerStyle({
   // We're nesting multi-line items inside a flexbox, so
   // we need to mark these children as columnar.

@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
 import { ipcRenderer } from '../../../../shared/electron';
 
 import Style from '../../../shared/style';
-import Btn from '../../widgets/btn';
+import Btn from '../../../shared/widgets/btn';
 import LocationCompletionRow from './location-completion-row';
 
 import { fixURL, getCurrentWebView } from '../../browser-util';
