@@ -56,7 +56,7 @@ export function LocationCompletionRow(props) {
         onClick={() => {
           props.onCompletionClick(props.completion.uri);
         }}
-        className={props.focusedResultIndex === props.index ? FOCUSED_RESULT_STYLE : null}>
+        className={props.isFocused ? FOCUSED_RESULT_STYLE : null}>
         <span>{props.completion.title}</span>&nbsp;—&nbsp;<span>{props.completion.uri}</span>
       </div>
       {snippet}
@@ -68,7 +68,7 @@ LocationCompletionRow.displayName = 'LocationCompletionRow';
 
 LocationCompletionRow.propTypes = {
   completion: PropTypes.object.isRequired,
-  focusedResultIndex: PropTypes.number.isRequired,
+  isFocused: PropTypes.number.isRequired,
   onCompletionClick: PropTypes.func.isRequired,
   onCompletionMouseOver: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,

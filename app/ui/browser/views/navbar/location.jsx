@@ -262,7 +262,7 @@ export class Location extends Component {
     if (completionsForLocation) {
       const results = completionsForLocation.map((completion, index) => {
         return (<LocationCompletionRow completion={completion}
-          focusedResultIndex={this.props.focusedResultIndex}
+          isFocused={this.props.focusedResultIndex === index}
           onCompletionMouseOver={this.handleCompletionMouseOver}
           onCompletionClick={this.handleCompletionClick}
           index={index} />);
