@@ -37,13 +37,13 @@ const COMPLETION_TEXT_STYLE = Style.registerStyle({
 /**
  * A completion row in the address bar.
  */
-export function LocationCompletionRow({ completion, focusedResultIndex, index }) {
+export function LocationCompletionRow(props) {
   // We get safe, decorated (<b>foo</b>) HTML from the database.
-  const snippet = completion.snippet ? (
+  const snippet = props.completion.snippet ? (
     <div
       className={COMPLETION_TEXT_STYLE}
       dangerouslySetInnerHTML={{          // eslint-disable-line react/no-danger
-        __html: completion.snippet,
+        __html: props.completion.snippet,
       }}>
     </div>
   ) : null;
@@ -52,12 +52,12 @@ export function LocationCompletionRow({ completion, focusedResultIndex, index })
     <div className={`completion-row ${ROW_STYLE}`}>
       <div
         onMouseDown={(ev) => { ev.preventDefault(); }}
-        onMouseOver={() => { this.props.dispatch(actions.setFocusedResultIndex(index)); }}
+        onMouseOver={() => { props.onCompletionMouseOver(props.index); }}
         onClick={() => {
-          this.selectAutocompleteItem(completion.uri);
+          props.onCompletionClick(props.completion.uri);
         }}
-        className={focusedResultIndex === index ? FOCUSED_RESULT_STYLE : null}>
-        <span>{completion.title}</span>&nbsp;—&nbsp;<span>{completion.uri}</span>
+        className={props.focusedResultIndex === props.index ? FOCUSED_RESULT_STYLE : null}>
+        <span>{props.completion.title}</span>&nbsp;—&nbsp;<span>{props.completion.uri}</span>
       </div>
       {snippet}
     </div>
@@ -67,9 +67,11 @@ export function LocationCompletionRow({ completion, focusedResultIndex, index })
 LocationCompletionRow.displayName = 'LocationCompletionRow';
 
 LocationCompletionRow.propTypes = {
-  completion: PropTypes.object,
+  completion: PropTypes.object.isRequired,
   focusedResultIndex: PropTypes.number.isRequired,
-  index: PropTypes.number,
+  onCompletionClick: PropTypes.func.isRequired,
+  onCompletionMouseOver: PropTypes.func.isRequired,
+  index: PropTypes.number.isRequired,
 };
 
 export default LocationCompletionRow;

@@ -245,6 +245,14 @@ export class Location extends Component {
     }
   }
 
+  handleCompletionClick = (url) => {
+    this.selectAutocompleteItem(url);
+  }
+
+  handleCompletionMouseOver = (index) => {
+    this.props.dispatch(actions.setFocusedResultIndex(index));
+  }
+
   render() {
     const { pages, page } = this.props;
     let completions = null;
@@ -255,6 +263,8 @@ export class Location extends Component {
       const results = completionsForLocation.map((completion, index) => {
         return (<LocationCompletionRow completion={completion}
           focusedResultIndex={this.props.focusedResultIndex}
+          onCompletionMouseOver={this.handleCompletionMouseOver}
+          onCompletionClick={this.handleCompletionClick}
           index={index} />);
       });
 
