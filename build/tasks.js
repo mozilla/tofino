@@ -24,6 +24,11 @@ const Lazy = {
   clean: () => require('./task-clean-package').default(),
 };
 
+const unwatch = watchers => {
+  console.log('Stopped watching the filesystem for changes.');
+  return Promise.all(watchers.map(w => w.close()));
+};
+
 export default {
   async buildDeps() {
     await Lazy.buildDeps();
@@ -33,11 +38,6 @@ export default {
     await Lazy.config(config);
 
     const watchers = [];
-    const unwatch = () => {
-      console.log('Stopped watching the filesystem for changes.');
-      return Promise.all(watchers.map(w => w.close()));
-    };
-
     try {
       watchers.push(await Lazy.buildShared());
       watchers.push(await Lazy.buildServices());
@@ -45,33 +45,38 @@ export default {
       watchers.push(await Lazy.buildBrowser());
       watchers.push(await Lazy.buildContent());
     } catch (e) {
-      await unwatch();
+      await unwatch(watchers);
       throw e;
     }
     if (!options.watch) {
-      await unwatch();
+      await unwatch(watchers);
       return [];
     }
 
     console.log('Now watching the filesystem for changes...');
-    return unwatch;
+    return watchers;
   },
 
   async serve() {
     await Lazy.config();
+    const watchers = [
+      await Lazy.buildShared(),
+      await Lazy.buildServices(),
+    ];
+    await unwatch(watchers);
     await Lazy.serve();
   },
 
   async run(args = []) {
-    const unwatch = await this.build({}, { watch: true });
+    const watchers = await this.build({}, { watch: true });
     await Lazy.run(args);
-    await unwatch();
+    await unwatch(watchers);
   },
 
   async runDev(args = []) {
-    const unwatch = await this.build({ development: true }, { watch: true });
+    const watchers = await this.build({ development: true }, { watch: true });
     await Lazy.run(args);
-    await unwatch();
+    await unwatch(watchers);
   },
 
   async test(args = []) {

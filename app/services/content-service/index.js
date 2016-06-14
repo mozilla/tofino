@@ -17,9 +17,6 @@ process.on('uncaughtException', console.error);
 process.on('unhandledRejection', console.error);
 
 // Start the content service, serving `tofino://` pages.
-// XXX: We're not actually registering a `tofino` http protocol just yet,
-// due to a possible bug in electron. See https://github.com/electron/electron/issues/5714
-// Currently we're just pointing the webview directly at the server address.
 contentService.start().then(() => {
   console.log(`Started a Content service running on ${endpoints.CONTENT_SERVER_PORT}.`);
 });

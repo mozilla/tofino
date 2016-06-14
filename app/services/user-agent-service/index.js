@@ -27,14 +27,14 @@ export async function UserAgentService(options = {}) {
   if (!meta.validVersions.includes(options.version)) {
     throw new Error('UserAgentService requires a valid `version`.');
   }
-  if (typeof options.contentService !== 'string') {
-    throw new Error('UserAgentService requires a `contentService` string.');
+  if (typeof options.contentServiceOrigin !== 'string') {
+    throw new Error('UserAgentService requires a `contentServiceOrigin` string.');
   }
 
   const port = options.port;
   const db = options.db;
   const version = options.version;
-  const contentService = options.contentService;
+  const contentServiceOrigin = options.contentServiceOrigin;
   const profileStorage = await ProfileStorage.open(db);
 
   await userAgentService.start({
@@ -43,7 +43,7 @@ export async function UserAgentService(options = {}) {
       debug: false,
       port,
       version,
-      contentService,
+      contentServiceOrigin,
     },
   });
 

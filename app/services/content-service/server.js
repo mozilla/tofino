@@ -16,14 +16,28 @@ import { makeServer, autoCaughtRouteError } from '../common';
 import * as endpoints from '../../shared/constants/endpoints';
 import { BUILT_UI_DIR } from '../../shared/paths-util';
 
-const VALID_PAGES = /(history|stars)/;
+const VALID_PAGES = [
+  'history',
+  'stars',
+];
 
 function configure(app, router) {
   router.use(express.static(path.join(BUILT_UI_DIR, 'content')));
 
+  for (const page of VALID_PAGES) {
+    const route = `${endpoints.CONTENT_SERVER_VERSION}/${page}`;
+    app.use(`/${route}`, router);
+  }
+
+  router.get('/credits', autoCaughtRouteError({
+    async method(req, res) {
+      res.sendFile(path.join(BUILT_UI_DIR, 'content', 'credits.html'));
+    },
+  }));
+
   router.get('/:page', autoCaughtRouteError({
     validator(req) {
-      req.checkParams('page').matches(VALID_PAGES);
+      req.checkParams('page').matches(new RegExp(`^${VALID_PAGES.join('|')}$`, 'i'));
     },
     async method(req, res) {
       res.sendFile(path.join(BUILT_UI_DIR, 'content', 'index.html'));
