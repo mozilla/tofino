@@ -34,6 +34,8 @@ const ignored = [
   // Webpack loaders.
   'babel-loader',
   'json-loader',
+  // Needed by babel-loader
+  'babel-core',
 
   // Modules called via CLI from main process
   'yargs',

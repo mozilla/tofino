@@ -18,7 +18,7 @@ import BUILD_CONFIG from '../../build-config';
 const ROOT = path.join(__dirname, '..', '..');
 const DB_PATH = ROOT;
 const SERVICES_PATH = path.join(ROOT, 'lib', 'services');
-const UA_SERVICE_BIN = path.join(SERVICES_PATH, 'user-agent-service', 'bin', 'user-agent-service');
+const UA_SERVICE_BIN = path.join(SERVICES_PATH, 'user-agent-service', 'user-agent-service');
 const CONTENT_SERVICE_PATH = path.join(SERVICES_PATH, 'content-service', 'index.js');
 
 // @TODO Use something like `forever` or `pm2` to ensure that this

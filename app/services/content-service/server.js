@@ -14,7 +14,7 @@ import path from 'path';
 import express from 'express';
 import { makeServer, autoCaughtRouteError } from '../common';
 import * as endpoints from '../../shared/constants/endpoints';
-import { BUILT_UI_DIR } from '../../shared/paths-util';
+import { UI_DIR } from '../../shared/paths-util';
 
 const VALID_PAGES = [
   'history',
@@ -22,7 +22,7 @@ const VALID_PAGES = [
 ];
 
 function configure(app, router) {
-  router.use(express.static(path.join(BUILT_UI_DIR, 'content')));
+  router.use(express.static(path.join(UI_DIR, 'content')));
 
   for (const page of VALID_PAGES) {
     const route = `${endpoints.CONTENT_SERVER_VERSION}/${page}`;
@@ -31,7 +31,7 @@ function configure(app, router) {
 
   router.get('/credits', autoCaughtRouteError({
     async method(req, res) {
-      res.sendFile(path.join(BUILT_UI_DIR, 'content', 'credits.html'));
+      res.sendFile(path.join(UI_DIR, 'content', 'credits.html'));
     },
   }));
 
@@ -40,7 +40,7 @@ function configure(app, router) {
       req.checkParams('page').matches(new RegExp(`^${VALID_PAGES.join('|')}$`, 'i'));
     },
     async method(req, res) {
-      res.sendFile(path.join(BUILT_UI_DIR, 'content', 'index.html'));
+      res.sendFile(path.join(UI_DIR, 'content', 'index.html'));
     },
   }));
 }

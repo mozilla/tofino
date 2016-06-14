@@ -5,9 +5,7 @@ import os from 'os';
 import path from 'path';
 import fs from 'fs-promise';
 import childProcess from 'child_process';
-import chokidar from 'chokidar';
 import webpack from 'webpack';
-import { transformFile } from 'babel-core';
 import { SRC_DIR, BUILD_DIR } from './const';
 import manifest from '../package.json';
 
@@ -160,83 +158,6 @@ export function webpackBuild(config) {
 
       const { time } = stats.toJson();
       console.log(`Incremental build succeeded in ${time} ms.`);
-    });
-  });
-}
-
-export async function babelBuild(source) {
-  const paths = await fs.walk(source);
-
-  // Find all the directories, and make sure they all exist in the build path.
-  const dirs = paths.filter(p => p.stats.isDirectory());
-  await Promise.all(dirs.map(p => fs.ensureDir(getBuildPath(p.path))));
-
-  // Build all the files.
-  const files = paths.filter(p => p.stats.isFile());
-  await Promise.all(files.map(p => babelFile(p.path, p.stats)));
-}
-
-export function watchSource(source, handler) {
-  const watcher = chokidar.watch(source, {
-    ignoreInitial: true,
-  });
-
-  watcher.on('add', handler);
-  watcher.on('change', handler);
-
-  return {
-    close: () => watcher.close(),
-  };
-}
-
-export async function babelFile(sourceFile, sourceStats) {
-  const { development } = getBuildConfig();
-
-  const targetFile = getBuildPath(sourceFile);
-  const extension = path.extname(sourceFile);
-  const baseFile = targetFile.substring(0, targetFile.length - extension.length);
-
-  try {
-    const targetStats = await fs.stat(targetFile);
-    if (targetStats.mtime > sourceStats.mtime) {
-      return;
-    }
-  } catch (e) {
-    // The target may not exist.
-    // For whatever reason just go and try to build it.
-  }
-
-  // Transpile js files and write a sourcemap.
-  if (extension === '.js') {
-    const mapFile = `${baseFile}.map`;
-    const results = await transpile(sourceFile, {
-      sourceMaps: development,
-      sourceFileName: normalizeFileURI(sourceFile),
-    });
-    if (development) {
-      // This must be an absolute URL since the devtools can't resolve relative
-      // paths from node modules.
-      results.code += `\n//# sourceMappingURL=${normalizeFileURI(mapFile)}\n`;
-      await fs.writeFile(mapFile, JSON.stringify(results.map));
-    }
-    await fs.writeFile(targetFile, results.code);
-    return;
-  }
-
-  // Copy json and shell scripts.
-  if (extension === '.json' || extension === '') {
-    await fs.copy(sourceFile, targetFile);
-  }
-}
-
-export function transpile(filename, options = {}) {
-  return new Promise((resolve, reject) => {
-    transformFile(filename, options, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
     });
   });
 }

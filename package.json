@@ -68,7 +68,6 @@
     "babel-preset-react-optimize": "1.0.1",
     "babel-register": "6.9.0",
     "check-dependencies": "0.12.0",
-    "chokidar": "1.5.1",
     "copy-webpack-plugin": "3.0.0",
     "coveralls": "2.11.9",
     "cross-env": "1.0.8",
@@ -103,7 +102,8 @@
     "through2": "2.0.1",
     "tmp": "0.0.28",
     "vinyl-fs": "2.4.2",
-    "webpack": "1.13.1"
+    "webpack": "1.13.1",
+    "webpack-node-externals": "1.2.0"
   },
   "engines": {
     "node": ">=6.1.0"

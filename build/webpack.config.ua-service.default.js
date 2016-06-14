@@ -7,25 +7,22 @@ import nodeExternals from 'webpack-node-externals';
 import defaultConfig from './webpack.config.base';
 import * as Const from './const';
 
-const src = path.join(Const.SRC_DIR, 'main');
-const dest = path.join(Const.BUILD_DIR, 'main');
+const src = path.join(Const.SRC_DIR, 'services', 'user-agent-service');
+const dest = path.join(Const.BUILD_DIR, 'services', 'user-agent-service');
 
 export default {
   ...defaultConfig,
-  entry: path.join(src, 'browser.js'),
+  entry: path.join(src, 'bin', 'user-agent-service'),
   output: {
     path: dest,
-    filename: 'index.js',
-    sourceMapFilename: 'index.map',
+    filename: 'user-agent-service',
+    sourceMapFilename: 'user-agent-service.map',
   },
-  target: 'electron',
+  target: 'node',
   plugins: [
     ...defaultConfig.plugins,
     new webpack.DefinePlugin({
-      __dirname: '__dirname',
-    }),
-    new webpack.DefinePlugin({
-      LIBDIR: 'require("path").join(__dirname, "..")',
+      LIBDIR: 'require("path").join(__dirname, "..", "..")',
     }),
   ],
   externals: [nodeExternals()],
