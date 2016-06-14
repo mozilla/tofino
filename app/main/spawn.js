@@ -14,7 +14,6 @@ import { spawn } from 'child_process';
 import path from 'path';
 import { logger } from '../shared/logging';
 import * as endpoints from '../shared/constants/endpoints';
-import BUILD_CONFIG from '../../build-config';
 
 const ROOT = path.join(__dirname, '..', '..');
 const DB_PATH = ROOT;
@@ -88,13 +87,9 @@ export function startContentService(options = {}) {
   });
 }
 
-// Some builds always kill spawned services for easy debugging.
-// See https://github.com/mozilla/tofino/issues/607 for more background.
-if (!BUILD_CONFIG.keepAliveAppServices) {
-  process.on('exit', () => terminateSpawnedProcesses('SIGTERM'));
-  process.on('SIGINT', () => terminateSpawnedProcesses('SIGTERM'));
-  process.on('SIGTERM', () => terminateSpawnedProcesses('SIGTERM'));
-}
+process.on('exit', () => terminateSpawnedProcesses('SIGTERM'));
+process.on('SIGINT', () => terminateSpawnedProcesses('SIGTERM'));
+process.on('SIGTERM', () => terminateSpawnedProcesses('SIGTERM'));
 
 function terminateSpawnedProcesses(code) {
   children.forEach(c => c.kill(code));
