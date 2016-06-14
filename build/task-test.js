@@ -1,10 +1,12 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
+import colors from 'colors/safe';
 import childProcess from 'child_process';
 import path from 'path';
 import os from 'os';
 import { spawn, getElectronPath, normalizeCommand } from './utils';
+import { logger } from './logging';
 
 const DEFAULT_UNIT_TESTS = path.join(__dirname, '..', 'test', 'unit');
 const DEFAULT_RENDERER_TESTS = path.join(__dirname, '..', 'test', 'renderer');
@@ -14,6 +16,8 @@ const ELECTRON_MOCHA = path.join(__dirname, '..', 'node_modules', '.bin', 'elect
 const PATH_TO_ELECTRON_MOCHA_OPTS = path.join(__dirname, '..', 'test', 'renderer', 'mocha.opts');
 
 export default async function(args) {
+  logger.info(colors.green('Running tests...'));
+
   // If no arguments passed in, we must run all tests; both mocha
   // and electron-mocha.
   if (!args.length) {
