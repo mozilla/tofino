@@ -66,7 +66,7 @@ LocationCompletionRow.displayName = 'LocationCompletionRow';
 
 LocationCompletionRow.propTypes = {
   completion: PropTypes.object.isRequired,
-  isFocused: PropTypes.number.isRequired,
+  isFocused: PropTypes.bool.isRequired,
   onCompletionClick: PropTypes.func.isRequired,
   onCompletionMouseOver: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
