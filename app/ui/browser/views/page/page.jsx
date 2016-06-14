@@ -11,6 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes, Component } from 'react';
+import { logger } from '../../../../shared/logging';
 
 import Style from '../../../shared/style';
 import { Page as PageModel } from '../../model';
@@ -197,10 +198,10 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
         menuWebViewContext(webview, e.args[0], dispatch, pageAccessor().sessionId);
         break;
       case 'show-bookmarks':
-        console.warn('@TODO: ipc-message:show-bookmarks');
+        logger.warn('@TODO: ipc-message:show-bookmarks');
         break;
       default:
-        console.warn(`@TODO: Unknown ipc-message:${e.channel}`);
+        logger.warn(`@TODO: Unknown ipc-message:${e.channel}`);
         break;
     }
   });

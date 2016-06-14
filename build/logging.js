@@ -10,14 +10,12 @@
  specific language governing permissions and limitations under the License.
  */
 
-import { logger } from '../../shared/logging';
-import * as contentService from './server';
-import * as endpoints from '../../shared/constants/endpoints';
+import bunyan from 'bunyan';
+import { pipeToStream } from '../app/shared/logging';
 
-process.on('uncaughtException', logger.error);
-process.on('unhandledRejection', logger.error);
-
-// Start the content service, serving `tofino://` pages.
-contentService.start().then(() => {
-  logger.info(`Started a Content service running on ${endpoints.CONTENT_SERVER_PORT}.`);
+export const logger = bunyan.createLogger({
+  name: 'build',
+  streams: [
+    pipeToStream(process.stdout),
+  ],
 });

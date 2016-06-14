@@ -12,3 +12,4 @@ build-config.json
 .electron
 .cache
 .vscode
+*.log

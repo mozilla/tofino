@@ -16,15 +16,16 @@ specific language governing permissions and limitations under the License.
 const browserStartTime = Date.now();
 
 import 'source-map-support/register';
+import { logger } from '../shared/logging';
 
 process.on('uncaughtException', (err) => {
-  console.error(err.stack);
+  logger.error(err.stack);
   process.exit(1);
 });
 
 process.on('unhandledRejection', (reason, p) => {
-  console.error(`Unhandled Rejection at: Promise ${JSON.stringify(p)}`);
-  console.error(reason.stack);
+  logger.error(`Unhandled Rejection at: Promise ${JSON.stringify(p)}`);
+  logger.error(reason.stack);
   process.exit(2);
 });
 

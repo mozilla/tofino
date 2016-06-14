@@ -48,6 +48,7 @@
     "arrow-body-style": ["off"],
     "func-names": ["off"],
     "space-before-function-paren": ["error", "never"],
+    "no-console": ["error"],
     "no-confusing-arrow": ["off"],
     "no-param-reassign": ["off"],
     "no-return-assign": ["off"],
@@ -70,7 +71,7 @@
     "react/jsx-handler-names": ["error"],
     "react/prefer-es6-class": ["off"],
     "import/no-unresolved": ["error", {
-      "ignore": ["^electron$", "\\./build-config$"],
+      "ignore": ["^electron$", "\\./build-config$", "^logging$"],
       "commonjs": true
     }],
     "import/no-commonjs": ["error"],

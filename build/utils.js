@@ -8,6 +8,7 @@ import childProcess from 'child_process';
 import webpack from 'webpack';
 import { SRC_DIR, BUILD_DIR } from './const';
 import manifest from '../package.json';
+import { logger } from './logging';
 
 export const IS_TRAVIS = process.env.TRAVIS === 'true';
 export const IS_APPVEYOR = process.env.APPVEYOR === 'True';
@@ -136,7 +137,7 @@ export function webpackBuild(config) {
         // Rejecting immediately would result in garbled text if other
         // logging operations follow. Furthermore, if the process exits,
         // it will stop the logging midway, resulting in incomplete output.
-        console.error(`\n${output}\n`);
+        logger.error(`\n${output}\n`);
         process.stderr.once('drain', () => reject('Compilation unsuccessful.'));
         return;
       }
@@ -157,7 +158,7 @@ export function webpackBuild(config) {
       }
 
       const { time } = stats.toJson();
-      console.log(`Incremental build succeeded in ${time} ms.`);
+      logger.info(`Incremental build succeeded in ${time} ms.`);
     });
   });
 }

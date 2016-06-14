@@ -16,19 +16,20 @@
 require('babel-polyfill');
 require('babel-register')();
 
+const { logger } = require('./logging');
 const semver = require('semver');
 const checkDependencies = require('check-dependencies');
 const VALID_NODE_VERSION_RANGE = require('../package.json').engines.node;
 
 const handleDepsCheckFailed = result => {
-  console.error('Dependency checks failed.');
-  result.error.forEach(err => console.error(err));
+  logger.error('Dependency checks failed.');
+  result.error.forEach(err => logger.error(err));
   process.exit(1);
 };
 
 const handleTaskFailed = err => {
-  console.error('Build failed.');
-  console.error(err);
+  logger.error('Build failed.');
+  logger.error(err);
   process.exit(1);
 };
 
@@ -39,13 +40,13 @@ const checkNodeVersion = version => {
 
   if (!semver.satisfies(version, VALID_NODE_VERSION_RANGE)) {
     /* eslint-disable quotes */
-    console.error(`*****\n` +
-                  `You are currently running node v${version}. Your version of node ` +
-                  `must satisfy ${VALID_NODE_VERSION_RANGE}, or else strange things ` +
-                  `could happen. Please upgrade your version of node, or use a ` +
-                  `node version manager, like nvm:\n` +
-                  `https://github.com/creationix/nvm\n` +
-                  `*****\n`);
+    logger.error(`*****\n` +
+                 `You are currently running node v${version}. Your version of node ` +
+                 `must satisfy ${VALID_NODE_VERSION_RANGE}, or else strange things ` +
+                 `could happen. Please upgrade your version of node, or use a ` +
+                 `node version manager, like nvm:\n` +
+                 `https://github.com/creationix/nvm\n` +
+                 `*****\n`);
     /* eslint-enable quotes */
   }
 };

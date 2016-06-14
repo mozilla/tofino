@@ -10,6 +10,7 @@
  specific language governing permissions and limitations under the License.
  */
 
+import { logger } from '../../shared/logging';
 import { makeServer, autoCaughtRouteError } from '../common';
 import { SnippetSize, StarOp } from './storage';
 import * as profileDiffs from '../../shared/profile-diffs';
@@ -219,11 +220,11 @@ export async function start({ storage, options }) {
   const { setup } = makeServer(version, port);
 
   await setup((app, router) => {
-    console.log(`Enabling CORS for the Content service on ${options.contentServiceOrigin}`);
+    logger.info(`Enabling CORS for the Content service on ${options.contentServiceOrigin}`);
     configure(app, router, storage, contentServiceOrigin);
 
     if (options.debug) {
-      storage.db.db.on('trace', console.log);
+      storage.db.db.on('trace', logger.trace);
     }
   });
 }

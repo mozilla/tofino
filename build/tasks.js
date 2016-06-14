@@ -9,6 +9,8 @@
  */
  /* eslint global-require: 0 */
 
+import { logger } from './logging';
+
 const Lazy = {
   buildDeps: () => require('./task-build-deps').default(),
   config: options => require('./task-config-builder').default(options),
@@ -24,7 +26,7 @@ const Lazy = {
 };
 
 const unwatch = watchers => {
-  console.log('Stopped watching the filesystem for changes.');
+  logger.info('Stopped watching the filesystem for changes.');
   return Promise.all(watchers.map(w => w.close()));
 };
 
@@ -51,7 +53,7 @@ export default {
       return [];
     }
 
-    console.log('Now watching the filesystem for changes...');
+    logger.info('Now watching the filesystem for changes...');
     return watchers;
   },
 

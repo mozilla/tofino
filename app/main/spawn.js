@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import { spawn } from 'child_process';
 import path from 'path';
+import { logger } from '../shared/logging';
 import * as endpoints from '../shared/constants/endpoints';
 import BUILD_CONFIG from '../../build-config';
 
@@ -28,12 +29,12 @@ const CONTENT_SERVICE_PATH = path.join(SERVICES_PATH, 'content-service', 'index.
 
 const children = new Set();
 function spawnProcess(name, command, args, options) {
-  console.log(`Executing ${command} ${args.join(' ')}`);
+  logger.debug(`Executing ${command} ${args.join(' ')}`);
   const child = spawn(command, args, options);
   children.add(child);
 
   child.on('error', (error) => {
-    console.error(`${name} threw error ${error}`);
+    logger.error(`${name} threw error ${error}`);
   });
 
   child.on('exit', (code) => {
@@ -46,7 +47,7 @@ function spawnProcess(name, command, args, options) {
 
     // Generally the services shouldn't exit while this process is still running
     // so this is an error regardless of the exit code.
-    console.error(`${name} exited with exit code ${code}`);
+    logger.error(`${name} exited with exit code ${code}`);
   });
 }
 

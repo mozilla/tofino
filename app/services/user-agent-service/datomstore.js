@@ -23,6 +23,7 @@ import {
 import Immutable from 'immutable';
 import microtime from 'microtime-fast';
 import { Bookmark } from '../../shared/model';
+import { logger } from '../../shared/logging';
 
 import { SessionEndReason, SessionStartReason, SnippetSize, StarOp, VisitType } from './storage';
 
@@ -188,7 +189,7 @@ export class ProfileDatomStorage {
     [:find ?title :in $ ?url :where [?x "page/url" ?url] [?x "page/title" ?title]]
     `);
     let results = datascript.core.q(query, datascript.js.db(this.conn), 'http://foo.com/');
-    console.log(results);
+    logger.info(results);
 
     datascript.core.transact_BANG_(this.conn, vector(
       vector(DB_ADD, -1, 'page/url', 'http://foo.com/'),
@@ -196,7 +197,7 @@ export class ProfileDatomStorage {
     ));
 
     results = datascript.core.q(query, datascript.js.db(this.conn), 'http://foo.com/');
-    console.log(results);
+    logger.info(results);
     return results;
   }
 

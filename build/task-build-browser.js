@@ -4,9 +4,10 @@
 import webpackProdConfig from './webpack.config.browser.prod';
 import webpackDevConfig from './webpack.config.browser.dev';
 import { webpackBuild, getBuildConfig } from './utils';
+import { logger } from './logging';
 
 export default async function() {
-  console.log('Building browser...');
+  logger.info('Building browser...');
   const { development } = getBuildConfig();
   return await webpackBuild(development ? webpackDevConfig : webpackProdConfig);
 }

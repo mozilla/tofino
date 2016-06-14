@@ -25,6 +25,9 @@ export default {
       __dirname: '__dirname',
     }),
     new webpack.DefinePlugin({
+      PROCESS_TYPE: '"main"',
+    }),
+    new webpack.DefinePlugin({
       LIBDIR: 'require("path").join(__dirname, "..")',
     }),
   ],

@@ -17,6 +17,7 @@ import expressWs from 'express-ws';
 import expressValidator from 'express-validator';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
+import { logger } from '../shared/logging';
 
 /**
  * Catch errors from the given async `method` and forward them to `next` for handling.
@@ -33,7 +34,7 @@ export function autoCaughtRouteError({ validator, method }) {
 
       const errors = req.validationErrors();
       if (errors) {
-        console.warn(errors);
+        logger.warn(errors);
         res.status(401).json(errors);
         return;
       }
@@ -82,7 +83,7 @@ export function makeServer(version, port) {
       // Must follow route definitions! Need to have four arguments here
       // so express knows that we want to handle errors.
       app.use((error, req, res, _next) => {
-        console.error(error.stack);
+        logger.error(error.stack);
         res.status(500).json({ error, stack: error.stack });
       });
 

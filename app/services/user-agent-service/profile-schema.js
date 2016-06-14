@@ -10,6 +10,8 @@
  specific language governing permissions and limitations under the License.
  */
 
+import { logger } from '../../shared/logging';
+
 const debug = false;
 
 // Associate URLs with persistent IDs.
@@ -139,21 +141,21 @@ export class ProfileStorageSchemaV5 {
 
     if (v === this.version) {
       if (debug) {
-        console.log(`Storage already at version ${v}.`);
+        logger.info(`Storage already at version ${v}.`);
       }
       return v;
     }
 
     if (v === 0) {
       if (debug) {
-        console.log(`Creating storage at version ${this.version}.`);
+        logger.info(`Creating storage at version ${this.version}.`);
       }
       return this.create(storage);
     }
 
     if (v < this.version) {
       if (debug) {
-        console.log(`Updating storage from ${v} to ${this.version}.`);
+        logger.info(`Updating storage from ${v} to ${this.version}.`);
       }
       return this.update(storage, v);
     }

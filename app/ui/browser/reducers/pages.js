@@ -13,6 +13,7 @@ specific language governing permissions and limitations under the License.
 import assert from 'assert';
 
 import Immutable from 'immutable';
+import { logger } from '../../../shared/logging';
 import * as types from '../constants/action-types';
 import { HOME_PAGE } from '../constants/ui';
 import { Pages, Page } from '../model';
@@ -125,7 +126,7 @@ function setPageDetails(state, pageId, payload) {
   return state.withMutations(mut => {
     for (const [key, value] of Object.entries(payload)) {
       if (key === 'id') {
-        console.warn('Skipping setting of `id` on page.');
+        logger.warn('Skipping setting of `id` on page.');
         continue;
       }
       assert(key !== 'userTyped', '`userTyped` must be set in setUserTypedLocation.');

@@ -10,6 +10,7 @@ import unzip from 'extract-zip';
 import { thenify } from 'thenify-all';
 
 import * as BuildUtils from './utils';
+import { logger } from './logging';
 
 async function downloadElectron() {
   const tmpDir = path.join(os.tmpdir(), 'tofino-tmp');
@@ -66,7 +67,7 @@ async function findNativeModules() {
 }
 
 async function rebuild() {
-  console.log('Rebuilding modules...');
+  logger.info('Rebuilding modules...');
   const command = path.join(__dirname, '..', 'node_modules', '.bin', 'electron-rebuild');
   await BuildUtils.spawn(command, [
     '-f',

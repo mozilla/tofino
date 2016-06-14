@@ -18,6 +18,7 @@
 
 import sqlite3 from 'sqlite3';
 import thenifyAll from 'thenify-all';
+import { logger } from '../../shared/logging';
 
 const Promise = global.Promise;
 const debug = false;
@@ -78,7 +79,7 @@ export class DB {
         }
 
         if (err) {
-          console.log(`SQL error in row function: ${err} in ${sql}.`);
+          logger.error(`SQL error in row function: ${err} in ${sql}.`);
           done = true;
           reject(err);
           return;
@@ -89,7 +90,7 @@ export class DB {
 
       const completionCallback = (err, count) => {
         if (err) {
-          console.log(`SQL error in completion function: ${err} in ${sql}.`);
+          logger.error(`SQL error in completion function: ${err} in ${sql}.`);
           reject(err);
           return;
         }
@@ -105,11 +106,11 @@ export class DB {
     return new Promise((resolve, reject) => {
       this.db.run(sql, params, function(err) {
         if (debug) {
-          console.log(`Running: ${sql}, ${JSON.stringify(params)}`);
+          logger.info(`Running: ${sql}, ${JSON.stringify(params)}`);
         }
 
         if (err) {
-          console.log(`SQL error: ${err} in ${sql}.`);
+          logger.info(`SQL error: ${err} in ${sql}.`);
           reject(err);
         } else {
           resolve({ lastID: this.lastID, changes: this.changes });

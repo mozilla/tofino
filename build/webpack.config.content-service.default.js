@@ -22,6 +22,9 @@ export default {
   plugins: [
     ...defaultConfig.plugins,
     new webpack.DefinePlugin({
+      PROCESS_TYPE: '"content-service"',
+    }),
+    new webpack.DefinePlugin({
       LIBDIR: 'require("path").join(__dirname, "..", "..")',
     }),
   ],

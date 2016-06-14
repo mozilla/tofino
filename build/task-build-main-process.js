@@ -4,9 +4,10 @@
 import webpackProdConfig from './webpack.config.main.prod';
 import webpackDevConfig from './webpack.config.main.dev';
 import { webpackBuild, getBuildConfig } from './utils';
+import { logger } from './logging';
 
 export default async function() {
-  console.log('Building main process...');
+  logger.info('Building main process...');
   const { development } = getBuildConfig();
   return await webpackBuild(development ? webpackDevConfig : webpackProdConfig);
 }

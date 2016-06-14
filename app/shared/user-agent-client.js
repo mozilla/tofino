@@ -14,6 +14,7 @@ import EventEmitter from 'events';
 import WebSocket from 'ws';
 import request from 'request';
 import backoff from 'backoff';
+import { logger } from './logging';
 
 function uaRequest(url, service, options) {
   return new Promise((resolve, reject) => {
@@ -87,7 +88,7 @@ class UserAgentClient extends EventEmitter {
     this._connect = new Promise((resolve) => {
       const call = backoff.call(this._connectAttempt, url, (err, ws) => {
         if (err) {
-          console.error(`UserAgentClient: ${err}`);
+          logger.error(`UserAgentClient: ${err}`);
         } else if (ws) {
           this.ws = ws;
           resolve(this);

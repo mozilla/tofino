@@ -2,6 +2,7 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import path from 'path';
+import webpack from 'webpack';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import defaultConfig from './webpack.config.base';
 import * as Const from './const';
@@ -20,6 +21,9 @@ export default {
   },
   plugins: [
     ...defaultConfig.plugins,
+    new webpack.DefinePlugin({
+      PROCESS_TYPE: '"ui"',
+    }),
     new CopyWebpackPlugin([{
       from: path.join(src, '*.html'),
       to: dest,

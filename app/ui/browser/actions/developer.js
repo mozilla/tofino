@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 /* eslint global-require: 0 */
 
+import { logger } from '../../../shared/logging';
 import BUILD_CONFIG from '../../../../build-config';
 
 /**
@@ -32,12 +33,12 @@ if (BUILD_CONFIG.development) {
 }
 
 export function perfStart() {
-  console.debug('Start recording React performance');
+  logger.debug('Start recording React performance');
   Perf.start();
 }
 
 export function perfStop() {
-  console.debug('Stop recording React performance');
+  logger.debug('Stop recording React performance');
   Perf.stop();
   Perf.printWasted(Perf.getLastMeasurements());
 }

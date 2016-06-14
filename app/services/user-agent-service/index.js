@@ -10,12 +10,13 @@
  specific language governing permissions and limitations under the License.
  */
 
+import { logger } from '../../shared/logging';
 import * as userAgentService from './server';
 import { ProfileStorage } from './sqlstorage';
 import meta from './meta.json';
 
-process.on('uncaughtException', console.error);
-process.on('unhandledRejection', console.error);
+process.on('uncaughtException', logger.error);
+process.on('unhandledRejection', logger.error);
 
 export async function UserAgentService(options = {}) {
   if (typeof options.port !== 'number') {
@@ -47,5 +48,5 @@ export async function UserAgentService(options = {}) {
     },
   });
 
-  console.log(`Started a User Agent service running on ${port}`);
+  logger.info(`Started a User Agent service running on ${port}`);
 }

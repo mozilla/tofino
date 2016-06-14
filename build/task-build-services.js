@@ -6,12 +6,13 @@ import uaDevConfig from './webpack.config.ua-service.dev';
 import contentProdConfig from './webpack.config.content-service.prod';
 import contentDevConfig from './webpack.config.content-service.dev';
 import { webpackBuild, getBuildConfig } from './utils';
+import { logger } from './logging';
 
 export default async function() {
   const { development } = getBuildConfig();
-  console.log('Building UA service...');
+  logger.info('Building UA service...');
   const { close: uaClose } = await webpackBuild(development ? uaDevConfig : uaProdConfig);
-  console.log('Building content service...');
+  logger.info('Building content service...');
   const { close: contentClose } =
     await webpackBuild(development ? contentDevConfig : contentProdConfig);
 
