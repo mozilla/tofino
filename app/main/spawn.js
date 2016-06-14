@@ -10,8 +10,9 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { spawn } from 'child_process';
+import colors from 'colors/safe';
 import path from 'path';
+import { spawn } from 'child_process';
 import { logger } from '../shared/logging';
 import * as endpoints from '../shared/constants/endpoints';
 
@@ -27,8 +28,10 @@ const CONTENT_SERVICE_PATH = path.join(SERVICES_PATH, 'content-service', 'index.
 // have node installed as an engineer?
 
 const children = new Set();
+
 function spawnProcess(name, command, args, options) {
-  logger.debug(`Executing ${command} ${args.join(' ')}`);
+  logger.info(colors.cyan('Executing'), colors.gray(`${command} ${args.join(' ')}`));
+
   const child = spawn(command, args, options);
   children.add(child);
 

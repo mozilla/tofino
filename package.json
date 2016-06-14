@@ -28,6 +28,7 @@
     "backoff": "2.5.0",
     "body-parser": "1.15.1",
     "bunyan": "1.8.1",
+    "colors": "1.1.2",
     "datascript-mori": "0.16.0",
     "electron-localshortcut": "0.6.0",
     "express": "4.13.4",

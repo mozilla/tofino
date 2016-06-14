@@ -1,6 +1,7 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
+import colors from 'colors/safe';
 import path from 'path';
 
 import * as BuildUtils from './utils';
@@ -11,7 +12,7 @@ export default async function(args = []) {
   const command = BuildUtils.getElectronPath();
   const script = path.join(__dirname, '..', manifest.main);
 
-  logger.info(`Executing command: ${command}`);
+  logger.info(colors.cyan('Executing'), colors.gray(command));
 
   await BuildUtils.spawn(command, [script, ...args], {
     stdio: 'inherit',

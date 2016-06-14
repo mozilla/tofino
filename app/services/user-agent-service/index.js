@@ -10,6 +10,7 @@
  specific language governing permissions and limitations under the License.
  */
 
+import colors from 'colors/safe';
 import { logger } from '../../shared/logging';
 import * as userAgentService from './server';
 import { ProfileStorage } from './sqlstorage';
@@ -48,5 +49,6 @@ export async function UserAgentService(options = {}) {
     },
   });
 
-  logger.info(`Started a User Agent service running on ${port}`);
+  const msg = `Started a User Agent service running on ${port}`;
+  logger.info(colors.green(msg));
 }

@@ -1,6 +1,8 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
+import colors from 'colors/safe';
+
 /**
  * Use need to allow lazy loading of modules for all tasks. Generally,
  * we assume `build-config.js` exists, however *during* the build process
@@ -27,7 +29,7 @@ const Lazy = {
 };
 
 const unwatch = watchers => {
-  logger.info('Stopped watching the filesystem for changes.');
+  logger.info(colors.gray('Stopped watching the filesystem for changes.'));
   return Promise.all(watchers.map(w => w.close()));
 };
 
@@ -44,7 +46,7 @@ export default {
       watchers.push(await Lazy.buildMainProcess());
       watchers.push(await Lazy.buildBrowser());
       watchers.push(await Lazy.buildContent());
-      logger.info('Now watching the filesystem for changes...');
+      logger.info(colors.green('Now watching the filesystem for changes...'));
     } catch (e) {
       await unwatch(watchers);
       throw e;

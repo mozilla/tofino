@@ -1,6 +1,7 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
+import colors from 'colors/safe';
 import os from 'os';
 import path from 'path';
 import fs from 'fs-promise';
@@ -175,12 +176,18 @@ export async function shouldRebuild(source, id) {
    // These are used to prevent redundant rebuilds.
 
   if (!('built' in currentConfig)) {
+    logger.info(colors.red(`No previous ${id} build found.`));
     currentConfig.built = { [id]: hash };
     writeBuildConfig(currentConfig);
     return true;
   }
 
   if (currentConfig.built[id] !== hash) {
+    if (!(id in currentConfig.built)) {
+      logger.info(colors.red(`No previous ${id} build found.`));
+    } else {
+      logger.info(colors.yellow(`Source changed for ${id}.`));
+    }
     currentConfig.built[id] = hash;
     writeBuildConfig(currentConfig);
     return true;
@@ -195,6 +202,7 @@ export async function shouldRebuild(source, id) {
   const previousConfig = currentConfig.prev;
 
   if (!isEqual(sanitizedConfig, previousConfig)) {
+    logger.info(colors.red(`Build config changed for ${id}.`));
     currentConfig.built[id] = hash;
     writeBuildConfig(currentConfig);
     return true;
