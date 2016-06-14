@@ -78,8 +78,6 @@ function main(argv, tasks, handlers, catcher) {
     }
   }
 
-  checkNodeVersion(process.version);
-
   return Promise.all(outstanding).then(null, catcher);
 }
 
@@ -89,6 +87,7 @@ module.exports = main;
 // Only auto-run `checkDependencies` if this is *not* imported as a module.
 // If `require.main` is `module`, then this is ran as a script.
 if (require.main === module) {
+  checkNodeVersion(process.version);
   checkDependencies(result => {
     if (!result.depsWereOk) {
       handleDepsCheckFailed(result);
