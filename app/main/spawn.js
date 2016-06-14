@@ -26,7 +26,29 @@ const CONTENT_SERVICE_PATH = path.join(SERVICES_PATH, 'content-service', 'index.
 // @TODO Will `node` be accessible via path on users machines that don't
 // have node installed as an engineer?
 
-const children = [];
+const children = new Set();
+function spawnProcess(name, command, args, options) {
+  console.log(`Executing ${command} ${args.join(' ')}`);
+  const child = spawn(command, args, options);
+  children.add(child);
+
+  child.on('error', (error) => {
+    console.error(`${name} threw error ${error}`);
+  });
+
+  child.on('exit', (code) => {
+    children.delete(child);
+
+    // The code is missing when the child was killed by a signal
+    if (code === null) {
+      return;
+    }
+
+    // Generally the services shouldn't exit while this process is still running
+    // so this is an error regardless of the exit code.
+    console.error(`${name} exited with exit code ${code}`);
+  });
+}
 
 export function startUserAgentService(userAgentClient, options = {}) {
   const port = endpoints.UA_SERVICE_PORT;
@@ -38,7 +60,7 @@ export function startUserAgentService(userAgentClient, options = {}) {
   const detached = !options.attached; // Detach by default
   const stdio = detached ? ['ignore'] : ['ignore', process.stdout, process.stderr];
 
-  children.push(spawn('node', [UA_SERVICE_BIN,
+  spawnProcess('UA Service', 'node', [UA_SERVICE_BIN,
     '--port', port,
     '--db', DB_PATH,
     '--version', version,
@@ -46,7 +68,7 @@ export function startUserAgentService(userAgentClient, options = {}) {
   ], {
     detached,
     stdio,
-  }));
+  });
 
   // Connecting to a client immediately is sometimes not necessary,
   // e.g. when starting this service standalone.
@@ -59,10 +81,10 @@ export function startContentService(options = {}) {
   const detached = !options.attached; // Detach by default
   const stdio = detached ? ['ignore'] : ['ignore', process.stdout, process.stderr];
 
-  children.push(spawn('node', [CONTENT_SERVICE_PATH], {
+  spawnProcess('Content service', 'node', [CONTENT_SERVICE_PATH], {
     detached,
     stdio,
-  }));
+  });
 }
 
 // Some builds always kill spawned services for easy debugging.
