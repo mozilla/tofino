@@ -5,6 +5,8 @@ import os from 'os';
 import path from 'path';
 import fs from 'fs-promise';
 import childProcess from 'child_process';
+import pick from 'lodash/pick';
+import isEqual from 'lodash/isEqual';
 import dirsum from 'dirsum';
 import webpack from 'webpack';
 import { thenify } from 'thenify-all';
@@ -179,6 +181,20 @@ export async function shouldRebuild(source, id) {
   }
 
   if (currentConfig.built[id] !== hash) {
+    currentConfig.built[id] = hash;
+    writeBuildConfig(currentConfig);
+    return true;
+  }
+
+  // Even if the sources haven't changed, always rebuild if the
+  // build configuration file has. Use `require` to import the base
+  // configuration file to avoid a circular dependency.
+
+  const baseConfig = require('./base-config').default; // eslint-disable-line
+  const sanitizedConfig = pick(currentConfig, Object.keys(baseConfig));
+  const previousConfig = currentConfig.prev;
+
+  if (!isEqual(sanitizedConfig, previousConfig)) {
     currentConfig.built[id] = hash;
     writeBuildConfig(currentConfig);
     return true;

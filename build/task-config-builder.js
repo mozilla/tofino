@@ -6,10 +6,11 @@
  * build configurations.
  */
 
+import pick from 'lodash/pick';
 import * as BuildUtils from './utils';
 import BASE_CONFIG from './base-config';
 
-export default function(options) {
+export function overwriteConfig(customConfig) {
   let currentConfig = {};
 
   try {
@@ -18,6 +19,19 @@ export default function(options) {
     // Ignore missing file errors.
   }
 
-  const configToWrite = Object.assign({}, currentConfig, BASE_CONFIG, options);
-  BuildUtils.writeBuildConfig(configToWrite);
+  BuildUtils.writeBuildConfig({
+    ...currentConfig,
+    ...BASE_CONFIG,
+    ...customConfig,
+  });
+}
+
+export function saveConfigAsPrev() {
+  const currentConfig = BuildUtils.getBuildConfig();
+  const sanitizedConfig = pick(currentConfig, Object.keys(BASE_CONFIG));
+
+  BuildUtils.writeBuildConfig({
+    ...currentConfig,
+    prev: sanitizedConfig,
+  });
 }

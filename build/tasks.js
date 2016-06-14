@@ -13,7 +13,8 @@ import { logger } from './logging';
 
 const Lazy = {
   buildDeps: () => require('./task-build-deps').default(),
-  config: options => require('./task-config-builder').default(options),
+  config: options => require('./task-config-builder').overwriteConfig(options),
+  saveConfig: options => require('./task-config-builder').saveConfigAsPrev(options),
   buildServices: () => require('./task-build-services').default(),
   buildMainProcess: () => require('./task-build-main-process').default(),
   buildBrowser: () => require('./task-build-browser').default(),
@@ -37,23 +38,23 @@ export default {
 
   async build(config = {}, options = {}) {
     await Lazy.config(config);
-
     const watchers = [];
     try {
       watchers.push(await Lazy.buildServices());
       watchers.push(await Lazy.buildMainProcess());
       watchers.push(await Lazy.buildBrowser());
       watchers.push(await Lazy.buildContent());
+      logger.info('Now watching the filesystem for changes...');
     } catch (e) {
       await unwatch(watchers);
       throw e;
     }
     if (!options.watch) {
       await unwatch(watchers);
-      return [];
     }
-
-    logger.info('Now watching the filesystem for changes...');
+    // Now that we've finished building, store the current configuration
+    // so that we may diff in the future to avoid unnecessary builds.
+    await Lazy.saveConfig();
     return watchers;
   },
 
@@ -64,6 +65,9 @@ export default {
       await Lazy.buildServices(),
     ];
     await unwatch(watchers);
+    // Now that we've finished building, store the current configuration
+    // so that we may diff in the future to avoid unnecessary builds.
+    await Lazy.saveConfig();
     await Lazy.serve();
   },
 

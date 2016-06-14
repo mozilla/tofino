@@ -6,7 +6,7 @@ import fs from 'fs-promise';
 
 import { autoFailingAsyncTest } from '../../utils/async.js';
 import BASE_CONFIG from '../../../build/base-config.js';
-import config from '../../../build/task-config-builder.js';
+import { overwriteConfig } from '../../../build/task-config-builder.js';
 import clean from '../../../build/task-clean-package.js';
 import * as utils from '../../../build/utils.js';
 import * as BuildConst from '../../../build/const.js';
@@ -24,7 +24,7 @@ describe('build tasks', () => {
     const initialConfig = utils.getBuildConfig();
     expect(initialConfig.foo).toNotExist();
 
-    await config({ foo: 'bar' });
+    await overwriteConfig({ foo: 'bar' });
 
     const loadedConfig = utils.getBuildConfig();
     expect(loadedConfig.foo).toBe('bar');
