@@ -10,6 +10,7 @@
  specific language governing permissions and limitations under the License.
  */
 
+import colors from 'colors/safe';
 import { logger } from '../../shared/logging';
 import * as contentService from './server';
 import * as endpoints from '../../shared/constants/endpoints';
@@ -19,5 +20,6 @@ process.on('unhandledRejection', logger.error);
 
 // Start the content service, serving `tofino://` pages.
 contentService.start().then(() => {
-  logger.info(`Started a Content service running on ${endpoints.CONTENT_SERVER_PORT}.`);
+  const msg = `Started a Content service running on ${endpoints.CONTENT_SERVER_PORT}.`;
+  logger.info(colors.green(msg));
 });

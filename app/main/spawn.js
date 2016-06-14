@@ -10,11 +10,11 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { spawn } from 'child_process';
+import colors from 'colors/safe';
 import path from 'path';
+import { spawn } from 'child_process';
 import { logger } from '../shared/logging';
 import * as endpoints from '../shared/constants/endpoints';
-import BUILD_CONFIG from '../../build-config';
 
 const ROOT = path.join(__dirname, '..', '..');
 const DB_PATH = ROOT;
@@ -26,8 +26,10 @@ const CONTENT_SERVICE_PATH = path.join(SERVICES_PATH, 'content-service', 'index.
 // process remains running
 
 const children = new Set();
+
 function spawnProcess(name, command, args, options) {
-  logger.debug(`Executing ${command} ${args.join(' ')}`);
+  logger.info(colors.cyan('Executing'), colors.gray(`${command} ${args.join(' ')}`));
+
   const child = spawn(command, args, options);
   children.add(child);
 
@@ -106,13 +108,9 @@ export function startContentService(options = {}) {
   });
 }
 
-// Some builds always kill spawned services for easy debugging.
-// See https://github.com/mozilla/tofino/issues/607 for more background.
-if (!BUILD_CONFIG.keepAliveAppServices) {
-  process.on('exit', () => terminateSpawnedProcesses('SIGTERM'));
-  process.on('SIGINT', () => terminateSpawnedProcesses('SIGTERM'));
-  process.on('SIGTERM', () => terminateSpawnedProcesses('SIGTERM'));
-}
+process.on('exit', () => terminateSpawnedProcesses('SIGTERM'));
+process.on('SIGINT', () => terminateSpawnedProcesses('SIGTERM'));
+process.on('SIGTERM', () => terminateSpawnedProcesses('SIGTERM'));
 
 function terminateSpawnedProcesses(code) {
   children.forEach(c => c.kill(code));

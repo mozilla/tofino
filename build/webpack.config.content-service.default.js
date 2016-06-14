@@ -7,14 +7,14 @@ import nodeExternals from 'webpack-node-externals';
 import defaultConfig from './webpack.config.base';
 import * as Const from './const';
 
-const src = path.join(Const.SRC_DIR, 'services', 'content-service');
-const dest = path.join(Const.BUILD_DIR, 'services', 'content-service');
+export const SRC_DIR = path.join(Const.SRC_DIR, 'services', 'content-service');
+export const DST_DIR = path.join(Const.BUILD_DIR, 'services', 'content-service');
 
 export default {
   ...defaultConfig,
-  entry: path.join(src, 'index.js'),
+  entry: path.join(SRC_DIR, 'index.js'),
   output: {
-    path: dest,
+    path: DST_DIR,
     filename: 'index.js',
     sourceMapFilename: 'index.map',
   },

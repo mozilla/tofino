@@ -1,11 +1,16 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
+import colors from 'colors/safe';
 import os from 'os';
 import path from 'path';
 import fs from 'fs-promise';
 import childProcess from 'child_process';
+import pick from 'lodash/pick';
+import isEqual from 'lodash/isEqual';
+import dirsum from 'dirsum';
 import webpack from 'webpack';
+import { thenify } from 'thenify-all';
 import { SRC_DIR, BUILD_DIR } from './const';
 import manifest from '../package.json';
 import { logger } from './logging';
@@ -161,6 +166,49 @@ export function webpackBuild(config) {
       logger.info(`Incremental build succeeded in ${time} ms.`);
     });
   });
+}
+
+export async function shouldRebuild(source, id) {
+  const { hash } = await thenify(dirsum.digest)(source, 'sha1');
+  const currentConfig = getBuildConfig();
+
+   // The `built` property contains hashes of the previously built sources.
+   // These are used to prevent redundant rebuilds.
+
+  if (!('built' in currentConfig)) {
+    logger.info(colors.red(`No previous ${id} build found.`));
+    currentConfig.built = { [id]: hash };
+    writeBuildConfig(currentConfig);
+    return true;
+  }
+
+  if (currentConfig.built[id] !== hash) {
+    if (!(id in currentConfig.built)) {
+      logger.info(colors.red(`No previous ${id} build found.`));
+    } else {
+      logger.info(colors.yellow(`Source changed for ${id}.`));
+    }
+    currentConfig.built[id] = hash;
+    writeBuildConfig(currentConfig);
+    return true;
+  }
+
+  // Even if the sources haven't changed, always rebuild if the
+  // build configuration file has. Use `require` to import the base
+  // configuration file to avoid a circular dependency.
+
+  const baseConfig = require('./base-config').default; // eslint-disable-line
+  const sanitizedConfig = pick(currentConfig, Object.keys(baseConfig));
+  const previousConfig = currentConfig.prev;
+
+  if (!isEqual(sanitizedConfig, previousConfig)) {
+    logger.info(colors.red(`Build config changed for ${id}.`));
+    currentConfig.built[id] = hash;
+    writeBuildConfig(currentConfig);
+    return true;
+  }
+
+  return false;
 }
 
 export function getBuildPath(sourcePath) {
