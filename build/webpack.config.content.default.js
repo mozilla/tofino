@@ -7,15 +7,15 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import defaultConfig from './webpack.config.base';
 import * as Const from './const';
 
-const shared = path.join(Const.SRC_DIR, 'ui', 'shared');
-const src = path.join(Const.SRC_DIR, 'ui', 'content');
-const dest = path.join(Const.BUILD_DIR, 'ui', 'content');
+export const SHARED_DIR = path.join(Const.SRC_DIR, 'ui', 'shared');
+export const SRC_DIR = path.join(Const.SRC_DIR, 'ui', 'content');
+export const DST_DIR = path.join(Const.BUILD_DIR, 'ui', 'content');
 
 export default {
   ...defaultConfig,
-  entry: path.join(src, 'index.jsx'),
+  entry: path.join(SRC_DIR, 'index.jsx'),
   output: {
-    path: dest,
+    path: DST_DIR,
     filename: 'index.js',
     sourceMapFilename: 'index.map',
   },
@@ -25,23 +25,23 @@ export default {
       PROCESS_TYPE: '"content"',
     }),
     new CopyWebpackPlugin([{
-      from: path.join(src, '*.html'),
-      to: dest,
+      from: path.join(SRC_DIR, '*.html'),
+      to: DST_DIR,
       flatten: true,
     }]),
     new CopyWebpackPlugin([{
-      from: path.join(src, 'css', '*.css'),
-      to: path.join(dest, 'css'),
+      from: path.join(SRC_DIR, 'css', '*.css'),
+      to: path.join(DST_DIR, 'css'),
       flatten: true,
     }]),
     new CopyWebpackPlugin([{
-      from: path.join(shared, 'css', '*.css'),
-      to: path.join(dest, 'css'),
+      from: path.join(SHARED_DIR, 'css', '*.css'),
+      to: path.join(DST_DIR, 'css'),
       flatten: true,
     }]),
     new CopyWebpackPlugin([{
-      from: path.join(shared, 'assets'),
-      to: path.join(dest, 'assets'),
+      from: path.join(SHARED_DIR, 'assets'),
+      to: path.join(DST_DIR, 'assets'),
       flatten: true,
     }]),
   ],
