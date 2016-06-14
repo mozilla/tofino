@@ -7,14 +7,14 @@ import nodeExternals from 'webpack-node-externals';
 import defaultConfig from './webpack.config.base';
 import * as Const from './const';
 
-const src = path.join(Const.SRC_DIR, 'services', 'user-agent-service');
-const dest = path.join(Const.BUILD_DIR, 'services', 'user-agent-service');
+export const SRC_DIR = path.join(Const.SRC_DIR, 'services', 'user-agent-service');
+export const DST_DIR = path.join(Const.BUILD_DIR, 'services', 'user-agent-service');
 
 export default {
   ...defaultConfig,
-  entry: path.join(src, 'bin', 'user-agent-service'),
+  entry: path.join(SRC_DIR, 'bin', 'user-agent-service'),
   output: {
-    path: dest,
+    path: DST_DIR,
     filename: 'user-agent-service',
     sourceMapFilename: 'user-agent-service.map',
   },
