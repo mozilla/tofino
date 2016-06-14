@@ -63,7 +63,6 @@ export default {
   async serve() {
     await Lazy.config();
     const watchers = [
-      await Lazy.buildShared(),
       await Lazy.buildServices(),
     ];
     await unwatch(watchers);
