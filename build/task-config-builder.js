@@ -18,8 +18,6 @@ export const BASE_CONFIG = {
   // Electron information
   electron: BuildUtils.getElectronVersion(),
 
-  // Other environment settings
-
   // Version number, with extra build numbers if in a CI environment
   version: BuildUtils.getAppVersion(),
 

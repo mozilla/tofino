@@ -5,7 +5,9 @@ import os from 'os';
 import path from 'path';
 import fs from 'fs-promise';
 import childProcess from 'child_process';
+import dirsum from 'dirsum';
 import webpack from 'webpack';
+import { thenify } from 'thenify-all';
 import { SRC_DIR, BUILD_DIR } from './const';
 import manifest from '../package.json';
 import { logger } from './logging';
@@ -161,6 +163,28 @@ export function webpackBuild(config) {
       logger.info(`Incremental build succeeded in ${time} ms.`);
     });
   });
+}
+
+export async function shouldRebuild(source, id) {
+  const { hash } = await thenify(dirsum.digest)(source, 'sha1');
+  const currentConfig = getBuildConfig();
+
+   // The `built` property contains hashes of the previously built sources.
+   // These are used to prevent redundant rebuilds.
+
+  if (!('built' in currentConfig)) {
+    currentConfig.built = { [id]: hash };
+    writeBuildConfig(currentConfig);
+    return true;
+  }
+
+  if (currentConfig.built[id] !== hash) {
+    currentConfig.built[id] = hash;
+    writeBuildConfig(currentConfig);
+    return true;
+  }
+
+  return false;
 }
 
 export function getBuildPath(sourcePath) {

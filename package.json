@@ -72,6 +72,7 @@
     "copy-webpack-plugin": "3.0.0",
     "coveralls": "2.11.9",
     "cross-env": "1.0.8",
+    "dirsum": "0.1.1",
     "electron-download": "2.1.2",
     "electron-ipc-mock": "0.0.2",
     "electron-mocha": "2.2.0",
