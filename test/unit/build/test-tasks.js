@@ -5,7 +5,8 @@ import expect from 'expect';
 import fs from 'fs-promise';
 
 import { autoFailingAsyncTest } from '../../utils/async.js';
-import config, { BASE_CONFIG } from '../../../build/task-config-builder.js';
+import BASE_CONFIG from '../../../build/base-config.js';
+import config from '../../../build/task-config-builder.js';
 import clean from '../../../build/task-clean-package.js';
 import * as utils from '../../../build/utils.js';
 import * as BuildConst from '../../../build/const.js';
