@@ -176,7 +176,7 @@ export async function shouldRebuild(source, id) {
    // These are used to prevent redundant rebuilds.
 
   if (!('built' in currentConfig)) {
-    logger.info(colors.red(`No previous ${id} build found.`));
+    logger.info(colors.yellow(`No previous ${id} build found.`));
     currentConfig.built = { [id]: hash };
     writeBuildConfig(currentConfig);
     return true;
@@ -184,7 +184,7 @@ export async function shouldRebuild(source, id) {
 
   if (currentConfig.built[id] !== hash) {
     if (!(id in currentConfig.built)) {
-      logger.info(colors.red(`No previous ${id} build found.`));
+      logger.info(colors.yellow(`No previous ${id} build found.`));
     } else {
       logger.info(colors.yellow(`Source changed for ${id}.`));
     }
@@ -202,7 +202,7 @@ export async function shouldRebuild(source, id) {
   const previousConfig = currentConfig.prev;
 
   if (!isEqual(sanitizedConfig, previousConfig)) {
-    logger.info(colors.red(`Build config changed for ${id}.`));
+    logger.info(colors.yellow(`Build config changed for ${id}.`));
     currentConfig.built[id] = hash;
     writeBuildConfig(currentConfig);
     return true;
