@@ -4,7 +4,7 @@
 import expect from 'expect';
 import jsdom from 'jsdom';
 
-import Readability from '../../../../../app/shared/preload/readability.js';
+import Readability from '../../../../../app/ui/preload/readability.js';
 
 describe('Readability', () => {
   it('Is barely functional', (done) => {
