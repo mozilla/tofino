@@ -25,9 +25,6 @@ export default {
   // using hot reloading and unminified content and other things like that.
   development: false,
 
-  // Whether or not the build is packaged in an electron distributable
-  packaged: false,
-
   // Whether or not the build is being tested
   test: false,
 

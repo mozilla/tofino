@@ -93,7 +93,7 @@ export default {
     // XXX: All builds (including packaged) currently start their own
     // UA and Contents services. In the future, we should consider
     // hosting these somewhere else other than the user's own machine.
-    await this.build({ packaged: true });
+    await this.build();
     await Lazy.clean();
     await Lazy.package();
   },
