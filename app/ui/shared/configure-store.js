@@ -39,7 +39,7 @@ export default function(rootReducer, initialState) {
   const middleware = [instrumenter, thunk];
   const historyStore = [];
 
-  if (BUILD_CONFIG.development && !BUILD_CONFIG.test) {
+  if (BUILD_CONFIG.development && !process.env.TEST) {
     middleware.unshift(createLogger({
       duration: true,
       collapsed: true,
@@ -48,7 +48,7 @@ export default function(rootReducer, initialState) {
     }));
   }
 
-  if (BUILD_CONFIG.test) {
+  if (process.env.TEST) {
     middleware.unshift(history(historyStore));
   }
 
@@ -56,7 +56,7 @@ export default function(rootReducer, initialState) {
 
   // Store action history on the exposed store
   // for tests
-  if (BUILD_CONFIG.test) {
+  if (process.env.TEST) {
     store.history = historyStore;
   }
 

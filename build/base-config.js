@@ -18,7 +18,4 @@ export default {
   // The `development` option indicates whether or not the build is
   // using hot reloading and unminified content and other things like that.
   development: false,
-
-  // Whether or not the build is being tested
-  test: false,
 };

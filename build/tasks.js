@@ -85,7 +85,7 @@ export default {
   },
 
   async test(args = []) {
-    await this.build({ test: true });
+    await this.build();
     await Lazy.test(args);
   },
 

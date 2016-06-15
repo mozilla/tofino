@@ -11,13 +11,9 @@ import clean from '../../../build/task-clean-package.js';
 import * as utils from '../../../build/utils.js';
 import * as BuildConst from '../../../build/const.js';
 
-const currentExpectedConfig = Object.assign({}, BASE_CONFIG, {
-  test: true,
-});
-
 describe('build tasks', () => {
   it('should have a proper `build-config.json` while testing', () => {
-    expect(utils.getBuildConfig()).toContain(currentExpectedConfig);
+    expect(utils.getBuildConfig()).toContain(BASE_CONFIG);
   });
 
   it('should have a working `config` task', autoFailingAsyncTest(async function() {
@@ -33,7 +29,7 @@ describe('build tasks', () => {
     utils.writeBuildConfig(initialConfig);
     const reloadedConfig = utils.getBuildConfig();
     expect(reloadedConfig.foo).toNotExist();
-    expect(reloadedConfig).toContain(currentExpectedConfig);
+    expect(reloadedConfig).toContain(BASE_CONFIG);
   }));
 
   it('should have a working `clean` task', autoFailingAsyncTest(async function() {
