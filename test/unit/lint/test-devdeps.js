@@ -11,7 +11,9 @@ const all = '/**/';
 const valid = '*.@(js|jsx)';
 
 const paths = [
-  `app${all}${valid}`,
+  `app/main${all}${valid}`,
+  `app/services${all}${valid}`,
+  `app/shared${all}${valid}`,
 ];
 
 const ignored = [
@@ -20,7 +22,7 @@ const ignored = [
 ];
 
 describe('dev dependecies', () => {
-  it('should be imported in app/', autoFailingAsyncTest(async function() {
+  it('should not be imported in non-browser processes', autoFailingAsyncTest(async function() {
     const manifest = await fs.readJson('package.json');
     const modules = Object.keys(manifest.devDependencies);
 
