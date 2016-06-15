@@ -21,7 +21,4 @@ export default {
 
   // Whether or not the build is being tested
   test: false,
-
-  // The Google Analytics tracking identifier to use when instrumenting.
-  googleAnalyticsTrackingID: 'UA-76122102-1',
 };
