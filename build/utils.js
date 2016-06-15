@@ -46,6 +46,14 @@ export function getRoot() {
   return path.dirname(__dirname);
 }
 
+export function safeGetBuildConfig() {
+  try {
+    return getBuildConfig();
+  } catch (e) {
+    return {};
+  }
+}
+
 export function getBuildConfig() {
   const file = path.join(__dirname, '..', 'build-config.json');
   return fs.readJsonSync(file);
