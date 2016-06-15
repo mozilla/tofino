@@ -27,6 +27,7 @@ install:
   - npm --version
   - set npm_config_arch=%PLATFORM:x86=ia32%
   - npm install --progress false --depth 0
+  - npm prune
 
 build: off
 
