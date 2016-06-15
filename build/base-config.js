@@ -15,12 +15,6 @@ export default {
   // Version number, with extra build numbers if in a CI environment
   version: BuildUtils.getAppVersion(),
 
-  // If this build occurred on Travis CI
-  travis: BuildUtils.IS_TRAVIS,
-
-  // If this build occurred on Appveyor
-  appveyor: BuildUtils.IS_APPVEYOR,
-
   // The `development` option indicates whether or not the build is
   // using hot reloading and unminified content and other things like that.
   development: false,
