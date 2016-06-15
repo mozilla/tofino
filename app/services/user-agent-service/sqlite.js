@@ -27,6 +27,10 @@ export function verbose() {
   sqlite3.verbose();
 }
 
+export const OPEN_CREATE = sqlite3.OPEN_CREATE;
+export const OPEN_READWRITE = sqlite3.OPEN_READWRITE;
+export const OPEN_READONLY = sqlite3.OPEN_READONLY;
+
 /**
  * Turn methods on `source` that return callbacks into methods on `dest` that are bound to
  * `source` as if invoked as method calls.
@@ -119,14 +123,27 @@ export class DB {
     });
   }
 
+  close() {
+    return new Promise((resolve, reject) => {
+      this.db.close((err) => {
+        if (err) {
+          console.log(`SQL error: ${err} closing.`);
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
   /**
    *
    * @param filename the file path to open
    * @param mode any mode flags to pass to `sqlite3.Database`.
-   *             Defaults to OPEN_CREATE | OPEN_READWRITE.
+   *             Defaults to OPEN_CREATE | OPEN_READWRITE.  Could be OPEN_READONLY.
    * @returns Promise that resolves to the opened database.
    */
-  static open(filename, mode = sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE) {
+  static open(filename, mode = OPEN_CREATE | OPEN_READWRITE) {
     return new Promise((resolve, reject) => {
       const sq = new sqlite3.Database(filename, mode, (err) => {
         if (err) {
