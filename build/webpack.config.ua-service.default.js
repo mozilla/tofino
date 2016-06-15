@@ -14,6 +14,7 @@ export default {
   ...defaultConfig,
   entry: path.join(SRC_DIR, 'bin', 'user-agent-service'),
   output: {
+    ...defaultConfig.output,
     path: DST_DIR,
     filename: 'user-agent-service',
     sourceMapFilename: 'user-agent-service.map',
@@ -28,5 +29,8 @@ export default {
       LIBDIR: 'require("path").join(__dirname, "..", "..")',
     }),
   ],
-  externals: [nodeExternals()],
+  externals: [
+    ...defaultConfig.externals,
+    nodeExternals(),
+  ],
 };

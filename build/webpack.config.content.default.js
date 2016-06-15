@@ -15,6 +15,7 @@ export default {
   ...defaultConfig,
   entry: path.join(SRC_DIR, 'index.jsx'),
   output: {
+    ...defaultConfig.output,
     path: DST_DIR,
     filename: 'index.js',
     sourceMapFilename: 'index.map',

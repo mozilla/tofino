@@ -14,6 +14,7 @@ export default {
   ...defaultConfig,
   entry: path.join(SRC_DIR, 'browser.js'),
   output: {
+    ...defaultConfig.output,
     path: DST_DIR,
     filename: 'index.js',
     sourceMapFilename: 'index.map',
@@ -31,5 +32,8 @@ export default {
       LIBDIR: 'require("path").join(__dirname, "..")',
     }),
   ],
-  externals: [nodeExternals()],
+  externals: [
+    ...defaultConfig.externals,
+    nodeExternals(),
+  ],
 };

@@ -8,6 +8,7 @@ import * as BuildUtils from './utils';
 const root = BuildUtils.getRoot();
 
 export default {
+  output: {},
   module: {
     loaders: [{
       test: /\.jsx?$/,
@@ -29,4 +30,5 @@ export default {
     new webpack.OldWatchingPlugin(),
     new webpack.NoErrorsPlugin(),
   ],
+  externals: [],
 };
