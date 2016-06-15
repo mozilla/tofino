@@ -97,7 +97,7 @@ export default async function() {
       build: {
         appId: 'tofino',
         'app-category-type': 'web',
-        asar: false,
+        asar: true,
         icon: Const.PACKAGED_ICON,
         ignore: IGNORE,
         electronVersion,
