@@ -89,7 +89,7 @@ export function makeServer(version, port) {
 
       // Sadly, app.listen does not return the HTTP server just yet.
       // Therefore, we extract it manually below.
-      app.listen(port, resolve);
+      app.listen(port, '127.0.0.1', resolve);
       wsserver = getWss();
       server = wsserver._server;
 
