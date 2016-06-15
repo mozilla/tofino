@@ -112,7 +112,7 @@ class Page extends Component {
         <webview is="webview"
           ref="webview"
           class={`webview-${this.props.page.id} ${WEB_VIEW_STYLE}`}
-          preload="../../shared/preload/content.js"
+          preload="../preload/index.js"
           guestInstanceId={this.props.page.guestInstanceId}
           onContextMenu={requestContextData} />
         <Status page={this.props.page} />
