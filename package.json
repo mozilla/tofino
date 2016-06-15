@@ -15,6 +15,7 @@
     "dev": "node build/main.js --run-dev",
     "package": "node build/main.js --package",
     "test": "cross-env TEST=true nyc -s node build/main.js --test",
+    "test-ci": "cross-env TEST=true nyc -s node build/main.js --test-ci",
     "lint": "npm test test/unit/lint",
     "report": "nyc report",
     "coverage": "nyc report --reporter=text-lcov | coveralls",

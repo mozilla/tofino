@@ -94,6 +94,17 @@ export default {
     await Lazy.test(args);
   },
 
+  async testCI(args = []) {
+    // These tests run on the CI server.
+    logger.info('Making a production build...');
+    await this.build();
+    await Lazy.test(args);
+
+    logger.info('Making a development build...');
+    await this.build({ development: true });
+    await Lazy.test(args);
+  },
+
   async package() {
     // XXX: All builds (including packaged) currently start their own
     // UA and Contents services. In the future, we should consider

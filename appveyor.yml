@@ -32,7 +32,7 @@ install:
 build: off
 
 test_script:
-  - npm test
+  - npm run test-ci
   - npm run package
 
 before_deploy:
