@@ -5,7 +5,7 @@ import colors from 'colors/safe';
 
 /**
  * Use need to allow lazy loading of modules for all tasks. Generally,
- * we assume `build-config.js` exists, however *during* the build process
+ * we assume `build-config.json` exists, however *during* the build process
  * this might not be true, which will break certain native module imports that
  * try to eagerly load this file.
  */
