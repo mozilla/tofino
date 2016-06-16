@@ -10,6 +10,7 @@
     "revision": "5cd1dc12f984"
   },
   "scripts": {
+    "clobber": "rm -r .electron; rm build-config.json; rm -r node_modules",
     "serve": "cross-env NODE_ENV=\"production\" node build/main.js --serve",
     "start": "cross-env NODE_ENV=\"production\" node build/main.js --run",
     "dev": "cross-env NODE_ENV=\"development\" node build/main.js --run-dev",

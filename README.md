@@ -38,6 +38,7 @@ Documentation for building can be found in [docs/building.md](/docs/building.md)
 * `npm start` - Runs the build in `production` mode. Should be similar to a packaged build.
 * `npm run dev` - Runs the build in `development` mode with hot module reloading.
 * `npm run package` - Creates a distributable package.
+* `npm run clobber` - Destroys a handful of temporary files (electron build, node modules, configurations) to clean up invalid states. If running into strange issues, try this command, followed by an `npm install`.
 
 Even though the user agent and content services are reused between multiple
 browser instances, they don't outlive their parent process by default when it
@@ -52,14 +53,6 @@ Currently runs linting, unit and webdriver tests with mocha.
 ```
 npm test
 ```
-
-## Clobbering
-
-If you have problems building or running, it might be worth deleting some generated files and then trying again.  For example:
-
-    rm -r .electron
-    rm -r node_modules
-    rm build-config.json
 
 ## Contributing
 
