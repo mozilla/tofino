@@ -11,7 +11,6 @@ import isEqual from 'lodash/isEqual';
 import dirsum from 'dirsum';
 import webpack from 'webpack';
 import { thenify } from 'thenify-all';
-import { SRC_DIR, BUILD_DIR } from './const';
 import manifest from '../package.json';
 import { logger } from './logging';
 
@@ -217,10 +216,6 @@ export async function shouldRebuild(source, id) {
   }
 
   return false;
-}
-
-export function getBuildPath(sourcePath) {
-  return path.resolve(BUILD_DIR, path.relative(SRC_DIR, sourcePath));
 }
 
 export function normalizeFileURI(str) {
