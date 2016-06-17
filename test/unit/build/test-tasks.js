@@ -5,9 +5,9 @@ import expect from 'expect';
 import fs from 'fs-promise';
 import omit from 'lodash/omit';
 
-import { autoFailingAsyncTest } from '../../utils/async.js';
-import { overwriteConfig } from '../../../build/task-config-builder.js';
-import clean from '../../../build/task-clean-package.js';
+import { autoFailingAsyncTest } from '../../utils/async';
+import { overwriteConfig } from '../../../build/task-config-builder';
+import clean from '../../../build/task-clean-package';
 import baseConfig from '../../../build/utils/base-config';
 import * as BuildUtils from '../../../build/utils';
 import * as Const from '../../../build/utils/const';

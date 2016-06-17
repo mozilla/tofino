@@ -5,7 +5,7 @@ import expect from 'expect';
 import path from 'path';
 import os from 'os';
 import fs from 'fs';
-import { autoFailingAsyncTest } from '../../utils/async.js';
+import { autoFailingAsyncTest } from '../../utils/async';
 import * as BuildUtils from '../../../build/utils';
 import * as ElectronUtils from '../../../build/utils/electron';
 import * as ProcessUtils from '../../../build/utils/process';
