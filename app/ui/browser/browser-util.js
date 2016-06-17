@@ -34,26 +34,6 @@ export function fixURL(typed) {
   return getSearchURL(typed);
 }
 
-/**
- *
- */
-export function getBestDropItem(dataTransfer) {
-  let uriitem = null;
-  let textitem = null;
-  for (const item of dataTransfer.items) {
-    if (item.type === 'application/vnd.mozilla.bh.page') {
-      return item;
-    }
-    if (item.type === 'text/uri-list') {
-      uriitem = item;
-    }
-    if (item.type === 'text/plain') {
-      textitem = item;
-    }
-  }
-  return uriitem || textitem;
-}
-
 const UUID_REGEX = /[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}/;
 export function isUUID(uuidString) {
   return UUID_REGEX.test(uuidString);

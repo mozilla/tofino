@@ -124,7 +124,7 @@ function setPageDetails(state, pageId, payload) {
   assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
 
   return state.withMutations(mut => {
-    for (const [key, value] of Object.entries(payload)) {
+    for (let [key, value] of Object.entries(payload)) {
       if (key === 'id') {
         logger.warn('Skipping setting of `id` on page.');
         continue;
