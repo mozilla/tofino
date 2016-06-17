@@ -22,7 +22,7 @@ export default async function() {
 async function buildUAService() {
   const id = 'user agent service';
 
-  if (!(await shouldRebuild(UAServiceDirs.SRC_DIR, id))) {
+  if (!(await shouldRebuild([UAServiceDirs.SRC_DIR, id]))) {
     logger.info(colors.green(`No changes in ${id}.`));
     return { close: () => {} };
   }
@@ -35,7 +35,7 @@ async function buildUAService() {
 async function buildContentService() {
   const id = 'content service';
 
-  if (!(await shouldRebuild(ContentServiceDirs.SRC_DIR, id))) {
+  if (!(await shouldRebuild([ContentServiceDirs.SRC_DIR, id]))) {
     logger.info(colors.green(`No changes in ${id}.`));
     return { close: () => {} };
   }

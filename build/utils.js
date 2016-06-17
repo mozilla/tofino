@@ -175,7 +175,22 @@ export function webpackBuild(config) {
   });
 }
 
-export async function shouldRebuild(source, id) {
+export async function sourcesChanged(...sources) {
+  const results = [];
+
+  for (const [source, id] of sources) {
+    const { changed, hash } = await sourceChanged([source, id]);
+    if (changed) {
+      results.push({ hash, id });
+    }
+  }
+
+  return results;
+}
+
+export async function sourceChanged([source, id]) {
+  logger.info(colors.gray('Checking source', source));
+
   const { hash } = await thenify(dirsum.digest)(source, 'sha1');
   const currentConfig = getBuildConfig();
 
@@ -183,19 +198,45 @@ export async function shouldRebuild(source, id) {
    // These are used to prevent redundant rebuilds.
 
   if (!('built' in currentConfig)) {
-    logger.info(colors.yellow(`No previous ${id} build found.`));
-    currentConfig.built = { [id]: hash };
-    writeBuildConfig(currentConfig);
+    logger.info(colors.yellow(`No previous '${id}' hash found.`));
+    return { changed: true, hash };
+  }
+  if (!(id in currentConfig.built)) {
+    logger.info(colors.yellow(`No previous '${id}' hash found.`));
+    return { changed: true, hash };
+  }
+  if (currentConfig.built[id] !== hash) {
+    logger.info(colors.yellow(`Source changed for '${id}'.`));
+    return { changed: true, hash };
+  }
+
+  return { changed: false, hash };
+}
+
+export function buildConfigChanged() {
+  const baseConfig = require('./base-config').default; // eslint-disable-line
+  const currentConfig = getBuildConfig();
+  const sanitizedConfig = pick(currentConfig, Object.keys(baseConfig));
+  const previousConfig = currentConfig.prev;
+
+  if (!isEqual(sanitizedConfig, previousConfig)) {
+    logger.info(colors.yellow('Build config changed.'));
     return true;
   }
 
-  if (currentConfig.built[id] !== hash) {
-    if (!(id in currentConfig.built)) {
-      logger.info(colors.yellow(`No previous ${id} build found.`));
-    } else {
-      logger.info(colors.yellow(`Source changed for ${id}.`));
-    }
+  return false;
+}
+
+export async function shouldRebuild(...sources) {
+  const changedSources = await sourcesChanged(...sources);
+  const currentConfig = getBuildConfig();
+
+  for (const { hash, id } of changedSources) {
+    currentConfig.built = currentConfig.built || {};
     currentConfig.built[id] = hash;
+  }
+
+  if (changedSources.length) {
     writeBuildConfig(currentConfig);
     return true;
   }
@@ -204,14 +245,7 @@ export async function shouldRebuild(source, id) {
   // build configuration file has. Use `require` to import the base
   // configuration file to avoid a circular dependency.
 
-  const baseConfig = require('./base-config').default; // eslint-disable-line
-  const sanitizedConfig = pick(currentConfig, Object.keys(baseConfig));
-  const previousConfig = currentConfig.prev;
-
-  if (!isEqual(sanitizedConfig, previousConfig)) {
-    logger.info(colors.yellow(`Build config changed for ${id}.`));
-    currentConfig.built[id] = hash;
-    writeBuildConfig(currentConfig);
+  if (buildConfigChanged()) {
     return true;
   }
 
