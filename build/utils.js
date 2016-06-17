@@ -11,7 +11,7 @@ import isEqual from 'lodash/isEqual';
 import dirsum from 'dirsum';
 import webpack from 'webpack';
 import { thenify } from 'thenify-all';
-import { SRC_DIR, BUILD_DIR } from './const';
+import { BUILD_SYSTEM_DIR, BUILD_DIR } from './const';
 import manifest from '../package.json';
 import { logger } from './logging';
 
@@ -176,7 +176,22 @@ export function webpackBuild(config) {
   });
 }
 
-export async function shouldRebuild(source, id) {
+export async function sourcesChanged(...sources) {
+  const results = [];
+
+  for (const [source, id] of sources) {
+    const { changed, hash } = await sourceChanged([source, id]);
+    if (changed) {
+      results.push({ hash, id });
+    }
+  }
+
+  return results;
+}
+
+export async function sourceChanged([source, id]) {
+  logger.info(colors.gray('Checking source', source));
+
   const { hash } = await thenify(dirsum.digest)(source, 'sha1');
   const currentConfig = getBuildConfig();
 
@@ -184,19 +199,69 @@ export async function shouldRebuild(source, id) {
    // These are used to prevent redundant rebuilds.
 
   if (!('built' in currentConfig)) {
-    logger.info(colors.yellow(`No previous ${id} build found.`));
-    currentConfig.built = { [id]: hash };
-    writeBuildConfig(currentConfig);
+    logger.info(colors.yellow(`No previous '${id}' hash found.`));
+    return { changed: true, hash };
+  }
+  if (!(id in currentConfig.built)) {
+    logger.info(colors.yellow(`No previous '${id}' hash found.`));
+    return { changed: true, hash };
+  }
+  if (currentConfig.built[id] !== hash) {
+    logger.info(colors.yellow(`Source changed for '${id}'.`));
+    return { changed: true, hash };
+  }
+
+  return { changed: false, hash };
+}
+
+export function buildConfigChanged() {
+  const baseConfig = require('./base-config').default; // eslint-disable-line
+  const currentConfig = getBuildConfig();
+  const sanitizedConfig = pick(currentConfig, Object.keys(baseConfig));
+  const previousConfig = currentConfig.prev;
+
+  if (!isEqual(sanitizedConfig, previousConfig)) {
+    logger.info(colors.yellow('Build config changed.'));
     return true;
   }
 
-  if (currentConfig.built[id] !== hash) {
-    if (!(id in currentConfig.built)) {
-      logger.info(colors.yellow(`No previous ${id} build found.`));
-    } else {
-      logger.info(colors.yellow(`Source changed for ${id}.`));
-    }
+  return false;
+}
+
+export async function buildDirectoryExists() {
+  logger.info(colors.gray('Checking if build directory exists', BUILD_DIR));
+
+  try {
+    await fs.stat(BUILD_DIR);
+    return true;
+  } catch (e) {
+    logger.info(colors.yellow('Build directory doesn\'t exist.'));
+    return false;
+  }
+}
+
+export async function shouldRebuild(taskId, ...sources) {
+  // Check if the `lib` directory exists. If it doesn't, need to rebuild.
+  if (!(await buildDirectoryExists())) {
+    logger.info(colors.gray('Deleting hashes from the build config.'));
+    const currentConfig = getBuildConfig();
+    delete currentConfig.built;
+    writeBuildConfig(currentConfig);
+  }
+
+  // Always also check for changes in the build system as well.
+  sources.push([BUILD_SYSTEM_DIR, `${taskId} build task`]);
+
+  const changedSources = await sourcesChanged(...sources);
+  const currentConfig = getBuildConfig();
+
+  for (const { hash, id } of changedSources) {
+    currentConfig.built = currentConfig.built || {};
     currentConfig.built[id] = hash;
+  }
+
+  if (changedSources.length) {
+    logger.info(colors.gray('Updating hashes in the build config.'));
     writeBuildConfig(currentConfig);
     return true;
   }
@@ -205,31 +270,9 @@ export async function shouldRebuild(source, id) {
   // build configuration file has. Use `require` to import the base
   // configuration file to avoid a circular dependency.
 
-  const baseConfig = require('./base-config').default; // eslint-disable-line
-  const sanitizedConfig = pick(currentConfig, Object.keys(baseConfig));
-  const previousConfig = currentConfig.prev;
-
-  if (!isEqual(sanitizedConfig, previousConfig)) {
-    logger.info(colors.yellow(`Build config changed for ${id}.`));
-    currentConfig.built[id] = hash;
-    writeBuildConfig(currentConfig);
+  if (buildConfigChanged()) {
     return true;
   }
 
   return false;
-}
-
-export function getBuildPath(sourcePath) {
-  return path.resolve(BUILD_DIR, path.relative(SRC_DIR, sourcePath));
-}
-
-export function normalizeFileURI(str) {
-  let pathName = path.resolve(str).replace(/\\/g, '/');
-
-  // Windows drive letter must be prefixed with a slash
-  if (pathName[0] !== '/') {
-    pathName = `/${pathName}`;
-  }
-
-  return encodeURI(`file://${pathName}`);
 }

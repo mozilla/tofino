@@ -11,10 +11,7 @@ import { logger } from './logging';
 export default async function() {
   const id = 'content';
 
-  const shouldRebuildSrc = await shouldRebuild(SRC_DIR, id);
-  const shouldRebuildShared = await shouldRebuild(SHARED_DIR, 'ui/shared');
-
-  if (!shouldRebuildSrc && !shouldRebuildShared) {
+  if (!(await shouldRebuild(id, [SRC_DIR, id], [SHARED_DIR, 'ui/shared']))) {
     logger.info(colors.green(`No changes in ${id}.`));
     return { close: () => {} };
   }
