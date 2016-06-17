@@ -4,11 +4,12 @@
 import lint from 'mocha-eslint';
 import fs from 'fs';
 import path from 'path';
+import { ROOT } from '../../../build/utils/const';
 
 const valid = '*.@(js|jsx)';
 
 // Load the ignore list
-let paths = fs.readFileSync(path.join(__dirname, '..', '..', '..', '.eslintignore'), {
+let paths = fs.readFileSync(path.join(ROOT, '.eslintignore'), {
   encoding: 'utf8',
 }).split('\n');
 

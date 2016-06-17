@@ -3,19 +3,17 @@
 
 import path from 'path';
 import os from 'os';
-
 import through2 from 'through2';
 import packager from 'electron-packager';
 import vinyl from 'vinyl-fs';
 import zip from 'gulp-vinyl-zip';
 
+import * as Const from './utils/const';
 import * as BuildUtils from './utils';
-import * as BuildConst from './const.js';
+import { getElectronVersion, getDownloadOptions } from './utils/electron';
 
 const ARCH = process.arch;
 const PLATFORM = os.platform();
-
-const ROOT = path.resolve(path.join(__dirname, '..'));
 
 // electron-packager compares these against paths that are rooted in the root
 // but begin with "/", e.g. "/README.md"
@@ -65,10 +63,8 @@ const packageApp = options => new Promise((resolve, reject) => {
 
 export default async function() {
   const manifest = BuildUtils.getManifest();
-  const electronVersion = BuildUtils.getElectronVersion();
-  const appVersion = BuildUtils.getAppVersion();
-
-  const downloadOptions = BuildUtils.getDownloadOptions();
+  const electronVersion = getElectronVersion();
+  const downloadOptions = getDownloadOptions();
 
   // packager displays a warning if this property is set.
   delete downloadOptions.version;
@@ -79,14 +75,14 @@ export default async function() {
     ignore: IGNORE,
     prune: true,
     version: electronVersion,
-    dir: ROOT,
-    icon: path.join(ROOT, 'branding', 'app-icon'),
-    out: BuildConst.PACKAGED_DIST_DIR,
+    dir: Const.ROOT,
+    icon: Const.PACKAGED_ICON,
+    out: Const.PACKAGED_DIST_DIR,
     download: downloadOptions,
   });
 
-  const packageName = `${manifest.name}-${appVersion}-${PLATFORM}-${ARCH}.zip`;
-  const distPath = path.join(BuildConst.PACKAGED_DIST_DIR, packageName);
+  const packageName = `${manifest.name}-${manifest.version}-${PLATFORM}-${ARCH}.zip`;
+  const distPath = path.join(Const.PACKAGED_DIST_DIR, packageName);
 
   packagedApp.pipe(zip.dest(distPath));
 }

@@ -6,44 +6,44 @@ import fs from 'fs-promise';
 import omit from 'lodash/omit';
 
 import { autoFailingAsyncTest } from '../../utils/async.js';
-import BASE_CONFIG from '../../../build/base-config.js';
 import { overwriteConfig } from '../../../build/task-config-builder.js';
 import clean from '../../../build/task-clean-package.js';
-import * as utils from '../../../build/utils.js';
-import * as BuildConst from '../../../build/const.js';
+import baseConfig from '../../../build/base-config';
+import * as BuildUtils from '../../../build/utils';
+import * as Const from '../../../build/utils/const';
 
 describe('build tasks', () => {
   // Tests might be running on both production and development builds, so
   // there's no guarantee as to what `development` flag is set in the config.
-  const baseConfigToCheckAgainst = omit(BASE_CONFIG, 'development');
+  const baseConfigToCheckAgainst = omit(baseConfig, 'development');
 
   it('should have a proper `build-config.json` while testing', () => {
-    expect(utils.getBuildConfig()).toContain(baseConfigToCheckAgainst);
+    expect(BuildUtils.getBuildConfig()).toContain(baseConfigToCheckAgainst);
   });
 
   it('should have a working `config` task', autoFailingAsyncTest(async function() {
-    const initialConfig = utils.getBuildConfig();
+    const initialConfig = BuildUtils.getBuildConfig();
     expect(initialConfig.foo).toNotExist();
 
     await overwriteConfig({ foo: 'bar' });
 
-    const loadedConfig = utils.getBuildConfig();
+    const loadedConfig = BuildUtils.getBuildConfig();
     expect(loadedConfig.foo).toBe('bar');
     expect(loadedConfig).toContain(baseConfigToCheckAgainst);
 
-    utils.writeBuildConfig(initialConfig);
-    const reloadedConfig = utils.getBuildConfig();
+    BuildUtils.writeBuildConfig(initialConfig);
+    const reloadedConfig = BuildUtils.getBuildConfig();
     expect(reloadedConfig.foo).toNotExist();
     expect(reloadedConfig).toContain(baseConfigToCheckAgainst);
   }));
 
   it('should have a working `clean` task', autoFailingAsyncTest(async function() {
-    fs.ensureDir(BuildConst.PACKAGED_DIST_DIR);
+    fs.ensureDir(Const.PACKAGED_DIST_DIR);
 
     let cleaned = false;
     await clean();
     try {
-      await fs.stat(BuildConst.PACKAGED_DIST_DIR);
+      await fs.stat(Const.PACKAGED_DIST_DIR);
     } catch (err) {
       cleaned = err;
     }

@@ -5,7 +5,9 @@ import colors from 'colors/safe';
 import { SRC_DIR } from './webpack.config.main.default';
 import webpackProdConfig from './webpack.config.main.prod';
 import webpackDevConfig from './webpack.config.main.dev';
-import { shouldRebuild, getBuildConfig, webpackBuild } from './utils';
+import { getBuildConfig } from './utils';
+import { shouldRebuild } from './utils/rebuild';
+import { webpackBuild } from './utils/webpack';
 import { logger } from './logging';
 
 export default async function() {

@@ -5,10 +5,10 @@ import webpack from 'webpack';
 import path from 'path';
 import nodeExternals from 'webpack-node-externals';
 import defaultConfig from './webpack.config.base';
-import * as Const from './const';
+import * as Const from './utils/const';
 
 export const SRC_DIR = path.join(Const.SRC_DIR, 'main');
-export const DST_DIR = path.join(Const.BUILD_DIR, 'main');
+export const DST_DIR = path.join(Const.LIB_DIR, 'main');
 
 export default {
   ...defaultConfig,

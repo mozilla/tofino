@@ -4,7 +4,7 @@
 import expect from 'expect';
 import path from 'path';
 import fs from 'fs';
-import * as Const from '../../../build/const.js';
+import * as Const from '../../../build/utils/const';
 
 const cwd = fs.realpathSync(process.cwd());
 

@@ -8,7 +8,9 @@ import uaProdConfig from './webpack.config.ua-service.prod';
 import uaDevConfig from './webpack.config.ua-service.dev';
 import contentProdConfig from './webpack.config.content-service.prod';
 import contentDevConfig from './webpack.config.content-service.dev';
-import { shouldRebuild, getBuildConfig, webpackBuild } from './utils';
+import { getBuildConfig } from './utils';
+import { shouldRebuild } from './utils/rebuild';
+import { webpackBuild } from './utils/webpack';
 import { logger } from './logging';
 
 export default async function() {

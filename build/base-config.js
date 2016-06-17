@@ -2,7 +2,8 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import os from 'os';
-import * as BuildUtils from './utils';
+import { getElectronVersion } from './utils/electron';
+import { getManifest } from './utils';
 
 export default {
   // System information
@@ -10,10 +11,10 @@ export default {
   arch: 'x64',
 
   // Electron information
-  electron: BuildUtils.getElectronVersion(),
+  electron: getElectronVersion(),
 
   // Version number, with extra build numbers if in a CI environment
-  version: BuildUtils.getAppVersion(),
+  version: getManifest().version,
 
   // The `development` option indicates whether or not the build is
   // using hot reloading and unminified content and other things like that.

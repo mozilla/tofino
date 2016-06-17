@@ -3,9 +3,9 @@
 
 import webpack from 'webpack';
 import path from 'path';
-import * as BuildUtils from './utils';
+import * as Const from './utils/const';
 
-const root = BuildUtils.getRoot();
+const root = Const.ROOT;
 
 export default {
   output: {},

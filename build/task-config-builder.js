@@ -7,30 +7,30 @@
  */
 
 import pick from 'lodash/pick';
-import * as BuildUtils from './utils';
-import BASE_CONFIG from './base-config';
+import { getBuildConfig, writeBuildConfig } from './utils';
+import baseConfig from './base-config';
 
 export function overwriteConfig(customConfig) {
   let currentConfig = {};
 
   try {
-    currentConfig = BuildUtils.getBuildConfig();
+    currentConfig = getBuildConfig();
   } catch (e) {
     // Ignore missing file errors.
   }
 
-  BuildUtils.writeBuildConfig({
+  writeBuildConfig({
     ...currentConfig,
-    ...BASE_CONFIG,
+    ...baseConfig,
     ...customConfig,
   });
 }
 
 export function saveConfigAsPrev() {
-  const currentConfig = BuildUtils.getBuildConfig();
-  const sanitizedConfig = pick(currentConfig, Object.keys(BASE_CONFIG));
+  const currentConfig = getBuildConfig();
+  const sanitizedConfig = pick(currentConfig, Object.keys(baseConfig));
 
-  BuildUtils.writeBuildConfig({
+  writeBuildConfig({
     ...currentConfig,
     prev: sanitizedConfig,
   });

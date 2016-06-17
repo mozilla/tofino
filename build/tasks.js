@@ -2,7 +2,8 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import colors from 'colors/safe';
-import * as BuildUtils from './utils';
+import { safeGetBuildConfig } from './utils';
+import { logger } from './logging';
 
 /**
  * Use need to allow lazy loading of modules for all tasks. Generally,
@@ -11,8 +12,6 @@ import * as BuildUtils from './utils';
  * try to eagerly load this file.
  */
  /* eslint global-require: 0 */
-
-import { logger } from './logging';
 
 const Lazy = {
   buildDeps: () => require('./task-build-deps').default(),
@@ -88,7 +87,7 @@ export default {
   async test(args = []) {
     // When testing locally, just use whatever build already existed,
     // regardless of whether it's production or development.
-    const { development } = BuildUtils.safeGetBuildConfig();
+    const { development } = safeGetBuildConfig();
     logger.info(`Attempting to use existing ${development ? 'dev' : 'production'} build...`);
     await this.build({ development });
     await Lazy.test(args);

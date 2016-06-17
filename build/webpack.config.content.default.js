@@ -5,11 +5,11 @@ import path from 'path';
 import webpack from 'webpack';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import defaultConfig from './webpack.config.base';
-import * as Const from './const';
+import * as Const from './utils/const';
 
 export const SHARED_DIR = path.join(Const.SRC_DIR, 'ui', 'shared');
 export const SRC_DIR = path.join(Const.SRC_DIR, 'ui', 'content');
-export const DST_DIR = path.join(Const.BUILD_DIR, 'ui', 'content');
+export const DST_DIR = path.join(Const.LIB_DIR, 'ui', 'content');
 
 export default {
   ...defaultConfig,

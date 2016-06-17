@@ -5,7 +5,8 @@
 
 import expect from 'expect';
 import { Application } from 'spectron';
-import { getRoot, getElectronPath } from '../../build/utils';
+import { getElectronPath } from '../../build/utils/electron';
+import * as Const from '../../build/utils/const';
 import startFixtureServer from '../utils/server';
 
 // WebDriver takes unicode mappings to certain keys,
@@ -38,7 +39,7 @@ const Driver = {
 
     this.app = new Application({
       path: getElectronPath(),
-      args: [getRoot()],
+      args: [Const.ROOT],
       env: process.env,
       startTimeout: WEBDRIVER_START_TIMEOUT_IN_MS,
       waitTimeout: WEBDRIVER_TIMEOUT_IN_MS,

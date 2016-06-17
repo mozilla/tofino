@@ -8,7 +8,9 @@ import browserDevConfig from './webpack.config.browser.dev';
 import * as PreloadDirs from './webpack.config.preload.default';
 import preloadProdConfig from './webpack.config.preload.prod';
 import preloadDevConfig from './webpack.config.preload.dev';
-import { shouldRebuild, getBuildConfig, webpackBuild } from './utils';
+import { getBuildConfig } from './utils';
+import { shouldRebuild } from './utils/rebuild';
+import { webpackBuild } from './utils/webpack';
 import { logger } from './logging';
 
 export default async function() {
