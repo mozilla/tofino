@@ -11,7 +11,7 @@ import { logger } from './logging';
 export default async function() {
   const id = 'main process';
 
-  if (!(await shouldRebuild([SRC_DIR, id]))) {
+  if (!(await shouldRebuild(id, [SRC_DIR, id]))) {
     logger.info(colors.green(`No changes in ${id}.`));
     return { close: () => {} };
   }

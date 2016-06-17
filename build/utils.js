@@ -11,6 +11,7 @@ import isEqual from 'lodash/isEqual';
 import dirsum from 'dirsum';
 import webpack from 'webpack';
 import { thenify } from 'thenify-all';
+import { BUILD_SYSTEM_DIR } from './const';
 import manifest from '../package.json';
 import { logger } from './logging';
 
@@ -227,7 +228,10 @@ export function buildConfigChanged() {
   return false;
 }
 
-export async function shouldRebuild(...sources) {
+export async function shouldRebuild(taskId, ...sources) {
+  // Always also check for changes in the build system as well.
+  sources.push([BUILD_SYSTEM_DIR, `${taskId} build task`]);
+
   const changedSources = await sourcesChanged(...sources);
   const currentConfig = getBuildConfig();
 

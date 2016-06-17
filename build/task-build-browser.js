@@ -23,7 +23,7 @@ async function buildBrowser() {
   const { SRC_DIR, SHARED_DIR } = BrowserDirs;
   const id = 'browser';
 
-  if (!(await shouldRebuild([SRC_DIR, id], [SHARED_DIR, 'ui/shared']))) {
+  if (!(await shouldRebuild(id, [SRC_DIR, id], [SHARED_DIR, 'ui/shared']))) {
     logger.info(colors.green(`No changes in ${id}.`));
     return { close: () => {} };
   }
@@ -36,7 +36,7 @@ async function buildBrowser() {
 async function buildPreload() {
   const id = 'preload';
 
-  if (!(await shouldRebuild([PreloadDirs.SRC_DIR, id]))) {
+  if (!(await shouldRebuild(id, [PreloadDirs.SRC_DIR, id]))) {
     logger.info(colors.green(`No changes in ${id}.`));
     return { close: () => {} };
   }
