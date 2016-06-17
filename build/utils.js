@@ -11,7 +11,7 @@ import isEqual from 'lodash/isEqual';
 import dirsum from 'dirsum';
 import webpack from 'webpack';
 import { thenify } from 'thenify-all';
-import { BUILD_SYSTEM_DIR } from './const';
+import { BUILD_SYSTEM_DIR, BUILD_DIR } from './const';
 import manifest from '../package.json';
 import { logger } from './logging';
 
@@ -228,7 +228,27 @@ export function buildConfigChanged() {
   return false;
 }
 
+export async function buildDirectoryExists() {
+  logger.info(colors.gray('Checking if build directory exists', BUILD_DIR));
+
+  try {
+    await fs.stat(BUILD_DIR);
+    return true;
+  } catch (e) {
+    logger.info(colors.yellow('Build directory doesn\'t exist.'));
+    return false;
+  }
+}
+
 export async function shouldRebuild(taskId, ...sources) {
+  // Check if the `lib` directory exists. If it doesn't, need to rebuild.
+  if (!(await buildDirectoryExists())) {
+    logger.info(colors.gray('Deleting hashes from the build config.'));
+    const currentConfig = getBuildConfig();
+    delete currentConfig.built;
+    writeBuildConfig(currentConfig);
+  }
+
   // Always also check for changes in the build system as well.
   sources.push([BUILD_SYSTEM_DIR, `${taskId} build task`]);
 
@@ -241,6 +261,7 @@ export async function shouldRebuild(taskId, ...sources) {
   }
 
   if (changedSources.length) {
+    logger.info(colors.gray('Updating hashes in the build config.'));
     writeBuildConfig(currentConfig);
     return true;
   }
