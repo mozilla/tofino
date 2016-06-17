@@ -217,14 +217,3 @@ export async function shouldRebuild(source, id) {
 
   return false;
 }
-
-export function normalizeFileURI(str) {
-  let pathName = path.resolve(str).replace(/\\/g, '/');
-
-  // Windows drive letter must be prefixed with a slash
-  if (pathName[0] !== '/') {
-    pathName = `/${pathName}`;
-  }
-
-  return encodeURI(`file://${pathName}`);
-}
