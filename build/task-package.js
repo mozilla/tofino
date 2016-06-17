@@ -1,12 +1,12 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
+import fs from 'fs-promise';
 import path from 'path';
 import os from 'os';
-import through2 from 'through2';
 import packager from 'electron-packager';
-import vinyl from 'vinyl-fs';
-import zip from 'gulp-vinyl-zip';
+import zipdir from 'zip-dir';
+import { thenify } from 'thenify-all';
 
 import * as Const from './utils/const';
 import * as BuildUtils from './utils';
@@ -40,25 +40,17 @@ const IGNORE = [
 ];
 
 const packageApp = options => new Promise((resolve, reject) => {
-  const rs = through2.obj();
-
   packager(options, (err, packed) => {
     if (err) {
-      rs.emit('error', err);
-      rs.end();
       reject(err);
-      return;
+    } else {
+      if (packed.length !== 1) {
+        reject(new Error('Expected `electron-packager` to return only one path.'));
+      } else {
+        resolve(packed[0]);
+      }
     }
-
-    const globs = packed.map(d => `${d}/**`);
-    vinyl.src(globs, {
-      followSymlinks: false,
-      ignore: packed,
-      dot: true,
-    }).pipe(rs);
   });
-
-  resolve(rs);
 });
 
 export default async function() {
@@ -69,7 +61,7 @@ export default async function() {
   // packager displays a warning if this property is set.
   delete downloadOptions.version;
 
-  const packagedApp = await packageApp({
+  const packagedAppPath = await packageApp({
     arch: ARCH,
     platform: PLATFORM,
     ignore: IGNORE,
@@ -82,7 +74,8 @@ export default async function() {
   });
 
   const packageName = `${manifest.name}-${manifest.version}-${PLATFORM}-${ARCH}.zip`;
-  const distPath = path.join(Const.PACKAGED_DIST_DIR, packageName);
+  const packagedZipPath = path.join(Const.PACKAGED_DIST_DIR, packageName);
 
-  packagedApp.pipe(zip.dest(distPath));
-}
+  const buffer = await thenify(zipdir)(packagedAppPath);
+  return fs.writeFile(packagedZipPath, buffer);
+};
