@@ -11,7 +11,7 @@ import isEqual from 'lodash/isEqual';
 import dirsum from 'dirsum';
 import webpack from 'webpack';
 import { thenify } from 'thenify-all';
-import { BUILD_SYSTEM_DIR, BUILD_DIR } from './const';
+import { APP_SHARED_DIR, BUILD_SYSTEM_DIR, BUILD_DIR } from './const';
 import manifest from '../package.json';
 import { logger } from './logging';
 
@@ -190,7 +190,7 @@ export async function sourcesChanged(...sources) {
 }
 
 export async function sourceChanged([source, id]) {
-  logger.info(colors.gray('Checking source', source));
+  logger.info(colors.gray('Checking if source changed', source));
 
   const { hash } = await thenify(dirsum.digest)(source, 'sha1');
   const currentConfig = getBuildConfig();
@@ -250,6 +250,7 @@ export async function shouldRebuild(taskId, ...sources) {
   }
 
   // Always also check for changes in the build system as well.
+  sources.push([APP_SHARED_DIR, `${taskId} app/shared`]);
   sources.push([BUILD_SYSTEM_DIR, `${taskId} build task`]);
 
   const changedSources = await sourcesChanged(...sources);
