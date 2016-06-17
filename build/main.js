@@ -62,6 +62,7 @@ const handleDepsCheckSucceeded = () => {
     '--run-dev': args => tasks.runDev(args),
     '--package': () => tasks.package(),
     '--test': args => tasks.test(args),
+    '--test-ci': args => tasks.testCI(args),
   };
   main(argv, tasks, handlers, handleTaskFailed);
 };

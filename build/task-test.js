@@ -16,8 +16,6 @@ const ELECTRON_MOCHA = path.join(__dirname, '..', 'node_modules', '.bin', 'elect
 const PATH_TO_ELECTRON_MOCHA_OPTS = path.join(__dirname, '..', 'test', 'renderer', 'mocha.opts');
 
 export default async function(args) {
-  logger.info(colors.green('Running tests...'));
-
   // If no arguments passed in, we must run all tests; both mocha
   // and electron-mocha.
   if (!args.length) {
@@ -26,8 +24,11 @@ export default async function(args) {
     // all tests in series, but reject if any suite fails after
     // we're done.
     const errors = [];
+    logger.info(colors.cyan('Running unit tests...'));
     await runMochaTests(DEFAULT_UNIT_TESTS).catch(e => errors.push(e));
+    logger.info(colors.cyan('Running renderer tests...'));
     await runRendererTests(DEFAULT_RENDERER_TESTS).catch(e => errors.push(e));
+    logger.info(colors.cyan('Running webdriver tests...'));
     await runMochaTests(DEFAULT_WEBDRIVER_TESTS).catch(e => errors.push(e));
     if (errors.length) {
       throw errors[0];
@@ -38,8 +39,10 @@ export default async function(args) {
     // globbing, but this is more than fine for now.
     const pathToTests = args[0];
     if (pathToTests.indexOf(path.join('test', 'renderer')) !== -1) {
+      logger.info(colors.cyan('Running renderer or webdriver tests...'));
       await runRendererTests(pathToTests);
     } else {
+      logger.info(colors.cyan('Running unit tests...'));
       await runMochaTests(pathToTests);
     }
   }

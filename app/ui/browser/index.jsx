@@ -32,7 +32,6 @@ import App from './views/app';
 import { createBrowserStore } from './store';
 import * as actions from './actions/main-actions';
 import * as profileDiffs from '../../shared/profile-diffs';
-import BUILD_CONFIG from '../../../build-config';
 import UserAgentClient from '../../shared/user-agent-client';
 
 const userAgentClient = new UserAgentClient();
@@ -50,7 +49,7 @@ const app = {
   store,
 };
 
-if (BUILD_CONFIG.test) {
+if (process.env.TEST) {
   window.app = app;
 
   // Make the store accessible from the ipcRenderer singleton

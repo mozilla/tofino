@@ -7,8 +7,7 @@
 
 import { app } from 'electron';
 import request from 'request';
-
-import { googleAnalyticsTrackingID } from '../../build-config';
+import { GOOGLE_ANALYTICS_TRACKING_ID } from '../shared/constants/endpoints';
 
 /**
  * Send an instrumentation payload to Google Analytics.
@@ -22,7 +21,7 @@ function send(payload) {
     aip: 1, // Anonymize IP address.
     an: app.getName(),
     av: app.getVersion(),
-    tid: googleAnalyticsTrackingID,
+    tid: GOOGLE_ANALYTICS_TRACKING_ID,
     cid: 0xdeadbeef, // Anonymous client ID for now.  TODO: track this per profile.
   });
 

@@ -3,6 +3,7 @@
 
 import expect from 'expect';
 import fs from 'fs-promise';
+import omit from 'lodash/omit';
 
 import { autoFailingAsyncTest } from '../../utils/async.js';
 import BASE_CONFIG from '../../../build/base-config.js';
@@ -11,13 +12,13 @@ import clean from '../../../build/task-clean-package.js';
 import * as utils from '../../../build/utils.js';
 import * as BuildConst from '../../../build/const.js';
 
-const currentExpectedConfig = Object.assign({}, BASE_CONFIG, {
-  test: true,
-});
-
 describe('build tasks', () => {
+  // Tests might be running on both production and development builds, so
+  // there's no guarantee as to what `development` flag is set in the config.
+  const baseConfigToCheckAgainst = omit(BASE_CONFIG, 'development');
+
   it('should have a proper `build-config.json` while testing', () => {
-    expect(utils.getBuildConfig()).toContain(currentExpectedConfig);
+    expect(utils.getBuildConfig()).toContain(baseConfigToCheckAgainst);
   });
 
   it('should have a working `config` task', autoFailingAsyncTest(async function() {
@@ -28,12 +29,12 @@ describe('build tasks', () => {
 
     const loadedConfig = utils.getBuildConfig();
     expect(loadedConfig.foo).toBe('bar');
-    expect(loadedConfig).toContain(BASE_CONFIG);
+    expect(loadedConfig).toContain(baseConfigToCheckAgainst);
 
     utils.writeBuildConfig(initialConfig);
     const reloadedConfig = utils.getBuildConfig();
     expect(reloadedConfig.foo).toNotExist();
-    expect(reloadedConfig).toContain(currentExpectedConfig);
+    expect(reloadedConfig).toContain(baseConfigToCheckAgainst);
   }));
 
   it('should have a working `clean` task', autoFailingAsyncTest(async function() {

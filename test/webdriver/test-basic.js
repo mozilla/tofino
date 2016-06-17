@@ -4,8 +4,16 @@
 import expect from 'expect';
 import Driver from '../utils/driver';
 import { HOME_PAGE } from '../../app/ui/browser/constants/ui';
+import BUILD_CONFIG from '../../build-config';
 
 describe('application launch', function() {
+  if (BUILD_CONFIG.development) {
+    // Skip test on development builds, since app.client returns the devtools
+    // window instead of the browser window, so all our checks are bogus.
+    // Should probably fix this.
+    return;
+  }
+
   this.timeout(Driver.TEST_TIMEOUT_IN_MS);
 
   beforeEach(async function() {

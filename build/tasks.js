@@ -2,10 +2,11 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import colors from 'colors/safe';
+import * as BuildUtils from './utils';
 
 /**
  * Use need to allow lazy loading of modules for all tasks. Generally,
- * we assume `build-config.js` exists, however *during* the build process
+ * we assume `build-config.json` exists, however *during* the build process
  * this might not be true, which will break certain native module imports that
  * try to eagerly load this file.
  */
@@ -85,7 +86,22 @@ export default {
   },
 
   async test(args = []) {
-    await this.build({ test: true });
+    // When testing locally, just use whatever build already existed,
+    // regardless of whether it's production or development.
+    const { development } = BuildUtils.safeGetBuildConfig();
+    logger.info(`Attempting to use existing ${development ? 'dev' : 'production'} build...`);
+    await this.build({ development });
+    await Lazy.test(args);
+  },
+
+  async testCI(args = []) {
+    // These tests run on the CI server.
+    logger.info('Making a production build...');
+    await this.build();
+    await Lazy.test(args);
+
+    logger.info('Making a development build...');
+    await this.build({ development: true });
     await Lazy.test(args);
   },
 
