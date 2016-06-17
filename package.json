@@ -10,7 +10,7 @@
     "revision": "5cd1dc12f984"
   },
   "scripts": {
-    "clobber": "rm -r .electron; rm build-config.json; rm -r node_modules",
+    "clobber": "rm build-config.json; rm -r lib; rm -r .electron; rm -r node_modules",
     "serve": "node build/main.js --serve",
     "start": "node build/main.js --run",
     "dev": "node build/main.js --run-dev",
