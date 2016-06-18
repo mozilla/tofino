@@ -1,14 +1,14 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-import prodConfig from './webpack.config.base.snippets.prod';
-import preloadConfig from './webpack.config.preload.default';
+import prodConfig from './webpack.base.snippets.prod';
+import browserConfig from './webpack.browser.default';
 
 export default {
   ...prodConfig,
-  ...preloadConfig,
+  ...browserConfig,
   plugins: [
     ...prodConfig.plugins,
-    ...preloadConfig.plugins,
+    ...browserConfig.plugins,
   ],
 };

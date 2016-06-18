@@ -4,8 +4,8 @@
 import path from 'path';
 import webpack from 'webpack';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import defaultConfig from './webpack.config.base';
-import * as Const from './utils/const';
+import defaultConfig from './webpack.base';
+import * as Const from '../utils/const';
 
 export const SHARED_DIR = path.join(Const.SRC_DIR, 'ui', 'shared');
 export const SRC_DIR = path.join(Const.SRC_DIR, 'ui', 'content');

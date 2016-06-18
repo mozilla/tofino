@@ -2,12 +2,12 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import colors from 'colors/safe';
-import * as UAServiceDirs from './webpack.config.ua-service.default';
-import * as ContentServiceDirs from './webpack.config.content-service.default';
-import uaProdConfig from './webpack.config.ua-service.prod';
-import uaDevConfig from './webpack.config.ua-service.dev';
-import contentProdConfig from './webpack.config.content-service.prod';
-import contentDevConfig from './webpack.config.content-service.dev';
+import * as UAServiceDirs from './config/webpack.ua-service.default';
+import * as ContentServiceDirs from './config/webpack.content-service.default';
+import uaProdConfig from './config/webpack.ua-service.prod';
+import uaDevConfig from './config/webpack.ua-service.dev';
+import contentProdConfig from './config/webpack.content-service.prod';
+import contentDevConfig from './config/webpack.content-service.dev';
 import { getBuildConfig } from './utils';
 import { shouldRebuild } from './utils/rebuild';
 import { webpackBuild } from './utils/webpack';

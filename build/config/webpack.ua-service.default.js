@@ -4,8 +4,8 @@
 import webpack from 'webpack';
 import path from 'path';
 import nodeExternals from 'webpack-node-externals';
-import defaultConfig from './webpack.config.base';
-import * as Const from './utils/const';
+import defaultConfig from './webpack.base';
+import * as Const from '../utils/const';
 
 export const SRC_DIR = path.join(Const.SRC_DIR, 'services', 'user-agent-service');
 export const DST_DIR = path.join(Const.LIB_DIR, 'services', 'user-agent-service');

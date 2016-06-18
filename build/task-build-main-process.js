@@ -2,9 +2,9 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import colors from 'colors/safe';
-import { SRC_DIR } from './webpack.config.main.default';
-import webpackProdConfig from './webpack.config.main.prod';
-import webpackDevConfig from './webpack.config.main.dev';
+import { SRC_DIR } from './config/webpack.main.default';
+import webpackProdConfig from './config/webpack.main.prod';
+import webpackDevConfig from './config/webpack.main.dev';
 import { getBuildConfig } from './utils';
 import { shouldRebuild } from './utils/rebuild';
 import { webpackBuild } from './utils/webpack';

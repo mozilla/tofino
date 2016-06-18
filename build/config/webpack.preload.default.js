@@ -3,8 +3,8 @@
 
 import path from 'path';
 import webpack from 'webpack';
-import defaultConfig from './webpack.config.base';
-import * as Const from './utils/const';
+import defaultConfig from './webpack.base';
+import * as Const from '../utils/const';
 
 export const SRC_DIR = path.join(Const.SRC_DIR, 'ui', 'preload');
 export const DST_DIR = path.join(Const.LIB_DIR, 'ui', 'preload');

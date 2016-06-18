@@ -1,14 +1,14 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-import prodConfig from './webpack.config.base.snippets.prod';
-import mainProcessConfig from './webpack.config.main.default';
+import prodConfig from './webpack.base.snippets.prod';
+import uaServiceConfig from './webpack.ua-service.default';
 
 export default {
   ...prodConfig,
-  ...mainProcessConfig,
+  ...uaServiceConfig,
   plugins: [
     ...prodConfig.plugins,
-    ...mainProcessConfig.plugins,
+    ...uaServiceConfig.plugins,
   ],
 };

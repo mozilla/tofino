@@ -3,7 +3,7 @@
 
 import webpack from 'webpack';
 import path from 'path';
-import * as Const from './utils/const';
+import * as Const from '../utils/const';
 
 const root = Const.ROOT;
 

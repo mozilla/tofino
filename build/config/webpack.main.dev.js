@@ -1,18 +1,18 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-import devConfig from './webpack.config.base.snippets.dev';
-import browserConfig from './webpack.config.browser.default';
+import devConfig from './webpack.base.snippets.dev';
+import mainProcessConfig from './webpack.main.default';
 
 export default {
   ...devConfig,
-  ...browserConfig,
+  ...mainProcessConfig,
   output: {
     ...devConfig.output,
-    ...browserConfig.output,
+    ...mainProcessConfig.output,
   },
   plugins: [
     ...devConfig.plugins,
-    ...browserConfig.plugins,
+    ...mainProcessConfig.plugins,
   ],
 };
