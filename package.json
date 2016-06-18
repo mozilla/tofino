@@ -34,7 +34,7 @@
     "datascript-mori": "0.16.0",
     "electron-localshortcut": "0.6.0",
     "express": "4.14.0",
-    "express-validator": "2.20.5",
+    "express-validator": "2.20.6",
     "express-ws": "2.0.0-rc.1",
     "fs-promise": "0.5.0",
     "immutable": "3.7.6",
