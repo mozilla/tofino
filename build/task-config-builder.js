@@ -8,7 +8,7 @@
 
 import pick from 'lodash/pick';
 import { getBuildConfig, writeBuildConfig } from './utils';
-import baseConfig from './base-config';
+import baseConfig from './utils/base-config';
 
 export function overwriteConfig(customConfig) {
   let currentConfig = {};

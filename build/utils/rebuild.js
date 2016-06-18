@@ -55,7 +55,7 @@ export function buildConfigChanged() {
 
   // Use `require` to import the base configuration file
   // to avoid a circular dependency.
-  const baseConfig = require('../utils/base-config').default; // eslint-disable-line
+  const baseConfig = require('./base-config').default; // eslint-disable-line
   const currentConfig = getBuildConfig();
   const sanitizedConfig = pick(currentConfig, Object.keys(baseConfig));
   const previousConfig = currentConfig.prev;

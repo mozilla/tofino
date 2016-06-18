@@ -8,7 +8,7 @@ import omit from 'lodash/omit';
 import { autoFailingAsyncTest } from '../../utils/async.js';
 import { overwriteConfig } from '../../../build/task-config-builder.js';
 import clean from '../../../build/task-clean-package.js';
-import baseConfig from '../../../build/base-config';
+import baseConfig from '../../../build/utils/base-config';
 import * as BuildUtils from '../../../build/utils';
 import * as Const from '../../../build/utils/const';
 

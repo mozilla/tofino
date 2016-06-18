@@ -2,8 +2,8 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import os from 'os';
-import { getElectronVersion } from './utils/electron';
-import { getManifest } from './utils';
+import { getElectronVersion } from './electron';
+import { getManifest } from './';
 
 export default {
   // System information
