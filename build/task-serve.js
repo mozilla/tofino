@@ -2,7 +2,7 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import * as spawn from '../app/main/spawn';
-import { getElectronPath } from './utils';
+import { getElectronPath } from './utils/electron';
 
 export function startUserAgentService(options = {}) {
   spawn.startUserAgentService(null, options);

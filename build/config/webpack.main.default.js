@@ -4,29 +4,32 @@
 import webpack from 'webpack';
 import path from 'path';
 import nodeExternals from 'webpack-node-externals';
-import defaultConfig from './webpack.config.base';
-import * as Const from './const';
+import defaultConfig from './webpack.base';
+import * as Const from '../utils/const';
 
-export const SRC_DIR = path.join(Const.SRC_DIR, 'services', 'user-agent-service');
-export const DST_DIR = path.join(Const.BUILD_DIR, 'services', 'user-agent-service');
+export const SRC_DIR = path.join(Const.SRC_DIR, 'main');
+export const DST_DIR = path.join(Const.LIB_DIR, 'main');
 
 export default {
   ...defaultConfig,
-  entry: path.join(SRC_DIR, 'bin', 'user-agent-service'),
+  entry: path.join(SRC_DIR, 'browser.js'),
   output: {
     ...defaultConfig.output,
     path: DST_DIR,
-    filename: 'user-agent-service',
-    sourceMapFilename: 'user-agent-service.map',
+    filename: 'index.js',
+    sourceMapFilename: 'index.map',
   },
-  target: 'node',
+  target: 'electron',
   plugins: [
     ...defaultConfig.plugins,
     new webpack.DefinePlugin({
-      PROCESS_TYPE: '"ua-service"',
+      __dirname: '__dirname',
     }),
     new webpack.DefinePlugin({
-      LIBDIR: 'require("path").join(__dirname, "..", "..")',
+      PROCESS_TYPE: '"main"',
+    }),
+    new webpack.DefinePlugin({
+      LIBDIR: 'require("path").join(__dirname, "..")',
     }),
   ],
   externals: [

@@ -5,7 +5,7 @@ import expect from 'expect';
 import fs from 'fs-promise';
 import without from 'lodash/without';
 import { autoFailingAsyncTest } from '../../utils/async';
-import { REQUIRES_REGEX, IMPORTS_REGEX, globMany, regexFiles } from './shared.js';
+import { REQUIRES_REGEX, IMPORTS_REGEX, globMany, regexFiles } from './shared';
 
 const all = '/**/';
 const valid = '*.@(js|jsx)';

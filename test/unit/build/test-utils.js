@@ -5,19 +5,21 @@ import expect from 'expect';
 import path from 'path';
 import os from 'os';
 import fs from 'fs';
-import { autoFailingAsyncTest } from '../../utils/async.js';
-import * as utils from '../../../build/utils.js';
+import { autoFailingAsyncTest } from '../../utils/async';
+import * as BuildUtils from '../../../build/utils';
+import * as ElectronUtils from '../../../build/utils/electron';
+import * as ProcessUtils from '../../../build/utils/process';
 
 const cwd = fs.realpathSync(process.cwd());
 
 describe('build utils', () => {
   it('should export `IS_TRAVIS` and `IS_APPVEYOR`', () => {
-    expect(typeof utils.IS_TRAVIS).toEqual('boolean');
-    expect(typeof utils.IS_APPVEYOR).toEqual('boolean');
+    expect(typeof BuildUtils.IS_TRAVIS).toEqual('boolean');
+    expect(typeof BuildUtils.IS_APPVEYOR).toEqual('boolean');
   });
 
   it('should export `getElectronExecutable()`', () => {
-    const executable = utils.getElectronExecutable();
+    const executable = ElectronUtils.getElectronExecutable();
     expect(Object.keys(executable)).toEqual([
       'win32', 'darwin', 'linux',
     ]);
@@ -26,18 +28,8 @@ describe('build utils', () => {
     expect(typeof executable.linux).toEqual('string');
   });
 
-  it('should export `getAppVersion`', () => {
-    const version = utils.getAppVersion();
-    expect(typeof version).toEqual('string');
-  });
-
-  it('should export `getRoot`', () => {
-    const root = utils.getRoot();
-    expect(root).toEqual(cwd);
-  });
-
   it('should export `getBuildConfig`', () => {
-    const config = utils.getBuildConfig();
+    const config = BuildUtils.getBuildConfig();
     expect(typeof config).toEqual('object');
     expect(typeof config.electron).toEqual('string');
     expect(typeof config.platform).toEqual('string');
@@ -46,21 +38,21 @@ describe('build utils', () => {
   });
 
   it('should export `writeBuildConfig`', () => {
-    const initialConfig = utils.getBuildConfig();
+    const initialConfig = BuildUtils.getBuildConfig();
     const bogusConfig = { foo: 'bar' };
     expect(initialConfig).toNotEqual(bogusConfig);
 
-    utils.writeBuildConfig(bogusConfig);
-    const loadedConfig = utils.getBuildConfig();
+    BuildUtils.writeBuildConfig(bogusConfig);
+    const loadedConfig = BuildUtils.getBuildConfig();
     expect(loadedConfig).toEqual(bogusConfig);
 
-    utils.writeBuildConfig(initialConfig);
-    const reloadedConfig = utils.getBuildConfig();
+    BuildUtils.writeBuildConfig(initialConfig);
+    const reloadedConfig = BuildUtils.getBuildConfig();
     expect(reloadedConfig).toEqual(initialConfig);
   });
 
   it('should export `getManifest`', () => {
-    const manifest = utils.getManifest();
+    const manifest = BuildUtils.getManifest();
     expect(typeof manifest).toEqual('object');
     expect(typeof manifest.scripts).toEqual('object');
     expect(typeof manifest.dependencies).toEqual('object');
@@ -68,25 +60,25 @@ describe('build utils', () => {
   });
 
   it('should export `getElectronRoot`', () => {
-    const root = utils.getElectronRoot();
+    const root = ElectronUtils.getElectronRoot();
     expect(root).toEqual(path.join(cwd, '.electron'));
   });
 
   it('should export `getElectronPath`', () => {
-    const root = utils.getElectronRoot();
-    const epath = utils.getElectronPath();
-    const executable = utils.getElectronExecutable();
+    const root = ElectronUtils.getElectronRoot();
+    const epath = ElectronUtils.getElectronPath();
+    const executable = ElectronUtils.getElectronExecutable();
     expect(epath).toEqual(path.join(root, executable[os.platform()]));
   });
 
   it('should export `getElectronVersion`', () => {
-    const version = utils.getElectronVersion();
+    const version = ElectronUtils.getElectronVersion();
     expect(typeof version).toEqual('string');
   });
 
   it('should export `spawn`', autoFailingAsyncTest(async function() {
     try {
-      await utils.spawn('node', ['--version']);
+      await ProcessUtils.spawn('node', ['--version']);
     } catch (e) {
       expect(false).toBe(true);
     }

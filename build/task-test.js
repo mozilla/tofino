@@ -5,15 +5,18 @@ import colors from 'colors/safe';
 import childProcess from 'child_process';
 import path from 'path';
 import os from 'os';
-import { spawn, getElectronPath, normalizeCommand } from './utils';
+import * as Const from './utils/const';
+import { spawn, normalizeCommand } from './utils/process';
+import { getElectronPath } from './utils/electron';
 import { logger } from './logging';
 
-const DEFAULT_UNIT_TESTS = path.join(__dirname, '..', 'test', 'unit');
-const DEFAULT_RENDERER_TESTS = path.join(__dirname, '..', 'test', 'renderer');
-const DEFAULT_WEBDRIVER_TESTS = path.join(__dirname, '..', 'test', 'webdriver');
-const MOCHA = path.join(__dirname, '..', 'node_modules', '.bin', 'mocha');
-const ELECTRON_MOCHA = path.join(__dirname, '..', 'node_modules', '.bin', 'electron-mocha');
-const PATH_TO_ELECTRON_MOCHA_OPTS = path.join(__dirname, '..', 'test', 'renderer', 'mocha.opts');
+const TEST_DIR = path.join(Const.ROOT, 'test');
+const DEFAULT_UNIT_TESTS = path.join(TEST_DIR, 'unit');
+const DEFAULT_RENDERER_TESTS = path.join(TEST_DIR, 'renderer');
+const DEFAULT_WEBDRIVER_TESTS = path.join(TEST_DIR, 'webdriver');
+const MOCHA = path.join(Const.NODE_MODULES_DIR, '.bin', 'mocha');
+const ELECTRON_MOCHA = path.join(Const.NODE_MODULES_DIR, '.bin', 'electron-mocha');
+const PATH_TO_ELECTRON_MOCHA_OPTS = path.join(TEST_DIR, 'renderer', 'mocha.opts');
 
 export default async function(args) {
   // If no arguments passed in, we must run all tests; both mocha

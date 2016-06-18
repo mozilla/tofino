@@ -2,13 +2,15 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import colors from 'colors/safe';
-import * as BrowserDirs from './webpack.config.browser.default';
-import browserProdConfig from './webpack.config.browser.prod';
-import browserDevConfig from './webpack.config.browser.dev';
-import * as PreloadDirs from './webpack.config.preload.default';
-import preloadProdConfig from './webpack.config.preload.prod';
-import preloadDevConfig from './webpack.config.preload.dev';
-import { shouldRebuild, getBuildConfig, webpackBuild } from './utils';
+import * as BrowserDirs from './config/webpack.browser.default';
+import browserProdConfig from './config/webpack.browser.prod';
+import browserDevConfig from './config/webpack.browser.dev';
+import * as PreloadDirs from './config/webpack.preload.default';
+import preloadProdConfig from './config/webpack.preload.prod';
+import preloadDevConfig from './config/webpack.preload.dev';
+import { getBuildConfig } from './utils';
+import { shouldRebuild } from './utils/rebuild';
+import { webpackBuild } from './utils/webpack';
 import { logger } from './logging';
 
 export default async function() {

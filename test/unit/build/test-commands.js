@@ -9,8 +9,8 @@
 /* eslint-disable import/default */
 
 import expect from 'expect';
-import { autoFailingAsyncTest, waitUntil } from '../../utils/async.js';
-import main from '../../../build/main.js';
+import { autoFailingAsyncTest, waitUntil } from '../../utils/async';
+import main from '../../../build/main';
 
 describe('build', () => {
   it('should parse arguments appropriately', autoFailingAsyncTest(async function() {

@@ -2,10 +2,12 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import colors from 'colors/safe';
-import { SRC_DIR, SHARED_DIR } from './webpack.config.content.default';
-import webpackProdConfig from './webpack.config.content.prod';
-import webpackDevConfig from './webpack.config.content.dev';
-import { shouldRebuild, getBuildConfig, webpackBuild } from './utils';
+import { SRC_DIR, SHARED_DIR } from './config/webpack.content.default';
+import webpackProdConfig from './config/webpack.content.prod';
+import webpackDevConfig from './config/webpack.content.dev';
+import { getBuildConfig } from './utils';
+import { shouldRebuild } from './utils/rebuild';
+import { webpackBuild } from './utils/webpack';
 import { logger } from './logging';
 
 export default async function() {

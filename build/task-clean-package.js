@@ -2,10 +2,10 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import rimraf from 'rimraf';
-import * as BuildConst from './const.js';
+import * as Const from './utils/const';
 
 export default () => new Promise((resolve, reject) => {
-  rimraf(BuildConst.PACKAGED_DIST_DIR, err => {
+  rimraf(Const.PACKAGED_DIST_DIR, err => {
     if (err) {
       reject(err);
     }

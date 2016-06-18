@@ -10,6 +10,9 @@ import unzip from 'extract-zip';
 import { thenify } from 'thenify-all';
 
 import * as BuildUtils from './utils';
+import * as ProcessUtils from './utils/process';
+import * as ElectronUtils from './utils/electron';
+import * as Const from './utils/const';
 import { logger } from './logging';
 
 async function downloadElectron() {
@@ -17,15 +20,13 @@ async function downloadElectron() {
   await fs.mkdirs(tmpDir);
 
   try {
-    const zipPath = await thenify(download)(BuildUtils.getDownloadOptions());
-
+    const zipPath = await thenify(download)(ElectronUtils.getDownloadOptions());
     await thenify(unzip)(zipPath, { dir: tmpDir });
 
     // Some tools like electron-rebuild rely on this to find the executable
-    await fs.writeFile(path.join(tmpDir, 'path.txt'),
-                       BuildUtils.getElectronExecutable()[os.platform()]);
+    await fs.writeFile(path.join(tmpDir, 'path.txt'), ElectronUtils.getOSElectronExecutable());
 
-    const targetDir = BuildUtils.getElectronRoot();
+    const targetDir = ElectronUtils.getElectronRoot();
     await fs.remove(targetDir);
     await fs.move(tmpDir, targetDir);
   } finally {
@@ -36,30 +37,31 @@ async function downloadElectron() {
 }
 
 async function findNativeModules() {
-  const nodeModules = path.join(__dirname, '..', 'node_modules');
-  const files = await fs.walk(nodeModules);
-
+  const files = await fs.walk(Const.NODE_MODULES_DIR);
   const modules = {};
+
   for (const { path: filepath, stats } of files) {
     if (!stats.isFile()) {
       continue;
     }
 
     // Native modules have `binding.gyp` at the top level.
-    if (path.basename(filepath) === 'binding.gyp') {
-      const modulePath = path.dirname(filepath);
+    if (path.basename(filepath) !== 'binding.gyp') {
+      continue;
+    }
 
-      // Check it is at the top level.
-      if (path.basename(path.dirname(modulePath)) !== 'node_modules') {
-        continue;
-      }
+    // Check it is at the top level.
+    const modulePath = path.dirname(filepath);
+    if (path.basename(path.dirname(modulePath)) !== 'node_modules') {
+      continue;
+    }
 
-      try {
-        const moduleManifest = await fs.readJson(path.join(modulePath, 'package.json'));
-        modules[path.relative(nodeModules, modulePath)] = moduleManifest.version;
-      } catch (e) {
-        // Ignore bad modules
-      }
+    // Check the module manifest and store the version.
+    try {
+      const moduleManifest = await fs.readJson(path.join(modulePath, 'package.json'));
+      modules[path.relative(Const.NODE_MODULES_DIR, modulePath)] = moduleManifest.version;
+    } catch (e) {
+      // Ignore bad modules
     }
   }
 
@@ -68,11 +70,11 @@ async function findNativeModules() {
 
 async function rebuild() {
   logger.info('Rebuilding modules...');
-  const command = path.join(__dirname, '..', 'node_modules', '.bin', 'electron-rebuild');
-  await BuildUtils.spawn(command, [
+  const command = path.join(Const.NODE_MODULES_DIR, '.bin', 'electron-rebuild');
+  await ProcessUtils.spawn(command, [
     '-f',
-    '-e', BuildUtils.getElectronRoot(),
-    '-v', BuildUtils.getElectronVersion(),
+    '-e', ElectronUtils.getElectronRoot(),
+    '-v', ElectronUtils.getElectronVersion(),
   ], {
     stdio: 'inherit',
   });
@@ -86,14 +88,14 @@ export default async function() {
     // Missing files mean we rebuild
   }
 
-  const electron = BuildUtils.getManifest()._electron;
   let currentElectron = null;
   try {
-    currentElectron = BuildUtils.getElectronVersion();
+    currentElectron = ElectronUtils.getElectronVersion();
   } catch (e) {
     // Fall through and download
   }
 
+  const electron = BuildUtils.getManifest()._electron;
   if (electron.version !== currentElectron) {
     await downloadElectron();
   }
@@ -104,7 +106,7 @@ export default async function() {
   }
 
   const shouldRebuild = () => {
-    if (existingConfig.electron !== BuildUtils.getElectronVersion()) {
+    if (existingConfig.electron !== ElectronUtils.getElectronVersion()) {
       return true;
     }
 
@@ -127,7 +129,7 @@ export default async function() {
 
   if (shouldRebuild()) {
     await rebuild();
-    existingConfig.electron = BuildUtils.getElectronVersion();
+    existingConfig.electron = ElectronUtils.getElectronVersion();
     existingConfig.nativeModules = modules;
     BuildUtils.writeBuildConfig(existingConfig);
   }

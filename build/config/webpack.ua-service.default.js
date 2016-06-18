@@ -4,26 +4,26 @@
 import webpack from 'webpack';
 import path from 'path';
 import nodeExternals from 'webpack-node-externals';
-import defaultConfig from './webpack.config.base';
-import * as Const from './const';
+import defaultConfig from './webpack.base';
+import * as Const from '../utils/const';
 
-export const SRC_DIR = path.join(Const.SRC_DIR, 'services', 'content-service');
-export const DST_DIR = path.join(Const.BUILD_DIR, 'services', 'content-service');
+export const SRC_DIR = path.join(Const.SRC_DIR, 'services', 'user-agent-service');
+export const DST_DIR = path.join(Const.LIB_DIR, 'services', 'user-agent-service');
 
 export default {
   ...defaultConfig,
-  entry: path.join(SRC_DIR, 'index.js'),
+  entry: path.join(SRC_DIR, 'bin', 'user-agent-service'),
   output: {
     ...defaultConfig.output,
     path: DST_DIR,
-    filename: 'index.js',
-    sourceMapFilename: 'index.map',
+    filename: 'user-agent-service',
+    sourceMapFilename: 'user-agent-service.map',
   },
   target: 'node',
   plugins: [
     ...defaultConfig.plugins,
     new webpack.DefinePlugin({
-      PROCESS_TYPE: '"content-service"',
+      PROCESS_TYPE: '"ua-service"',
     }),
     new webpack.DefinePlugin({
       LIBDIR: 'require("path").join(__dirname, "..", "..")',
