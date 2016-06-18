@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import rootReducer from '../reducers';
-import * as model from '../model/index';
+import * as model from '../model/browser';
 
 import configureStore from '../../shared/configure-store';
 

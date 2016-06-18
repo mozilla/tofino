@@ -10,13 +10,26 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { PropTypes } from 'react';
-import ImmutablePropTypes from 'react-immutable-proptypes';
+import React from 'react';
 
-import * as Model from './browser';
+import Style from '../../shared/style';
+import BrowserWindow from './browser';
 
-export const Page = PropTypes.instanceOf(Model.Page);
-export const Pages = ImmutablePropTypes.listOf(Page.isRequired);
+const APP_STYLE = Style.registerStyle({
+  width: '100%',
+  height: '100%',
+});
 
-export const Profile = PropTypes.instanceOf(Model.Profile);
-export const Profiles = ImmutablePropTypes.listOf(Profile.isRequired);
+const App = function() {
+  const Element = Style.Element;
+  return (
+    <div className={APP_STYLE}>
+      <BrowserWindow />
+      <Element />
+    </div>
+  );
+};
+
+App.displayName = 'App';
+
+export default Style.component(App);

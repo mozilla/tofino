@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes } from 'react';
 
 import Style from '../../shared/style';
-import Page from './page/page';
+import Page from '../../shared/chrome/page/page';
 import * as SharedPropTypes from '../../shared/model/shared-prop-types';
 
 const CONTENT_AREA_STYLE = Style.registerStyle({

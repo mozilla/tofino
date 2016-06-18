@@ -20,7 +20,7 @@ import LocationCompletionRow from './location-completion-row';
 
 import { fixURL, getCurrentWebView } from '../../browser-util';
 import { SHOW_COMPLETIONS } from '../../constants/ui';
-import { Page } from '../../model';
+import { Page } from '../../model/browser';
 import * as selectors from '../../selectors';
 import * as actions from '../../actions/main-actions';
 

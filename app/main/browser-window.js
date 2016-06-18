@@ -17,7 +17,9 @@ import * as hotkeys from './hotkeys';
 import { UI_DIR, fileUrl } from '../shared/paths-util';
 import BUILD_CONFIG from '../../build-config';
 
-const BROWSER_CHROME_URL = fileUrl(path.join(UI_DIR, 'browser', 'browser.html'));
+const BROWSER_CHROME_URL1 = fileUrl(path.join(UI_DIR, 'browser1', 'browser.html'));
+const BROWSER_CHROME_URL2 = fileUrl(path.join(UI_DIR, 'browser2', 'browser.html'));
+
 const BrowserWindow = electron.BrowserWindow;  // create native browser window.
 
 /**
@@ -79,7 +81,11 @@ export async function createBrowserWindow(userAgentClient, onload) {
   });
 
   // Start loading browser chrome.
-  browser.loadURL(BROWSER_CHROME_URL);
+  if (false) {
+    browser.loadURL(BROWSER_CHROME_URL1);
+  } else {
+    browser.loadURL(BROWSER_CHROME_URL2);
+  }
 
   hotkeys.bindBrowserWindowHotkeys(browser);
   browser.once('closed', () => {

@@ -8,8 +8,8 @@ import defaultConfig from './webpack.base';
 import * as Const from '../utils/const';
 
 export const SHARED_DIR = path.join(Const.SRC_DIR, 'ui', 'shared');
-export const SRC_DIR = path.join(Const.SRC_DIR, 'ui', 'browser1');
-export const DST_DIR = path.join(Const.LIB_DIR, 'ui', 'browser1');
+export const SRC_DIR = path.join(Const.SRC_DIR, 'ui', 'browser2');
+export const DST_DIR = path.join(Const.LIB_DIR, 'ui', 'browser2');
 
 export default {
   ...defaultConfig,

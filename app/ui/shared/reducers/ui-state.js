@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 import assert from 'assert';
 
 import * as types from '../constants/action-types';
-import { UIState } from '../model';
+import { UIState } from '../model/browser';
 import { isUUID } from '../browser-util';
 
 const initialState = new UIState();
