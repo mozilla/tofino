@@ -121,7 +121,7 @@ const NavBar = (props) => {
           onClick={navRefresh}
           disabled={!props.page.canRefresh} />
       </div>
-      <Location { ...props } />
+      <Location {...props} />
       <div className={`${NAVBAR_SIDE_SECTIONS_STYLE} ${NAVBAR_SIDE_SECTION_RIGHT_STYLE}`}>
         <Btn id="browser-navbar-minimize"
           className={NAVBAR_WINDOW_CONTROL_BUTTONS_STYLE}
