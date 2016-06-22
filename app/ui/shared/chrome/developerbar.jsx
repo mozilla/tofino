@@ -15,7 +15,7 @@ import React, { Component, PropTypes } from 'react';
 import BUILD_CONFIG from '../../../../build-config';
 import Style from '../../shared/style';
 import Btn from '../../shared/widgets/btn';
-import { perfStart, perfStop } from '../actions/developer';
+import { perfStart, perfStop } from '../../shared/actions/developer';
 
 const DEVELOPER_BAR_STYLE = Style.registerStyle({
   position: 'fixed',

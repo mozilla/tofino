@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes } from 'react';
 
 import * as UIConstants from '../../constants/ui';
-import { Page } from '../../model';
+import { Page } from '../../model/browser';
 import Style from '../../../shared/style';
 import Btn from '../../../shared/widgets/btn';
 

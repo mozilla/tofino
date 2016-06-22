@@ -13,8 +13,8 @@ specific language governing permissions and limitations under the License.
 import React from 'react';
 
 import Style from '../../shared/style';
-import TabBar from './tabbar/tabbar';
-import NavBar from './navbar/navbar';
+import TabBar from '../../shared/chrome/tabbar/tabbar';
+import NavBar from '../../shared/chrome/navbar/navbar';
 
 const CHROME_AREA_STYLE = Style.registerStyle({
   flexDirection: 'column',

@@ -29,8 +29,8 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
 import App from './views/app';
-import { createBrowserStore } from './store';
-import * as actions from './actions/main-actions';
+import { createBrowserStore } from '../shared/store';
+import * as actions from '../shared/actions/main-actions';
 import * as profileDiffs from '../../shared/profile-diffs';
 import UserAgentClient from '../../shared/user-agent-client';
 

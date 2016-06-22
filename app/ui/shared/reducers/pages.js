@@ -16,7 +16,7 @@ import Immutable from 'immutable';
 import { logger } from '../../../shared/logging';
 import * as types from '../constants/action-types';
 import { HOME_PAGE } from '../constants/ui';
-import { Pages, Page } from '../model';
+import { Pages, Page } from '../model/browser';
 import { isUUID } from '../browser-util';
 import { getPageIndexById, getPageIndexBySessionId } from '../selectors';
 

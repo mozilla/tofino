@@ -17,13 +17,13 @@ import { ipcRenderer } from '../../../shared/electron';
 import Style from '../../shared/style';
 import * as SharedPropTypes from '../../shared/model/shared-prop-types';
 import BrowserChrome from './browser-chrome';
-import BrowserContent from './browser-content';
-import DeveloperBar from './developerbar';
-import WebViewController from '../lib/webview-controller';
+import BrowserContent from '../../shared/chrome/browser-content';
+import DeveloperBar from '../../shared/chrome/developerbar';
+import WebViewController from '../../shared/lib/webview-controller';
 
-import * as actions from '../actions/main-actions';
-import * as external from '../actions/external';
-import * as selectors from '../selectors';
+import * as actions from '../../shared/actions/main-actions';
+import * as external from '../../shared/actions/external';
+import * as selectors from '../../shared/selectors';
 import * as contentURLs from '../../../shared/constants/content-pages-locations';
 
 const BROWSER_WINDOW_STYLE = Style.registerStyle({

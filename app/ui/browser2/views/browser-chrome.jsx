@@ -10,13 +10,26 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { PropTypes } from 'react';
-import ImmutablePropTypes from 'react-immutable-proptypes';
+import React from 'react';
 
-import * as Model from './browser';
+import Style from '../../shared/style';
+import TabBar from '../../shared/chrome/tabbar/tabbar';
+import NavBar from '../../shared/chrome/navbar/navbar';
 
-export const Page = PropTypes.instanceOf(Model.Page);
-export const Pages = ImmutablePropTypes.listOf(Page.isRequired);
+const CHROME_AREA_STYLE = Style.registerStyle({
+  flexDirection: 'column',
+  backgroundColor: 'grey',
+});
 
-export const Profile = PropTypes.instanceOf(Model.Profile);
-export const Profiles = ImmutablePropTypes.listOf(Profile.isRequired);
+const BrowserChrome = function(props) {
+  return (
+    <div className={CHROME_AREA_STYLE}>
+      <NavBar {...props} />
+      <TabBar {...props} />
+    </div>
+  );
+};
+
+BrowserChrome.displayName = 'BrowserChrome';
+
+export default BrowserChrome;

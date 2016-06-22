@@ -14,7 +14,7 @@ import React, { PropTypes, Component } from 'react';
 import { logger } from '../../../../shared/logging';
 
 import Style from '../../../shared/style';
-import { Page as PageModel } from '../../model';
+import { Page as PageModel } from '../../model/browser';
 
 import Status from './status';
 import Search from '../../../shared/widgets/search';

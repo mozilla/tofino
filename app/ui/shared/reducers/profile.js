@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import Immutable from 'immutable';
-import { Profile } from '../model';
+import { Profile } from '../model/browser';
 import * as types from '../constants/action-types';
 import * as profileDiffTypes from '../../../shared/constants/profile-diff-types';
 
