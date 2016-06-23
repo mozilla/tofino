@@ -6,12 +6,14 @@ import webpack from 'webpack';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import defaultConfig from './webpack.base';
 import * as Const from '../utils/const';
+import devConfig from './webpack.base.snippets.dev';
+import prodConfig from './webpack.base.snippets.prod';
 
 export const SHARED_DIR = path.join(Const.SRC_DIR, 'ui', 'shared');
 export const SRC_DIR = path.join(Const.SRC_DIR, 'ui', 'browser');
 export const DST_DIR = path.join(Const.LIB_DIR, 'ui', 'browser');
 
-export default {
+const browserConfig = {
   ...defaultConfig,
   entry: path.join(SRC_DIR, 'index.jsx'),
   output: {
@@ -52,4 +54,26 @@ export default {
     }]),
   ],
   target: 'electron-renderer',
+};
+
+export const dev = {
+  ...devConfig,
+  ...browserConfig,
+  output: {
+    ...devConfig.output,
+    ...browserConfig.output,
+  },
+  plugins: [
+    ...devConfig.plugins,
+    ...browserConfig.plugins,
+  ],
+};
+
+export const prod = {
+  ...prodConfig,
+  ...browserConfig,
+  plugins: [
+    ...prodConfig.plugins,
+    ...browserConfig.plugins,
+  ],
 };

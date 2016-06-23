@@ -2,17 +2,13 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import colors from 'colors/safe';
-import * as BrowserDirs from './config/webpack.browser.default';
-import browserProdConfig from './config/webpack.browser.prod';
-import browserDevConfig from './config/webpack.browser.dev';
 import * as PreloadDirs from './config/webpack.preload.default';
-
-import * as BrowserAltDirs from './config/webpack.browseralt.default';
-import browserAltProdConfig from './config/webpack.browseralt.prod';
-import browserAltDevConfig from './config/webpack.browseralt.dev';
-
 import preloadProdConfig from './config/webpack.preload.prod';
 import preloadDevConfig from './config/webpack.preload.dev';
+
+import * as browserConfig from './config/webpack.browser.default';
+import * as browserAltConfig from './config/webpack.browseralt.default';
+
 import { getBuildConfig } from './utils';
 import { shouldRebuild } from './utils/rebuild';
 import { webpackBuild } from './utils/webpack';
@@ -28,7 +24,7 @@ export default async function() {
 }
 
 async function buildBrowser() {
-  const { SRC_DIR, SHARED_DIR } = BrowserDirs;
+  const { SRC_DIR, SHARED_DIR } = browserConfig;
   const id = 'browser';
 
   if (!(await shouldRebuild(id, [SRC_DIR, id], [SHARED_DIR, 'ui/shared']))) {
@@ -38,11 +34,11 @@ async function buildBrowser() {
 
   logger.info(colors.cyan(`Building ${id}...`));
   const { development } = getBuildConfig();
-  return await webpackBuild(development ? browserDevConfig : browserProdConfig);
+  return await webpackBuild(development ? browserConfig.dev : browserConfig.prod);
 }
 
 async function buildBrowserAlt() {
-  const { SRC_DIR, SHARED_DIR } = BrowserAltDirs;
+  const { SRC_DIR, SHARED_DIR } = browserAltConfig;
   const id = 'browser-alt';
 
   if (!(await shouldRebuild(id, [SRC_DIR, id], [SHARED_DIR, 'ui/shared']))) {
@@ -52,7 +48,7 @@ async function buildBrowserAlt() {
 
   logger.info(colors.cyan(`Building ${id}...`));
   const { development } = getBuildConfig();
-  return await webpackBuild(development ? browserAltDevConfig : browserAltProdConfig);
+  return await webpackBuild(development ? browserAltConfig.dev : browserAltConfig.prod);
 }
 
 async function buildPreload() {
