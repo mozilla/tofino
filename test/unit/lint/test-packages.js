@@ -52,6 +52,7 @@ const ignored = [
   'babel-preset-react',
   'babel-runtime',
   'babel-eslint',
+  'uglify-js',
   'eslint',
   'eslint-config-airbnb',
   'eslint-plugin-flow-vars',
