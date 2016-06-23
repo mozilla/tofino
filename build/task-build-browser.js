@@ -6,6 +6,11 @@ import * as BrowserDirs from './config/webpack.browser.default';
 import browserProdConfig from './config/webpack.browser.prod';
 import browserDevConfig from './config/webpack.browser.dev';
 import * as PreloadDirs from './config/webpack.preload.default';
+
+import * as BrowserAltDirs from './config/webpack.browseralt.default';
+import browserAltProdConfig from './config/webpack.browseralt.prod';
+import browserAltDevConfig from './config/webpack.browseralt.dev';
+
 import preloadProdConfig from './config/webpack.preload.prod';
 import preloadDevConfig from './config/webpack.preload.dev';
 import { getBuildConfig } from './utils';
@@ -15,9 +20,10 @@ import { logger } from './logging';
 
 export default async function() {
   const { close: browserClose } = await buildBrowser();
+  const { close: browserAltClose } = await buildBrowserAlt();
   const { close: preloadClose } = await buildPreload();
   return {
-    close: () => Promise.all([browserClose(), preloadClose()]),
+    close: () => Promise.all([browserClose(), browserAltClose(), preloadClose()]),
   };
 }
 
@@ -33,6 +39,20 @@ async function buildBrowser() {
   logger.info(colors.cyan(`Building ${id}...`));
   const { development } = getBuildConfig();
   return await webpackBuild(development ? browserDevConfig : browserProdConfig);
+}
+
+async function buildBrowserAlt() {
+  const { SRC_DIR, SHARED_DIR } = BrowserAltDirs;
+  const id = 'browser-alt';
+
+  if (!(await shouldRebuild(id, [SRC_DIR, id], [SHARED_DIR, 'ui/shared']))) {
+    logger.info(colors.green(`No changes in ${id}.`));
+    return { close: () => {} };
+  }
+
+  logger.info(colors.cyan(`Building ${id}...`));
+  const { development } = getBuildConfig();
+  return await webpackBuild(development ? browserAltDevConfig : browserAltProdConfig);
 }
 
 async function buildPreload() {
