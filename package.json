@@ -79,7 +79,7 @@
     "electron-download": "2.1.2",
     "electron-ipc-mock": "0.0.2",
     "electron-mocha": "2.2.1",
-    "electron-packager": "7.0.4",
+    "electron-packager": "7.1.0",
     "electron-rebuild": "1.1.5",
     "enzyme": "2.2.0",
     "eslint": "2.13.1",
