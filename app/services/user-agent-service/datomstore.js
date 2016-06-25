@@ -23,18 +23,17 @@ import {
 import Immutable from 'immutable';
 import microtime from 'microtime-fast';
 import { Bookmark } from '../../shared/model';
-import { logger } from '../../shared/logging';
 
 import {
   SessionEndReason,
   SessionStartReason,
   SnippetSize,
-  // StarOp,
+  StarOp,
   // VisitType
 } from './storage';
 
 const { lazySeq, vector, parse, getIn } = mori;
-const { DB_ADD, TEMPIDS } = helpers;
+const { DB_ADD, DB_RETRACT, DB_CURRENT_TX, TEMPIDS } = helpers;
 
 const profileSchema = {
   'page/url': {
@@ -57,10 +56,9 @@ const profileSchema = {
     ':db/doc': 'A visit to the page.',
   },
 
-  'event/star': {
-    ':db/valueType': ':db.type/ref',
-    ':db/cardinality': ':db.cardinality/many',
-    ':db/doc': 'A starring to the page.',
+  'page/starred': {
+    ':db/cardinality': ':db.cardinality/one',
+    ':db/doc': 'A starring of the page.',
   },
 
   // TODO: model sessions.
@@ -185,12 +183,27 @@ export class ProfileDatomStorage {
   }
 
   // Chains through place ID.
-  starPage(url, session, action, now = microtime.now()) {
-    const result = this.transact(vector(
-      vector(DB_ADD, -1, 'page/url', url)
-    ));
+  async starPage(url, session, action, now = microtime.now()) {
+    if (action === StarOp.star) {
+      // TODO: session, time
+      const result = this.transact(vector(
+        vector(DB_ADD, DB_CURRENT_TX, ':db/txInstant', (now / 1000)),
+        vector(DB_ADD, -1, 'page/url', url),
+        vector(DB_ADD, -1, 'page/starred', true)
+      ));
+      return getIn(result, [TEMPIDS, -1]);
+    }
 
-    return getIn(result, [TEMPIDS, -1]);
+    if (action === StarOp.unstar) {
+      // TODO: session, time
+      const result = this.transact(vector(
+        vector(DB_ADD, DB_CURRENT_TX, ':db/txInstant', (now / 1000)),
+        vector(DB_RETRACT, vector('page/url', url), true)
+      ));
+      return -1;        // TODO
+    }
+
+    return Promise.reject(new Error(`Unknown action ${action}.`));
   }
 
   /**
@@ -289,6 +302,7 @@ export class ProfileDatomStorage {
    * @returns {Promise<[AwesomebarMatch]>}
    */
   async query(string, since = 0, limit = 10, snippetSize = SnippetSize.medium) {
+    // TODO
   }
 
   // Future: free-text indexing.
