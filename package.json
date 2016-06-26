@@ -92,7 +92,7 @@
     "fetch-mock": "4.5.4",
     "glob": "7.0.5",
     "gulp-vinyl-zip": "1.2.2",
-    "jsdom": "9.2.1",
+    "jsdom": "9.3.0",
     "json-loader": "0.5.4",
     "lodash": "4.13.1",
     "mocha": "2.5.3",
