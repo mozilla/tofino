@@ -272,6 +272,39 @@ export class ProfileDatomStorage {
     return lazyMapcat(expandResults, chunks);
   }
 
+  async visitedMatchingFilter(visitDatoms, filter, limit = 10, filterRate = 3) {
+    // Fast path: we don't need chunking or laziness, because there are
+    // fewer than `limit` total visits.
+    const count = mori.count(visitDatoms);
+    if (!limit || (count < limit)) {
+      const all = await this.getVisitedPagesEagerly(visitDatoms);
+      return mori.filter(filter, all);
+    }
+
+    const all = await this.getVisitedPagesLazily(visitDatoms, filterRate * limit);
+    return mori.take(limit, mori.filter(filter, all));
+  }
+
+  /**
+   * Produce a predicate that allows a result to pass only once.
+   */
+  uniquenessFilter() {
+    const seen = new Set();
+    return page => {
+      if (seen.has(page.place)) {
+        return false;
+      }
+      seen.add(page.place);
+      return true;
+    };
+  }
+
+  matchesFilter(input) {
+    const re = new RegExp(escapeRegExp(input), 'i');
+    return result => (result.title && re.test(result.title)) ||
+                     (re.test(result.uri));
+  }
+
   // Ordered by last visit, descending.
   async visited(since = null, limit = 10) {
     const visitDatoms = this.getVisits(since);
@@ -283,10 +316,25 @@ export class ProfileDatomStorage {
       return this.getVisitedPagesEagerly(visitDatoms);
     }
 
-    // We add a little padding to make it so that one or two
-    // repeated visits don't push us into the next chunk.
-    const all = await this.getVisitedPagesLazily(visitDatoms, limit + 3);
-    return mori.take(limit, all);
+    return this.visitedMatchingFilter(visitDatoms, this.uniquenessFilter(), limit);
+  }
+
+  // Future: free-text indexing.
+  // Future: consider whether to do text lookup on URLs first (perhaps through an
+  // auxiliary data structure) rather than filtering visits.
+  // For lots of matches and a small limit, filtering might well be faster, but…
+  async visitedMatches(substring, since = 0, limit = 10) {
+    const visitDatoms = this.getVisits(since);
+
+    if (substring === '') {
+      return this.visited(since, limit);
+    }
+
+    const unique = this.uniquenessFilter();
+    const matches = this.matchesFilter(substring);
+    const keep = page => unique(page) && matches(page);
+
+    return this.visitedMatchingFilter(visitDatoms, keep, limit);
   }
 
   /**
@@ -303,24 +351,6 @@ export class ProfileDatomStorage {
    */
   async query(string, since = 0, limit = 10, snippetSize = SnippetSize.medium) {
     // TODO
-  }
-
-  // Future: free-text indexing.
-  async visitedMatches(substring, since = 0, limit = 10) {
-    if (substring === '') {
-      return this.visited(since, limit);
-    }
-
-    const re = new RegExp(escapeRegExp(substring), 'i');
-    function matchesSubstring(result) {
-      return (result.title && re.test(result.title)) ||
-             (re.test(result.uri));
-    }
-
-    const visitDatoms = this.getVisits(since);
-    const all = await this.getVisitedPagesLazily(visitDatoms, 3 * limit);
-
-    return mori.take(limit, mori.filter(matchesSubstring, all));
   }
 
   async getStarredWithOrderByAndLimit(newestFirst, limit) {
