@@ -183,11 +183,12 @@ export class ProfileDatomStorage {
   }
 
   // Chains through place ID.
+  // Unlike Datomic, we use microseconds for transaction timestamps.
   async starPage(url, session, action, now = microtime.now()) {
     if (action === StarOp.star) {
-      // TODO: session, time
+      // TODO: session.
       const result = this.transact(vector(
-        vector(DB_ADD, DB_CURRENT_TX, ':db/txInstant', (now / 1000)),
+        vector(DB_ADD, DB_CURRENT_TX, ':db/txInstant', now),
         vector(DB_ADD, -1, 'page/url', url),
         vector(DB_ADD, -1, 'page/starred', true)
       ));
@@ -195,12 +196,12 @@ export class ProfileDatomStorage {
     }
 
     if (action === StarOp.unstar) {
-      // TODO: session, time
+      // TODO: session.
       const result = this.transact(vector(
-        vector(DB_ADD, DB_CURRENT_TX, ':db/txInstant', (now / 1000)),
-        vector(DB_RETRACT, vector('page/url', url), true)
+        vector(DB_ADD, DB_CURRENT_TX, ':db/txInstant', now),
+        vector(DB_RETRACT, vector('page/url', url), 'page/starred', true)
       ));
-      return -1;        // TODO
+      return undefined;         // TODO?
     }
 
     return Promise.reject(new Error(`Unknown action ${action}.`));
@@ -239,22 +240,21 @@ export class ProfileDatomStorage {
         this.getDB(), 'visit/instant', since, null));
   }
 
+  pageResultToJSON(tuple) {
+    const [ts, details, page] = tuple;
+    return {
+      lastVisited: ts,
+      place: page,
+      uri: mori.get(details, 'page/url'),
+      title: mori.get(details, 'page/title'),
+    };
+  }
+
   getPageDetails(visits) {
     const query = this.pageDetailsQuery;
-
-    function toJSON(pair) {
-      const [ts, details, page] = pair;
-      return {
-        lastVisited: ts,
-        place: page,
-        uri: mori.get(details, 'page/url'),
-        title: mori.get(details, 'page/title'),
-      };
-    }
-
     const results = datascript.core.q(query, this.getDB(), visits);
     const sorted = mori.sortBy(mori.first, compareDescending, results);
-    return mori.map(toJSON, sorted);
+    return mori.map(this.pageResultToJSON, sorted);
   }
 
   async getVisitedPagesEagerly(visitDatoms) {
@@ -324,22 +324,33 @@ export class ProfileDatomStorage {
   }
 
   async getStarredWithOrderByAndLimit(newestFirst, limit) {
+    const starredQuery = parse(`
+    [:find (max ?timestampMicros) (pull ?page ["page/url" "page/title"]) ?page
+     :in $
+     :where
+     [?page "page/starred" true ?t]
+     [?t ":db/txInstant" ?timestampMicros]
+    ]`);
+    const results = datascript.core.q(starredQuery, this.getDB());
+    const sorted = newestFirst ? mori.sortBy(mori.first, compareDescending, results) : results;
+    const limited = limit ? mori.take(limit, sorted) : sorted;
+    return mori.map(this.pageResultToJSON, limited);
   }
 
   async starredURLs(limit = undefined) {
-    // Fetch all places visited, with the latest timestamp for each.
     const rows = await this.getStarredWithOrderByAndLimit(false, limit);
-    return Immutable.Set(rows.map(row => row.url));
+    return mori.set(mori.map(row => row.uri, rows));
   }
 
   async recentlyStarred(limit = 5) {
     const rows = await this.getStarredWithOrderByAndLimit(true, limit);
-    return rows.map(row =>
+    return mori.map(row =>
       new Bookmark({
-        title: row.title, location: row.url, visitedAt: row.ts,
-      }));
+        title: row.title, location: row.uri, visitedAt: row.lastVisited,
+      }), rows);
   }
 
   async savePage(page, session, now = microtime.now()) {
+    // TODO
   }
 }

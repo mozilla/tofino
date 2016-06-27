@@ -12,8 +12,39 @@ import {
 } from 'datascript-mori';
 
 import { ProfileDatomStorage } from '../../../app/services/user-agent-service/datomstore';
+import { StarOp } from '../../../app/services/user-agent-service/storage';
+
 const { vector, getIn } = mori;
 const { DB_ADD, TEMPIDS } = helpers;
+
+describe('Storage.recentlyStarred', () => {
+  it('Stars and unstars.', async () => {
+    const db = new ProfileDatomStorage('.');
+    const A = await db.recentlyStarred();
+    expect(mori.count(A)).toBe(0);
+    await db.starPage('http://foo.com/bar', 0, StarOp.star, 1234567890);
+    const B = await db.recentlyStarred();
+    expect(mori.count(B)).toBe(1);
+
+    const { visitedAt, location, title } = mori.first(B);
+    expect(visitedAt).toBe(1234567890);
+    expect(location).toBe('http://foo.com/bar');
+    expect(title).toNotExist();
+
+    await db.starPage('http://foo.com/bar', 0, StarOp.unstar, 1234567891);
+    const C = await db.recentlyStarred();
+    expect(mori.count(C)).toBe(0);
+  });
+
+  it('Cannot re-star.', async () => {
+    const db = new ProfileDatomStorage('.');
+    await db.starPage('http://foo.com/bar', 0, StarOp.star, 1234567892);
+    expect(mori.first(await db.recentlyStarred()).visitedAt).toBe(1234567892);
+    await db.starPage('http://foo.com/bar', 0, StarOp.star, 1234567900);
+    expect(mori.count(await db.recentlyStarred())).toBe(1);
+    expect(mori.first(await db.recentlyStarred()).visitedAt).toBe(1234567892);
+  });
+});
 
 describe('Storage.visited', () => {
   it('Empty fetches with no limit.', async () => {
@@ -80,7 +111,7 @@ describe('Storage.visited', () => {
     const session = await db.startSession('here', null, 1234567890);
 
     let visitCount = 0;
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < 10000; i++) {
       for (let j = 0; j < (3 * (Math.random())); j++) {
         visitCount++;
         await db.visit(`http://example.com/foo/${i}`,
