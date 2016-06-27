@@ -3,7 +3,7 @@
 --recursive
 --check-leaks
 --full-trace
---timeout 3000
+--timeout 5000
 --require test/unit/head.js
 --require babel-polyfill
 --require isomorphic-fetch
