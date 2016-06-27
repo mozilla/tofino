@@ -98,27 +98,6 @@ export class ProfileStorage {
   }
 
   /**
-   * Begins a transaction and runs `f`. If `f` returns a promise that rejects,
-   * rolls back the transaction and passes through the rejection. If `f` resolves
-   * to a value, commits the transaction and passes through the resolved value.
-   *
-   * @param f the function to call within a transaction.
-   * @returns {*} the result or rejection of `f`.
-   */
-  inTransaction(f) {
-    return this.db
-               .run('BEGIN TRANSACTION')
-               .then(f)
-               .then((result) =>
-                 this.db
-                     .run('COMMIT')
-                     .then(() => Promise.resolve(result)))
-               .catch((err) =>
-                 this.db.run('ROLLBACK')
-                     .then(() => Promise.reject(err)));
-  }
-
-  /**
    * Saves a place, expecting a transaction to be established if necessary.
    * Does not update `this.places`! Callers should do that once the entire
    * transaction completes.
@@ -259,7 +238,7 @@ export class ProfileStorage {
       return star(place);
     }
 
-    return this.inTransaction(() =>
+    return this.db.inTransaction(() =>
                  this.savePlaceWithoutEstablishingTransaction(url, now)
                      .then(star))
 
@@ -301,7 +280,7 @@ export class ProfileStorage {
    * @returns {Promise} a promise that resolves to the place ID.
    */
   visit(url, session, title, now = microtime.now()) {
-    return this.inTransaction(() =>
+    return this.db.inTransaction(() =>
       this.recordVisitWithoutEstablishingTransaction(url, session, title, now)
 
           // If the transaction committed, keep the URL -> ID mapping in memory.
