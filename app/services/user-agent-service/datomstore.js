@@ -220,7 +220,7 @@ export class ProfileDatomStorage {
       const result = await this.transact(vector(
         vector(DB_ADD, DB_CURRENT_TX, ':db/txInstant', now),
         vector(DB_ADD, -1, 'page/url', url),
-        vector(DB_ADD, -1, 'page/starred', true)
+        vector(DB_ADD, -1, 'page/starred', 1)
       ));
       return getIn(result, [TEMPIDS, -1]);
     }
@@ -229,7 +229,7 @@ export class ProfileDatomStorage {
       // TODO: session.
       const result = await this.transact(vector(
         vector(DB_ADD, DB_CURRENT_TX, ':db/txInstant', now),
-        vector(DB_RETRACT, vector('page/url', url), 'page/starred', true)
+        vector(DB_RETRACT, vector('page/url', url), 'page/starred', 1)
       ));
       return undefined;         // TODO?
     }
@@ -388,7 +388,7 @@ export class ProfileDatomStorage {
     [:find (max ?timestampMicros) (pull ?page ["page/url" "page/title"]) ?page
      :in $
      :where
-     [?page "page/starred" true ?t]
+     [?page "page/starred" 1 ?t]
      [?t ":db/txInstant" ?timestampMicros]
     ]`);
     const results = datascript.core.q(starredQuery, this.getDB());
