@@ -2,8 +2,7 @@ platform:
   - x86
   - x64
 
-image: Visual Studio 2013
-os: unstable
+os: Previous Visual Studio 2015
 
 environment:
   nodejs_version: "6.1"
