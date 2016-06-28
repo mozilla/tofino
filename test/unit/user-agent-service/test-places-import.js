@@ -23,7 +23,7 @@ describe('Places importer', function() {
   it('Should import Places from disk.', function(done) {
     (async function () {
       try {
-        const datomStorage = await ProfileDatomStorage.open('.'); // TODO: temporary directory.
+        const datomStorage = new ProfileDatomStorage();
         const conn = datomStorage.conn;
 
         const limit = undefined; // Use a small number in testing.

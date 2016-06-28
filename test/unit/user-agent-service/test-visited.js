@@ -22,7 +22,7 @@ const perfTesting = false;
 
 describe('Storage.recentlyStarred', () => {
   it('Stars and unstars.', async () => {
-    const db = new ProfileDatomStorage('.');
+    const db = new ProfileDatomStorage();
     const A = await db.recentlyStarred();
     expect(mori.count(A)).toBe(0);
     await db.starPage('http://foo.com/bar', 0, StarOp.star, 1234567890);
@@ -40,7 +40,7 @@ describe('Storage.recentlyStarred', () => {
   });
 
   it('Cannot re-star.', async () => {
-    const db = new ProfileDatomStorage('.');
+    const db = new ProfileDatomStorage();
     await db.starPage('http://foo.com/bar', 0, StarOp.star, 1234567892);
     expect(mori.first(await db.recentlyStarred()).visitedAt).toBe(1234567892);
     await db.starPage('http://foo.com/bar', 0, StarOp.star, 1234567900);
@@ -51,13 +51,13 @@ describe('Storage.recentlyStarred', () => {
 
 describe('Storage.visited', () => {
   it('Empty fetches with no limit.', async () => {
-    const db = new ProfileDatomStorage('.');
+    const db = new ProfileDatomStorage();
     const result = await db.visited();
     expect(mori.isEmpty(result)).toBeTruthy();
   });
 
   it('Smushes URLs for multiple transacts.', async () => {
-    const db = new ProfileDatomStorage('.');
+    const db = new ProfileDatomStorage();
     const resultA = datascript.core.transact_BANG_(db.conn, vector(
       vector(DB_ADD, -1, 'page/url', 'http://example.com')
     ));
@@ -69,7 +69,7 @@ describe('Storage.visited', () => {
   });
 
   it('Fetches a single row with more than one visit.', async () => {
-    const db = new ProfileDatomStorage('.');
+    const db = new ProfileDatomStorage();
     const session = await db.startSession('here', null, 1234567890);
     const pageA = await db.visit('http://example.com/foo/', session, 'Example Páge', 1234567900);
     const pageB = await db.visit('http://example.com/foo/', session, 'Example Páge 2', 1234567910);
@@ -93,7 +93,7 @@ describe('Storage.visited', () => {
   });
 
   it('Matches substrings.', async () => {
-    const db = new ProfileDatomStorage('.');
+    const db = new ProfileDatomStorage();
     const session = await db.startSession('here', null, 1234567890);
     await db.visit('http://example.com/foo/', session, 'Example Páge', 1234567900);
     await db.visit('http://example.com/bar/', session, 'Example Páge 2', 1234567910);
@@ -111,7 +111,7 @@ describe('Storage.visited', () => {
 
   if (perfTesting) {
     it('Performs reasonably well with lots of data.', async() => {
-      const db = new ProfileDatomStorage('.');
+      const db = new ProfileDatomStorage();
       const session = await db.startSession('here', null, 1234567890);
 
       let visitCount = 0;
@@ -134,7 +134,7 @@ describe('Storage.visited', () => {
   }
 
   it('Obeys limits.', async () => {
-    const db = new ProfileDatomStorage('.');
+    const db = new ProfileDatomStorage();
     const session = await db.startSession('here', null, 1234567890);
     await db.visit('http://example.com/foo/', session, 'Example Páge', 1234567900);
     await db.visit('http://example.com/bar/', session, 'Example Páge 2', 1234567910);
