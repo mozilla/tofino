@@ -52,6 +52,15 @@ export class DatomStorageSqlite {
   }
 
   async listen(report) {
+    const transactionToRow = (tx) => {
+      return mori.vector(tx.e,
+                         tx.a,
+                         tx.v,
+                         tx.tx,
+                         tx.added ? 1 : 0);
+    };
+
+
     const txData = mori.get(report, mori.keyword('tx-data'));
 
     await this.db.inTransaction(() => {
@@ -60,11 +69,7 @@ export class DatomStorageSqlite {
         const qs = `(?, ?, ?, ?, ?)${', (?, ?, ?, ?, ?)'.repeat(mori.count(txChunk) - 1)}`;
         return this.db
           .run(`INSERT INTO transactions (e, a, v, tx, added) VALUES ${qs}`,
-               mori.intoArray(mori.mapcat((tx) => mori.vector(tx.e,
-                                                              tx.a,
-                                                              tx.v,
-                                                              tx.tx,
-                                                              tx.added ? 1 : 0), txChunk)));
+               mori.intoArray(mori.mapcat(transactionToRow, txChunk)));
       }, mori.partitionAll(150, txData));
 
       // ps is a lazy sequence.  intoArray forces, like `seq`.
@@ -107,6 +112,7 @@ export class DatomStorageSqlite {
   async dbFromSnapshot(schema = datomstore.profileSchema) {
     const toDatom = (row) => d.datom(row.e, row.a, row.v, row.tx);
 
+    // DataScript sorts the input datom set.  This does most of the sorting at the DB level.
     const rows = await this.db.all('SELECT e, a, v, tx FROM datoms ORDER BY e, a');
     return djs.init_db(mori.map(toDatom, rows), helpers.schema_to_clj(schema));
   }
@@ -117,6 +123,8 @@ export class DatomStorageSqlite {
    * @param db DataScript database to persist.
    */
   async replaceSnapshot(db) {
+    const fromDatom = (x) => mori.vector(x.e, x.a, x.v, x.tx);
+
     const self = this;
     return await self.db.inTransaction(async function() {
       await self.db.run('DELETE FROM datoms');
@@ -126,7 +134,7 @@ export class DatomStorageSqlite {
         const qs = `(?, ?, ?, ?)${', (?, ?, ?, ?)'.repeat(mori.count(datomsChunk) - 1)}`;
         return self.db
           .run(`INSERT INTO datoms (e, a, v, tx) VALUES ${qs}`,
-               mori.intoArray(mori.mapcat((x) => mori.vector(x.e, x.a, x.v, x.tx), datomsChunk)));
+               mori.intoArray(mori.mapcat(fromDatom, datomsChunk)));
       }, mori.partitionAll(200, djs.datoms(db, mori.keyword('eavt'))));
 
       // ps is a lazy sequence.  intoArray forces, like `seq`.

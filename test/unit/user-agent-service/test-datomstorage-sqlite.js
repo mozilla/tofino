@@ -18,10 +18,12 @@ import * as microtime from 'microtime-fast';
 import { ProfileDatomStorage } from '../../../app/services/user-agent-service/datomstore';
 import { DatomStorageSqlite } from '../../../app/services/user-agent-service/datomstorage-sqlite';
 import { DB } from '../../../app/services/user-agent-service/sqlite';
+import { StarOp } from '../../../app/services/user-agent-service/storage';
 
 const { vector } = mori;
 const { DB_ADD, DB_RETRACT, TEMPIDS } = helpers;
 
+const d = datascript.core;
 const djs = datascript.js;
 
 const TEST_DATOMS_PATH = path.join(__dirname, 'test-datoms.db');
@@ -72,6 +74,68 @@ describe('DatomStorageSQLite', function() {
           expect(mori.count(djs.db(conn))).toBe(1);
           expect(await transactionCount()).toBe(2);
           expect(await transactionRowCount()).toBe(3);
+
+          done();
+        } finally {
+          datomStorage.close();
+          // This should be the only file after we close.
+          fs.unlinkSync(path.join(tempDir, 'datoms.db'));
+          fs.rmdirSync(tempDir);
+        }
+      } catch (e) {
+        done(e);
+      }
+    }());
+  });
+
+  it('Should persist transaction metadata.', function(done) {
+    (async function () {
+      try {
+        const tempDir = tmp.tmpNameSync();
+        const datomStorage = await ProfileDatomStorage.open(tempDir);
+
+        // Just for testing.
+        const persistentStorage = datomStorage.persistentStorage;
+        const db = datomStorage.persistentStorage.db;
+
+        const transactionCount = async function() {
+          const rows = await db.all('SELECT DISTINCT(tx) FROM transactions');
+          return rows.length;
+        };
+
+        try {
+          const session = undefined;
+          await datomStorage.starPage('https://google.com/', session, StarOp.star, 1);
+
+          const conn = datomStorage.conn;
+
+          await persistentStorage.replaceSnapshot(djs.db(conn));
+
+          let snapshotDB;
+          snapshotDB = await persistentStorage.dbFromSnapshot();
+          expect(mori.equals(djs.db(conn), snapshotDB)).toBe(true);
+
+          // This verifies that the DataScript max-eid correctly filters out assertions about
+          // transaction IDs.  If it didn't, we would get different entity IDs assigned.  See
+          // https://github.com/tonsky/datascript/issues/163.
+          expect(mori.equals(
+            d.db_with(djs.db(conn), vector(vector(DB_ADD, -1, 'attr', 0))),
+            d.db_with(snapshotDB, vector(vector(DB_ADD, -1, 'attr', 0))))).toBe(true);
+
+          const beforeUnstarTransactionCount = await transactionCount();
+          await datomStorage.starPage('https://google.com/', session, StarOp.unstar, 2);
+          const afterUnstarTransactionCount = await transactionCount();
+          // We should have written a single transaction.
+          expect(beforeUnstarTransactionCount + 1).toBe(afterUnstarTransactionCount);
+
+          await persistentStorage.replaceSnapshot(djs.db(conn));
+
+          snapshotDB = await persistentStorage.dbFromSnapshot();
+          expect(mori.equals(djs.db(conn), snapshotDB)).toBe(true);
+          // See comment above.
+          expect(mori.equals(
+            d.db_with(djs.db(conn), vector(vector(DB_ADD, -1, 'attr', 0))),
+            d.db_with(snapshotDB, vector(vector(DB_ADD, -1, 'attr', 0))))).toBe(true);
 
           done();
         } finally {
