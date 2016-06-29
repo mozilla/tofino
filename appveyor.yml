@@ -7,10 +7,6 @@ os: Previous Visual Studio 2015
 environment:
   nodejs_version: "6.1"
 
-branches:
-  only:
-    - master
-
 skip_commits:
   message: /\[ci skip\]/
 
@@ -46,4 +42,4 @@ deploy:
   bucket:
     secure: a/ijSslVXIxT1KRgwK6oWBJiOYD2DS5KCC5JpEDtXaU=
   set_public: true
-  folder: mozilla/tofino/builds
+  folder: mozilla/tofino/builds/$(appveyor_repo_branch)
