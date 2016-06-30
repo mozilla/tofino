@@ -20,7 +20,7 @@ addons:
       secure: yOwR+kXPsGBRngo/WetjJoeHSgMwxnKXvQBj2+hj2CGSv3sInGWAxUvagG9uq8l6c9YruBYankljZtspbbgiHooyRATC4Bv2FEVEEZWQKipVt0s7yRvLH1EOLz2PZO61LNGQsrS8PwujO5F77kf4/HcOlxljk/O2gLtDiP9+4upHWcgOMOfvaOpMOc7t0cnTjyvhfcabHH3Pv56tWdJBvOhQAai+LAiUkdsmjH1fnAplxiYnTWbGVlsvr8bn1zqZNIx5ZnmxGjOiEVnZyLY3QfbyhsthGPiKKumMV7fgUYX79suM+rjLw7kDYn3q1kEGIPw88k7LYYzx/uftprAcfmScSns5G9uGThR+0jUvAL24zwaQh4USrLb8ru+OCt6N0/P/Pk/YlpVms27dl9DbopdOWARFLCwK/Sdwki2/g7u2VJv/BBCCYZ7G3te66rhy+o/UKBhb4UpjJGusbxwfHMu8v0tpwWsTQjX4XKbz8VvixkT//C+DrqFlJ6w04+ohW0hI4ejCoHRF7xEKgPZfnxEVtBYfvJSwgFky0bw3Dl1xuwWQ7KSLIu6VfSTDo7dU7TGYFOjJ/Gt6SsL7GKstp1pGO7lSyR5RyiQcaM1G08MmWNLwlcxgoaFMbmbAX01mItODlUTN8riW5lMixGxuJhFvpMGTKLBaz1gR04hJHVs=
     paths: $(cd dist && ls *.zip | tr "\n" ":")
     working_dir: dist
-    target_paths: mozilla/tofino/builds
+    target_paths: $(echo mozilla/tofino/builds/${TRAVIS_BRANCH})
     permissions: public-read
 
 before_install:
@@ -42,7 +42,3 @@ script:
 after_success:
   - npm run package
   - npm run coverage
-
-branches:
-  only:
-    - master
