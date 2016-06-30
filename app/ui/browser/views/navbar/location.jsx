@@ -78,6 +78,7 @@ const TITLE_BAR_STYLE = Style.registerStyle({
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
   },
+  fontSize: '16px',
 });
 
 const INPUT_BAR_STYLE = Style.registerStyle({
@@ -91,6 +92,7 @@ const INPUT_BAR_STYLE = Style.registerStyle({
     background: 'var(--theme-selection-color)',
     color: 'var(--theme-content-selected-color)',
   },
+  fontSize: '16px',
 });
 
 /**
