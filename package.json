@@ -93,6 +93,7 @@
     "glob": "7.0.5",
     "jsdom": "9.2.1",
     "json-loader": "0.5.4",
+    "license-checker": "5.1.2",
     "lodash": "4.13.1",
     "mocha": "2.5.3",
     "mocha-eslint": "2.1.1",
@@ -103,8 +104,8 @@
     "rimraf": "2.5.2",
     "semver": "5.1.1",
     "spectron": "3.2.3",
-    "uglify-js": "github:mishoo/UglifyJS2#harmony",
     "tmp": "0.0.28",
+    "uglify-js": "github:mishoo/UglifyJS2#harmony",
     "webpack": "1.13.1",
     "webpack-node-externals": "1.2.0",
     "zip-dir": "1.0.2"
