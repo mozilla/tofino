@@ -97,7 +97,7 @@
     "mocha": "2.5.3",
     "mocha-eslint": "2.1.1",
     "nyc": "6.6.1",
-    "react-addons-perf": "15.1.0",
+    "react-addons-perf": "15.2.0",
     "react-addons-test-utils": "15.1.0",
     "require-dir": "0.3.0",
     "rimraf": "2.5.2",
