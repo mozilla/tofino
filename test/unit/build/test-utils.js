@@ -31,10 +31,6 @@ describe('build utils', () => {
   it('should export `getBuildConfig`', () => {
     const config = BuildUtils.getBuildConfig();
     expect(typeof config).toEqual('object');
-    expect(typeof config.electron).toEqual('string');
-    expect(typeof config.platform).toEqual('string');
-    expect(typeof config.arch).toEqual('string');
-    expect(typeof config.version).toEqual('string');
   });
 
   it('should export `writeBuildConfig`', () => {
