@@ -91,6 +91,7 @@ class UserAgentClient extends EventEmitter {
           logger.error(`UserAgentClient: ${err}`);
         } else if (ws) {
           this.ws = ws;
+          this._connected = true;
           resolve(this);
         }
       });
