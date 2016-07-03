@@ -100,7 +100,7 @@
     "react-addons-perf": "15.2.0",
     "react-addons-test-utils": "15.2.0",
     "require-dir": "0.3.0",
-    "rimraf": "2.5.2",
+    "rimraf": "2.5.3",
     "semver": "5.2.0",
     "spectron": "3.2.4",
     "uglify-js": "github:mishoo/UglifyJS2#harmony",
