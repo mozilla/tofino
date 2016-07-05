@@ -15,7 +15,7 @@ import {
   mori,
   helpers,
 } from 'datascript-mori';
-import * as sqlite from './user-agent-service/sqlite';
+import * as sqlite from 'promise-sqlite';
 
 import { logger } from '../shared/logging';
 
