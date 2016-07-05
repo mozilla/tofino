@@ -18,7 +18,6 @@
 
 import sqlite3 from 'sqlite3';
 import thenifyAll from 'thenify-all';
-import { logger } from '../../shared/logging';
 
 const Promise = global.Promise;
 const debug = false;
@@ -46,9 +45,15 @@ function thenifyMethods(source, dest, methods) {
   }
 }
 
+const defaultLogger = {
+  error: () => {},
+  info: () => {},
+};
+
 export class DB {
-  constructor(db) {
+  constructor(db, logger) {
     this.db = db;
+    this.logger = logger || defaultLogger;
     thenifyMethods(db, this, ['close', 'get', 'all', 'exec']);
   }
 
@@ -83,7 +88,7 @@ export class DB {
         }
 
         if (err) {
-          logger.error(`SQL error in row function: ${err} in ${sql}.`);
+          this.logger.error(`SQL error in row function: ${err} in ${sql}.`);
           done = true;
           reject(err);
           return;
@@ -94,7 +99,7 @@ export class DB {
 
       const completionCallback = (err, count) => {
         if (err) {
-          logger.error(`SQL error in completion function: ${err} in ${sql}.`);
+          this.logger.error(`SQL error in completion function: ${err} in ${sql}.`);
           reject(err);
           return;
         }
@@ -110,11 +115,11 @@ export class DB {
     return new Promise((resolve, reject) => {
       this.db.run(sql, params, function(err) {
         if (debug) {
-          logger.info(`Running: ${sql}, ${JSON.stringify(params)}`);
+          this.logger.info(`Running: ${sql}, ${JSON.stringify(params)}`);
         }
 
         if (err) {
-          logger.info(`SQL error: ${err} in ${sql}.`);
+          this.logger.info(`SQL error: ${err} in ${sql}.`);
           reject(err);
         } else {
           resolve({ lastID: this.lastID, changes: this.changes });
@@ -163,15 +168,17 @@ export class DB {
    * @param mode any mode flags to pass to `sqlite3.Database`.
    *             Defaults to OPEN_CREATE | OPEN_READWRITE.  May be
    *             OPEN_READONLY, but be aware of https://www.sqlite.org/wal.html#readonly.
+   * @param logger an object with 'info' and 'error' methods, each of which takes a string argument.
+   *               Defaults to a placeholder that logs nothing.
    * @returns Promise that resolves to the opened database.
    */
-  static open(filename, mode = OPEN_CREATE | OPEN_READWRITE) {
+  static open(filename, mode = OPEN_CREATE | OPEN_READWRITE, logger = defaultLogger) {
     return new Promise((resolve, reject) => {
       const sq = new sqlite3.Database(filename, mode, (err) => {
         if (err) {
           reject(err);
         } else {
-          resolve(new DB(sq));
+          resolve(new DB(sq, logger));
         }
       });
     });
