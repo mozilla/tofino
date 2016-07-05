@@ -43,9 +43,13 @@ class BrowserWindow extends Component {
   }
 
   handleKeyDown = (ev) => {
-    const { dispatch, currentPage } = this.props;
+    const { dispatch, currentPage, focusedURLBar } = this.props;
 
-    if (ev.metaKey && ev.code === 'KeyF' || ev.code === 'Slash') { // cmd+f or "/"
+    if (focusedURLBar) {
+      return;
+    }
+
+    if (ev.metaKey && ev.code === 'KeyF' || (!ev.shiftKey && ev.code === 'Slash')) { // cmd+f or "/"
       dispatch(actions.setPageDetails(currentPage.id, { isSearching: true }));
     } else if (ev.code === 'Escape') { // esc
       dispatch(actions.setPageDetails(currentPage.id, { isSearching: false }));
@@ -119,14 +123,17 @@ BrowserWindow.propTypes = {
   currentPage: SharedPropTypes.Page.isRequired,
   currentPageIndex: PropTypes.number.isRequired,
   profile: SharedPropTypes.Profile.isRequired,
+  focusedURLBar: PropTypes.bool.isRequired,
 };
 
 function mapStateToProps(state) {
+  const currentPage = selectors.getCurrentPage(state);
   return {
     pages: selectors.getPages(state),
-    currentPage: selectors.getCurrentPage(state),
+    currentPage,
     currentPageIndex: selectors.getCurrentPageIndex(state),
     profile: selectors.getProfile(state),
+    focusedURLBar: selectors.focusedURLBar(state, currentPage.id),
   };
 }
 

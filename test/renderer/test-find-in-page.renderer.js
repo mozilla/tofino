@@ -5,15 +5,38 @@
 import expect from 'expect';
 import { waitUntil } from '../utils/async';
 import * as actions from '../../app/ui/browser/constants/action-types';
+import * as selectors from '../../app/ui/browser/selectors/index';
 
 const fireKeyDown = (ops) => {
   const event = new window.KeyboardEvent('keydown', ops);
   document.body.dispatchEvent(event);
 };
 
+const setFocusedURLBar = (dispatch, pageId, focused) => {
+  // Make our own dispatch action here since we need to fire the action
+  // within the electron renderer context and use the 'dispatch' that's
+  // hooked up to the store we're actually testing
+  dispatch({
+    type: actions.SET_URL_INPUT_FOCUSED,
+    pageId,
+    payload: { focused },
+  });
+};
+
+const waitUntilURLBarUnfocused = state =>
+  waitUntil(() => !selectors.focusedURLBar(state, selectors.getCurrentPage(state).id));
+
 describe('renderer - find in page', function() {
+  before(async function() {
+    const { store } = window.app;
+    // Ensure URL bar is not focused
+    store.getState().pages.pages.forEach(page => setFocusedURLBar(store.dispatch, page.id, false));
+    await waitUntilURLBarUnfocused(store.getState());
+  });
+
   it('Slash/Escape fires SET_PAGE_DETAILS with isSearching', async function() {
     const { store } = window.app;
+
     const getSearchingActions = () =>
       store.history.filter(action =>
         action.type === actions.SET_PAGE_DETAILS && 'isSearching' in action.payload);
@@ -22,6 +45,7 @@ describe('renderer - find in page', function() {
     fireKeyDown({ code: 'Slash' });
 
     await waitUntil(() => getSearchingActions().length === startingCount + 1);
+
     expect(getSearchingActions()[startingCount].payload.isSearching).toBe(true,
       'Received a SET_PAGE_DETAILS event with { isSearching: true } after "Slash"');
 
