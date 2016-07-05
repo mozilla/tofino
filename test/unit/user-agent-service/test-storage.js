@@ -8,8 +8,8 @@ import Immutable from 'immutable';
 import microtime from 'microtime-fast';
 import path from 'path';
 import tmp from 'tmp';
+import { DB } from 'promise-sqlite';
 
-import { DB } from '../../../app/services/user-agent-service/sqlite';
 import { VisitType } from '../../../app/services/user-agent-service/storage';
 import { ProfileStorage } from '../../../app/services/user-agent-service/sqlstorage';
 

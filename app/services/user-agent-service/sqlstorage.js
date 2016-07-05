@@ -20,10 +20,10 @@ import fs from 'fs-promise';
 import microtime from 'microtime-fast';
 import path from 'path';
 import escaper from 'true-html-escape';
+import { DB, verbose } from 'promise-sqlite';
 
 import { Bookmark } from '../../shared/model';
 import { ProfileStorageSchemaV5 } from './profile-schema';
-import { DB, verbose } from './sqlite';
 import { SessionEndReason, SessionStartReason, SnippetSize, StarOp, VisitType } from './storage';
 import { logger } from '../../shared/logging';
 
