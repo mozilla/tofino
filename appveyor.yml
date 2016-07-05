@@ -10,6 +10,10 @@ environment:
 skip_commits:
   message: /\[ci skip\]/
 
+branches:
+  except:
+    - /^greenkeeper-.*$/
+
 pull_requests:
   do_not_increment_build_number: true
 
