@@ -82,7 +82,7 @@ export class PlacesImporter {
 
   static async importFromPlaces(pathToPlaces, datomStorage, limit = undefined) {
     // The WAL is enabled, so opening read-only leaves orphaned .shm/.wal files.
-    const placesDB = await sqlite.DB.open(pathToPlaces, undefined, logger);
+    const placesDB = await sqlite.DB.open(pathToPlaces, { logger });
     try {
       const importer = new PlacesImporter(placesDB);
       await importer.buildPlaceMap(limit);

@@ -55,7 +55,7 @@ export class ProfileStorage {
     const filePath = path.join(dir, 'browser.db');
 
     await fs.mkdirp(dir);
-    const db = await DB.open(filePath, undefined, logger);
+    const db = await DB.open(filePath, { logger });
     return new ProfileStorage(db).init();
   }
 
