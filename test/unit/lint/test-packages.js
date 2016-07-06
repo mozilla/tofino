@@ -24,6 +24,7 @@ const native = [
   'os',
   'path',
   'stream',
+  'url',
 ];
 
 const ignored = [
