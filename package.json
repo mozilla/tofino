@@ -97,7 +97,7 @@
     "redux": "3.5.1",
     "redux-immutable": "3.0.6",
     "redux-logger": "2.6.1",
-    "react-addons-perf": "15.2.0",
+    "react-addons-perf": "15.2.1",
     "react-addons-test-utils": "15.2.1",
     "require-dir": "0.3.0",
     "rimraf": "2.5.3",
