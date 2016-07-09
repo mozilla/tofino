@@ -102,7 +102,7 @@
     "require-dir": "0.3.0",
     "rimraf": "2.5.3",
     "semver": "5.2.0",
-    "spectron": "3.2.5",
+    "spectron": "3.2.6",
     "uglify-js": "github:mishoo/UglifyJS2#harmony",
     "tmp": "0.0.28",
     "webpack": "1.13.1",
