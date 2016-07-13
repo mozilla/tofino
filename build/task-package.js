@@ -4,18 +4,19 @@
 import fs from 'fs-promise';
 import path from 'path';
 import os from 'os';
-import packager from 'electron-packager';
+import builder from 'electron-builder';
 import zipdir from 'zip-dir';
 import { thenify } from 'thenify-all';
+import { getManifest } from './utils';
 
 import * as Const from './utils/const';
-import * as BuildUtils from './utils';
 import { getElectronVersion, getDownloadOptions } from './utils/electron';
+import { logger } from './logging';
 
 const ARCH = process.arch;
 const PLATFORM = os.platform();
 
-// electron-packager compares these against paths that are rooted in the root
+// electron-builder compares these against paths that are rooted in the root
 // but begin with "/", e.g. "/README.md"
 const IGNORE = [
   // Ignore hidden files
@@ -39,43 +40,115 @@ const IGNORE = [
   '^/NOTICE$',
 ];
 
-const packageApp = options => new Promise((resolve, reject) => {
-  packager(options, (err, packed) => {
-    if (err) {
-      reject(err);
-    } else {
-      if (packed.length !== 1) {
-        reject(new Error('Expected `electron-packager` to return only one path.'));
-      } else {
-        resolve(packed[0]);
-      }
-    }
-  });
-});
+const archIfNotx64 = ARCH === 'x64' ? '' : `-${ARCH}`;
+
+// electron-builder outputs its targets using different naming schemes depending
+// on architecture and platform. We want them to be fairly consistent so this
+// is a set of instructions to copy/zip files into the targets we want.
+const fileChanges = {
+  win32: {
+    copies: [
+      [path.join(Const.PACKAGED_DIST_DIR, `win${archIfNotx64}`,
+                 `tofino Setup ${getManifest().version}${archIfNotx64}.exe`),
+       path.join(Const.PACKAGED_DIST_DIR, `tofino-win32-${ARCH}.exe`)],
+
+      [path.join(Const.PACKAGED_DIST_DIR, `win${archIfNotx64}`,
+                 `tofino-${getManifest().version}-full.nupkg`),
+       path.join(Const.PACKAGED_DIST_DIR, `tofino-${getManifest().version}-full.nupkg`)],
+
+      [path.join(Const.PACKAGED_DIST_DIR, `win${archIfNotx64}`, 'RELEASES'),
+       path.join(Const.PACKAGED_DIST_DIR, 'RELEASES')],
+    ],
+    zips: [
+      [path.join(Const.PACKAGED_DIST_DIR, `win${archIfNotx64}-unpacked`),
+       path.join(Const.PACKAGED_DIST_DIR, `tofino-${PLATFORM}-${ARCH}.zip`)],
+    ],
+  },
+  darwin: {
+    copies: [
+      [path.join(Const.PACKAGED_DIST_DIR, 'mac', `tofino-${getManifest().version}-mac.zip`),
+       path.join(Const.PACKAGED_DIST_DIR, `tofino-${PLATFORM}-${ARCH}.zip`)],
+
+      [path.join(Const.PACKAGED_DIST_DIR, 'mac', `tofino-${getManifest().version}.dmg`),
+       path.join(Const.PACKAGED_DIST_DIR, `tofino-${PLATFORM}-${ARCH}.dmg`)],
+    ],
+  },
+  linux: {
+    zips: [
+      [path.join(Const.PACKAGED_DIST_DIR, 'linux'),
+       path.join(Const.PACKAGED_DIST_DIR, `tofino-${PLATFORM}-${ARCH}.zip`)],
+    ],
+  },
+};
 
 export default async function() {
-  const manifest = BuildUtils.getManifest();
   const electronVersion = getElectronVersion();
   const downloadOptions = getDownloadOptions();
 
   // packager displays a warning if this property is set.
   delete downloadOptions.version;
 
-  const packagedAppPath = await packageApp({
-    arch: ARCH,
-    platform: PLATFORM,
-    ignore: IGNORE,
-    prune: true,
-    version: electronVersion,
-    dir: Const.ROOT,
-    icon: Const.PACKAGED_ICON,
-    out: Const.PACKAGED_DIST_DIR,
-    download: downloadOptions,
+  await builder.build({
+    devMetadata: {
+      directories: {
+        app: Const.ROOT,
+        output: Const.PACKAGED_DIST_DIR,
+      },
+      build: {
+        appId: 'tofino',
+        'app-category-type': 'web',
+        asar: false,
+        icon: Const.PACKAGED_ICON,
+        ignore: IGNORE,
+        electronVersion,
+        download: downloadOptions,
+        npmPrune: true,
+        npmRebuild: false,
+        linux: {
+          target: [],
+        },
+        mac: {
+          icon: path.join(Const.ROOT, 'branding', 'app-icon.icns'),
+          target: ['default'],
+        },
+        dmg: {
+          icon: path.join(Const.ROOT, 'branding', 'app-icon.icns'),
+          contents: [
+            {
+              x: 410,
+              y: 150,
+              type: 'link',
+              path: '/Applications',
+            },
+            {
+              x: 130,
+              y: 150,
+              type: 'file',
+            },
+          ],
+        },
+        win: {
+          icon: path.join(Const.ROOT, 'branding', 'app-icon.ico'),
+          iconURL: 'https://raw.githubusercontent.com/mozilla/tofino/master/branding/app-icon.ico',
+          target: ['default'],
+        },
+      },
+    },
   });
 
-  const packageName = `${manifest.name}-${manifest.version}-${PLATFORM}-${ARCH}.zip`;
-  const packagedZipPath = path.join(Const.PACKAGED_DIST_DIR, packageName);
+  const mutations = fileChanges[PLATFORM];
 
-  const buffer = await thenify(zipdir)(packagedAppPath);
-  return fs.writeFile(packagedZipPath, buffer);
+  if ('copies' in mutations) {
+    for (const [from, to] of mutations.copies) {
+      await fs.copy(from, to);
+    }
+  }
+
+  if ('zips' in mutations) {
+    for (const [dir, target] of mutations.zips) {
+      logger.info(`Zipping ${dir} to ${target}`);
+      const buffer = await thenify(zipdir)(dir);
+      await fs.writeFile(target, buffer);
+    }
+  }
 };

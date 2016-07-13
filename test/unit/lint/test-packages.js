@@ -39,6 +39,7 @@ const ignored = [
   'mocha',
   'coveralls',
   'nyc',
+  'isomorphic-fetch',
 
   // Webpack loaders.
   'babel-loader',

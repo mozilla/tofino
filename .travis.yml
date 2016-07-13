@@ -22,10 +22,23 @@ addons:
       secure: bFW29iR16H1HX0kzbzo1cnSPvrp3Caxk+U346Yym6s1n9t/9Gp6s95PSn4kWu45fp6/lctRUU6jol8d7K30mfm82/hSqbvh1yr/tICrSF8HZg9YxLZPK9NxZC+a6Fie39WBO9Vt7faE20VltUlHFhw1ucK9mHzouQRO1Vl51LEImJaiXx7JKym7Rw/YHAa9jDnn5mwM4cW6Rca+I8GL05rXcRnGJA39YE2v0mih7pHE/BQ+HbYz6gymdPf2ZyXb+m4TD61cNHgqcQKMS154Fkflm+dQ+v0ViPUMDgSvPeMGu1WzA8u+ORI2pMFQympVEtTG/6AqHsF3dvfUvSULuNUZ55IBveq3fXHrVL2UJR1Q1ovokOSK2/w4fo75xjMvbIbwWoqCGKyfJZHOxF7pdELDSaHl85MglK8xPCYH4Flxj2gAEYzVQzuXOmYyGKl3Vn9ArJs/gXLsghtzP6z7shA3j+vrIGyO6qprS6RHzf/j/njAR66lPpvZKPvwJvsf/gmqNpM6d/7St+yJbkpnse8n/Nu+xQziI3LntRnPy8KeRVDD1aCJXkn/w8y/v5eksdzZm1cqheIOsT9mfT7EVeVr2TAR+Nsfr2Slf2LcleYh7igNsh3bptyX7LdWTyIkOgypCmBGKIrAR5lINImAmLaPZLWKOaCoH/72DFZMd3hM=
     s3_bucket:
       secure: yOwR+kXPsGBRngo/WetjJoeHSgMwxnKXvQBj2+hj2CGSv3sInGWAxUvagG9uq8l6c9YruBYankljZtspbbgiHooyRATC4Bv2FEVEEZWQKipVt0s7yRvLH1EOLz2PZO61LNGQsrS8PwujO5F77kf4/HcOlxljk/O2gLtDiP9+4upHWcgOMOfvaOpMOc7t0cnTjyvhfcabHH3Pv56tWdJBvOhQAai+LAiUkdsmjH1fnAplxiYnTWbGVlsvr8bn1zqZNIx5ZnmxGjOiEVnZyLY3QfbyhsthGPiKKumMV7fgUYX79suM+rjLw7kDYn3q1kEGIPw88k7LYYzx/uftprAcfmScSns5G9uGThR+0jUvAL24zwaQh4USrLb8ru+OCt6N0/P/Pk/YlpVms27dl9DbopdOWARFLCwK/Sdwki2/g7u2VJv/BBCCYZ7G3te66rhy+o/UKBhb4UpjJGusbxwfHMu8v0tpwWsTQjX4XKbz8VvixkT//C+DrqFlJ6w04+ohW0hI4ejCoHRF7xEKgPZfnxEVtBYfvJSwgFky0bw3Dl1xuwWQ7KSLIu6VfSTDo7dU7TGYFOjJ/Gt6SsL7GKstp1pGO7lSyR5RyiQcaM1G08MmWNLwlcxgoaFMbmbAX01mItODlUTN8riW5lMixGxuJhFvpMGTKLBaz1gR04hJHVs=
-    paths: $(cd dist && ls *.zip | tr "\n" ":")
+    paths: $(cd dist && ls *.zip *.dmg | tr "\n" ":")
     working_dir: dist
     target_paths: $(echo mozilla/tofino/builds/${TRAVIS_BRANCH})
     permissions: public-read
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "apcRdYszdMfMp6DE0sDHEuGK1XZBeq+xv3+qOAFu00vCKjewgIlKwR9DGwTo7f+doAu3O9LeSOm68VgVBY4dnO/GcxvuFo1FE7kEWKMBR/hllgUHSslvhPjzAsby45DAkhbPwnPeMaYq7gPoUpZfdb0PEI5mFWIgvlkGa9C23DUlE31SD7Dgdfwi1UUEZ6SWgurGWnb3XDSMdgnZieKJeKWPLj+ctxXdeAooFH9NKMCy6zWF8YA0W4r6OF8EuSh4v5GnnUXF/cXfk2L9F2cIJe5uTOxo73gv4k8CQ0K/pmuyEe0WgV4lxFBYY95ms3wh83SZR1fp4ZUnnz21HDF6G4iGNLrkVJ7o1uL5vzIicI5/PbhFkIE5iP3RLlS2WwD3xFDCDh0B0N9G7N4Tc70ZU1qzE7yOSrhBjH613C0a1SGhlDYTjhj2oLwfgMSnFW0TrSGLrvKinyQwIUokWttYoTX6H/7DBwyL1wwWXey4+CKr8B+3vHO/vsAfyGUKG8OOdItqorfQe745KV40SmPmZnywnqBEHDEWdf/RBVxNoJpN858vnjqi27nkSOC8ikjT8d09qBIOiUE8EhLNl0g4z2F5R6LboLv5HWBmfBEYr+AAfT5ceLTlO69gpKl5lp4i7e3KmKFXMfjZVKAW2cvudldyF4K+oasr/D/WARgDkwY="
+  file_glob: true
+  file:
+    - "dist/*.zip"
+    - "dist/*.dmg"
+  skip_cleanup: true
+  overwrite: true
+  on:
+    tags: true
 
 before_install:
   - "export DISPLAY=:99.0"
@@ -39,10 +52,11 @@ install:
   - npm --version
   - npm install --progress false --depth 0
   - npm prune
+  - cd node_modules/mv
+  - npm install rimraf@~2.4.0
+  - cd ../..
 
 script:
   - npm run test-ci
-
-after_success:
   - npm run package
   - npm run coverage

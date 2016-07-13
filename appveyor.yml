@@ -1,6 +1,5 @@
 platform:
   - x86
-  - x64
 
 os: Previous Visual Studio 2015
 
@@ -27,6 +26,9 @@ install:
   - set npm_config_arch=%PLATFORM:x86=ia32%
   - npm install --progress false --depth 0
   - npm prune
+  - cd node_modules\mv
+  - npm install rimraf@~2.4.0
+  - cd ..\..
 
 build: off
 
@@ -35,15 +37,28 @@ test_script:
   - npm run package
 
 before_deploy:
+  - ps: Get-ChildItem dist\RELEASES | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
+  - ps: Get-ChildItem dist\*.nupkg | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
+  - ps: Get-ChildItem dist\*.exe | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
   - ps: Get-ChildItem dist\*.zip | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
 
 deploy:
-  provider: S3
-  access_key_id:
-    secure: xsHB6zN4IRGJy9uUocU3+6/nZPa408ARYut11Wg30CA=
-  secret_access_key:
-    secure: 8L4sC5l97dY13Jnv/6Gd8Fe//FpnOuMQWu7st2LNLRhX4LjQ9uSLfObqRT0HsBqw
-  bucket:
-    secure: a/ijSslVXIxT1KRgwK6oWBJiOYD2DS5KCC5JpEDtXaU=
-  set_public: true
-  folder: mozilla/tofino/builds/$(appveyor_repo_branch)
+  - provider: S3
+    access_key_id:
+      secure: xsHB6zN4IRGJy9uUocU3+6/nZPa408ARYut11Wg30CA=
+    secret_access_key:
+      secure: 8L4sC5l97dY13Jnv/6Gd8Fe//FpnOuMQWu7st2LNLRhX4LjQ9uSLfObqRT0HsBqw
+    bucket:
+      secure: a/ijSslVXIxT1KRgwK6oWBJiOYD2DS5KCC5JpEDtXaU=
+    set_public: true
+    folder: mozilla/tofino/builds/$(appveyor_repo_branch)
+    artifact: /^.*\.(zip|exe)$/
+  - provider: GitHub
+    description: 'Draft release'
+    draft: true
+    auth_token:
+      secure: hJqkl2Amid9oaQZO9z0jedpQ3lNObygSTGPHDqOE+EEtnqQa0DkRDVJ3/i8i1YYg
+    artifact: /^(RELEASES|.*\.(nupkg|exe))$/
+    force_update: true
+    on:
+      appveyor_repo_tag: true

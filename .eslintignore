@@ -3,3 +3,4 @@ pkg/**
 dist/**
 node_modules/**
 app/ui/preload/readability.js
+build/task-package.js

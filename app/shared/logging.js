@@ -55,7 +55,7 @@ export function pipeToStream(target, level = undefined) {
  * Sends log messages to the `console` object
  */
 export function pipeToConsole() {
-  /* eslint no-console: off */
+  /* eslint no-console: 0 */
   return {
     stream: new stream.Writable({
       write(chunk, encoding, next) {
