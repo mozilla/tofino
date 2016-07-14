@@ -25,6 +25,11 @@ const APP_MENU_BUTTON_STYLE = Style.registerStyle({
   margin: '0 5px',
 });
 
+const OVERVIEW_BUTTON_STYLE = Style.registerStyle({
+  color: 'var(--theme-content-color)',
+  margin: '0 5px',
+});
+
 const WINDOW_CONTROL_BUTTONS_STYLE = Style.registerStyle({
   margin: '0 1px',
 });
@@ -40,6 +45,12 @@ const Decorations = function(props) {
         imgHeight="18px"
         onClick={props.handleOpenMenu} />
       <VerticalSeparator />
+      <Btn id="pages-overview"
+        className={OVERVIEW_BUTTON_STYLE}
+        title="Page summaries"
+        onClick={props.handleOpenOverview}>
+        Overview
+      </Btn>
       {props.children}
       <Btn id="browser-minimize"
         className={WINDOW_CONTROL_BUTTONS_STYLE}
@@ -73,6 +84,7 @@ Decorations.displayName = 'Decorations';
 
 Decorations.propTypes = {
   handleOpenMenu: PropTypes.func.isRequired,
+  handleOpenOverview: PropTypes.func.isRequired,
   handleMinimize: PropTypes.func.isRequired,
   handleMaximize: PropTypes.func.isRequired,
   handleClose: PropTypes.func.isRequired,
