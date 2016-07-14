@@ -144,8 +144,22 @@ export class Location extends Component {
             this.props.page.location : this.props.userTypedLocation;
   }
 
+  getInfoButtonIcon() {
+    const { focusedURLBar } = this.props;
+
+    if (focusedURLBar) {
+      return 'glyph-search-16.svg';
+    }
+
+    // The only state we have currently for this is the search icon --
+    // fall back to default, but in the future we can have SSL/favicon
+    // icons, etc.
+    return '';
+  }
+
   getBookmarkIcon() {
     const { page, isBookmarked } = this.props;
+
     if (page.state === Page.PAGE_STATE_LOADING) {
       return 'glyph-bookmark-unknown-16.svg';
     }
@@ -330,7 +344,7 @@ export class Location extends Component {
           className={`${LOCATION_BAR_STYLE}`}>
           <Btn title="Info"
             className={LOCATION_BAR_BUTTONS_STYLE}
-            image=""
+            image={this.getInfoButtonIcon()}
             onClick={() => {}} />
           <div id="browser-location-title-bar"
             className={TITLE_BAR_STYLE}
