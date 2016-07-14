@@ -48,6 +48,9 @@ const Decorations = function(props) {
       <Btn id="pages-overview"
         className={OVERVIEW_BUTTON_STYLE}
         title="Page summaries"
+        image="glyph-overview-16.svg"
+        imgWidth="14px"
+        imgHeight="14px"
         onClick={props.handleOpenOverview}>
         Overview
       </Btn>
