@@ -44,7 +44,7 @@
     "immutable": "3.7.6",
     "microtime-fast": "1.0.2",
     "morgan": "1.7.0",
-    "promise-sqlite": "1.2.0",
+    "promise-sqlite": "1.2.1",
     "request": "2.65.0",
     "source-map-support": "ncalexan/node-source-map-support#fileUrls-plus",
     "thenify-all": "1.6.0",
