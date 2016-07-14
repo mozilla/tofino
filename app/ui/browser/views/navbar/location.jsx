@@ -33,20 +33,17 @@ const LOCATION_BAR_STYLE = Style.registerStyle({
   flex: 1,
   alignItems: 'center',
   overflow: 'hidden',
-  margin: '10px 4vw',
-  padding: '0 10px',
+  margin: '7px 22vw',
   border: 'var(--theme-locationbar-border-width) solid',
   borderColor: 'var(--theme-locationbar-border-color)',
   backgroundColor: 'var(--theme-locationbar-background)',
   color: 'var(--theme-content-color)',
-  transition: `margin 0.3s ease-in-out,
-               border-color 0.3s ease-in-out`,
 
   WebkitAppRegion: 'no-drag',
   cursor: 'default',
 
   '@media (max-width: 1024px)': {
-    margin: '12px 0',
+    margin: '7px 0px',
   },
 });
 
@@ -64,7 +61,7 @@ const LOCATION_BAR_AUTOCOMPLETE_STYLE = Style.registerStyle({
 });
 
 const LOCATION_BAR_BUTTONS_STYLE = Style.registerStyle({
-  margin: '0 3px',
+  margin: '0 4px',
 });
 
 const TITLE_BAR_STYLE = Style.registerStyle({
@@ -92,7 +89,8 @@ const INPUT_BAR_STYLE = Style.registerStyle({
     background: 'var(--theme-selection-color)',
     color: 'var(--theme-content-selected-color)',
   },
-  fontSize: '130%',
+  fontWeight: 100,
+  fontSize: '120%',
 });
 
 /**
@@ -345,6 +343,8 @@ export class Location extends Component {
           <Btn title="Info"
             className={LOCATION_BAR_BUTTONS_STYLE}
             image={this.getInfoButtonIcon()}
+            imgWidth="16px"
+            imgHeight="16px"
             onClick={() => {}} />
           <div id="browser-location-title-bar"
             className={TITLE_BAR_STYLE}
@@ -360,6 +360,8 @@ export class Location extends Component {
           <Btn title="Bookmark"
             className={LOCATION_BAR_BUTTONS_STYLE}
             image={this.getBookmarkIcon()}
+            imgWidth="16px"
+            imgHeight="16px"
             disabled={this.props.page.state === Page.PAGE_STATE_LOADING}
             onClick={this.handleBookmarkClick} />
           {completions}

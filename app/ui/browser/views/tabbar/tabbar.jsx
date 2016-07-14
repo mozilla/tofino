@@ -16,41 +16,35 @@ import * as UIConstants from '../../constants/ui';
 import Style from '../../../shared/style';
 import Tab from './tab';
 import Btn from '../../../shared/widgets/btn';
+import VerticalSeparator from '../../../shared/widgets/vertical-separator';
 
 const TABBAR_STYLE = Style.registerStyle({
-  minHeight: `${UIConstants.TABBAR_HEIGHT}px`,
-  backgroundColor: 'var(--theme-tabbar-background)',
+  flex: 1,
+  overflow: 'hidden',
+  height: `${UIConstants.TABBAR_HEIGHT}px`,
 });
 
-const NEW_TAB_BUTTON_STYLE = Style.registerStyle({
-  color: 'var(--theme-content-color)',
-});
-
-const TabBar = ({
-  pages, currentPageIndex,
-  handleTabContextMenu, handleNewTabClick, handleTabClick, handleTabClose,
-}) => (
+const TabBar = (props) => (
   <div id="browser-tabbar"
     className={TABBAR_STYLE}>
-    {pages.map((page, i) => (
+    {props.pages.map((page, i) => (
       <Tab key={`browser-tab-${i}`}
         className={`browser-tab-${i}`}
-        isActive={currentPageIndex === i}
+        isActive={props.currentPageIndex === i}
         page={page}
-        onClick={handleTabClick(page.id)}
-        onContextMenu={handleTabContextMenu(page.id)}
-        onClose={handleTabClose(page.id)} />
-      )
-    )}
+        onClick={props.handleTabClick(page.id)}
+        onContextMenu={props.handleTabContextMenu(page.id)}
+        onClose={props.handleTabClose(page.id)} />
+    ))}
+    <VerticalSeparator />
     <Btn id="new-tab"
-      className={NEW_TAB_BUTTON_STYLE}
       title="Add new tab"
       image="glyph-addNew-24.svg"
-      imgWidth="10px"
-      imgHeight="10px"
+      imgWidth="8px"
+      imgHeight="8px"
       imgPosition="center"
       minWidth={`${UIConstants.TABBAR_HEIGHT}px`}
-      onClick={handleNewTabClick} />
+      onClick={props.handleNewTabClick} />
   </div>
 );
 

@@ -12,22 +12,15 @@ function createSpyProps() {
   return {
     page: new Page(),
     pages: new Set(),
-    pageAreaVisible: false,
-    ipcRenderer: Object.create(null),
     navBack: expect.createSpy(),
     navForward: expect.createSpy(),
     navRefresh: expect.createSpy(),
-    minimize: expect.createSpy(),
-    maximize: expect.createSpy(),
-    close: expect.createSpy(),
-    openMenu: expect.createSpy(),
     isBookmarked: expect.createSpy(),
     bookmark: expect.createSpy(),
     unbookmark: expect.createSpy(),
     onLocationChange: expect.createSpy(),
     onLocationContextMenu: expect.createSpy(),
     onLocationReset: expect.createSpy(),
-    setPageAreaVisibility: expect.createSpy(),
     navigateTo: expect.createSpy(),
   };
 }
@@ -37,21 +30,8 @@ describe('NavBar', () => {
     it('should render the empty case', () => {
       const props = createSpyProps();
       delete props.page;
-      const wrapper = shallow(
-        <NavBar {...props} />
-      );
-
+      const wrapper = shallow(<NavBar {...props} />);
       expect(wrapper.html()).toMatch(/<div id="browser-navbar" class="[a-z0-9]+?"><\/div>/);
-    });
-  });
-
-  describe('Menu button', () => {
-    it('calls handler on click', () => {
-      const props = createSpyProps();
-      props.openMenu = expect.createSpy();
-      const wrapper = shallow(<NavBar {...props} />).find('#browser-navbar-menu').shallow();
-      wrapper.simulate('click');
-      expect(props.openMenu).toHaveBeenCalled();
     });
   });
 
@@ -59,7 +39,8 @@ describe('NavBar', () => {
     it('is disabled if page cannot go back', () => {
       const props = createSpyProps();
       props.page = new Page({ canGoBack: false });
-      const wrapper = shallow(<NavBar {...props} />).find('#browser-navbar-back').shallow();
+      const wrapper = shallow(<NavBar {...props} />
+      ).find('#browser-navbar-back').shallow();
       expect(wrapper.prop('disabled')).toEqual(true);
       wrapper.simulate('click');
       expect(props.navBack).toNotHaveBeenCalled();
@@ -67,7 +48,8 @@ describe('NavBar', () => {
     it('is not disabled if page can go back', () => {
       const props = createSpyProps();
       props.page = new Page({ canGoBack: true });
-      const wrapper = shallow(<NavBar {...props} />).find('#browser-navbar-back').shallow();
+      const wrapper = shallow(<NavBar {...props} />
+      ).find('#browser-navbar-back').shallow();
       expect(wrapper.prop('disabled')).toEqual(false);
       wrapper.simulate('click');
       expect(props.navBack).toHaveBeenCalled();
@@ -78,7 +60,8 @@ describe('NavBar', () => {
     it('is disabled if page cannot go forward', () => {
       const props = createSpyProps();
       props.page = new Page({ canGoForward: false });
-      const wrapper = shallow(<NavBar {...props} />).find('#browser-navbar-forward').shallow();
+      const wrapper = shallow(<NavBar {...props} />
+      ).find('#browser-navbar-forward').shallow();
       expect(wrapper.prop('disabled')).toEqual(true);
       wrapper.simulate('click');
       expect(props.navForward).toNotHaveBeenCalled();
@@ -86,17 +69,20 @@ describe('NavBar', () => {
     it('is not disabled if page can go forwardd', () => {
       const props = createSpyProps();
       props.page = new Page({ canGoForward: true });
-      const wrapper = shallow(<NavBar {...props} />).find('#browser-navbar-forward').shallow();
+      const wrapper = shallow(<NavBar {...props} />
+      ).find('#browser-navbar-forward').shallow();
       expect(wrapper.prop('disabled')).toEqual(false);
       wrapper.simulate('click');
       expect(props.navForward).toHaveBeenCalled();
     });
   });
+
   describe('Refresh button', () => {
     it('is disabled if page cannot be refreshed', () => {
       const props = createSpyProps();
       props.page = new Page({ canRefresh: false });
-      const wrapper = shallow(<NavBar {...props} />).find('#browser-navbar-refresh').shallow();
+      const wrapper = shallow(<NavBar {...props} />
+      ).find('#browser-navbar-refresh').shallow();
       expect(wrapper.prop('disabled')).toEqual(true);
       wrapper.simulate('click');
       expect(props.navRefresh).toNotHaveBeenCalled();
@@ -104,34 +90,11 @@ describe('NavBar', () => {
     it('is not disabled if page can be refreshed', () => {
       const props = createSpyProps();
       props.page = new Page({ canRefresh: true });
-      const wrapper = shallow(<NavBar {...props} />).find('#browser-navbar-refresh').shallow();
+      const wrapper = shallow(<NavBar {...props} />
+      ).find('#browser-navbar-refresh').shallow();
       expect(wrapper.prop('disabled')).toEqual(false);
       wrapper.simulate('click');
       expect(props.navRefresh).toHaveBeenCalled();
-    });
-  });
-  describe('Minimize button ', () => {
-    it('calls handler', () => {
-      const props = createSpyProps();
-      const wrapper = shallow(<NavBar {...props} />).find('#browser-navbar-minimize').shallow();
-      wrapper.simulate('click');
-      expect(props.minimize).toHaveBeenCalled();
-    });
-  });
-  describe('Maximize button ', () => {
-    it('calls handler', () => {
-      const props = createSpyProps();
-      const wrapper = shallow(<NavBar {...props} />).find('#browser-navbar-maximize').shallow();
-      wrapper.simulate('click');
-      expect(props.maximize).toHaveBeenCalled();
-    });
-  });
-  describe('Close button ', () => {
-    it('calls handler', () => {
-      const props = createSpyProps();
-      const wrapper = shallow(<NavBar {...props} />).find('#browser-navbar-close').shallow();
-      wrapper.simulate('click');
-      expect(props.close).toHaveBeenCalled();
     });
   });
 });

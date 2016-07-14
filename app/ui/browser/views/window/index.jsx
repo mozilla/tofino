@@ -12,19 +12,19 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
-import { ipcRenderer } from '../../../shared/electron';
+import { ipcRenderer } from '../../../../shared/electron';
 
-import Style from '../../shared/style';
-import * as SharedPropTypes from '../../shared/model/shared-prop-types';
-import BrowserChrome from './browser-chrome';
-import BrowserContent from './browser-content';
+import Style from '../../../shared/style';
+import * as SharedPropTypes from '../../../shared/model/shared-prop-types';
+import BrowserChrome from '../browser/browser-chrome';
+import BrowserContent from '../browser/browser-content';
 import DeveloperBar from './developerbar';
-import WebViewController from '../lib/webview-controller';
+import WebViewController from '../../lib/webview-controller';
 
-import * as actions from '../actions/main-actions';
-import * as external from '../actions/external';
-import * as selectors from '../selectors';
-import * as contentURLs from '../../../shared/constants/content-pages-locations';
+import * as actions from '../../actions/main-actions';
+import * as external from '../../actions/external';
+import * as selectors from '../../selectors';
+import * as contentURLs from '../../../../shared/constants/content-pages-locations';
 
 const BROWSER_WINDOW_STYLE = Style.registerStyle({
   flexDirection: 'column',
@@ -62,10 +62,10 @@ class BrowserWindow extends Component {
 
     const browserChromeMethods = {
       // Window methods.
-      minimize: external.minimize,
-      maximize: external.maximize,
-      close: external.close,
-      openMenu: external.menuBrowser,
+      handleOpenMenu: external.menuBrowser,
+      handleMinimize: external.minimize,
+      handleMaximize: external.maximize,
+      handleClose: external.close,
 
       // Location & navigation methods.
       navBack: () => webViewController.navigateBack(currentPage.id),

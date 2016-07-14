@@ -16,7 +16,7 @@ import { logger } from '../../../../shared/logging';
 import Style from '../../../shared/style';
 import { Page as PageModel } from '../../model';
 
-import Status from './status';
+import Status from '../window/status';
 import Search from '../../../shared/widgets/search';
 
 import { fixURL } from '../../browser-util';

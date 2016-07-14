@@ -1,7 +1,7 @@
 body {
-  background-color: var(--theme-body-color);
+  background-color: var(--theme-navbar-background);
   background-image: url('../assets/chrome-background.png');
-  background-size: 28px;
+  background-size: var(--theme-window-image-tile-size);
 }
 
 #content-container {

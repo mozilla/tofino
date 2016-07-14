@@ -16,8 +16,9 @@ import Style from '../style';
 
 const VERTICAL_SEPARATOR_STYLE = Style.registerStyle({
   alignSelf: 'stretch',
+  flexShrink: 0,
   width: '1px',
-  margin: '4px 10px',
+  margin: '4px',
   background: 'var(--theme-separator-color)',
 });
 

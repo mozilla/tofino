@@ -21,20 +21,18 @@ const TAB_STYLE = Style.registerStyle({
   alignItems: 'center',
   overflow: 'hidden',
   width: `${UIConstants.TAB_DEFAULT_WIDTH}vw`,
-  border: '1px solid var(--theme-tab-border-color)',
-  borderTopWidth: 0,
-  borderBottomWidth: 0,
-  marginLeft: '-1px',
   padding: '0 8px',
   backgroundColor: 'var(--theme-tab-inactive-background)',
   color: 'var(--theme-tab-inactive-color)',
   opacity: 'var(--theme-tab-inactive-opacity)',
   '&.active': {
     backgroundColor: 'var(--theme-tab-background)',
+    backgroundImage: 'url(assets/chrome-background.png)',
+    backgroundSize: 'var(--theme-window-image-tile-size)',
+    backgroundAttachment: 'fixed',
     color: 'var(--theme-tab-color)',
     opacity: 'var(--theme-tab-opacity)',
   },
-  cursor: 'default',
 });
 
 const TAB_TITLE_STYLE = Style.registerStyle({
@@ -44,18 +42,14 @@ const TAB_TITLE_STYLE = Style.registerStyle({
   textOverflow: 'ellipsis',
 });
 
-const TAB_CLOSE_BUTTON_STYLE = Style.registerStyle({
-  color: 'var(--theme-content-color)',
-});
-
 /**
  * Tab is an element on the TabBar at the top of a browser window which shows
  * one of the opened tabs. The web page contained within the tab may not be
  * visible
  */
-function Tab(props) {
+const Tab = function(props) {
   const {
-    page, isActive, onClose, onClick, onContextMenu,
+    page, isActive, onClick, onClose, onContextMenu,
   } = props;
 
   const modes = [
@@ -71,14 +65,17 @@ function Tab(props) {
       <span>
         {page.state === Page.PAGE_STATE_LOADING ? <i className="fa fa-spinner fa-pulse" /> : null}
       </span>
-      <Btn className={`tab-close ${TAB_CLOSE_BUTTON_STYLE}`}
+      <Btn className="tab-close"
         title="Close tab"
-        onClick={onClose}>
-        <i className="fa fa-close" />
-      </Btn>
+        image="glyph-addNew-24.svg"
+        imgWidth="8px"
+        imgHeight="8px"
+        imgPosition="center"
+        style={{ transform: 'rotate(45deg)' }}
+        onClick={onClose} />
     </div>
   );
-}
+};
 
 Tab.displayName = 'Tab';
 
