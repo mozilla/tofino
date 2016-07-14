@@ -119,45 +119,6 @@ describe('Btn', () => {
       minHeight: '200px',
     });
   });
-  it('sets the correct min size based off of the default min size if necessary', () => {
-    const wrapper = shallow(
-      <Btn image=""
-        imgWidth="1px"
-        imgHeight="2px"
-        onClick={() => {}}
-        title="my title" />
-    );
-    expect(wrapper.prop('style')).toContain({
-      minWidth: Const.MIN_WIDTH,
-      minHeight: Const.MIN_HEIGHT,
-    });
-  });
-  it('sets the correct min width based off of the default min width if necessary', () => {
-    const wrapper = shallow(
-      <Btn image=""
-        imgWidth="100px"
-        imgHeight="2px"
-        onClick={() => {}}
-        title="my title" />
-    );
-    expect(wrapper.prop('style')).toContain({
-      minWidth: '100px',
-      minHeight: Const.MIN_HEIGHT,
-    });
-  });
-  it('sets the correct min height based off of the default min height if necessary', () => {
-    const wrapper = shallow(
-      <Btn image=""
-        imgWidth="1px"
-        imgHeight="100px"
-        onClick={() => {}}
-        title="my title" />
-    );
-    expect(wrapper.prop('style')).toContain({
-      minWidth: Const.MIN_WIDTH,
-      minHeight: '100px',
-    });
-  });
   it('sets the correct min size based off of `minWidth` and `minHeight` if given', () => {
     const wrapper = shallow(
       <Btn image=""
@@ -184,6 +145,34 @@ describe('Btn', () => {
     expect(wrapper.prop('style')).toContain({
       minWidth: '300px',
       minHeight: '400px',
+    });
+  });
+  it('sets the correct padding when given an image but no children', () => {
+    const wrapper = shallow(
+      <Btn image=""
+        imgWidth="100px"
+        imgHeight="200px"
+        onClick={() => {}}
+        title="my title" />
+    );
+    expect(wrapper.prop('style')).toExclude([
+      'paddingLeft',
+      'paddingRigth',
+    ]);
+  });
+  it('sets the correct padding when given an image with children', () => {
+    const wrapper = shallow(
+      <Btn image=""
+        imgWidth="100px"
+        imgHeight="200px"
+        onClick={() => {}}
+        title="my title">
+        Test
+      </Btn>
+    );
+    expect(wrapper.prop('style')).toContain({
+      paddingLeft: '105px',
+      paddingRight: '0px',
     });
   });
 });
