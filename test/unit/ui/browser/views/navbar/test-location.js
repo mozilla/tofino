@@ -102,13 +102,20 @@ describe('Location', () => {
       );
 
       wrapper.setProps({ showURLBar: true, focusedURLBar: true });
+
       expect(wrapper.find('#autocomplete-results').length).toEqual(1);
       expect(wrapper.find(LocationCompletionRow).first().shallow()
-        .find('.completion-row')
-        .text()).toEqual('Mozilla.com — https://mozilla.com/');
+        .find('.completion-title')
+        .text()).toEqual('Mozilla.com');
+      expect(wrapper.find(LocationCompletionRow).first().shallow()
+        .find('.completion-url')
+        .text()).toEqual('mozilla.com/');
       expect(wrapper.find(LocationCompletionRow).last().shallow()
-        .find('.completion-row')
-        .text()).toEqual('Mozilla.org — https://mozilla.org/');
+        .find('.completion-title')
+        .text()).toEqual('Mozilla.org');
+      expect(wrapper.find(LocationCompletionRow).last().shallow()
+        .find('.completion-url')
+        .text()).toEqual('mozilla.org/');
     });
 
     it('should reset the selected index when input changes', () => {

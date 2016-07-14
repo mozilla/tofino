@@ -2,7 +2,7 @@
   --theme-body-color: #2d9cdb;
   --theme-content-color: #fff;
   --theme-content-selected-color: #fff;
-  --theme-selection-color: rgba(47,128,237,0.5);
+  --theme-selection-color: #b3dbf2;
 
   --theme-navbar-background: transparent;
   --theme-tabbar-background: rgba(47,128,237,0.5);
@@ -11,6 +11,7 @@
   --theme-locationbar-background: rgba(255,255,255,0.25);
   --theme-locationbar-border-color: rgba(255,255,255,0.75);
   --theme-locationbar-border-width: 2px;
+  --theme-locationbar-title-color: rgba(0,0,0,1);
 
   --theme-back-button-background: transparent;
   --theme-back-button-color: #fff;

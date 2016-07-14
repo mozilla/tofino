@@ -54,8 +54,8 @@ const LOCATION_BAR_AUTOCOMPLETE_STYLE = Style.registerStyle({
   flexDirection: 'column',
   position: 'absolute',
   background: '#fcfcfc',
-  color: 'var(--theme-body-color)',
-  padding: 10,
+  fontSize: '110%',
+  padding: '10px 20vw',
   left: 0,
   right: 0,
   top: '100%',
@@ -78,7 +78,7 @@ const TITLE_BAR_STYLE = Style.registerStyle({
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
   },
-  fontSize: '16px',
+  fontSize: '130%',
 });
 
 const INPUT_BAR_STYLE = Style.registerStyle({
@@ -92,7 +92,7 @@ const INPUT_BAR_STYLE = Style.registerStyle({
     background: 'var(--theme-selection-color)',
     color: 'var(--theme-content-selected-color)',
   },
-  fontSize: '16px',
+  fontSize: '130%',
 });
 
 /**
