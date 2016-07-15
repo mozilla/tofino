@@ -31,7 +31,7 @@ async function buildUAService() {
 
   logger.info(colors.cyan(`Building ${id}...`));
   const { development } = getBuildConfig();
-  return await webpackBuild(development ? uaProdConfig : uaDevConfig);
+  return await webpackBuild(development ? uaDevConfig : uaProdConfig);
 }
 
 async function buildContentService() {
@@ -44,5 +44,5 @@ async function buildContentService() {
 
   logger.info(colors.cyan(`Building ${id}...`));
   const { development } = getBuildConfig();
-  return await webpackBuild(development ? contentProdConfig : contentDevConfig);
+  return await webpackBuild(development ? contentDevConfig : contentProdConfig);
 }
