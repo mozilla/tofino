@@ -15,9 +15,9 @@ import path from 'path';
 import { spawn } from 'child_process';
 import { logger } from '../shared/logging';
 import * as endpoints from '../shared/constants/endpoints';
+import { parseArgs } from '../shared/environment';
 
 const ROOT = path.join(__dirname, '..', '..');
-const DB_PATH = ROOT;
 const SERVICES_PATH = path.join(ROOT, 'lib', 'services');
 const UA_SERVICE_BIN = path.join(SERVICES_PATH, 'user-agent-service', 'user-agent-service');
 const CONTENT_SERVICE_PATH = path.join(SERVICES_PATH, 'content-service', 'index.js');
@@ -72,7 +72,7 @@ export function startUserAgentService(userAgentClient, options = {}) {
 
   spawnProcess('UA Service', command, [UA_SERVICE_BIN,
     '--port', port,
-    '--db', DB_PATH,
+    '--profile', parseArgs().profile,
     '--version', version,
     '--content-service-origin', `${endpoints.TOFINO_PROTOCOL}://`,
   ], {
@@ -101,7 +101,9 @@ export function startContentService(options = {}) {
     command = options.command;
   }
 
-  spawnProcess('Content service', command, [CONTENT_SERVICE_PATH], {
+  spawnProcess('Content service', command, [CONTENT_SERVICE_PATH,
+    '--profile', parseArgs().profile,
+  ], {
     detached,
     stdio,
     env,

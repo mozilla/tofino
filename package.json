@@ -1,12 +1,12 @@
 {
-  "name": "tofino",
+  "name": "Tofino",
   "version": "0.1.0",
   "author": {
     "name": "Mozilla",
     "email": "tofino-dev@mozilla.org",
     "url": "https://mozilla.github.io/tofino/"
   },
-  "description": "Experimental prototype",
+  "description": "Project Tofino",
   "main": "lib/main/index.js",
   "repository": "https://github.com/mozilla/tofino",
   "_electron": {
@@ -30,6 +30,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "appdirectory": "0.1.0",
     "babel-runtime": "6.9.2",
     "backoff": "2.5.0",
     "body-parser": "1.15.2",
@@ -40,6 +41,7 @@
     "express": "4.14.0",
     "express-validator": "2.20.8",
     "express-ws": "2.0.0-rc.1",
+    "fs-extra": "0.30.0",
     "fs-promise": "0.5.0",
     "immutable": "3.7.6",
     "microtime-fast": "1.0.2",
@@ -96,6 +98,8 @@
     "mocha-eslint": "2.1.1",
     "nyc": "7.0.0",
     "react": "15.2.1",
+    "react-addons-perf": "15.2.1",
+    "react-addons-test-utils": "15.2.1",
     "react-dom": "15.2.0",
     "react-free-style": "2.2.2",
     "react-immutable-proptypes": "1.7.1",
@@ -103,14 +107,12 @@
     "redux": "3.5.1",
     "redux-immutable": "3.0.6",
     "redux-logger": "2.6.1",
-    "react-addons-perf": "15.2.1",
-    "react-addons-test-utils": "15.2.1",
     "require-dir": "0.3.0",
     "rimraf": "2.5.3",
     "semver": "5.2.0",
     "spectron": "3.2.6",
-    "uglify-js": "github:mishoo/UglifyJS2#harmony",
     "tmp": "0.0.28",
+    "uglify-js": "github:mishoo/UglifyJS2#harmony",
     "webpack": "1.13.1",
     "webpack-node-externals": "1.2.0",
     "zip-dir": "1.0.2"

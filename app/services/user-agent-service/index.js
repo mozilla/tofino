@@ -11,7 +11,9 @@
  */
 
 import colors from 'colors/safe';
-import { logger } from '../../shared/logging';
+import fs from 'fs';
+import path from 'path';
+import { logger, pipeToStream } from '../../shared/logging';
 import * as userAgentService from './server';
 import { ProfileStorage } from './sqlstorage';
 import meta from './meta.json';
@@ -32,6 +34,9 @@ export async function UserAgentService(options = {}) {
   if (typeof options.contentServiceOrigin !== 'string') {
     throw new Error('UserAgentService requires a `contentServiceOrigin` string.');
   }
+
+  const fileStream = fs.createWriteStream(path.join(options.db, 'ua-service.log'));
+  logger.addStream(pipeToStream(fileStream), 'debug');
 
   const port = options.port;
   const db = options.db;

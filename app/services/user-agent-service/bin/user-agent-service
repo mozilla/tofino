@@ -4,45 +4,39 @@ var UserAgentService = require('../').UserAgentService;
 var repl = require('repl');
 var meta = require('../meta.json');
 var endpoints = require('../../../shared/constants/endpoints');
+var { argParser, parseArgs } = require('../../../shared/environment');
 
-var argv = require('yargs')
-  .usage('Usage: $0 [options]')
-  .option('p', {
-    alias: 'port',
-    require: true,
-    describe: 'The port that the UserAgentService will run on.',
-    type: 'number'
-  })
-  .option('d', {
-    alias: 'db',
-    require: true,
-    describe: 'The path to the directory containing the browser.db.',
-    type: 'string'
-  })
-  .option('v', {
-    alias: 'version',
-    describe: 'The version of API to use.',
-    choices: meta.validVersions,
-    default: meta.defaultVersion,
-    type: 'string',
-  })
-  .option('c', {
-    alias: 'content-service-origin',
-    describe: 'The origin of the Content Service so that CORS can be enabled.',
-    default: endpoints.TOFINO_PROTOCOL + '://',
-    type: 'string'
-  })
-  .option('r', {
-    alias: 'repl',
-    require: false,
-    describe: 'If provided, start a REPL after launching the user agent service.',
-    type: 'boolean'
-  })
-  .argv;
+argParser.option('p', {
+  alias: 'port',
+  require: true,
+  describe: 'The port that the UserAgentService will run on.',
+  type: 'number'
+})
+.option('v', {
+  alias: 'version',
+  describe: 'The version of API to use.',
+  choices: meta.validVersions,
+  default: meta.defaultVersion,
+  type: 'string',
+})
+.option('c', {
+  alias: 'content-service-origin',
+  describe: 'The origin of the Content Service so that CORS can be enabled.',
+  default: endpoints.TOFINO_PROTOCOL + '://',
+  type: 'string'
+})
+.option('r', {
+  alias: 'repl',
+  require: false,
+  describe: 'If provided, start a REPL after launching the user agent service.',
+  type: 'boolean'
+});
+
+var argv = parseArgs();
 
 UserAgentService({
   port: argv.port,
-  db: argv.db,
+  db: argv.profile,
   version: argv.version,
   contentServiceOrigin: argv.contentServiceOrigin,
 });

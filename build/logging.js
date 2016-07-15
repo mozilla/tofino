@@ -16,6 +16,6 @@ import { pipeToStream } from '../app/shared/logging';
 export const logger = bunyan.createLogger({
   name: 'build',
   streams: [
-    pipeToStream(process.stdout),
+    pipeToStream(process.stdout, 'debug'),
   ],
 });

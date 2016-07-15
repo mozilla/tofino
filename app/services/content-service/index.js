@@ -10,13 +10,19 @@
  specific language governing permissions and limitations under the License.
  */
 
+import fs from 'fs';
+import path from 'path';
 import colors from 'colors/safe';
-import { logger } from '../../shared/logging';
+import { logger, pipeToStream } from '../../shared/logging';
 import * as contentService from './server';
 import * as endpoints from '../../shared/constants/endpoints';
+import { parseArgs } from '../../shared/environment';
 
 process.on('uncaughtException', logger.error);
 process.on('unhandledRejection', logger.error);
+
+const fileStream = fs.createWriteStream(path.join(parseArgs().profile, 'content-service.log'));
+logger.addStream(pipeToStream(fileStream), 'debug');
 
 // Start the content service, serving `tofino://` pages.
 contentService.start().then(() => {

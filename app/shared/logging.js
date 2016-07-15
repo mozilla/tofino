@@ -13,7 +13,6 @@
 
 import bunyan from 'bunyan';
 import stream from 'stream';
-import fs from 'fs';
 
 const LEVELS = [
   'FATAL', 'ERROR', 'WARN', 'INFO', 'DEBUG', 'TRACE',
@@ -48,6 +47,7 @@ export function pipeToStream(target, level = undefined) {
   return {
     stream: serializer,
     level,
+    closeOnExit: true,
   };
 }
 
@@ -87,23 +87,15 @@ try {
 const streams = [];
 
 switch (name) {
-  case 'main': {
+  case 'main':
+  case 'ua-service':
+  case 'content-service': {
     streams.push(pipeToStream(process.stdout));
     break;
   }
   case 'content':
   case 'ui': {
     streams.push(pipeToConsole());
-    break;
-  }
-  case 'ua-service':
-  case 'content-service': {
-    streams.push(pipeToStream(process.stdout));
-
-    if (process.env.NODE_ENV === 'development') {
-      const fileStream = fs.createWriteStream(`${name}.log`);
-      streams.push(pipeToStream(fileStream));
-    }
     break;
   }
   default: {

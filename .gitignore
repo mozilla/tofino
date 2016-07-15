@@ -13,3 +13,4 @@ build-config.json
 .cache
 .vscode
 *.log
+profile
