@@ -6,7 +6,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import Immutable from 'immutable';
 
-import TabBar from '../../../../../../app/ui/browser/views/tabbar';
+import { TabBar } from '../../../../../../app/ui/browser/views/tabbar';
 import { Page } from '../../../../../../app/ui/browser/model/index';
 
 /**

@@ -11,8 +11,10 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 import * as UIConstants from '../../constants/ui';
+import * as selectors from '../../selectors';
 import Style from '../../../shared/style';
 import Tab from './tab';
 import Btn from '../../../shared/widgets/btn';
@@ -24,13 +26,13 @@ const TABBAR_STYLE = Style.registerStyle({
   height: `${UIConstants.TABBAR_HEIGHT}px`,
 });
 
-const TabBar = (props) => (
+export const TabBar = (props) => (
   <div id="browser-tabbar"
     className={TABBAR_STYLE}>
     {props.pages.map((page, i) => (
       <Tab key={`browser-tab-${i}`}
         className={`browser-tab-${i}`}
-        isActive={props.currentPageIndex === i}
+        isActive={props.currentPageIndex === i && !props.pageSumariesVisible}
         page={page}
         onClick={props.handleTabClick(page.id)}
         onContextMenu={props.handleTabContextMenu(page.id)}
@@ -54,10 +56,17 @@ TabBar.displayName = 'TabBar';
 TabBar.propTypes = {
   pages: PropTypes.object.isRequired,
   currentPageIndex: PropTypes.number.isRequired,
+  pageSumariesVisible: PropTypes.bool.isRequired,
   handleTabClick: PropTypes.func.isRequired,
   handleTabClose: PropTypes.func.isRequired,
   handleNewTabClick: PropTypes.func.isRequired,
   handleTabContextMenu: PropTypes.func.isRequired,
 };
 
-export default TabBar;
+function mapStateToProps(state) {
+  return {
+    pageSumariesVisible: selectors.getShowPageSummaries(state),
+  };
+}
+
+export default connect(mapStateToProps)(TabBar);
