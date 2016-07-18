@@ -50,11 +50,9 @@ install:
   - nvm install 6.1
   - node --version
   - npm --version
-  - npm install --progress false --depth 0
   - npm prune
-  - cd node_modules/mv
-  - npm install rimraf@~2.4.0
-  - cd ../..
+  - npm install --progress false --depth 0
+  - npm install --progress false --depth 0
 
 script:
   - npm run test-ci

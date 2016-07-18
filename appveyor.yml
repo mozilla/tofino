@@ -24,11 +24,9 @@ install:
   - node --version
   - npm --version
   - set npm_config_arch=%PLATFORM:x86=ia32%
-  - npm install --progress false --depth 0
   - npm prune
-  - cd node_modules\mv
-  - npm install rimraf@~2.4.0
-  - cd ..\..
+  - npm install --progress false --depth 0
+  - npm install --progress false --depth 0
 
 build: off
 
