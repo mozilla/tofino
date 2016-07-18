@@ -67,6 +67,9 @@ export const UIState = Immutable.Record({
   // What the user has typed into the location bar, stored by page ID.
   userTypedLocation: Immutable.Map(),
 
+  // Should the page summaries be visible
+  showPageSummaries: false,
+
   // Should the autocomplete popup be visible
   showCompletions: false,
 
