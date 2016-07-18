@@ -18,13 +18,14 @@ import Btn from '../../../shared/widgets/btn';
 import Location from './location';
 
 const NAVBAR_STYLE = Style.registerStyle({
+  alignItems: 'stretch',
   position: 'relative',
   height: `${UIConstants.NAVBAR_HEIGHT}px`,
   backgroundColor: 'var(--theme-navbar-background)',
   backgroundImage: 'url(assets/chrome-background.png)',
   backgroundSize: 'var(--theme-window-image-tile-size)',
   backgroundAttachment: 'fixed',
-  padding: '0 10px',
+  padding: `0 ${UIConstants.NAVBAR_HORIZONTAL_PADDING}px`,
 });
 
 const NAVBAR_NAVIGATION_CONTAINER_STYLE = Style.registerStyle({
@@ -45,8 +46,8 @@ const NAVBAR_NAVIGATION_BACK_BUTTON_STYLE = Style.registerStyle({
   backgroundColor: 'var(--theme-back-button-background)',
   borderColor: 'var(--theme-back-button-border-color)',
   marginRight: '4px',
-  width: `${UIConstants.NAVBAR_HEIGHT - 10}px`,
-  height: `${UIConstants.NAVBAR_HEIGHT - 10}px`,
+  width: `${UIConstants.NAVBAR_HEIGHT - 12}px`,
+  height: `${UIConstants.NAVBAR_HEIGHT - 12}px`,
 });
 
 const NavBar = (props) => {
