@@ -13,8 +13,9 @@ specific language governing permissions and limitations under the License.
 import React from 'react';
 
 import Style from '../../../shared/style';
-import TabBar from '../tabbar/tabbar';
-import NavBar from '../navbar/navbar';
+import TabBar from '../tabbar';
+import NavBar from '../navbar';
+import Overview from '../overview';
 import WinDecorations from '../window/decorations';
 
 const CHROME_AREA_STYLE = Style.registerStyle({
@@ -32,6 +33,7 @@ const BrowserChrome = function(props) {
         <TabBar {...props} />
       </WinDecorations>
       <NavBar {...props} />
+      <Overview {...props} />
     </div>
   );
 };
