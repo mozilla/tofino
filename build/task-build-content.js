@@ -13,7 +13,7 @@ import { logger } from './logging';
 export default async function() {
   const id = 'content';
 
-  if (!(await shouldRebuild(id, [SRC_DIR, id], [SHARED_DIR, 'ui/shared']))) {
+  if (!(await shouldRebuild(id, [SRC_DIR, id], [SHARED_DIR, 'content ui/shared']))) {
     logger.info(colors.green(`No changes in ${id}.`));
     return { close: () => {} };
   }
