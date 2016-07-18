@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
+  <style>
+    path {
+      fill: #2d9cdb;
+    }
+  </style>
+
+  <path id="glyph-addNew" d="M11,0h2V24H11V0ZM0,11H24v2H0V11Z"/>
+</svg>

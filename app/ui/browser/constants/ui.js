@@ -18,6 +18,9 @@ export const TABBAR_HEIGHT = 26; // px
 export const TAB_DEFAULT_WIDTH = 19; // vw;
 
 export const NAVBAR_HEIGHT = 42; // px
+export const NAVBAR_HORIZONTAL_PADDING = 10; // px
+export const OVERVIEWBAR_HEIGHT = NAVBAR_HEIGHT; // px
+export const OVERVIEWBAR_HORIZONTAL_PADDING = NAVBAR_HORIZONTAL_PADDING; // px
 
 // Show autocompletions when typing in location bar
 export const SHOW_COMPLETIONS = true;

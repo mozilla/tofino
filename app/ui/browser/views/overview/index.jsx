@@ -15,9 +15,12 @@ import { connect } from 'react-redux';
 
 import Style from '../../../shared/style';
 import * as UIConstants from '../../constants/ui';
+import OverviewBar from './overview-bar';
+
 import * as selectors from '../../selectors';
 
 const OVERVIEW_STYLE = Style.registerStyle({
+  flexDirection: 'column',
   position: 'absolute',
   top: UIConstants.TABBAR_HEIGHT,
   bottom: 0,
@@ -31,7 +34,7 @@ const Overview = function(props) {
   return (
     <div className={OVERVIEW_STYLE}
       hidden={!props.show}>
-
+      <OverviewBar />
     </div>
   );
 };
