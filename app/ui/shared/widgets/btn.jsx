@@ -31,7 +31,8 @@ const BUTTON_STYLE = Style.registerStyle({
   padding: '0',
   border: '0',
   background: 'transparent',
-
+  font: 'inherit',
+  textRendering: 'inherit',
   WebkitUserSelect: 'none',
   WebkitAppRegion: 'no-drag',
 });
