@@ -27,7 +27,7 @@ async function buildBrowser() {
   const { SRC_DIR, SHARED_DIR } = browserConfig;
   const id = 'browser';
 
-  if (!(await shouldRebuild(id, [SRC_DIR, id], [SHARED_DIR, 'ui/shared']))) {
+  if (!(await shouldRebuild(id, [SRC_DIR, id], [SHARED_DIR, 'browser ui/shared']))) {
     logger.info(colors.green(`No changes in ${id}.`));
     return { close: () => {} };
   }
@@ -41,7 +41,7 @@ async function buildBrowserAlt() {
   const { SRC_DIR, SHARED_DIR } = browserAltConfig;
   const id = 'browser-alt';
 
-  if (!(await shouldRebuild(id, [SRC_DIR, id], [SHARED_DIR, 'ui/shared']))) {
+  if (!(await shouldRebuild(id, [SRC_DIR, id], [SHARED_DIR, 'browser-alt ui/shared']))) {
     logger.info(colors.green(`No changes in ${id}.`));
     return { close: () => {} };
   }

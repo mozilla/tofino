@@ -12,10 +12,10 @@ specific language governing permissions and limitations under the License.
 
 import React, { Component, PropTypes } from 'react';
 
-import BUILD_CONFIG from '../../../../build-config';
-import Style from '../../shared/style';
-import Btn from '../../shared/widgets/btn';
-import { perfStart, perfStop } from '../actions/developer';
+import BUILD_CONFIG from '../../../../../build-config';
+import Style from '../../../shared/style';
+import Btn from '../../../shared/widgets/btn';
+import { perfStart, perfStop } from '../../actions/developer';
 
 const DEVELOPER_BAR_STYLE = Style.registerStyle({
   position: 'fixed',
@@ -23,13 +23,15 @@ const DEVELOPER_BAR_STYLE = Style.registerStyle({
   right: 0,
   zIndex: 1,
   padding: '2px 10px',
-  border: '1px solid var(--theme-splitter-color)',
+  border: '1px solid var(--theme-content-border-color)',
   borderTopLeftRadius: 'var(--theme-default-roundness)',
   borderBottomWidth: 0,
   borderRightWidth: 0,
-  backgroundColor: 'var(--theme-body-color)',
+  backgroundColor: 'var(--theme-window-background)',
+  backgroundImage: 'url(assets/chrome-background.png)',
+  backgroundSize: 'var(--theme-window-image-tile-size)',
+  backgroundAttachment: 'fixed',
   color: 'var(--theme-content-color)',
-  alignItems: 'center',
 });
 
 /**

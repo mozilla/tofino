@@ -35,7 +35,7 @@ const TITLE_STYLE = Style.registerStyle({
 
 const URL_STYLE = Style.registerStyle({
   flex: 4,
-  color: 'var(--theme-body-color)',
+  color: 'var(--theme-content-color-alt)',
   fontSize: '11px',
   overflow: 'hidden',
   whiteSpace: 'nowrap',

@@ -19,51 +19,34 @@ import Location from './location';
 
 const NAVBAR_STYLE = Style.registerStyle({
   position: 'relative',
-  minHeight: `${UIConstants.NAVBAR_EXPANDED_HEIGHT}px`,
+  height: `${UIConstants.NAVBAR_HEIGHT}px`,
   backgroundColor: 'var(--theme-navbar-background)',
+  backgroundImage: 'url(assets/chrome-background.png)',
+  backgroundSize: 'var(--theme-window-image-tile-size)',
+  backgroundAttachment: 'fixed',
   padding: '0 10px',
-  WebkitAppRegion: 'drag',
 });
 
-const NAVBAR_SIDE_SECTIONS_STYLE = Style.registerStyle({
-  alignItems: 'center',
-  minWidth: '260px',
-  flexShrink: 0,
-
-  '@media (max-width: 1024px)': {
-    minWidth: 'initial',
+const NAVBAR_NAVIGATION_CONTAINER_STYLE = Style.registerStyle({
+  '@media (min-width: 1025px)': {
+    position: 'absolute', // don't affect layout, so that the navbar gets centered
   },
-});
-
-const NAVBAR_SIDE_SECTION_LEFT_STYLE = Style.registerStyle({
-  justifyContent: 'flex-start',
-});
-
-const NAVBAR_SIDE_SECTION_RIGHT_STYLE = Style.registerStyle({
-  justifyContent: 'flex-end',
-});
-
-const NAVBAR_APP_MENU_BUTTON_STYLE = Style.registerStyle({
-  marginLeft: '8px',
-  marginRight: '24px',
+  alignItems: 'center',
+  height: 'inherit',
 });
 
 const NAVBAR_NAVIGATION_BUTTONS_STYLE = Style.registerStyle({
-  margin: '0 10px',
+  margin: '0 8px',
 });
 
 const NAVBAR_NAVIGATION_BACK_BUTTON_STYLE = Style.registerStyle({
   borderRadius: '100px',
   border: 'var(--theme-back-button-border-width) solid',
   backgroundColor: 'var(--theme-back-button-background)',
-  borderColor: 'var(--theme-back-button-color)',
+  borderColor: 'var(--theme-back-button-border-color)',
   marginRight: '4px',
-  width: `${UIConstants.NAVBAR_EXPANDED_HEIGHT - 10}px`,
-  height: `${UIConstants.NAVBAR_EXPANDED_HEIGHT - 10}px`,
-});
-
-const NAVBAR_WINDOW_CONTROL_BUTTONS_STYLE = Style.registerStyle({
-  margin: '0 8px',
+  width: `${UIConstants.NAVBAR_HEIGHT - 10}px`,
+  height: `${UIConstants.NAVBAR_HEIGHT - 10}px`,
 });
 
 const NavBar = (props) => {
@@ -75,26 +58,15 @@ const NavBar = (props) => {
   }
 
   const {
-    openMenu,
     navBack,
     navForward,
     navRefresh,
-    minimize,
-    maximize,
-    close,
   } = props;
 
   return (
     <div id="browser-navbar"
       className={`${NAVBAR_STYLE}`}>
-      <div className={`${NAVBAR_SIDE_SECTIONS_STYLE} ${NAVBAR_SIDE_SECTION_LEFT_STYLE}`}>
-        <Btn id="browser-navbar-menu"
-          className={NAVBAR_APP_MENU_BUTTON_STYLE}
-          title="Menu"
-          image="glyph-menu-16.svg"
-          imgWidth="22px"
-          imgHeight="22px"
-          onClick={openMenu} />
+      <div className={NAVBAR_NAVIGATION_CONTAINER_STYLE}>
         <Btn id="browser-navbar-back"
           className={`${NAVBAR_NAVIGATION_BACK_BUTTON_STYLE}`}
           title="Back"
@@ -122,32 +94,6 @@ const NavBar = (props) => {
           disabled={!props.page.canRefresh} />
       </div>
       <Location {...props} />
-      <div className={`${NAVBAR_SIDE_SECTIONS_STYLE} ${NAVBAR_SIDE_SECTION_RIGHT_STYLE}`}>
-        <Btn id="browser-navbar-minimize"
-          className={NAVBAR_WINDOW_CONTROL_BUTTONS_STYLE}
-          title="Minimize"
-          image="glyph-window-minimize-16.svg"
-          imgWidth="18px"
-          imgHeight="18px"
-          imgPosition="center 3px"
-          onClick={minimize} />
-        <Btn id="browser-navbar-maximize"
-          className={NAVBAR_WINDOW_CONTROL_BUTTONS_STYLE}
-          title="Maximize"
-          image="glyph-window-maximize-16.svg"
-          imgWidth="18px"
-          imgHeight="18px"
-          imgPosition="center bottom"
-          onClick={maximize} />
-        <Btn id="browser-navbar-close"
-          className={NAVBAR_WINDOW_CONTROL_BUTTONS_STYLE}
-          title="Close"
-          image="glyph-window-close-16.svg"
-          imgWidth="18px"
-          imgHeight="18px"
-          imgPosition="center bottom"
-          onClick={close} />
-      </div>
     </div>
   );
 };
@@ -160,10 +106,6 @@ NavBar.propTypes = {
   navBack: PropTypes.func.isRequired,
   navForward: PropTypes.func.isRequired,
   navRefresh: PropTypes.func.isRequired,
-  minimize: PropTypes.func.isRequired,
-  maximize: PropTypes.func.isRequired,
-  close: PropTypes.func.isRequired,
-  openMenu: PropTypes.func.isRequired,
 
   // For <Location>
   isBookmarked: PropTypes.func.isRequired,

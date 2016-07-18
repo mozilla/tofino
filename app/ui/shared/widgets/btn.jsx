@@ -19,6 +19,7 @@ export const MIN_HEIGHT = '16px';
 export const BKG_REPEAT_DEFAULT = 'no-repeat';
 export const BKG_POSIITON_DEFAULT = 'left center';
 export const BKG_SIZE_DEFAULT = 'contain';
+export const BKG_VS_CHILDREN_DISTANCE = 5; // px
 
 const BUTTON_STYLE = Style.registerStyle({
   display: 'flex',
@@ -30,7 +31,8 @@ const BUTTON_STYLE = Style.registerStyle({
   padding: '0',
   border: '0',
   background: 'transparent',
-
+  font: 'inherit',
+  textRendering: 'inherit',
   WebkitUserSelect: 'none',
   WebkitAppRegion: 'no-drag',
 });
@@ -43,20 +45,11 @@ const Btn = (props) => {
 
   const custom = {
     opacity: (disabled ? '0.5' : '1'),
+    minWidth: minWidth || imgWidth || MIN_WIDTH,
+    minHeight: minHeight || imgHeight || MIN_HEIGHT,
     ...style,
   };
 
-  if (minWidth) {
-    custom.minWidth = minWidth;
-  } else if (imgWidth) {
-    custom.minWidth = `${Math.max(parseInt(imgWidth, 10), parseInt(MIN_WIDTH, 10))}px`;
-  }
-
-  if (minHeight) {
-    custom.minHeight = minHeight;
-  } else if (imgHeight) {
-    custom.minHeight = `${Math.max(parseInt(imgHeight, 10), parseInt(MIN_HEIGHT, 10))}px`;
-  }
 
   // Check for null or undefined here, so that we can use a default background
   // when an asset is intended, but not supplied yet. Simply checking for a
@@ -66,6 +59,13 @@ const Btn = (props) => {
     custom.backgroundRepeat = BKG_REPEAT_DEFAULT;
     custom.backgroundPosition = imgPosition || BKG_POSIITON_DEFAULT;
     custom.backgroundSize = imgWidth || imgHeight ? `${imgWidth} ${imgHeight}` : BKG_SIZE_DEFAULT;
+
+    // Make sure the text doesn't overlap the image.
+    if (children) {
+      const bkgWidth = imgWidth || MIN_WIDTH;
+      custom.paddingLeft = `${parseInt(bkgWidth, 10) + BKG_VS_CHILDREN_DISTANCE}px`;
+      custom.paddingRight = '0px';
+    }
   }
 
   return (

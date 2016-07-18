@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 import React from 'react';
 
 import Style from '../../shared/style';
-import BrowserWindow from './browser';
+import BrowserWindow from './window';
 
 const APP_STYLE = Style.registerStyle({
   width: '100%',

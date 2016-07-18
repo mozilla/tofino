@@ -12,22 +12,26 @@ specific language governing permissions and limitations under the License.
 
 import React from 'react';
 
-import Style from '../../shared/style';
-import TabBar from './tabbar/tabbar';
-import NavBar from './navbar/navbar';
+import Style from '../../../shared/style';
+import TabBar from '../tabbar/tabbar';
+import NavBar from '../navbar/navbar';
+import WinDecorations from '../window/decorations';
 
 const CHROME_AREA_STYLE = Style.registerStyle({
+  WebkitAppRegion: 'drag',
   flexDirection: 'column',
-  backgroundColor: 'var(--theme-body-color)',
+  backgroundColor: 'var(--theme-window-background)',
   backgroundImage: 'url(assets/chrome-background.png)',
-  backgroundSize: '28px',
+  backgroundSize: 'var(--theme-window-image-tile-size)',
 });
 
 const BrowserChrome = function(props) {
   return (
     <div className={CHROME_AREA_STYLE}>
+      <WinDecorations {...props} >
+        <TabBar {...props} />
+      </WinDecorations>
       <NavBar {...props} />
-      <TabBar {...props} />
     </div>
   );
 };

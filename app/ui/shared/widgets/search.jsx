@@ -21,7 +21,7 @@ const SEARCH_STYLE = Style.registerStyle({
 const INPUT_STYLE = Style.registerStyle({
   flex: '1',
   padding: '2px 4px',
-  border: '1px solid var(--theme-splitter-color)',
+  border: '1px solid var(--theme-content-border-color)',
   borderRadius: 'var(--theme-default-roundness)',
 });
 

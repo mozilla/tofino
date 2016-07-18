@@ -14,9 +14,10 @@ import * as contentURLs from '../../../shared/constants/content-pages-locations'
 
 export const HOME_PAGE = contentURLs.HISTORY_PAGE;
 
-export const NAVBAR_EXPANDED_HEIGHT = 55; // px
-export const TABBAR_HEIGHT = 30; // px
-export const TAB_DEFAULT_WIDTH = 20; // vw;
+export const TABBAR_HEIGHT = 26; // px
+export const TAB_DEFAULT_WIDTH = 19; // vw;
+
+export const NAVBAR_HEIGHT = 42; // px
 
 // Show autocompletions when typing in location bar
 export const SHOW_COMPLETIONS = true;
