@@ -51,7 +51,7 @@
     "true-html-escape": "0.0.2",
     "uuid": "2.0.2",
     "ws": "1.1.1",
-    "yargs": "4.8.0"
+    "yargs": "4.8.1"
   },
   "devDependencies": {
     "babel-core": "6.10.4",
