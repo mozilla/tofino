@@ -60,6 +60,12 @@ export default function uiState(state = initialState, action) {
       return state.set('showPageSummaries', !prev);
     }
 
+    case types.CREATE_TAB:
+    case types.SET_CURRENT_TAB:
+    case types.SET_CURRENT_TAB_PREVIOUS:
+    case types.SET_CURRENT_TAB_NEXT:
+      return state.set('showPageSummaries', false);
+
     default:
       return state;
   }
