@@ -44,6 +44,7 @@ const TabBar = (props) => (
       imgHeight="8px"
       imgPosition="center"
       minWidth={`${UIConstants.TABBAR_HEIGHT}px`}
+      minHeight={`${UIConstants.TABBAR_HEIGHT}px`}
       onClick={props.handleNewTabClick} />
   </div>
 );

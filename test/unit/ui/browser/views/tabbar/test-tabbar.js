@@ -43,7 +43,7 @@ describe('TabBar', () => {
   it('calls new tab handler on click', () => {
     const props = createSpyProps();
     const wrapper = shallow(<TabBar {...props} />).find('#new-tab').shallow();
-    wrapper.simulate('click');
+    wrapper.find('button').simulate('click');
     expect(props.handleNewTabClick).toHaveBeenCalled();
   });
 });

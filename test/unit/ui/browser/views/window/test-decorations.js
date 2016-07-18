@@ -36,7 +36,7 @@ describe('Window decorations', () => {
       const wrapper = shallow(
         <Decorations {...props} />
       ).find('#browser-menu').shallow();
-      wrapper.simulate('click');
+      wrapper.find('button').simulate('click');
       expect(props.handleOpenMenu).toHaveBeenCalled();
     });
   });
@@ -47,7 +47,7 @@ describe('Window decorations', () => {
       const wrapper = shallow(
         <Decorations {...props} />
       ).find('#browser-minimize').shallow();
-      wrapper.simulate('click');
+      wrapper.find('button').simulate('click');
       expect(props.handleMinimize).toHaveBeenCalled();
     });
   });
@@ -58,7 +58,7 @@ describe('Window decorations', () => {
       const wrapper = shallow(
         <Decorations {...props} />
       ).find('#browser-maximize').shallow();
-      wrapper.simulate('click');
+      wrapper.find('button').simulate('click');
       expect(props.handleMaximize).toHaveBeenCalled();
     });
   });
@@ -69,7 +69,7 @@ describe('Window decorations', () => {
       const wrapper = shallow(
         <Decorations {...props} />
       ).find('#browser-close').shallow();
-      wrapper.simulate('click');
+      wrapper.find('button').simulate('click');
       expect(props.handleClose).toHaveBeenCalled();
     });
   });
