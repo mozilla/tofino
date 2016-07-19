@@ -54,6 +54,9 @@ const browserConfig = {
     }]),
   ],
   target: 'electron-renderer',
+  externals: [
+    'dtrace-provider',
+  ],
 };
 
 export const dev = {
