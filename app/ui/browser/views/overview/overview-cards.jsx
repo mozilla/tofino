@@ -11,49 +11,35 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
 
 import * as SharedPropTypes from '../../../shared/model/shared-prop-types';
-import * as UIConstants from '../../constants/ui';
 import Style from '../../../shared/style';
-import OverviewBar from './overview-bar';
-import OverviewCards from './overview-cards';
+import SimpleCard from './cards/simple-card';
 
-import * as selectors from '../../selectors';
-
-const OVERVIEW_STYLE = Style.registerStyle({
-  flexDirection: 'column',
-  position: 'absolute',
-  top: UIConstants.TABBAR_HEIGHT,
-  bottom: 0,
-  right: 0,
-  left: 0,
-  zIndex: UIConstants.OVERVIEW_ZINDEX,
-  backgroundColor: 'var(--theme-window-background)',
+const OVERVIEW_CARDS_STYLE = Style.registerStyle({
+  flexFlow: 'wrap',
+  margin: '45px',
 });
 
-const Overview = function(props) {
+const OverviewCards = function(props) {
   return (
-    <div className={OVERVIEW_STYLE}
-      hidden={!props.show}>
-      <OverviewBar />
-      <OverviewCards {...props} />
+    <div className={OVERVIEW_CARDS_STYLE}>
+      {props.pages.map((page, pageIndex) => (
+        <SimpleCard key={`page-${page.id}`}
+          page={page}
+          pageIndex={pageIndex}
+          isSelected={pageIndex === props.currentPageIndex} />
+      ))}
     </div>
   );
 };
 
-Overview.displayName = 'Overview';
+OverviewCards.displayName = 'OverviewCards';
 
-Overview.propTypes = {
+OverviewCards.propTypes = {
   show: PropTypes.bool.isRequired,
   pages: SharedPropTypes.Pages.isRequired,
   currentPageIndex: PropTypes.number.isRequired,
 };
 
-function mapStateToProps(state) {
-  return {
-    show: selectors.getShowPageSummaries(state),
-  };
-}
-
-export default connect(mapStateToProps)(Overview);
+export default OverviewCards;
