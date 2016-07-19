@@ -24,3 +24,18 @@ export const OVERVIEWBAR_HORIZONTAL_PADDING = NAVBAR_HORIZONTAL_PADDING; // px
 
 // Show autocompletions when typing in location bar
 export const SHOW_COMPLETIONS = true;
+
+// Content z-indices.
+export const BROWSER_CONTENT_BASE_ZINDEX = 0;
+export const BROWSER_CONTENT_ACTIVE_PAGE_ZINDEX = 1;
+
+// Navbar view z-indices.
+export const LOCATION_BAR_AUTOCOMPLETE_ZINDEX = 2;
+
+// Page summaries view z-indices.
+export const OVERVIEW_ZINDEX = 1;
+
+// Other floating UI elements z-indices.
+export const CONTENT_SEARCHBOX_ZINDEX = 1;
+export const DEVELOPER_BAR_ZINDEX = 1;
+export const STATUS_BAR_ZINDEX = 1;

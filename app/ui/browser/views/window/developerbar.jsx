@@ -14,6 +14,7 @@ import React, { Component, PropTypes } from 'react';
 
 import BUILD_CONFIG from '../../../../../build-config';
 import Style from '../../../shared/style';
+import * as UIConstants from '../../constants/ui';
 import Btn from '../../../shared/widgets/btn';
 import { perfStart, perfStop } from '../../actions/developer';
 
@@ -21,7 +22,7 @@ const DEVELOPER_BAR_STYLE = Style.registerStyle({
   position: 'fixed',
   bottom: 0,
   right: 0,
-  zIndex: 1,
+  zIndex: UIConstants.DEVELOPER_BAR_ZINDEX,
   padding: '2px 10px',
   border: '1px solid var(--theme-content-border-color)',
   borderTopLeftRadius: 'var(--theme-default-roundness)',
