@@ -21,6 +21,7 @@ import WinDecorations from '../window/decorations';
 const CHROME_AREA_STYLE = Style.registerStyle({
   WebkitAppRegion: 'drag',
   flexDirection: 'column',
+  overflow: 'hidden',
   backgroundColor: 'var(--theme-window-background)',
   backgroundImage: 'url(assets/chrome-background.png)',
   backgroundSize: 'var(--theme-window-image-tile-size)',
