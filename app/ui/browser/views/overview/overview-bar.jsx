@@ -11,8 +11,10 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 import * as UIConstants from '../../constants/ui';
+import * as actions from '../../actions/main-actions';
 import Style from '../../../shared/style';
 import Btn from '../../../shared/widgets/btn';
 
@@ -49,7 +51,7 @@ const OVERVIEW_BAR_NEW_TAB_BUTTON_STYLE = Style.registerStyle({
   fontSize: '110%',
 });
 
-const OverviewBar = () => {
+const OverviewBar = (props) => {
   return (
     <div id="browser-overviewbar"
       className={OVERVIEW_BAR_STYLE}>
@@ -60,13 +62,15 @@ const OverviewBar = () => {
           image="glyph-arrow-nav-back-16.svg"
           imgWidth="22px"
           imgHeight="22px"
-          imgPosition="center" />
+          imgPosition="center"
+          onClick={() => props.dispatch(actions.togglePageSummaries())} />
         <Btn id="browser-overviewbar-new-tab"
           className={OVERVIEW_BAR_NEW_TAB_BUTTON_STYLE}
           title="Add new tab"
           image="glyph-addNew-24-blue.svg"
           imgWidth="12px"
-          imgHeight="12px">
+          imgHeight="12px"
+          onClick={() => props.dispatch(actions.createTab())} >
           New Tab
         </Btn>
       </div>
@@ -77,6 +81,11 @@ const OverviewBar = () => {
 OverviewBar.displayName = 'OverviewBar';
 
 OverviewBar.propTypes = {
+  dispatch: PropTypes.func.isRequired,
 };
 
-export default OverviewBar;
+function mapStateToProps() {
+  return {};
+}
+
+export default connect(mapStateToProps)(OverviewBar);
