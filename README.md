@@ -54,6 +54,14 @@ Currently runs linting, unit and webdriver tests with mocha.
 npm test
 ```
 
+## Downloads
+
+The most recent master branch builds are available here. Be warned, they will frequently be broken.
+
+* https://mozilla-releng-tofino.s3.amazonaws.com/mozilla/tofino/builds/master/tofino-win32-ia32.zip
+* https://mozilla-releng-tofino.s3.amazonaws.com/mozilla/tofino/builds/master/tofino-darwin-x64.zip
+* https://mozilla-releng-tofino.s3.amazonaws.com/mozilla/tofino/builds/master/tofino-linux-x64.zip
+
 ## Contributing
 
 Please note that this project is released with a Contributor Code of Conduct.
