@@ -20,6 +20,12 @@ const RequiredProps = {
     onKeyUp: () => {},
     hidden: false,
   },
+  FittedImage: {
+    src: 'url()',
+    mode: 'cover',
+    width: '100px',
+    height: '200px',
+  },
 };
 
 describe('widgets', () => {
