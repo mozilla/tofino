@@ -14,13 +14,14 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import Style from '../../../shared/style';
+import * as UIConstants from '../../constants/ui';
 import { getStatusText } from '../../selectors';
 
 const STATUS_STYLE = Style.registerStyle({
   position: 'fixed',
   bottom: 0,
   left: 0,
-  zIndex: 1,
+  zIndex: UIConstants.STATUS_BAR_ZINDEX,
   padding: '2px 10px',
   border: '1px solid var(--theme-content-border-color)',
   borderTopRightRadius: 'var(--theme-default-roundness)',

@@ -12,14 +12,15 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes } from 'react';
 
+import * as SharedPropTypes from '../../../shared/model/shared-prop-types';
+import * as UIConstants from '../../constants/ui';
 import Style from '../../../shared/style';
 import Page from '../page';
-import * as SharedPropTypes from '../../../shared/model/shared-prop-types';
 
 const CONTENT_AREA_STYLE = Style.registerStyle({
   flex: 1,
   position: 'relative',
-  zIndex: 0,
+  zIndex: UIConstants.BROWSER_CONTENT_BASE_ZINDEX,
 });
 
 const BrowserContent = function(props) {
