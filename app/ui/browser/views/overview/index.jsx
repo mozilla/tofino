@@ -31,6 +31,10 @@ const OVERVIEW_STYLE = Style.registerStyle({
   left: 0,
   zIndex: UIConstants.OVERVIEW_ZINDEX,
   backgroundColor: 'var(--theme-window-background)',
+  backgroundImage: 'url(assets/chrome-background.png)',
+  backgroundSize: 'var(--theme-window-image-tile-size)',
+  backgroundAttachment: 'fixed',
+  backgroundBlendMode: 'soft-light',
 });
 
 const Overview = function(props) {
