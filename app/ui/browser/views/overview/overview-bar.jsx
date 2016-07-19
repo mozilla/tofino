@@ -19,6 +19,7 @@ import Style from '../../../shared/style';
 import Btn from '../../../shared/widgets/btn';
 
 const OVERVIEW_BAR_STYLE = Style.registerStyle({
+  flexShrink: 0,
   alignItems: 'stretch',
   height: `${UIConstants.NAVBAR_HEIGHT}px`,
   backgroundColor: 'var(--theme-navbar-background)',

@@ -23,6 +23,7 @@ import * as selectors from '../../selectors';
 
 const OVERVIEW_STYLE = Style.registerStyle({
   flexDirection: 'column',
+  overflow: 'hidden',
   position: 'absolute',
   top: UIConstants.TABBAR_HEIGHT,
   bottom: 0,

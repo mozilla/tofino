@@ -18,6 +18,7 @@ import Btn from '../../../shared/widgets/btn';
 import Location from './location';
 
 const NAVBAR_STYLE = Style.registerStyle({
+  flexShrink: 0,
   alignItems: 'stretch',
   position: 'relative',
   height: `${UIConstants.NAVBAR_HEIGHT}px`,

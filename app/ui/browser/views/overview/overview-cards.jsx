@@ -21,6 +21,7 @@ import * as actions from '../../actions/main-actions';
 
 const OVERVIEW_CARDS_STYLE = Style.registerStyle({
   flexFlow: 'wrap',
+  overflow: 'auto',
   margin: '45px',
 });
 
