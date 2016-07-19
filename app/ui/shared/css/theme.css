@@ -1,13 +1,21 @@
 :root {
+  /* Window */
+
   --theme-window-background: #2f4e78;
   --theme-window-image-tile-size: 23px;
+
+  /* Content */
 
   --theme-content-color: #fff;
   --theme-content-color-alt: #2d9cdb;
   --theme-content-selected-color: #fff;
+
   --theme-content-border-color: #2f4e78;
+  --theme-content-selected-border-color: #2d9cdb;
 
   --theme-selection-color: #b3dbf2;
+
+  /* Tabbar */
 
   --theme-tab-background: #2d9cdb;
   --theme-tab-color: #fff;
@@ -16,6 +24,8 @@
   --theme-tab-inactive-background: transparent;
   --theme-tab-inactive-color: #fff;
   --theme-tab-inactive-opacity: 0.9;
+
+  /* Navbar */
 
   --theme-navbar-background: #2d9cdb;
 
@@ -28,11 +38,20 @@
   --theme-back-button-border-color: #fff;
   --theme-back-button-border-width: 2px;
 
+  /* Overview (Page Summaries) */
+
   --theme-overview-new-tab-button-background: #fff;
   --theme-overview-new-tab-button-color: #2d9cdb;
+
+  --theme-overview-summary-background: linear-gradient(to bottom, rgba(255,255,255,0) 0px, rgba(255,255,255,1) 20px);
+  --theme-overview-summary-title-color: #000;
+  --theme-overview-summary-subtitle-color: #2f4e78;
+
+  /* Misc */
 
   --theme-separator-color: #fff;
 
   --theme-default-roundness: 3px;
   --theme-default-shadow: 0px 2px 4px 0px rgba(0,0,0,0.5);
+  --theme-default-selected-shadow: 0px 0px 5px 0px #2d9cdb;
 }
