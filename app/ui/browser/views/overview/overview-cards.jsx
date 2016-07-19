@@ -11,10 +11,13 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 import * as SharedPropTypes from '../../../shared/model/shared-prop-types';
 import Style from '../../../shared/style';
 import SimpleCard from './cards/simple-card';
+
+import * as actions from '../../actions/main-actions';
 
 const OVERVIEW_CARDS_STYLE = Style.registerStyle({
   flexFlow: 'wrap',
@@ -28,7 +31,8 @@ const OverviewCards = function(props) {
         <SimpleCard key={`page-${page.id}`}
           page={page}
           pageIndex={pageIndex}
-          isSelected={pageIndex === props.currentPageIndex} />
+          isSelected={pageIndex === props.currentPageIndex}
+          onClick={pageId => props.dispatch(actions.setCurrentTab(pageId))} />
       ))}
     </div>
   );
@@ -37,9 +41,14 @@ const OverviewCards = function(props) {
 OverviewCards.displayName = 'OverviewCards';
 
 OverviewCards.propTypes = {
+  dispatch: PropTypes.func.isRequired,
   show: PropTypes.bool.isRequired,
   pages: SharedPropTypes.Pages.isRequired,
   currentPageIndex: PropTypes.number.isRequired,
 };
 
-export default OverviewCards;
+function mapStateToProps() {
+  return {};
+}
+
+export default connect(mapStateToProps)(OverviewCards);

@@ -30,7 +30,8 @@ const Thumbnail = props => {
   return (
     <div id={props.id}
       style={props.style}
-      className={`${THUMBNAIL_STYLE} ${props.className || ''}`}>
+      className={`${THUMBNAIL_STYLE} ${props.className || ''}`}
+      onClick={props.onClick}>
       <FittedImage src={props.src}
         width={props.imgWidth}
         height={props.imgHeight}
@@ -58,6 +59,7 @@ Thumbnail.propTypes = {
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,
   ]),
+  onClick: PropTypes.func,
 };
 
 export default Thumbnail;

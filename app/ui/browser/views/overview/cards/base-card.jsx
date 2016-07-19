@@ -12,13 +12,16 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes } from 'react';
 
+import * as SharedPropTypes from '../../../../shared/model/shared-prop-types';
 import * as UIConstants from '../../../constants/ui';
 import Style from '../../../../shared/style';
 import Thumbnail from '../../../../shared/widgets/thumbnail';
 
 const CARD_STYLE = Style.registerStyle({
+  WebkitUserSelect: 'none',
   position: 'relative',
   margin: '20px',
+  cursor: 'pointer',
 });
 
 const SUMMARY_STYLE = Style.registerStyle({
@@ -48,7 +51,8 @@ const BaseCard = function(props) {
       imgWidth={`${UIConstants.CARD_WIDTH}px`}
       imgHeight={`${UIConstants.CARD_HEIGHT}px`}
       imgMode="contain"
-      imgPosition="top center">
+      imgPosition="top center"
+      onClick={() => props.onClick(props.page.id)}>
       <div className={SUMMARY_STYLE}>
         {props.children}
       </div>
@@ -59,6 +63,7 @@ const BaseCard = function(props) {
 BaseCard.displayName = 'BaseCard';
 
 BaseCard.propTypes = {
+  page: SharedPropTypes.Page.isRequired,
   isSelected: PropTypes.bool.isRequired,
   backgroundColor: PropTypes.string.isRequired,
   backgroundImage: PropTypes.string.isRequired,
@@ -66,6 +71,7 @@ BaseCard.propTypes = {
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,
   ]),
+  onClick: PropTypes.func.isRequired,
 };
 
 export default BaseCard;
