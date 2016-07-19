@@ -25,7 +25,7 @@ const COLORS = (new ColorScheme())
 
 const SimpleCard = function(props) {
   return (
-    <BaseCard isSelected={props.isSelected}
+    <BaseCard {...props}
       backgroundColor={`#${COLORS[props.pageIndex % COLORS.length]}`}
       backgroundImage="assets/logo-tofino.png">
       <SimpleSummary title={props.page.title}
@@ -40,6 +40,7 @@ SimpleCard.propTypes = {
   page: SharedPropTypes.Page.isRequired,
   pageIndex: PropTypes.number.isRequired,
   isSelected: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
 };
 
 export default SimpleCard;
