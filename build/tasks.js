@@ -2,8 +2,9 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import colors from 'colors/safe';
-import { safeGetBuildConfig } from './utils';
 import { logger } from './logging';
+import { safeGetBuildConfig } from './utils';
+import argv from './utils/argv';
 
 /**
  * Use need to allow lazy loading of modules for all tasks. Generally,
@@ -33,7 +34,7 @@ const unwatch = watchers => {
   return Promise.all(watchers.map(w => w.close()));
 };
 
-export default {
+const Tasks = {
   async buildDeps() {
     await Lazy.buildDeps();
   },
@@ -113,3 +114,23 @@ export default {
     await Lazy.package();
   },
 };
+
+const CliMap = {
+  '--build-deps': 'buildDeps',
+  '--build-services': 'buildServices',
+  '--serve': 'serve',
+  '--build': 'build',
+  '--run': 'run',
+  '--run-dev': 'runDev',
+  '--package': 'package',
+  '--test': 'test',
+  '--test-ci': 'testCI',
+};
+
+export async function run() {
+  for (const [command, runner] of Object.entries(CliMap)) {
+    if (argv[command.substr(2)]) {
+      await Tasks[runner](argv._);
+    }
+  }
+}
