@@ -88,7 +88,7 @@
     "eslint-plugin-react": "5.2.2",
     "expect": "1.20.2",
     "extract-zip": "1.5.0",
-    "fetch-mock": "5.0.1",
+    "fetch-mock": "5.0.2",
     "glob": "7.0.5",
     "isomorphic-fetch": "2.2.1",
     "jsdom": "9.4.1",
