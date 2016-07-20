@@ -4,9 +4,20 @@ html, body {
 
 body {
   margin: 0;
-  /* Use a default system font in the entire application */
-  font: 11px BlinkMacSystemFont, sans-serif;
   text-rendering: geometricPrecision;
+  /* Will get used for content pages which do not get the platform
+   * specific body class for fonts */
+  font: 11px BlinkMacSystemFont, sans-serif;
+}
+
+body.win {
+  font: 11px 'Segoe UI Regular', sans-serif;
+}
+body.osx {
+  font: 11px 'San Francisco Text Regular', 'Helvetica Regular', sans-serif;
+}
+body.linux {
+  font: 11px 'Ubuntu Sans Regular', sans-serif;
 }
 
 div {

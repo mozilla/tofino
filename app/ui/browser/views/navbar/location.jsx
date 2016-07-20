@@ -89,7 +89,6 @@ const INPUT_BAR_STYLE = Style.registerStyle({
     background: 'var(--theme-selection-color)',
     color: 'var(--theme-content-selected-color)',
   },
-  fontWeight: 100,
   fontSize: '120%',
 });
 
