@@ -12,7 +12,7 @@ export const DST_DIR = path.join(Const.LIB_DIR, 'main');
 
 export default {
   ...defaultConfig,
-  entry: path.join(SRC_DIR, 'browser.js'),
+  entry: path.join(SRC_DIR, 'index.js'),
   output: {
     ...defaultConfig.output,
     path: DST_DIR,

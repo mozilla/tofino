@@ -15,19 +15,7 @@ specific language governing permissions and limitations under the License.
 // Must go before any require statements.
 const browserStartTime = Date.now();
 
-import 'source-map-support/register';
 import { logger } from '../shared/logging';
-
-process.on('uncaughtException', (err) => {
-  logger.error(err.stack);
-  process.exit(1);
-});
-
-process.on('unhandledRejection', (reason, p) => {
-  logger.error(`Unhandled Rejection at: Promise ${JSON.stringify(p)}`);
-  logger.error(reason.stack);
-  process.exit(2);
-});
 
 import electron from 'electron';
 
