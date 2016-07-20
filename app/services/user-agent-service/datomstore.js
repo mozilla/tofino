@@ -22,7 +22,13 @@ import {
 
 import Immutable from 'immutable';
 import microtime from 'microtime-fast';
+import fs from 'fs-promise';
+import path from 'path';
+
 import { Bookmark } from '../../shared/model';
+import { logger } from '../../shared/logging';
+import { DatomStorageSchemaV1 } from './datomstorage-schema';
+import { DB, verbose } from './sqlite';
 
 import {
   SessionEndReason,
@@ -31,11 +37,15 @@ import {
   StarOp,
   // VisitType
 } from './storage';
+import { DatomStorageSqlite } from './datomstorage-sqlite';
 
 const { lazySeq, vector, parse, getIn } = mori;
 const { DB_ADD, DB_RETRACT, DB_CURRENT_TX, TEMPIDS } = helpers;
 
-const profileSchema = {
+const d = datascript.core;
+const djs = datascript.js;
+
+export const profileSchema = {
   'page/url': {
     ':db/cardinality': ':db.cardinality/one',
     ':db/unique': ':db.unique/identity',
@@ -122,11 +132,10 @@ function escapeRegExp(string) {
 }
 
 export class ProfileDatomStorage {
-  constructor(dir) {
-    this.dir = dir;
-    const schema = this.createSchema();
-    this.conn = datascript.core.create_conn(schema);
-    this.schema = schema;
+  constructor(persistentStorage, conn = undefined) {
+    this.persistentStorage = persistentStorage;
+    this.schema = this.createSchema();
+    this.conn = conn || datascript.core.create_conn(this.schema);
 
     this.pageDetailsQuery = parse(`
     [:find (max ?timestamp) (pull ?page ["page/url" "page/title"]) ?page
@@ -143,10 +152,27 @@ export class ProfileDatomStorage {
   }
 
   static async open(dir) {
-    return new ProfileDatomStorage(dir);
+    verbose();
+
+    const filePath = path.join(dir, 'datoms.db');
+
+    await fs.mkdirp(dir);
+    const db = await DB.open(filePath);
+
+    const persistentStorage = new DatomStorageSqlite(db);
+    await persistentStorage.init();
+    const conn = djs.conn_from_db(await persistentStorage.dbFromSnapshot());
+
+    // No listener witnesses these transactions replayed from persistent storage.
+    await persistentStorage.replayTransactions(conn, persistentStorage.getLastTxInSnapshot() + 1);
+
+    const profileStorage = new ProfileDatomStorage(persistentStorage, conn);
+    return profileStorage;
   }
 
   close() {
+    this.persistentStorage.close();
+    this.persistentStorage = null;
     return true;
   }
 
@@ -154,8 +180,12 @@ export class ProfileDatomStorage {
     return datascript.core.db(this.conn);
   }
 
-  transact(assertions) {
-    return datascript.core.transact_BANG_(this.conn, assertions);
+  async transact(assertions) {
+    const report = datascript.core.transact_BANG_(this.conn, assertions);
+    if (this.persistentStorage) {
+      await this.persistentStorage.listen(report);
+    }
+    return report;
   }
 
   async startSession(scope, ancestor, now = microtime.now(), reason = SessionStartReason.newTab) {
@@ -171,12 +201,12 @@ export class ProfileDatomStorage {
       );
     }
 
-    const result = this.transact(assertions);
+    const result = await this.transact(assertions);
     return getIn(result, [TEMPIDS, -1]);
   }
 
   async endSession(session, now = microtime.now(), reason = SessionEndReason.tabClosed) {
-    return this.transact(vector(
+    return await this.transact(vector(
       vector(DB_ADD, session, 'session/endReason', reason),
       vector(DB_ADD, session, 'session/endTime', now)
     ));
@@ -187,19 +217,19 @@ export class ProfileDatomStorage {
   async starPage(url, session, action, now = microtime.now()) {
     if (action === StarOp.star) {
       // TODO: session.
-      const result = this.transact(vector(
+      const result = await this.transact(vector(
         vector(DB_ADD, DB_CURRENT_TX, ':db/txInstant', now),
         vector(DB_ADD, -1, 'page/url', url),
-        vector(DB_ADD, -1, 'page/starred', true)
+        vector(DB_ADD, -1, 'page/starred', 1)
       ));
       return getIn(result, [TEMPIDS, -1]);
     }
 
     if (action === StarOp.unstar) {
       // TODO: session.
-      const result = this.transact(vector(
+      const result = await this.transact(vector(
         vector(DB_ADD, DB_CURRENT_TX, ':db/txInstant', now),
-        vector(DB_RETRACT, vector('page/url', url), 'page/starred', true)
+        vector(DB_RETRACT, vector('page/url', url), 'page/starred', 1)
       ));
       return undefined;         // TODO?
     }
@@ -214,7 +244,7 @@ export class ProfileDatomStorage {
    * @param now (optional) microsecond timestamp.
    * @returns {Promise} a promise that resolves to the place ID.
    */
-  visit(url, session, title, now = microtime.now()) {
+  async visit(url, session, title, now = microtime.now()) {
     let assertions = vector(
       vector(DB_ADD, -1, 'page/url', url),
       vector(DB_ADD, -1, 'event/visit', -2),
@@ -227,7 +257,7 @@ export class ProfileDatomStorage {
       );
     }
 
-    const result = this.transact(assertions);
+    const result = await this.transact(assertions);
 
     // TODO: session.
 
@@ -358,7 +388,7 @@ export class ProfileDatomStorage {
     [:find (max ?timestampMicros) (pull ?page ["page/url" "page/title"]) ?page
      :in $
      :where
-     [?page "page/starred" true ?t]
+     [?page "page/starred" 1 ?t]
      [?t ":db/txInstant" ?timestampMicros]
     ]`);
     const results = datascript.core.q(starredQuery, this.getDB());
