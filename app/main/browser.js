@@ -15,8 +15,6 @@ specific language governing permissions and limitations under the License.
 // Must go before any require statements.
 const browserStartTime = Date.now();
 
-import { logger } from '../shared/logging';
-
 import electron from 'electron';
 
 import * as protocols from './protocols';
