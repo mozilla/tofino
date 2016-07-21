@@ -24,12 +24,13 @@ const WINDOW_DECORATIONS_STYLE = Style.registerStyle({
 });
 
 const APP_MENU_BUTTON_STYLE = Style.registerStyle({
-  padding: '0 5px',
+  paddingLeft: '5px',
+  paddingRight: '10px',
 });
 
 const OVERVIEW_BUTTON_STYLE = Style.registerStyle({
   color: 'var(--theme-tab-color)',
-  padding: '0 5px',
+  padding: '0 10px',
 
   '&[data-active="true"]': {
     backgroundColor: 'var(--theme-tab-background)',
