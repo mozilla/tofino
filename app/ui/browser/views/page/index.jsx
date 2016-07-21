@@ -14,11 +14,11 @@ import React, { PropTypes, Component } from 'react';
 import { logger } from '../../../../shared/logging';
 
 import Style from '../../../shared/style';
-import { Page as PageModel } from '../../model';
-
+import * as UIConstants from '../../constants/ui';
 import Status from '../window/status';
 import Search from '../../../shared/widgets/search';
 
+import { Page as PageModel } from '../../model';
 import { fixURL } from '../../browser-util';
 import { menuWebViewContext, inPageSearch } from '../../actions/external';
 import * as actions from '../../actions/main-actions';
@@ -37,12 +37,12 @@ const PAGE_STYLE = Style.registerStyle({
   // https://github.com/electron/electron/blob/master/docs/api/web-view-tag.md#css-styling-notes)
   // Instead just layer the active page over the top of the others.
   '&.active-browser-page': {
-    zIndex: 1,
+    zIndex: UIConstants.BROWSER_CONTENT_ACTIVE_PAGE_ZINDEX,
   },
 });
 
 const SEARCH_STYLE = Style.registerStyle({
-  zIndex: '1',
+  zIndex: UIConstants.CONTENT_SEARCHBOX_ZINDEX,
   position: 'absolute',
   top: '10px',
   right: '10px',

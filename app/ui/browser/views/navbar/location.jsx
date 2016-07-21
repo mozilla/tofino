@@ -15,11 +15,11 @@ import { connect } from 'react-redux';
 import { ipcRenderer } from '../../../../shared/electron';
 
 import Style from '../../../shared/style';
+import * as UIConstants from '../../constants/ui';
 import Btn from '../../../shared/widgets/btn';
 import LocationCompletionRow from './location-completion-row';
 
 import { fixURL, getCurrentWebView } from '../../browser-util';
-import { SHOW_COMPLETIONS } from '../../constants/ui';
 import { Page } from '../../model';
 import * as selectors from '../../selectors';
 import * as actions from '../../actions/main-actions';
@@ -56,7 +56,7 @@ const LOCATION_BAR_AUTOCOMPLETE_STYLE = Style.registerStyle({
   left: 0,
   right: 0,
   top: '100%',
-  zIndex: 2,
+  zIndex: UIConstants.LOCATION_BAR_AUTOCOMPLETE_ZINDEX,
   cursor: 'default',
 });
 
@@ -170,7 +170,7 @@ export class Location extends Component {
   getVisibleCompletionsForLocation() {
     const { profile } = this.props;
     const completionsForLocation = profile.completions.get(this.getRenderLocation());
-    if (SHOW_COMPLETIONS && this.props.showCompletions &&
+    if (UIConstants.SHOW_COMPLETIONS && this.props.showCompletions &&
        this.props.focusedURLBar && completionsForLocation) {
       return completionsForLocation;
     }

@@ -22,26 +22,40 @@ describe('Btn', () => {
         title="my title" />);
     expect(wrapper.prop('className')).toMatch(/my-btn-cls/);
   });
+  it('has `data-active` prop if given', () => {
+    const wrapper = shallow(
+      <Btn active
+        onClick={() => {}}
+        title="my title" />);
+    expect(wrapper.prop('data-active')).toEqual(true);
+  });
+  it('does not have `data-active` if not given', () => {
+    const wrapper = shallow(
+      <Btn title="my title"
+        onClick={() => {}} />
+    );
+    expect(wrapper.prop('data-active')).toEqual(void 0);
+  });
   it('has `disabled` prop if given', () => {
     const wrapper = shallow(
       <Btn disabled
         onClick={() => {}}
         title="my title" />);
-    expect(wrapper.prop('disabled')).toEqual(true);
+    expect(wrapper.find('button').prop('disabled')).toEqual(true);
   });
   it('does not have `disabled` if not given', () => {
     const wrapper = shallow(
       <Btn title="my title"
         onClick={() => {}} />
     );
-    expect(wrapper.prop('disabled')).toEqual(void 0);
+    expect(wrapper.find('button').prop('disabled')).toEqual(void 0);
   });
   it('sets `title`', () => {
     const wrapper = shallow(
       <Btn title="my title"
         onClick={() => {}} />
     );
-    expect(wrapper.prop('title')).toEqual('my title');
+    expect(wrapper.find('button').prop('title')).toEqual('my title');
   });
   it('fires the click handler on click', () => {
     const spy = expect.createSpy();
@@ -50,7 +64,7 @@ describe('Btn', () => {
         onClick={spy} />
     );
     expect(spy).toNotHaveBeenCalled();
-    wrapper.simulate('click');
+    wrapper.find('button').simulate('click');
     expect(spy).toHaveBeenCalled();
   });
   it('does not fire the click handler on click when disabled', () => {
@@ -61,7 +75,7 @@ describe('Btn', () => {
         onClick={spy} />
     );
     expect(spy).toNotHaveBeenCalled();
-    wrapper.simulate('click');
+    wrapper.find('button').simulate('click');
     expect(spy).toNotHaveBeenCalled();
   });
   it('sets `image` if given', () => {
@@ -70,7 +84,7 @@ describe('Btn', () => {
         onClick={() => {}}
         title="my title" />
     );
-    expect(wrapper.prop('style')).toContain({
+    expect(wrapper.find('button').prop('style')).toContain({
       backgroundImage: 'url(assets/some-file.svg)',
       backgroundRepeat: Const.BKG_REPEAT_DEFAULT,
       backgroundPosition: Const.BKG_POSIITON_DEFAULT,
@@ -83,7 +97,7 @@ describe('Btn', () => {
         onClick={() => {}}
         title="my title" />
     );
-    expect(wrapper.prop('style')).toContain({
+    expect(wrapper.find('button').prop('style')).toContain({
       backgroundImage: `url(${Const.BKG_IMAGE_DEFAULT})`,
       backgroundRepeat: Const.BKG_REPEAT_DEFAULT,
       backgroundPosition: Const.BKG_POSIITON_DEFAULT,
@@ -99,7 +113,7 @@ describe('Btn', () => {
         onClick={() => {}}
         title="my title" />
     );
-    expect(wrapper.prop('style')).toContain({
+    expect(wrapper.find('button').prop('style')).toContain({
       backgroundImage: `url(${Const.BKG_IMAGE_DEFAULT})`,
       backgroundRepeat: Const.BKG_REPEAT_DEFAULT,
       backgroundPosition: 'center',
@@ -114,7 +128,7 @@ describe('Btn', () => {
         onClick={() => {}}
         title="my title" />
     );
-    expect(wrapper.prop('style')).toContain({
+    expect(wrapper.find('button').prop('style')).toContain({
       minWidth: '100px',
       minHeight: '200px',
     });
@@ -127,7 +141,7 @@ describe('Btn', () => {
         onClick={() => {}}
         title="my title" />
     );
-    expect(wrapper.prop('style')).toContain({
+    expect(wrapper.find('button').prop('style')).toContain({
       minWidth: '300px',
       minHeight: '400px',
     });
@@ -142,7 +156,7 @@ describe('Btn', () => {
         onClick={() => {}}
         title="my title" />
     );
-    expect(wrapper.prop('style')).toContain({
+    expect(wrapper.find('button').prop('style')).toContain({
       minWidth: '300px',
       minHeight: '400px',
     });
@@ -155,7 +169,7 @@ describe('Btn', () => {
         onClick={() => {}}
         title="my title" />
     );
-    expect(wrapper.prop('style')).toExclude([
+    expect(wrapper.find('button').prop('style')).toExclude([
       'paddingLeft',
       'paddingRigth',
     ]);
@@ -170,7 +184,7 @@ describe('Btn', () => {
         Test
       </Btn>
     );
-    expect(wrapper.prop('style')).toContain({
+    expect(wrapper.find('button').prop('style')).toContain({
       paddingLeft: '105px',
       paddingRight: '0px',
     });

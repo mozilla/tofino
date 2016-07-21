@@ -11,25 +11,40 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
+import * as selectors from '../../selectors';
 import Style from '../../../shared/style';
 import Btn from '../../../shared/widgets/btn';
 import VerticalSeparator from '../../../shared/widgets/vertical-separator';
 
 const WINDOW_DECORATIONS_STYLE = Style.registerStyle({
-  alignItems: 'center',
-  margin: '0px 5px',
+  alignItems: 'stretch',
+  padding: '0px 5px',
 });
 
 const APP_MENU_BUTTON_STYLE = Style.registerStyle({
-  margin: '0 5px',
+  padding: '0 5px',
+});
+
+const OVERVIEW_BUTTON_STYLE = Style.registerStyle({
+  color: 'var(--theme-tab-color)',
+  padding: '0 5px',
+
+  '&[data-active="true"]': {
+    backgroundColor: 'var(--theme-tab-background)',
+    backgroundImage: 'url(assets/chrome-background.png)',
+    backgroundSize: 'var(--theme-window-image-tile-size)',
+    backgroundAttachment: 'fixed',
+    opacity: 'var(--theme-tab-opacity)',
+  },
 });
 
 const WINDOW_CONTROL_BUTTONS_STYLE = Style.registerStyle({
-  margin: '0 1px',
+  padding: '0 1px',
 });
 
-const Decorations = function(props) {
+export const Decorations = function(props) {
   return (
     <div className={WINDOW_DECORATIONS_STYLE}>
       <Btn id="browser-menu"
@@ -40,6 +55,16 @@ const Decorations = function(props) {
         imgHeight="18px"
         onClick={props.handleOpenMenu} />
       <VerticalSeparator />
+      <Btn id="pages-overview"
+        className={OVERVIEW_BUTTON_STYLE}
+        active={props.pageSumariesVisible}
+        title="Page summaries"
+        image="glyph-overview-16.svg"
+        imgWidth="14px"
+        imgHeight="14px"
+        onClick={() => props.handleOpenOverview(!props.pageSumariesVisible)}>
+        Overview
+      </Btn>
       {props.children}
       <Btn id="browser-minimize"
         className={WINDOW_CONTROL_BUTTONS_STYLE}
@@ -72,7 +97,9 @@ const Decorations = function(props) {
 Decorations.displayName = 'Decorations';
 
 Decorations.propTypes = {
+  pageSumariesVisible: PropTypes.bool.isRequired,
   handleOpenMenu: PropTypes.func.isRequired,
+  handleOpenOverview: PropTypes.func.isRequired,
   handleMinimize: PropTypes.func.isRequired,
   handleMaximize: PropTypes.func.isRequired,
   handleClose: PropTypes.func.isRequired,
@@ -82,4 +109,10 @@ Decorations.propTypes = {
   ]),
 };
 
-export default Decorations;
+function mapStateToProps(state) {
+  return {
+    pageSumariesVisible: selectors.getShowPageSummaries(state),
+  };
+}
+
+export default connect(mapStateToProps)(Decorations);

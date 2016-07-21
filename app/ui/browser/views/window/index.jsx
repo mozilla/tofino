@@ -66,6 +66,7 @@ class BrowserWindow extends Component {
       handleMinimize: external.minimize,
       handleMaximize: external.maximize,
       handleClose: external.close,
+      handleOpenOverview: visible => dispatch(actions.setShowPageSummaries(visible)),
 
       // Location & navigation methods.
       navBack: () => webViewController.navigateBack(currentPage.id),
@@ -103,7 +104,8 @@ class BrowserWindow extends Component {
 
     return (
       <div className={BROWSER_WINDOW_STYLE}>
-        <BrowserChrome page={currentPage}
+        <BrowserChrome currentPageIndex={currentPageIndex}
+          page={currentPage}
           {...this.props}
           {...browserChromeMethods} />
         <BrowserContent currentPageIndex={currentPageIndex}

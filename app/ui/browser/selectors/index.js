@@ -67,3 +67,7 @@ export function getPageIndexById(state, id) {
 export function getPageIndexBySessionId(state, sessionId) {
   return state.pages.findIndex(page => page.sessionId === sessionId);
 }
+
+export function getShowPageSummaries(state) {
+  return state.uiState.showPageSummaries;
+}

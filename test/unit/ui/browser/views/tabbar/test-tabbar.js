@@ -6,7 +6,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import Immutable from 'immutable';
 
-import TabBar from '../../../../../../app/ui/browser/views/tabbar/tabbar';
+import { TabBar } from '../../../../../../app/ui/browser/views/tabbar';
 import { Page } from '../../../../../../app/ui/browser/model/index';
 
 /**
@@ -43,7 +43,7 @@ describe('TabBar', () => {
   it('calls new tab handler on click', () => {
     const props = createSpyProps();
     const wrapper = shallow(<TabBar {...props} />).find('#new-tab').shallow();
-    wrapper.simulate('click');
+    wrapper.find('button').simulate('click');
     expect(props.handleNewTabClick).toHaveBeenCalled();
   });
 });

@@ -13,55 +13,52 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import Style from '../../../shared/style';
+import * as SharedPropTypes from '../../../shared/model/shared-prop-types';
 import * as UIConstants from '../../constants/ui';
-import { getStatusText } from '../../selectors';
+import Style from '../../../shared/style';
+import OverviewBar from './overview-bar';
+import OverviewCards from './overview-cards';
 
-const STATUS_STYLE = Style.registerStyle({
-  position: 'fixed',
+import * as selectors from '../../selectors';
+
+const OVERVIEW_STYLE = Style.registerStyle({
+  flexDirection: 'column',
+  overflow: 'hidden',
+  position: 'absolute',
+  top: UIConstants.TABBAR_HEIGHT,
   bottom: 0,
+  right: 0,
   left: 0,
-  zIndex: UIConstants.STATUS_BAR_ZINDEX,
-  padding: '2px 10px',
-  border: '1px solid var(--theme-content-border-color)',
-  borderTopRightRadius: 'var(--theme-default-roundness)',
-  borderBottomWidth: 0,
-  borderLeftWidth: 0,
+  zIndex: UIConstants.OVERVIEW_ZINDEX,
   backgroundColor: 'var(--theme-window-background)',
   backgroundImage: 'url(assets/chrome-background.png)',
   backgroundSize: 'var(--theme-window-image-tile-size)',
   backgroundAttachment: 'fixed',
-  color: 'var(--theme-content-color)',
-  whiteSpace: 'nowrap',
-  maxWidth: '85%',
-  textOverflow: 'ellipsis',
-  overflow: 'hidden',
-  display: 'block',
+  backgroundBlendMode: 'soft-light',
 });
 
-/**
- * A status bar at the bottom of the browser UI.
- */
-
-export function Status({ statusText }) {
+const Overview = function(props) {
   return (
-    <div className={STATUS_STYLE}
-      hidden={!statusText}>
-      {statusText}
+    <div className={OVERVIEW_STYLE}
+      hidden={!props.show}>
+      <OverviewBar />
+      <OverviewCards {...props} />
     </div>
   );
-}
+};
 
-Status.displayName = 'Status';
+Overview.displayName = 'Overview';
 
-Status.propTypes = {
-  statusText: PropTypes.string,
+Overview.propTypes = {
+  show: PropTypes.bool.isRequired,
+  pages: SharedPropTypes.Pages.isRequired,
+  currentPageIndex: PropTypes.number.isRequired,
 };
 
 function mapStateToProps(state) {
   return {
-    statusText: getStatusText(state),
+    show: selectors.getShowPageSummaries(state),
   };
 }
 
-export default connect(mapStateToProps)(Status);
+export default connect(mapStateToProps)(Overview);

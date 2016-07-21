@@ -171,3 +171,7 @@ export function unbookmark(pageId, url) {
 export function didStartSession(pageId, sessionId, ancestorId) {
   return { type: types.DID_START_SESSION, pageId, sessionId, ancestorId };
 }
+
+export function setShowPageSummaries(visible) {
+  return { type: types.SET_PAGE_SUMMARIES_VISIBLE, payload: { visible } };
+}

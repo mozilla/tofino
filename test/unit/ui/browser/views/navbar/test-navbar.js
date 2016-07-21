@@ -5,7 +5,7 @@ import expect from 'expect';
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import NavBar from '../../../../../../app/ui/browser/views/navbar/navbar';
+import NavBar from '../../../../../../app/ui/browser/views/navbar';
 import { Page } from '../../../../../../app/ui/browser/model/index';
 
 function createSpyProps() {
@@ -41,8 +41,8 @@ describe('NavBar', () => {
       props.page = new Page({ canGoBack: false });
       const wrapper = shallow(<NavBar {...props} />
       ).find('#browser-navbar-back').shallow();
-      expect(wrapper.prop('disabled')).toEqual(true);
-      wrapper.simulate('click');
+      expect(wrapper.find('button').prop('disabled')).toEqual(true);
+      wrapper.find('button').simulate('click');
       expect(props.navBack).toNotHaveBeenCalled();
     });
     it('is not disabled if page can go back', () => {
@@ -50,8 +50,8 @@ describe('NavBar', () => {
       props.page = new Page({ canGoBack: true });
       const wrapper = shallow(<NavBar {...props} />
       ).find('#browser-navbar-back').shallow();
-      expect(wrapper.prop('disabled')).toEqual(false);
-      wrapper.simulate('click');
+      expect(wrapper.find('button').prop('disabled')).toEqual(false);
+      wrapper.find('button').simulate('click');
       expect(props.navBack).toHaveBeenCalled();
     });
   });
@@ -62,8 +62,8 @@ describe('NavBar', () => {
       props.page = new Page({ canGoForward: false });
       const wrapper = shallow(<NavBar {...props} />
       ).find('#browser-navbar-forward').shallow();
-      expect(wrapper.prop('disabled')).toEqual(true);
-      wrapper.simulate('click');
+      expect(wrapper.find('button').prop('disabled')).toEqual(true);
+      wrapper.find('button').simulate('click');
       expect(props.navForward).toNotHaveBeenCalled();
     });
     it('is not disabled if page can go forwardd', () => {
@@ -71,8 +71,8 @@ describe('NavBar', () => {
       props.page = new Page({ canGoForward: true });
       const wrapper = shallow(<NavBar {...props} />
       ).find('#browser-navbar-forward').shallow();
-      expect(wrapper.prop('disabled')).toEqual(false);
-      wrapper.simulate('click');
+      expect(wrapper.find('button').prop('disabled')).toEqual(false);
+      wrapper.find('button').simulate('click');
       expect(props.navForward).toHaveBeenCalled();
     });
   });
@@ -83,8 +83,8 @@ describe('NavBar', () => {
       props.page = new Page({ canRefresh: false });
       const wrapper = shallow(<NavBar {...props} />
       ).find('#browser-navbar-refresh').shallow();
-      expect(wrapper.prop('disabled')).toEqual(true);
-      wrapper.simulate('click');
+      expect(wrapper.find('button').prop('disabled')).toEqual(true);
+      wrapper.find('button').simulate('click');
       expect(props.navRefresh).toNotHaveBeenCalled();
     });
     it('is not disabled if page can be refreshed', () => {
@@ -92,8 +92,8 @@ describe('NavBar', () => {
       props.page = new Page({ canRefresh: true });
       const wrapper = shallow(<NavBar {...props} />
       ).find('#browser-navbar-refresh').shallow();
-      expect(wrapper.prop('disabled')).toEqual(false);
-      wrapper.simulate('click');
+      expect(wrapper.find('button').prop('disabled')).toEqual(false);
+      wrapper.find('button').simulate('click');
       expect(props.navRefresh).toHaveBeenCalled();
     });
   });

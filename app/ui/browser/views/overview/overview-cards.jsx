@@ -11,36 +11,45 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 import * as SharedPropTypes from '../../../shared/model/shared-prop-types';
-import * as UIConstants from '../../constants/ui';
 import Style from '../../../shared/style';
-import Page from '../page';
+import SimpleCard from './cards/simple-card';
 
-const CONTENT_AREA_STYLE = Style.registerStyle({
-  flex: 1,
-  position: 'relative',
-  zIndex: UIConstants.BROWSER_CONTENT_BASE_ZINDEX,
+import * as actions from '../../actions/main-actions';
+
+const OVERVIEW_CARDS_STYLE = Style.registerStyle({
+  flexFlow: 'wrap',
+  overflow: 'auto',
+  margin: '45px',
 });
 
-const BrowserContent = function(props) {
+const OverviewCards = function(props) {
   return (
-    <div className={CONTENT_AREA_STYLE}>
+    <div className={OVERVIEW_CARDS_STYLE}>
       {props.pages.map((page, pageIndex) => (
-        <Page key={`page-${page.id}`}
+        <SimpleCard key={`page-${page.id}`}
           page={page}
-          isActive={pageIndex === props.currentPageIndex}
-          {...props} />
+          pageIndex={pageIndex}
+          isSelected={pageIndex === props.currentPageIndex}
+          onClick={pageId => props.dispatch(actions.setCurrentTab(pageId))} />
       ))}
     </div>
   );
 };
 
-BrowserContent.propTypes = {
+OverviewCards.displayName = 'OverviewCards';
+
+OverviewCards.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  show: PropTypes.bool.isRequired,
   pages: SharedPropTypes.Pages.isRequired,
   currentPageIndex: PropTypes.number.isRequired,
 };
 
-BrowserContent.displayName = 'BrowserContent';
+function mapStateToProps() {
+  return {};
+}
 
-export default BrowserContent;
+export default connect(mapStateToProps)(OverviewCards);
