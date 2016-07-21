@@ -55,10 +55,8 @@ export default function uiState(state = initialState, action) {
     case types.SET_URL_INPUT_AUTOCOMPLETE_INDEX:
       return state.set('focusedResultIndex', action.payload.index);
 
-    case types.TOGGLE_PAGE_SUMMARIES: {
-      const prev = state.showPageSummaries;
-      return state.set('showPageSummaries', !prev);
-    }
+    case types.SET_PAGE_SUMMARIES_VISIBLE:
+      return state.set('showPageSummaries', action.payload.visible);
 
     case types.CREATE_TAB:
     case types.SET_CURRENT_TAB:

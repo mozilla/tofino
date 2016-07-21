@@ -62,7 +62,7 @@ export const Decorations = function(props) {
         image="glyph-overview-16.svg"
         imgWidth="14px"
         imgHeight="14px"
-        onClick={props.handleOpenOverview}>
+        onClick={() => props.handleOpenOverview(!props.pageSumariesVisible)}>
         Overview
       </Btn>
       {props.children}
