@@ -75,7 +75,7 @@
     "coveralls": "2.11.11",
     "cross-env": "2.0.0",
     "dirsum": "0.1.1",
-    "electron-builder": "5.12.1",
+    "electron-builder": "5.15.0",
     "electron-download": "2.1.2",
     "electron-ipc-mock": "0.0.2",
     "electron-mocha": "2.3.1",
