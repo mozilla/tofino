@@ -13,19 +13,21 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import * as selectors from '../../selectors';
+import * as UIConstants from '../../constants/ui';
 import Style from '../../../shared/style';
 import Btn from '../../../shared/widgets/btn';
 import VerticalSeparator from '../../../shared/widgets/vertical-separator';
 
+import * as selectors from '../../selectors';
+
 const WINDOW_DECORATIONS_STYLE = Style.registerStyle({
-  alignItems: 'stretch',
+  height: `${UIConstants.TABBAR_HEIGHT}px`,
   padding: '0px 5px',
 });
 
 const APP_MENU_BUTTON_STYLE = Style.registerStyle({
-  paddingLeft: '5px',
-  paddingRight: '10px',
+  padding: '0 5px',
+  marginRight: '5px',
 });
 
 const OVERVIEW_BUTTON_STYLE = Style.registerStyle({
@@ -47,7 +49,8 @@ const WINDOW_CONTROL_BUTTONS_STYLE = Style.registerStyle({
 
 export const Decorations = function(props) {
   return (
-    <div className={WINDOW_DECORATIONS_STYLE}>
+    <div id="browser-window-decorations"
+      className={WINDOW_DECORATIONS_STYLE}>
       <Btn id="browser-menu"
         className={APP_MENU_BUTTON_STYLE}
         title="Menu"

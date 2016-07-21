@@ -27,7 +27,8 @@ const OVERVIEW_CARDS_STYLE = Style.registerStyle({
 
 const OverviewCards = function(props) {
   return (
-    <div className={OVERVIEW_CARDS_STYLE}>
+    <div id="browser-overview-cards"
+      className={OVERVIEW_CARDS_STYLE}>
       {props.pages.map((page, pageIndex) => (
         <SimpleCard key={`page-${page.id}`}
           page={page}

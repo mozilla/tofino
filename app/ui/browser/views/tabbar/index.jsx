@@ -14,15 +14,15 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import * as UIConstants from '../../constants/ui';
-import * as selectors from '../../selectors';
 import Style from '../../../shared/style';
 import Tab from './tab';
 import Btn from '../../../shared/widgets/btn';
 
+import * as selectors from '../../selectors';
+
 const TABBAR_STYLE = Style.registerStyle({
   flex: 1,
   overflow: 'hidden',
-  height: `${UIConstants.TABBAR_HEIGHT}px`,
 });
 
 export const TabBar = (props) => (

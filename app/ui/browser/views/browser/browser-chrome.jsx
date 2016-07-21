@@ -29,7 +29,8 @@ const CHROME_AREA_STYLE = Style.registerStyle({
 
 const BrowserChrome = function(props) {
   return (
-    <div className={CHROME_AREA_STYLE}>
+    <div id="browser-chrome"
+      className={CHROME_AREA_STYLE}>
       <WinDecorations {...props} >
         <TabBar {...props} />
       </WinDecorations>

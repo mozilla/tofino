@@ -25,7 +25,8 @@ const CONTENT_AREA_STYLE = Style.registerStyle({
 
 const BrowserContent = function(props) {
   return (
-    <div className={CONTENT_AREA_STYLE}>
+    <div id="browser-content"
+      className={CONTENT_AREA_STYLE}>
       {props.pages.map((page, pageIndex) => (
         <Page key={`page-${page.id}`}
           page={page}

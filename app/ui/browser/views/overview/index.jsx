@@ -39,7 +39,8 @@ const OVERVIEW_STYLE = Style.registerStyle({
 
 const Overview = function(props) {
   return (
-    <div className={OVERVIEW_STYLE}
+    <div id="browser-overview"
+      className={OVERVIEW_STYLE}
       hidden={!props.show}>
       <OverviewBar />
       <OverviewCards {...props} />

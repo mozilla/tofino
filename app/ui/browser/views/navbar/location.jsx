@@ -31,7 +31,6 @@ const LOCATION_BAR_CONTAINER_STYLE = Style.registerStyle({
 
 const LOCATION_BAR_STYLE = Style.registerStyle({
   flex: 1,
-  alignItems: 'center',
   overflow: 'hidden',
   margin: '7px 22vw',
   border: 'var(--theme-locationbar-border-width) solid',
@@ -67,7 +66,6 @@ const LOCATION_BAR_BUTTONS_STYLE = Style.registerStyle({
 const TITLE_BAR_STYLE = Style.registerStyle({
   flex: 1,
   alignItems: 'center',
-  alignSelf: 'stretch',
   justifyContent: 'center',
   overflow: 'hidden',
   '*': {
@@ -80,7 +78,6 @@ const TITLE_BAR_STYLE = Style.registerStyle({
 
 const INPUT_BAR_STYLE = Style.registerStyle({
   flex: 1,
-  alignSelf: 'stretch',
   overflow: 'hidden',
   border: 'none',
   background: 'transparent',
