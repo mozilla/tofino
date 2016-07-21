@@ -20,6 +20,8 @@ import VerticalSeparator from '../../../shared/widgets/vertical-separator';
 
 const TAB_STYLE = Style.registerStyle({
   overflow: 'hidden',
+  WebkitUserSelect: 'none',
+  WebkitAppRegion: 'no-drag',
 });
 
 const TAB_CONTENTS_STYLE = Style.registerStyle({
