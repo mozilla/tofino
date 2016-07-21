@@ -11,12 +11,15 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 import * as UIConstants from '../../constants/ui';
-import { Page } from '../../model';
 import Style from '../../../shared/style';
 import Btn from '../../../shared/widgets/btn';
 import VerticalSeparator from '../../../shared/widgets/vertical-separator';
+
+import { Page } from '../../model';
+import * as selectors from '../../selectors';
 
 const TAB_STYLE = Style.registerStyle({
   overflow: 'hidden',
@@ -54,7 +57,7 @@ const TAB_TITLE_STYLE = Style.registerStyle({
  * one of the opened tabs. The web page contained within the tab may not be
  * visible
  */
-const Tab = function(props) {
+export const Tab = function(props) {
   const modes = [
     ...(props.isActive ? ['active-tab'] : []),
   ].join(' ');
@@ -64,7 +67,7 @@ const Tab = function(props) {
       onContextMenu={props.onContextMenu}
       onClick={props.onClick}>
       <VerticalSeparator style={{
-        opacity: props.isActive || props.isAfterActive ? 0 : 1,
+        opacity: props.isActive || props.isAfterActive || props.pageSumariesVisible ? 0 : 1,
       }} />
       <div className={`${TAB_CONTENTS_STYLE} ${modes}`}>
         <span className={TAB_TITLE_STYLE}>
@@ -98,6 +101,7 @@ const Tab = function(props) {
 Tab.displayName = 'Tab';
 
 Tab.propTypes = {
+  pageSumariesVisible: PropTypes.bool.isRequired,
   page: PropTypes.object.isRequired,
   isActive: PropTypes.bool.isRequired,
   isAfterActive: PropTypes.bool.isRequired,
@@ -109,4 +113,10 @@ Tab.propTypes = {
   onContextMenu: PropTypes.func.isRequired,
 };
 
-export default Tab;
+function mapStateToProps(state) {
+  return {
+    pageSumariesVisible: selectors.getShowPageSummaries(state),
+  };
+}
+
+export default connect(mapStateToProps)(Tab);

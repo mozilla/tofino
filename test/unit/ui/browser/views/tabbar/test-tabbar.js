@@ -6,6 +6,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import Immutable from 'immutable';
 
+import Tab from '../../../../../../app/ui/browser/views/tabbar/tab';
 import { TabBar } from '../../../../../../app/ui/browser/views/tabbar';
 import { Page } from '../../../../../../app/ui/browser/model/index';
 
@@ -36,7 +37,7 @@ function createSpyProps() {
 describe('TabBar', () => {
   it('tabs are created for each page', () => {
     const props = createSpyProps();
-    const wrapper = shallow(<TabBar {...props} />).find('Tab');
+    const wrapper = shallow(<TabBar {...props} />).find(Tab);
     expect(wrapper.length).toEqual(3);
   });
 

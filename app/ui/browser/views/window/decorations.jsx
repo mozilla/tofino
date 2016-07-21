@@ -58,7 +58,9 @@ export const Decorations = function(props) {
         imgWidth="18px"
         imgHeight="18px"
         onClick={props.handleOpenMenu} />
-      <VerticalSeparator />
+      <VerticalSeparator style={{
+        opacity: props.pageSumariesVisible ? 0 : 1,
+      }} />
       <Btn id="pages-overview"
         className={OVERVIEW_BUTTON_STYLE}
         active={props.pageSumariesVisible}
