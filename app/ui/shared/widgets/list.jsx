@@ -26,7 +26,8 @@ const List = props => {
   return (
     <ul id={props.id}
       style={props.style}
-      className={`${LIST_STYLE} ${props.className || ''}`}>
+      className={`${LIST_STYLE} ${props.className || ''}`}
+      hidden={props.hidden}>
       {props.children}
     </ul>
   );
@@ -38,6 +39,7 @@ List.propTypes = {
   id: PropTypes.string,
   className: PropTypes.string,
   style: PropTypes.object,
+  hidden: PropTypes.bool,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,

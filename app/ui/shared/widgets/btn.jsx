@@ -74,6 +74,7 @@ const Btn = (props) => {
         opacity: props.disabled ? DISABLED_OPACITY : ENABLED_OPACITY,
         ...props.style,
       }}
+      hidden={props.hidden}
       data-title={props.title}
       data-disabled={props.disabled}
       data-active={props.active}>
@@ -105,6 +106,7 @@ Btn.propTypes = {
   id: PropTypes.string,
   className: PropTypes.string,
   style: PropTypes.object,
+  hidden: PropTypes.bool,
   children: React.PropTypes.oneOfType([
     React.PropTypes.arrayOf(React.PropTypes.node),
     React.PropTypes.node,

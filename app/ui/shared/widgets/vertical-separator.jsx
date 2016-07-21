@@ -26,7 +26,8 @@ const VerticalSeparator = props => {
   return (
     <div id={props.id}
       style={props.style}
-      className={`${VERTICAL_SEPARATOR_STYLE} ${props.className || ''}`} />
+      className={`${VERTICAL_SEPARATOR_STYLE} ${props.className || ''}`}
+      hidden={props.hidden} />
   );
 };
 
@@ -36,6 +37,7 @@ VerticalSeparator.propTypes = {
   id: PropTypes.string,
   className: PropTypes.string,
   style: PropTypes.object,
+  hidden: PropTypes.bool,
 };
 
 export default VerticalSeparator;

@@ -22,7 +22,8 @@ const ListItem = props => {
   return (
     <li id={props.id}
       style={props.style}
-      className={`${LIST_ITEM_STYLE} ${props.className || ''}`}>
+      className={`${LIST_ITEM_STYLE} ${props.className || ''}`}
+      hidden={props.hidden}>
       {props.children}
     </li>
   );
@@ -34,6 +35,7 @@ ListItem.propTypes = {
   id: PropTypes.string,
   className: PropTypes.string,
   style: PropTypes.object,
+  hidden: PropTypes.bool,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,

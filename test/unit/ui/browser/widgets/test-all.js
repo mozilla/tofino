@@ -56,6 +56,16 @@ describe('widgets', () => {
   }
 
   for (const Widget of components) {
+    it(`${Widget.displayName} should pass in 'hidden' if given`, () => {
+      const wrapper = shallow(
+        <Widget {...RequiredProps[Widget.displayName]}
+          hidden />);
+
+      expect(wrapper.prop('hidden')).toEqual(true);
+    });
+  }
+
+  for (const Widget of components) {
     it(`${Widget.displayName} should extend style if given`, () => {
       const wrapper = shallow(
         <Widget {...RequiredProps[Widget.displayName]}

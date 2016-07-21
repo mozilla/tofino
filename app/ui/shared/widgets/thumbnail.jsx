@@ -31,6 +31,7 @@ const Thumbnail = props => {
     <div id={props.id}
       style={props.style}
       className={`${THUMBNAIL_STYLE} ${props.className || ''}`}
+      hidden={props.hidden}
       onClick={props.onClick}>
       <FittedImage src={props.src}
         width={props.imgWidth}
@@ -55,6 +56,7 @@ Thumbnail.propTypes = {
   id: PropTypes.string,
   className: PropTypes.string,
   style: PropTypes.object,
+  hidden: PropTypes.bool,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,

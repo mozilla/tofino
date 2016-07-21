@@ -37,7 +37,8 @@ const FittedImage = props => {
         backgroundSize: props.mode,
         ...props.style,
       }}
-      className={`${FITTED_IMAGE_STYLE} ${props.className || ''}`}>
+      className={`${FITTED_IMAGE_STYLE} ${props.className || ''}`}
+      hidden={props.hidden}>
       {props.children}
     </div>
   );
@@ -55,6 +56,7 @@ FittedImage.propTypes = {
   id: PropTypes.string,
   className: PropTypes.string,
   style: PropTypes.object,
+  hidden: PropTypes.bool,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,
