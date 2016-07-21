@@ -18,7 +18,6 @@ import * as selectors from '../../selectors';
 import Style from '../../../shared/style';
 import Tab from './tab';
 import Btn from '../../../shared/widgets/btn';
-import VerticalSeparator from '../../../shared/widgets/vertical-separator';
 
 const TABBAR_STYLE = Style.registerStyle({
   flex: 1,
@@ -33,12 +32,15 @@ export const TabBar = (props) => (
       <Tab key={`browser-tab-${i}`}
         className={`browser-tab-${i}`}
         isActive={props.currentPageIndex === i && !props.pageSumariesVisible}
+        isBeforeActive={props.currentPageIndex === i + 1 && !props.pageSumariesVisible}
+        isAfterActive={props.currentPageIndex === i - 1 && !props.pageSumariesVisible}
+        isFirst={i === 0}
+        isLast={i === props.pages.count() - 1}
         page={page}
         onClick={props.handleTabClick(page.id)}
         onContextMenu={props.handleTabContextMenu(page.id)}
         onClose={props.handleTabClose(page.id)} />
     ))}
-    <VerticalSeparator />
     <Btn id="new-tab"
       title="Add new tab"
       image="glyph-addNew-24.svg"

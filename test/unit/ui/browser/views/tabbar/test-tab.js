@@ -25,7 +25,7 @@ describe('components - Tab', () => {
         onContextMenu={expect.createSpy()} />
     );
 
-    wrapper.find('div').simulate('click');
+    wrapper.find('.tab').simulate('click');
     expect(onClick).toHaveBeenCalled();
   });
 });

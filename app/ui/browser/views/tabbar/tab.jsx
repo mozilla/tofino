@@ -16,8 +16,13 @@ import * as UIConstants from '../../constants/ui';
 import { Page } from '../../model';
 import Style from '../../../shared/style';
 import Btn from '../../../shared/widgets/btn';
+import VerticalSeparator from '../../../shared/widgets/vertical-separator';
 
 const TAB_STYLE = Style.registerStyle({
+  overflow: 'hidden',
+});
+
+const TAB_CONTENTS_STYLE = Style.registerStyle({
   alignItems: 'center',
   overflow: 'hidden',
   width: `${UIConstants.TAB_DEFAULT_WIDTH}vw`,
@@ -25,7 +30,7 @@ const TAB_STYLE = Style.registerStyle({
   backgroundColor: 'var(--theme-tab-inactive-background)',
   color: 'var(--theme-tab-inactive-color)',
   opacity: 'var(--theme-tab-inactive-opacity)',
-  '&.active': {
+  '&.active-tab': {
     backgroundColor: 'var(--theme-tab-background)',
     backgroundImage: 'url(assets/chrome-background.png)',
     backgroundSize: 'var(--theme-window-image-tile-size)',
@@ -48,31 +53,42 @@ const TAB_TITLE_STYLE = Style.registerStyle({
  * visible
  */
 const Tab = function(props) {
-  const {
-    page, isActive, onClick, onClose, onContextMenu,
-  } = props;
-
   const modes = [
-    ...(isActive ? ['active'] : []),
-  ];
+    ...(props.isActive ? ['active-tab'] : []),
+  ].join(' ');
 
   return (
-    <div className={`tab ${TAB_STYLE} ${modes.join(' ')}`}
-      {...{ onClick, onContextMenu }}>
-      <span className={TAB_TITLE_STYLE}>
-        {page.state === Page.PAGE_STATE_LOADING ? 'Loading...' : page.title}
-      </span>
-      <span>
-        {page.state === Page.PAGE_STATE_LOADING ? <i className="fa fa-spinner fa-pulse" /> : null}
-      </span>
-      <Btn className="tab-close"
-        title="Close tab"
-        image="glyph-addNew-24.svg"
-        imgWidth="8px"
-        imgHeight="8px"
-        imgPosition="center"
-        style={{ transform: 'rotate(45deg)' }}
-        onClick={onClose} />
+    <div className={`tab ${TAB_STYLE}`}
+      onContextMenu={props.onContextMenu}
+      onClick={props.onClick}>
+      <VerticalSeparator style={{
+        opacity: props.isActive || props.isAfterActive ? 0 : 1,
+      }} />
+      <div className={`${TAB_CONTENTS_STYLE} ${modes}`}>
+        <span className={TAB_TITLE_STYLE}>
+          {props.page.state === Page.PAGE_STATE_LOADING
+            ? 'Loading...'
+            : props.page.title
+          }
+        </span>
+        <span>
+          {props.page.state === Page.PAGE_STATE_LOADING
+            ? <i className="fa fa-spinner fa-pulse" />
+            : null
+          }
+        </span>
+        <Btn className="tab-close"
+          title="Close tab"
+          image="glyph-addNew-24.svg"
+          imgWidth="8px"
+          imgHeight="8px"
+          imgPosition="center"
+          style={{ transform: 'rotate(45deg)' }}
+          onClick={props.onClose} />
+      </div>
+      <VerticalSeparator style={{
+        opacity: props.isActive || !props.isLast ? 0 : 1,
+      }} />
     </div>
   );
 };
@@ -82,6 +98,10 @@ Tab.displayName = 'Tab';
 Tab.propTypes = {
   page: PropTypes.object.isRequired,
   isActive: PropTypes.bool.isRequired,
+  isAfterActive: PropTypes.bool.isRequired,
+  isBeforeActive: PropTypes.bool.isRequired,
+  isFirst: PropTypes.bool.isRequired,
+  isLast: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onClick: PropTypes.func.isRequired,
   onContextMenu: PropTypes.func.isRequired,
