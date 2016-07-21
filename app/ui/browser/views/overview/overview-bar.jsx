@@ -63,7 +63,7 @@ const OverviewBar = (props) => {
           imgWidth="22px"
           imgHeight="22px"
           imgPosition="center"
-          onClick={() => props.dispatch(actions.togglePageSummaries())} />
+          onClick={() => props.dispatch(actions.setShowPageSummaries(false))} />
         <Btn id="browser-overviewbar-new-tab"
           className={OVERVIEW_BAR_NEW_TAB_BUTTON_STYLE}
           title="Add new tab"

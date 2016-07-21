@@ -66,7 +66,7 @@ class BrowserWindow extends Component {
       handleMinimize: external.minimize,
       handleMaximize: external.maximize,
       handleClose: external.close,
-      handleOpenOverview: () => dispatch(actions.togglePageSummaries()),
+      handleOpenOverview: visible => dispatch(actions.setShowPageSummaries(visible)),
 
       // Location & navigation methods.
       navBack: () => webViewController.navigateBack(currentPage.id),
