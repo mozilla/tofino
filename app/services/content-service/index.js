@@ -22,7 +22,7 @@ process.on('uncaughtException', logger.error);
 process.on('unhandledRejection', logger.error);
 
 const fileStream = fs.createWriteStream(path.join(parseArgs().profile, 'content-service.log'));
-logger.addStream(pipeToStream(fileStream), 'debug');
+logger.addStream(pipeToStream(fileStream, 'debug'));
 
 // Start the content service, serving `tofino://` pages.
 contentService.start().then(() => {

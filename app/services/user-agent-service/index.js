@@ -36,7 +36,7 @@ export async function UserAgentService(options = {}) {
   }
 
   const fileStream = fs.createWriteStream(path.join(options.db, 'ua-service.log'));
-  logger.addStream(pipeToStream(fileStream), 'debug');
+  logger.addStream(pipeToStream(fileStream, 'debug'));
 
   const port = options.port;
   const db = options.db;
