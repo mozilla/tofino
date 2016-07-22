@@ -200,6 +200,11 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
       case 'show-bookmarks':
         logger.warn('@TODO: ipc-message:show-bookmarks');
         break;
+      case 'metadata':
+        dispatch(actions.setPageDetails(pageAccessor().id, {
+          meta: e.args[0],
+        }));
+        break;
       default:
         logger.warn(`@TODO: Unknown ipc-message:${e.channel}`);
         break;

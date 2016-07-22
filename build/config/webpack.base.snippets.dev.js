@@ -7,7 +7,9 @@ export default {
   output: {
     pathinfo: true,
   },
-  devtool: 'eval',
+  // Something in `fathom-web/utils.js` breaks when eval'd,
+  // so comment out 'eval' tool for now???
+  devtool: 'cheap-source-map',
   plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': '"development"',

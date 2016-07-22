@@ -10,9 +10,18 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
+import { ipcRenderer as ipc } from 'electron';
+
 import './hover-status';
 import './context-menu';
 import { readerify } from './reader';
 import Readability from './readability';
+import { parseMetadata } from './metadata-parsing';
 
 window._readerify = readerify.bind(null, Readability);
+
+// Must be called after page is parsed; will need to wait after
+// load event if we need any image data
+document.addEventListener('DOMContentLoaded', () => {
+  ipc.sendToHost('metadata', parseMetadata(document));
+});
