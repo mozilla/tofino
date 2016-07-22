@@ -26,6 +26,7 @@ import * as BW from './browser-window';
 import * as certs from './certificates';
 import * as ProfileDiffTypes from '../shared/constants/profile-diff-types';
 import UserAgentClient from '../shared/user-agent-client';
+import { startUpdateChecks } from './updater';
 
 const app = electron.app; // control application life.
 const ipc = electron.ipcMain;
@@ -57,6 +58,8 @@ app.on('ready', async function() {
   await BW.createBrowserWindow(userAgentClient, () => {
     instrument.event('browser', 'READY', 'ms', Date.now() - browserStartTime);
   });
+
+  startUpdateChecks();
 });
 
 // Unregister all shortcuts.
