@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 import * as UIConstants from '../../constants/ui';
 import Style from '../../../shared/style';
 import Btn from '../../../shared/widgets/btn';
+import FittedImage from '../../../shared/widgets/fitted-image';
 import VerticalSeparator from '../../../shared/widgets/vertical-separator';
 
 import { Page } from '../../model';
@@ -52,6 +53,10 @@ const TAB_TITLE_STYLE = Style.registerStyle({
   textOverflow: 'ellipsis',
 });
 
+const FAVICON_STYLE = Style.registerStyle({
+  marginRight: '5px',
+});
+
 /**
  * Tab is an element on the TabBar at the top of a browser window which shows
  * one of the opened tabs. The web page contained within the tab may not be
@@ -71,6 +76,14 @@ export const Tab = function(props) {
           props.isFirst && props.pageSumariesVisible) ? 0 : 1,
       }} />
       <div className={`${TAB_CONTENTS_STYLE} ${modes}`}>
+        {props.page.meta.icon_url
+          ? <FittedImage className={FAVICON_STYLE}
+            src={props.page.meta.icon_url}
+            width="16px"
+            height="16px"
+            mode="contain" />
+          : (<div />)
+        }
         <span className={TAB_TITLE_STYLE}>
           {props.page.state === Page.PAGE_STATE_LOADING
             ? 'Loading...'
