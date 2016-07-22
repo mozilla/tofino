@@ -24,6 +24,15 @@ const CARD_STYLE = Style.registerStyle({
   cursor: 'pointer',
 });
 
+const BACKGROUND_STYLE = Style.registerStyle({
+  position: 'absolute',
+  top: 0,
+  bottom: 0,
+  left: 0,
+  right: 0,
+  zIndex: '-1',
+});
+
 const SUMMARY_STYLE = Style.registerStyle({
   background: 'var(--theme-overview-summary-background)',
   position: 'absolute',
@@ -39,7 +48,6 @@ const BaseCard = function(props) {
   return (
     <Thumbnail className={CARD_STYLE}
       style={{
-        backgroundColor: props.backgroundColor,
         borderColor: props.isSelected
           ? 'var(--theme-content-selected-border-color)'
           : 'var(--theme-content-border-color)',
@@ -53,6 +61,16 @@ const BaseCard = function(props) {
       imgMode="contain"
       imgPosition="top center"
       onClick={() => props.onClick(props.page.id)}>
+      <div className={BACKGROUND_STYLE}
+        style={props.backgroundImage ? {
+          backgroundImage: `url(${props.backgroundImage})`,
+          backgroundSize: '100% 100%',
+          WebkitFilter: 'brightness(5) blur(32px)',
+        } : {
+          backgroundColor: props.backgroundColor || 'transparent',
+          backgroundImage: 'url(assets/logo-tofino.png)',
+          backgroundSize: 'contain',
+        }} />
       <div className={SUMMARY_STYLE}>
         {props.children}
       </div>
@@ -65,8 +83,8 @@ BaseCard.displayName = 'BaseCard';
 BaseCard.propTypes = {
   page: SharedPropTypes.Page.isRequired,
   isSelected: PropTypes.bool.isRequired,
-  backgroundColor: PropTypes.string.isRequired,
-  backgroundImage: PropTypes.string.isRequired,
+  backgroundColor: PropTypes.string,
+  backgroundImage: PropTypes.string,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,
