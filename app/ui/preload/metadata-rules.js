@@ -44,20 +44,24 @@ function buildRuleset(name, rules) {
   };
 }
 
+const mapToContentOrText = node => node.element.content || node.element.innerText;
+
 /**
  * !!! If you add a new rule here, you should make sure it's also
  * in the page model in app/browser/ui/browser/model/index.js
  */
 const metadataRules = {
-  // This is a hacky metadata parsing mostly for testing now.
-  player_url: buildRuleset('player_url', [
-    ['meta[property="twitter:player"]', node => node.element.content],
+  rating: buildRuleset('rating', [
+    ['[itemprop="aggregateRating"] [itemprop="ratingValue"]', mapToContentOrText],
   ]),
-  player_stream_url: buildRuleset('player_stream_url', [
-    ['meta[property="twitter:player:stream"]', node => node.element.content],
+  best_rating: buildRuleset('best_rating', [
+    ['[itemprop="aggregateRating"] [itemprop="bestRating"]', mapToContentOrText],
   ]),
-  player_stream_content_type: buildRuleset('player_stream_content_type', [
-    ['meta[property="twitter:player:stream:content_type"]', node => node.element.content],
+  worst_rating: buildRuleset('worst_rating', [
+    ['[itemprop="aggregateRating"] [itemprop="worstRating"]', mapToContentOrText],
+  ]),
+  review_count: buildRuleset('review_count', [
+    ['[itemprop="aggregateRating"] [itemprop="reviewCount"]', mapToContentOrText],
   ]),
 };
 
