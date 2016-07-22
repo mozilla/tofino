@@ -11,14 +11,18 @@
  */
 /* global LIBDIR */
 
-import yargs from 'yargs';
+import yargs from 'yargs/yargs';
 import path from 'path';
 import AppDirectory from 'appdirectory';
 import fs from 'fs-extra';
 import manifest from '../../package.json';
 import BUILD_CONFIG from '../../build-config.json';
 
-export const argParser = yargs.usage('Usage: $0 [options]').option('P', {
+// Electron sets a flag to let you know if the path to the app is included in
+// the command line arguments.
+const argv = process.argv.slice(process.defaultApp ? 2 : 1);
+
+export const argParser = yargs(argv).usage('Usage: $0 [options]').option('P', {
   alias: 'profile',
   default: undefined,
   describe: 'The user profile directory.',

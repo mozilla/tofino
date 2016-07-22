@@ -30,32 +30,49 @@ process.on('unhandledRejection', (reason, p) => {
 import { app } from 'electron';
 import { argParser, parseArgs } from '../shared/environment';
 
-const SQUIRREL_EVENTS = [
+const SQUIRREL_VERSION_EVENTS = [
   'squirrel-install',
   'squirrel-updated',
   'squirrel-uninstall',
   'squirrel-obsolete',
 ];
-argParser.boolean(SQUIRREL_EVENTS);
+const SQUIRREL_FIRSTRUN_EVENT = 'squirrel-firstrun';
 
-// For now we don't actually do anything on squirrel events, just let the app
-// exit.
-function handledSquirrelEvent() {
-  const options = parseArgs();
-
-  for (const event of SQUIRREL_EVENTS) {
-    if (options[event]) {
-      return true;
-    }
-  }
-
-  return false;
+for (const event of SQUIRREL_VERSION_EVENTS) {
+  argParser.option(event, {
+    default: undefined,
+    type: 'string',
+  });
 }
 
-// Any additional command line arguments must be registered before calling this
-// function which will parse the arguments.
-if (handledSquirrelEvent()) {
-  app.quit();
+argParser.boolean(SQUIRREL_FIRSTRUN_EVENT);
+
+// Check if a squirrel event flag was passed. Any additional command line
+// arguments must be registered before here
+let seenEvent = null;
+const options = parseArgs();
+
+if (options[SQUIRREL_FIRSTRUN_EVENT]) {
+  seenEvent = SQUIRREL_FIRSTRUN_EVENT;
 } else {
-  require('./browser');
+  for (const event of SQUIRREL_VERSION_EVENTS) {
+    if (options[event]) {
+      seenEvent = event;
+      break;
+    }
+  }
+}
+
+switch (seenEvent) {
+  // When there was no event or the first-run event just let the app start
+  // normally.
+  case SQUIRREL_FIRSTRUN_EVENT:
+  case null:
+    require('./browser');
+    break;
+
+  // For all other events quit the app.
+  default:
+    app.quit();
+    break;
 }
