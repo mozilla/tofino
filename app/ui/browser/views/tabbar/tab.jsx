@@ -67,7 +67,8 @@ export const Tab = function(props) {
       onContextMenu={props.onContextMenu}
       onClick={props.onClick}>
       <VerticalSeparator style={{
-        opacity: props.isActive || props.isAfterActive || props.pageSumariesVisible ? 0 : 1,
+        opacity: props.isActive || props.isAfterActive || (
+          props.isFirst && props.pageSumariesVisible) ? 0 : 1,
       }} />
       <div className={`${TAB_CONTENTS_STYLE} ${modes}`}>
         <span className={TAB_TITLE_STYLE}>
