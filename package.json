@@ -111,7 +111,7 @@
     "redux-immutable": "3.0.6",
     "redux-logger": "2.6.1",
     "require-dir": "0.3.0",
-    "rimraf": "2.5.3",
+    "rimraf": "2.5.4",
     "semver": "5.2.0",
     "spectron": "3.2.6",
     "tmp": "0.0.28",
