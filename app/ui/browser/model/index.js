@@ -25,6 +25,18 @@ export const Pages = Immutable.Record({
 }, 'Pages');
 
 /**
+ * The metadata parsed from a page for a Page record.
+ */
+export const PageMeta = Immutable.Record({
+  description: undefined,
+  icon_url: undefined,
+  image_url: undefined,
+  title: undefined,
+  type: undefined,
+  url: undefined,
+}, 'PageMeta');
+
+/**
  * The data that we store alongside a single web page
  */
 export class Page extends Immutable.Record({
@@ -39,6 +51,7 @@ export class Page extends Immutable.Record({
   canGoForward: false,
   canRefresh: false,
   chromeMode: 'expanded',
+  meta: new PageMeta(),
 }, 'Page') {
   constructor(data) {
     super(Object.assign({ id: uuid.v4() }, data));

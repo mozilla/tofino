@@ -17,6 +17,8 @@ import * as SharedPropTypes from '../../../../shared/model/shared-prop-types';
 import BaseCard from './base-card';
 import SimpleSummary from '../summaries/simple-summary';
 
+const DEFAULT_IMAGE = 'assets/logo-tofino.png';
+
 const COLORS = (new ColorScheme())
   .from_hue(230)
   .scheme('triade')
@@ -24,11 +26,16 @@ const COLORS = (new ColorScheme())
   .colors();
 
 const SimpleCard = function(props) {
+  const meta = props.page.meta;
+
+  const title = meta.title || props.page.title;
+  const backgroundImage = meta.image_url || DEFAULT_IMAGE;
+
   return (
     <BaseCard {...props}
       backgroundColor={`#${COLORS[props.pageIndex % COLORS.length]}`}
-      backgroundImage="assets/logo-tofino.png">
-      <SimpleSummary title={props.page.title}
+      backgroundImage={backgroundImage}>
+      <SimpleSummary title={title}
         url={props.page.location} />
     </BaseCard>
   );
