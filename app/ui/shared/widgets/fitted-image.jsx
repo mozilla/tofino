@@ -47,7 +47,7 @@ const FittedImage = props => {
 FittedImage.displayName = 'FittedImage';
 
 FittedImage.propTypes = {
-  src: PropTypes.string.isRequired,
+  src: PropTypes.string,
   width: PropTypes.string.isRequired,
   height: PropTypes.string.isRequired,
   mode: PropTypes.oneOf(['cover', 'contain']).isRequired,

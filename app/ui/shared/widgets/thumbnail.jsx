@@ -47,7 +47,7 @@ const Thumbnail = props => {
 Thumbnail.displayName = 'Thumbnail';
 
 Thumbnail.propTypes = {
-  src: PropTypes.string.isRequired,
+  src: PropTypes.string,
   imgWidth: PropTypes.string.isRequired,
   imgHeight: PropTypes.string.isRequired,
   imgMode: PropTypes.oneOf(['cover', 'contain']).isRequired,
