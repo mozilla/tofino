@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
 
 import * as SharedPropTypes from '../../../shared/model/shared-prop-types';
 import Style from '../../../shared/style';
-import SimpleCard from './cards/simple-card';
+import OverviewCard from './cards/overview-card';
 
 import * as actions from '../../actions/main-actions';
 
@@ -30,7 +30,7 @@ const OverviewCards = function(props) {
     <div id="browser-overview-cards"
       className={OVERVIEW_CARDS_STYLE}>
       {props.pages.map((page, pageIndex) => (
-        <SimpleCard key={`page-${page.id}`}
+        <OverviewCard key={`page-${page.id}`}
           page={page}
           pageIndex={pageIndex}
           isSelected={pageIndex === props.currentPageIndex}
