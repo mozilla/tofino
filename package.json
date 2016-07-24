@@ -94,7 +94,7 @@
     "isomorphic-fetch": "2.2.1",
     "jsdom": "9.4.1",
     "json-loader": "0.5.4",
-    "lodash": "4.13.1",
+    "lodash": "4.14.0",
     "mocha": "2.5.3",
     "mocha-eslint": "2.1.1",
     "nyc": "7.0.0",
