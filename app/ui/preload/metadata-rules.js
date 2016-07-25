@@ -37,7 +37,7 @@ function buildRuleset(name, rules) {
     if (maxNode) {
       const value = maxNode.flavors.get(name);
       if (value) {
-        return value.trim();
+        return value.trim ? value.trim() : value;
       }
     }
     return void 0;
@@ -45,6 +45,8 @@ function buildRuleset(name, rules) {
 }
 
 const mapToContentOrText = node => node.element.content || node.element.innerText;
+const parseIntText = node => parseInt(node.element.innerText, 10);
+const parseFloatText = node => parseFloat(node.element.innerText, 10);
 
 /**
  * !!! If you add a new rule here, you should make sure it's also
@@ -64,8 +66,34 @@ const metadataRules = {
     ['body', node => `${node.element.ownerDocument.location.origin}/favicon.ico`],
   ]),
 
+  // title takes some properties from page-metadata-parser,
+  // and adds additional rules, like for Amazon.
+  title: buildRuleset('title', [
+    ['meta[property="og:title"]', node => node.element.content],
+    ['meta[property="twitter:title"]', node => node.element.content],
+    ['meta[name="hdl"]', node => node.element.content],
+    // Amazon
+    ['#productTitle', node => node.element.innerText],
+    ['title', node => node.element.text],
+  ]),
+
+  // image_url takes some properties from page-metadata-parser,
+  // and adds additional rules, like for Amazon.
+  image_url: buildRuleset('image_url', [
+    ['meta[property="og:image"]', node => node.element.content],
+    ['meta[property="twitter:image"]', node => node.element.content],
+    ['meta[name="thumbnail"]', node => node.element.content],
+    // amazon
+    ['#landingImage', node => node.element.src],
+    // Comment out `img` because not sure how this beats out #landingImage on
+    // Amazon pages, even when after it in list?
+    // ['img', node => node.element.src],
+  ]),
+
   rating: buildRuleset('rating', [
     ['[itemprop="aggregateRating"] [itemprop="ratingValue"]', mapToContentOrText],
+    // amazon
+    ['#reviewStarsLinkedCustomerReviews span', parseFloatText],
   ]),
   best_rating: buildRuleset('best_rating', [
     ['[itemprop="aggregateRating"] [itemprop="bestRating"]', mapToContentOrText],
@@ -75,6 +103,8 @@ const metadataRules = {
   ]),
   review_count: buildRuleset('review_count', [
     ['[itemprop="aggregateRating"] [itemprop="reviewCount"]', mapToContentOrText],
+    // amazon
+    ['#acrCustomerReviewText', parseIntText],
   ]),
 };
 
