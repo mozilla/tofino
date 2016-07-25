@@ -20,11 +20,9 @@ const SimpleCard = function(props) {
   const meta = props.page.meta;
 
   const title = meta.title || props.page.title;
-  const backgroundImage = meta.image_url;
 
   return (
-    <BaseCard {...props}
-      backgroundImage={backgroundImage}>
+    <BaseCard {...props}>
       <SimpleSummary title={title}
         url={props.page.location} />
     </BaseCard>

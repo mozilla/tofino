@@ -23,7 +23,6 @@ const ReviewableCard = function(props) {
   const meta = props.page.meta;
 
   const title = meta.title || props.page.title;
-  const backgroundImage = meta.image_url;
 
   const reviewCount = parseInt(meta.review_count, 10);
   const rating = parseFloat(meta.rating, 10) || null;
@@ -31,8 +30,7 @@ const ReviewableCard = function(props) {
   const minRating = parseInt(meta.worst_rating || DEFAULT_MIN_RATING, 10) || null;
 
   return (
-    <BaseCard {...props}
-      backgroundImage={backgroundImage}>
+    <BaseCard {...props}>
       <ReviewableSummary title={title}
         reviewCount={reviewCount}
         rating={rating}
