@@ -16,12 +16,19 @@ import * as SharedPropTypes from '../../../../shared/model/shared-prop-types';
 import * as UIConstants from '../../../constants/ui';
 import Style from '../../../../shared/style';
 import Thumbnail from '../../../../shared/widgets/thumbnail';
+import FittedImage from '../../../../shared/widgets/fitted-image';
 
 const CARD_STYLE = Style.registerStyle({
   WebkitUserSelect: 'none',
   position: 'relative',
   margin: '20px',
   cursor: 'pointer',
+});
+
+const BADGE_STYLE = Style.registerStyle({
+  top: 0,
+  left: 0,
+  position: 'absolute',
 });
 
 const BACKGROUND_STYLE = Style.registerStyle({
@@ -45,6 +52,9 @@ const SUMMARY_STYLE = Style.registerStyle({
 });
 
 const BaseCard = function(props) {
+  const backgroundImage = props.backgroundImage || props.page.meta.image_url;
+  const badgeImage = props.badgeImage || props.page.meta.icon_url;
+
   return (
     <Thumbnail className={CARD_STYLE}
       style={{
@@ -55,15 +65,20 @@ const BaseCard = function(props) {
           ? 'var(--theme-default-selected-shadow)'
           : 'var(--theme-default-shadow)',
       }}
-      src={props.backgroundImage}
+      src={backgroundImage}
       imgWidth={`${UIConstants.CARD_WIDTH}px`}
       imgHeight={`${UIConstants.CARD_HEIGHT}px`}
       imgMode="contain"
       imgPosition="top center"
       onClick={() => props.onClick(props.page.id)}>
+      <FittedImage className={BADGE_STYLE}
+        src={badgeImage}
+        width={`${UIConstants.CARD_BADGE_WIDTH}px`}
+        height={`${UIConstants.CARD_BADGE_HEIGHT}px`}
+        mode="contain" />
       <div className={BACKGROUND_STYLE}
-        style={props.backgroundImage ? {
-          backgroundImage: `url(${props.backgroundImage})`,
+        style={backgroundImage ? {
+          backgroundImage: `url(${backgroundImage})`,
           backgroundSize: '100% 100%',
           WebkitFilter: 'brightness(5) blur(32px)',
         } : {
@@ -85,6 +100,7 @@ BaseCard.propTypes = {
   isSelected: PropTypes.bool.isRequired,
   backgroundColor: PropTypes.string,
   backgroundImage: PropTypes.string,
+  badgeImage: PropTypes.string,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,

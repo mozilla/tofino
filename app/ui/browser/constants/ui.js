@@ -24,9 +24,12 @@ export const NAVBAR_HORIZONTAL_PADDING = 10; // px
 export const OVERVIEWBAR_HEIGHT = NAVBAR_HEIGHT; // px
 export const OVERVIEWBAR_HORIZONTAL_PADDING = NAVBAR_HORIZONTAL_PADDING; // px
 
-// Overview (page summaries) dimensinos.
+// Overview (page summaries) dimensions.
 export const CARD_WIDTH = 140; // px
 export const CARD_HEIGHT = 175; // px
+// Overview (page summaries) favicon/badge dimensions.
+export const CARD_BADGE_WIDTH = 24; // px
+export const CARD_BADGE_HEIGHT = 24; // px
 
 // Show autocompletions when typing in location bar
 export const SHOW_COMPLETIONS = true;
