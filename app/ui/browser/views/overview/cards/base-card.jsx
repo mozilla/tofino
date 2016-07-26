@@ -68,7 +68,7 @@ const BaseCard = function(props) {
       src={backgroundImage}
       imgWidth={`${UIConstants.CARD_WIDTH}px`}
       imgHeight={`${UIConstants.CARD_HEIGHT}px`}
-      imgMode="contain"
+      imgMode="100% auto"
       imgPosition="top center"
       onClick={() => props.onClick(props.page.id)}>
       <FittedImage className={BADGE_STYLE}
@@ -79,7 +79,7 @@ const BaseCard = function(props) {
       <div className={BACKGROUND_STYLE}
         style={backgroundImage ? {
           backgroundImage: `url(${backgroundImage})`,
-          backgroundSize: '100% 100%',
+          backgroundSize: '100% auto',
           WebkitFilter: 'brightness(5) blur(32px)',
         } : {
           backgroundColor: props.backgroundColor || 'transparent',
