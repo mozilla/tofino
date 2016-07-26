@@ -19,6 +19,27 @@ const RULES = {
   ...tofinoRules,
 };
 
+const URL_PROPERTIES = [
+  'icon_url',
+  'image_url',
+  'url',
+];
+
 export function parseMetadata(document) {
-  return getMetadata(document, RULES);
+  const meta = getMetadata(document, RULES);
+
+  if (!meta) {
+    return meta;
+  }
+
+  // Handle URLs that lack protocol and append appropriate
+  // 'http:' or 'https:'
+  for (const prop of URL_PROPERTIES) {
+    const value = meta[prop];
+    if (value && value.substr(0, 2) === '//') {
+      meta[prop] = `${document.location.protocol}${value}`;
+    }
+  }
+
+  return meta;
 }
