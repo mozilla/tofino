@@ -26,7 +26,7 @@ const CONTAINER_STYLE = Style.registerStyle({
 });
 
 const TITLE_STYLE = Style.registerStyle({
-  display: 'block',
+  flex: 1,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   paddingBottom: '1px',
@@ -35,6 +35,7 @@ const TITLE_STYLE = Style.registerStyle({
 });
 
 const REVIEW_COUNT_STYLE = Style.registerStyle({
+  flexShrink: 0,
   display: 'block',
   overflow: 'hidden',
   textOverflow: 'ellipsis',

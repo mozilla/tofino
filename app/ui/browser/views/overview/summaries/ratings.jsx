@@ -22,7 +22,7 @@ const STAR_IMAGES = {
 };
 
 const CONTAINER_STYLE = Style.registerStyle({
-  flex: 1,
+  flexShrink: 0,
 });
 
 const STAR_STYLE = Style.registerStyle({
