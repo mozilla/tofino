@@ -23,7 +23,10 @@ const FITTED_IMAGE_STYLE = Style.registerStyle({
 
 /**
  * A component that fits an image inside an element such that the correct
- * aspect ratio is preserved. Available modes are 'cover' and 'contain'.
+ * aspect ratio is preserved. Available modes are
+ * - 'cover'
+ * - 'contain'
+ * - '100% auto'
  */
 const FittedImage = props => {
   return (
@@ -50,7 +53,7 @@ FittedImage.propTypes = {
   src: PropTypes.string,
   width: PropTypes.string.isRequired,
   height: PropTypes.string.isRequired,
-  mode: PropTypes.oneOf(['cover', 'contain']).isRequired,
+  mode: PropTypes.oneOf(['cover', 'contain', '100% auto']).isRequired,
   repeat: PropTypes.string,
   position: PropTypes.string,
   id: PropTypes.string,
