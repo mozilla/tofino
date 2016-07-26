@@ -30,6 +30,8 @@ export const CARD_HEIGHT = 175; // px
 // Overview (page summaries) favicon/badge dimensions.
 export const CARD_BADGE_WIDTH = 24; // px
 export const CARD_BADGE_HEIGHT = 24; // px
+export const CARD_BADGE_LARGE_WIDTH = 32; // px
+export const CARD_BADGE_LARGE_HEIGHT = 32; // px
 
 // Show autocompletions when typing in location bar
 export const SHOW_COMPLETIONS = true;

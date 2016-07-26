@@ -26,8 +26,6 @@ const CARD_STYLE = Style.registerStyle({
 });
 
 const BADGE_STYLE = Style.registerStyle({
-  top: 0,
-  left: 0,
   position: 'absolute',
 });
 
@@ -72,15 +70,27 @@ const BaseCard = function(props) {
       imgPosition="top center"
       onClick={() => props.onClick(props.page.id)}>
       <FittedImage className={BADGE_STYLE}
+        style={backgroundImage ? {
+          top: 0,
+          left: 0,
+        } : {
+          top: '30%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}
         src={badgeImage}
-        width={`${UIConstants.CARD_BADGE_WIDTH}px`}
-        height={`${UIConstants.CARD_BADGE_HEIGHT}px`}
+        width={backgroundImage
+          ? `${UIConstants.CARD_BADGE_WIDTH}px`
+          : `${UIConstants.CARD_BADGE_LARGE_WIDTH}px`}
+        height={backgroundImage
+          ? `${UIConstants.CARD_BADGE_HEIGHT}px`
+          : `${UIConstants.CARD_BADGE_LARGE_HEIGHT}px`}
         mode="contain" />
       <div className={BACKGROUND_STYLE}
-        style={backgroundImage ? {
-          backgroundImage: `url(${backgroundImage})`,
+        style={backgroundImage || badgeImage ? {
+          backgroundImage: `url(${backgroundImage || badgeImage})`,
           backgroundSize: '100% auto',
-          WebkitFilter: 'brightness(5) blur(32px)',
+          WebkitFilter: 'blur(30px) saturate(2)',
         } : {
           backgroundColor: props.backgroundColor || 'transparent',
           backgroundImage: 'url(assets/logo-tofino.png)',
