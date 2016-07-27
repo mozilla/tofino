@@ -47,7 +47,7 @@ before_install:
 
 install:
   - nvm --version
-  - nvm install 6.1
+  - nvm install 6.3
   - node --version
   - npm --version
   - npm prune
