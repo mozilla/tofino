@@ -20,10 +20,8 @@ const LIST_ITEM_STYLE = Style.registerStyle({
 
 const ListItem = props => {
   return (
-    <li id={props.id}
-      style={props.style}
-      className={`${LIST_ITEM_STYLE} ${props.className || ''}`}
-      hidden={props.hidden}>
+    <li {...props}
+      className={`${LIST_ITEM_STYLE} ${props.className || ''}`}>
       {props.children}
     </li>
   );

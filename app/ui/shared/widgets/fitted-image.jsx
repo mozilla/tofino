@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes } from 'react';
 
+import omit from 'lodash/omit';
 import Style from '../style';
 
 const BKG_REPEAT_DEFAULT = 'no-repeat';
@@ -30,7 +31,7 @@ const FITTED_IMAGE_STYLE = Style.registerStyle({
  */
 const FittedImage = props => {
   return (
-    <div id={props.id}
+    <div {...omit(props, Object.keys(UnfriendlyDomProps))}
       style={{
         width: props.width,
         height: props.height,
@@ -40,8 +41,7 @@ const FittedImage = props => {
         backgroundSize: props.mode,
         ...props.style,
       }}
-      className={`${FITTED_IMAGE_STYLE} ${props.className || ''}`}
-      hidden={props.hidden}>
+      className={`${FITTED_IMAGE_STYLE} ${props.className || ''}`}>
       {props.children}
     </div>
   );
@@ -49,13 +49,17 @@ const FittedImage = props => {
 
 FittedImage.displayName = 'FittedImage';
 
-FittedImage.propTypes = {
+const UnfriendlyDomProps = {
   src: PropTypes.string,
   width: PropTypes.string.isRequired,
   height: PropTypes.string.isRequired,
   mode: PropTypes.oneOf(['cover', 'contain', '100% auto']).isRequired,
   repeat: PropTypes.string,
   position: PropTypes.string,
+};
+
+FittedImage.propTypes = {
+  ...UnfriendlyDomProps,
   id: PropTypes.string,
   className: PropTypes.string,
   style: PropTypes.object,

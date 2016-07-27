@@ -24,10 +24,8 @@ const LIST_STYLE = Style.registerStyle({
 
 const List = props => {
   return (
-    <ul id={props.id}
-      style={props.style}
-      className={`${LIST_STYLE} ${props.className || ''}`}
-      hidden={props.hidden}>
+    <ul {...props}
+      className={`${LIST_STYLE} ${props.className || ''}`}>
       {props.children}
     </ul>
   );

@@ -63,7 +63,7 @@ export const Decorations = function(props) {
       }} />
       <Btn id="pages-overview"
         className={OVERVIEW_BUTTON_STYLE}
-        active={props.pageSumariesVisible}
+        data-active={props.pageSumariesVisible}
         title="Page summaries"
         image="glyph-overview-16.svg"
         imgWidth="14px"
