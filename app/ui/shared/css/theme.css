@@ -10,7 +10,7 @@
   --theme-content-color-alt: #2d9cdb;
   --theme-content-selected-color: #fff;
 
-  --theme-content-border-color: #2f4e78;
+  --theme-content-border-color: rgba(255,255,255,0.25);
   --theme-content-selected-border-color: #2d9cdb;
 
   --theme-selection-color: #b3dbf2;
@@ -32,7 +32,7 @@
   --theme-locationbar-background: rgba(255,255,255,0.25);
   --theme-locationbar-border-color: rgba(255,255,255,0.75);
   --theme-locationbar-border-width: 2px;
-  --theme-locationbar-title-color: rgba(0,0,0,1);
+  --theme-locationbar-title-color: #000;
 
   --theme-back-button-background: transparent;
   --theme-back-button-border-color: #fff;
@@ -52,6 +52,6 @@
   --theme-separator-color: #fff;
 
   --theme-default-roundness: 3px;
-  --theme-default-shadow: 0px 2px 4px 0px rgba(0,0,0,0.5);
-  --theme-default-selected-shadow: 0px 0px 5px 0px #2d9cdb;
+  --theme-default-shadow: 0px 2px 5px 0px rgba(0,0,0,0.5);
+  --theme-default-selected-shadow: 0px 0px 7px 0px #2d9cdb;
 }

@@ -18,15 +18,30 @@ import Style from '../../../../shared/style';
 import Thumbnail from '../../../../shared/widgets/thumbnail';
 import FittedImage from '../../../../shared/widgets/fitted-image';
 
+const CARD_STYLE_NORMAL = {
+  boxShadow: `var(--theme-default-shadow),
+              var(--theme-content-border-color) 0 0 0 1px inset`,
+};
+
+const CARD_STYLE_ACTIVE = {
+  boxShadow: `var(--theme-default-selected-shadow),
+              var(--theme-content-selected-border-color) 0 0 0 1px inset`,
+};
+
 const CARD_STYLE = Style.registerStyle({
   WebkitUserSelect: 'none',
+  overflow: 'hidden',
   position: 'relative',
   margin: '20px',
+  border: 'none',
   cursor: 'pointer',
+  ...CARD_STYLE_NORMAL,
+  '&:hover, &[data-selected="true"]': CARD_STYLE_ACTIVE,
 });
 
 const BADGE_STYLE = Style.registerStyle({
   position: 'absolute',
+  zIndex: -1,
 });
 
 const BACKGROUND_STYLE = Style.registerStyle({
@@ -35,7 +50,7 @@ const BACKGROUND_STYLE = Style.registerStyle({
   bottom: 0,
   left: 0,
   right: 0,
-  zIndex: '-1',
+  zIndex: -2,
 });
 
 const SUMMARY_STYLE = Style.registerStyle({
@@ -55,14 +70,7 @@ const BaseCard = function(props) {
 
   return (
     <Thumbnail className={CARD_STYLE}
-      style={{
-        borderColor: props.isSelected
-          ? 'var(--theme-content-selected-border-color)'
-          : 'var(--theme-content-border-color)',
-        boxShadow: props.isSelected
-          ? 'var(--theme-default-selected-shadow)'
-          : 'var(--theme-default-shadow)',
-      }}
+      data-selected={props.isSelected}
       src={backgroundImage}
       imgWidth={`${UIConstants.CARD_WIDTH}px`}
       imgHeight={`${UIConstants.CARD_HEIGHT}px`}
