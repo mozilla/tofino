@@ -106,6 +106,18 @@ const metadataRules = {
     // amazon
     ['#acrCustomerReviewText', parseIntText],
   ]),
+
+  price: buildRuleset('price', [
+    ['[itemprop="price"]', mapToContentOrText],
+    // amazon, on select "sale" items
+    ['#priceblock_dealprice', node => node.element.innerText],
+    // amazon
+    ['#priceblock_ourprice', node => node.element.innerText],
+  ]),
+
+  currency: buildRuleset('currency', [
+    ['[itemprop="priceCurrency"]', mapToContentOrText],
+  ]),
 };
 
 export default metadataRules;
