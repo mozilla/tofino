@@ -26,10 +26,8 @@ const INPUT_STYLE = Style.registerStyle({
 });
 
 const Search = props => (
-  <div id={props.id}
-    style={props.style}
-    className={`${SEARCH_STYLE} ${props.className || ''}`}
-    hidden={props.hidden}>
+  <div {...props}
+    className={`${SEARCH_STYLE} ${props.className || ''}`}>
     <input className={INPUT_STYLE}
       type="text"
       placeholder="Search..."

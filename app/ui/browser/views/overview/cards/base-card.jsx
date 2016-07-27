@@ -14,28 +14,48 @@ import React, { PropTypes } from 'react';
 
 import * as SharedPropTypes from '../../../../shared/model/shared-prop-types';
 import * as UIConstants from '../../../constants/ui';
+import * as Endpoints from '../../../../../shared/constants/endpoints';
 import Style from '../../../../shared/style';
 import Thumbnail from '../../../../shared/widgets/thumbnail';
 import FittedImage from '../../../../shared/widgets/fitted-image';
 
+const TOFINO_LOGO = 'assets/logo-tofino.png';
+
+const CARD_STYLE_NORMAL = {
+  boxShadow: `var(--theme-default-shadow),
+              var(--theme-content-border-color) 0 0 0 1px inset`,
+};
+
+const CARD_STYLE_ACTIVE = {
+  boxShadow: `var(--theme-default-selected-shadow),
+              var(--theme-content-selected-border-color) 0 0 0 1px inset`,
+};
+
 const CARD_STYLE = Style.registerStyle({
   WebkitUserSelect: 'none',
+  overflow: 'hidden',
   position: 'relative',
   margin: '20px',
+  border: 'none',
   cursor: 'pointer',
+  ...CARD_STYLE_NORMAL,
+  '&:hover, &[data-selected="true"]': CARD_STYLE_ACTIVE,
 });
 
 const BADGE_STYLE = Style.registerStyle({
   position: 'absolute',
+  zIndex: -1,
 });
 
 const BACKGROUND_STYLE = Style.registerStyle({
+  WebkitFilter: 'blur(30px) saturate(2)',
+  backgroundSize: '100% auto',
   position: 'absolute',
   top: 0,
   bottom: 0,
   left: 0,
   right: 0,
-  zIndex: '-1',
+  zIndex: -2,
 });
 
 const SUMMARY_STYLE = Style.registerStyle({
@@ -50,19 +70,19 @@ const SUMMARY_STYLE = Style.registerStyle({
 });
 
 const BaseCard = function(props) {
-  const backgroundImage = props.backgroundImage || props.page.meta.image_url;
-  const badgeImage = props.badgeImage || props.page.meta.icon_url;
+  let backgroundImage;
+  let badgeImage;
+
+  if (props.page.location.startsWith(Endpoints.TOFINO_PROTOCOL)) {
+    badgeImage = TOFINO_LOGO;
+  } else {
+    backgroundImage = props.backgroundImage || props.page.meta.image_url;
+    badgeImage = props.badgeImage || props.page.meta.icon_url;
+  }
 
   return (
     <Thumbnail className={CARD_STYLE}
-      style={{
-        borderColor: props.isSelected
-          ? 'var(--theme-content-selected-border-color)'
-          : 'var(--theme-content-border-color)',
-        boxShadow: props.isSelected
-          ? 'var(--theme-default-selected-shadow)'
-          : 'var(--theme-default-shadow)',
-      }}
+      data-selected={props.isSelected}
       src={backgroundImage}
       imgWidth={`${UIConstants.CARD_WIDTH}px`}
       imgHeight={`${UIConstants.CARD_HEIGHT}px`}
@@ -87,14 +107,8 @@ const BaseCard = function(props) {
           : `${UIConstants.CARD_BADGE_LARGE_HEIGHT}px`}
         mode="contain" />
       <div className={BACKGROUND_STYLE}
-        style={backgroundImage || badgeImage ? {
+        style={{
           backgroundImage: `url(${backgroundImage || badgeImage})`,
-          backgroundSize: '100% auto',
-          WebkitFilter: 'blur(30px) saturate(2)',
-        } : {
-          backgroundColor: props.backgroundColor || 'transparent',
-          backgroundImage: 'url(assets/logo-tofino.png)',
-          backgroundSize: 'contain',
         }} />
       <div className={SUMMARY_STYLE}>
         {props.children}

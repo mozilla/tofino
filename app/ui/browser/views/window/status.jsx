@@ -23,7 +23,7 @@ const STATUS_STYLE = Style.registerStyle({
   left: 0,
   zIndex: UIConstants.STATUS_BAR_ZINDEX,
   padding: '2px 10px',
-  border: '1px solid var(--theme-content-border-color)',
+  border: '1px solid var(--theme-content-selected-border-color)',
   borderTopRightRadius: 'var(--theme-default-roundness)',
   borderBottomWidth: 0,
   borderLeftWidth: 0,

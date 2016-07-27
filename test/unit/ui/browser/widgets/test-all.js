@@ -66,6 +66,16 @@ describe('widgets', () => {
   }
 
   for (const Widget of components) {
+    it(`${Widget.displayName} should pass in data-* props if given`, () => {
+      const wrapper = shallow(
+        <Widget {...RequiredProps[Widget.displayName]}
+          data-foo="bar" />);
+
+      expect(wrapper.prop('data-foo')).toEqual('bar');
+    });
+  }
+
+  for (const Widget of components) {
     it(`${Widget.displayName} should extend style if given`, () => {
       const wrapper = shallow(
         <Widget {...RequiredProps[Widget.displayName]}

@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes } from 'react';
 
+import omit from 'lodash/omit';
 import Style from '../style';
 import FittedImage from './fitted-image';
 
@@ -22,18 +23,20 @@ const THUMBNAIL_STYLE = Style.registerStyle({
   boxShadow: 'var(--theme-default-shadow)',
 });
 
+const IMAGE_STYLE = Style.registerStyle({
+  zIndex: -1,
+});
+
 /**
  * A component that joins a fitted image and some children together
  * under the same parent.
  */
 const Thumbnail = props => {
   return (
-    <div id={props.id}
-      style={props.style}
-      className={`${THUMBNAIL_STYLE} ${props.className || ''}`}
-      hidden={props.hidden}
-      onClick={props.onClick}>
-      <FittedImage src={props.src}
+    <div {...omit(props, Object.keys(UnfriendlyDomProps))}
+      className={`${THUMBNAIL_STYLE} ${props.className || ''}`}>
+      <FittedImage className={IMAGE_STYLE}
+        src={props.src}
         width={props.imgWidth}
         height={props.imgHeight}
         mode={props.imgMode}
@@ -46,13 +49,17 @@ const Thumbnail = props => {
 
 Thumbnail.displayName = 'Thumbnail';
 
-Thumbnail.propTypes = {
+const UnfriendlyDomProps = {
   src: PropTypes.string,
   imgWidth: PropTypes.string.isRequired,
   imgHeight: PropTypes.string.isRequired,
-  imgMode: PropTypes.oneOf(['cover', 'contain']).isRequired,
+  imgMode: PropTypes.string.isRequired,
   imgRepeat: PropTypes.string,
   imgPosition: PropTypes.string,
+};
+
+Thumbnail.propTypes = {
+  ...UnfriendlyDomProps,
   id: PropTypes.string,
   className: PropTypes.string,
   style: PropTypes.object,
