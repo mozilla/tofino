@@ -24,10 +24,8 @@ const VERTICAL_SEPARATOR_STYLE = Style.registerStyle({
 
 const VerticalSeparator = props => {
   return (
-    <div id={props.id}
-      style={props.style}
-      className={`${VERTICAL_SEPARATOR_STYLE} ${props.className || ''}`}
-      hidden={props.hidden} />
+    <div {...props}
+      className={`${VERTICAL_SEPARATOR_STYLE} ${props.className || ''}`} />
   );
 };
 

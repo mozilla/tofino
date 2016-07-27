@@ -24,7 +24,7 @@ describe('Btn', () => {
   });
   it('has `data-active` prop if given', () => {
     const wrapper = shallow(
-      <Btn active
+      <Btn data-active
         onClick={() => {}}
         title="my title" />);
     expect(wrapper.prop('data-active')).toEqual(true);

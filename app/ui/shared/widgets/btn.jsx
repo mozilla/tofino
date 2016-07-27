@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes } from 'react';
 
+import omit from 'lodash/omit';
 import Style from '../style';
 
 export const MIN_WIDTH = '16px';
@@ -68,16 +69,14 @@ const Btn = (props) => {
   }
 
   return (
-    <div id={props.id}
+    <div {...omit(props, Object.keys(UnfriendlyDomProps))}
       className={`${BUTTON_WRAPPER_STYLE} ${props.className || ''}`}
       style={{
         opacity: props.disabled ? DISABLED_OPACITY : ENABLED_OPACITY,
         ...props.style,
       }}
-      hidden={props.hidden}
       data-title={props.title}
-      data-disabled={props.disabled}
-      data-active={props.active}>
+      data-disabled={props.disabled}>
       <button type="button"
         className={BUTTON_STYLE}
         style={internal}
@@ -92,10 +91,9 @@ const Btn = (props) => {
 
 Btn.displayName = 'Btn';
 
-Btn.propTypes = {
+const UnfriendlyDomProps = {
   title: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
-  active: PropTypes.bool,
   image: PropTypes.string,
   imgWidth: PropTypes.string,
   imgHeight: PropTypes.string,
@@ -103,6 +101,10 @@ Btn.propTypes = {
   imgPosition: PropTypes.string,
   minWidth: PropTypes.string,
   minHeight: PropTypes.string,
+};
+
+Btn.propTypes = {
+  ...UnfriendlyDomProps,
   id: PropTypes.string,
   className: PropTypes.string,
   style: PropTypes.object,
