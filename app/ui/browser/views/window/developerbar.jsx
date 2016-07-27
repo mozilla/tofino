@@ -24,7 +24,7 @@ const DEVELOPER_BAR_STYLE = Style.registerStyle({
   right: 0,
   zIndex: UIConstants.DEVELOPER_BAR_ZINDEX,
   padding: '2px 10px',
-  border: '1px solid var(--theme-content-border-color)',
+  border: '1px solid var(--theme-content-selected-border-color)',
   borderTopLeftRadius: 'var(--theme-default-roundness)',
   borderBottomWidth: 0,
   borderRightWidth: 0,

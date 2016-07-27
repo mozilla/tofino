@@ -23,6 +23,10 @@ const THUMBNAIL_STYLE = Style.registerStyle({
   boxShadow: 'var(--theme-default-shadow)',
 });
 
+const IMAGE_STYLE = Style.registerStyle({
+  zIndex: -1,
+});
+
 /**
  * A component that joins a fitted image and some children together
  * under the same parent.
@@ -31,7 +35,8 @@ const Thumbnail = props => {
   return (
     <div {...omit(props, Object.keys(UnfriendlyDomProps))}
       className={`${THUMBNAIL_STYLE} ${props.className || ''}`}>
-      <FittedImage src={props.src}
+      <FittedImage className={IMAGE_STYLE}
+        src={props.src}
         width={props.imgWidth}
         height={props.imgHeight}
         mode={props.imgMode}
