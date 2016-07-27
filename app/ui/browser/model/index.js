@@ -38,6 +38,8 @@ export const PageMeta = Immutable.Record({
   worst_rating: undefined,
   best_rating: undefined,
   review_count: undefined,
+  price: undefined,
+  currency: undefined,
 }, 'PageMeta');
 
 /**

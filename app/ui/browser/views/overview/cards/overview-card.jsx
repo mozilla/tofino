@@ -18,13 +18,13 @@ import React, { PropTypes } from 'react';
  */
 import * as SharedPropTypes from '../../../../shared/model/shared-prop-types';
 import SimpleCard from './simple-card';
-import ReviewableCard from './reviewable-card';
+import ProductCard from './product-card';
 
 const OverviewCard = function(props) {
   const meta = props.page.meta;
 
-  if (meta.rating) {
-    return (<ReviewableCard {...props} />);
+  if (meta.rating || meta.price) {
+    return (<ProductCard {...props} />);
   }
 
   return (<SimpleCard {...props} />);

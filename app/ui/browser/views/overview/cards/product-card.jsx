@@ -14,16 +14,44 @@ import React, { PropTypes } from 'react';
 
 import * as SharedPropTypes from '../../../../shared/model/shared-prop-types';
 import BaseCard from './base-card';
-import ReviewableSummary from '../summaries/reviewable-summary';
+import ProductSummary from '../summaries/product-summary';
 
 const DEFAULT_MAX_RATING = 5;
 const DEFAULT_MIN_RATING = 1;
 
-const ReviewableCard = function(props) {
+/**
+ * Takes a Page's meta object and determines how to format
+ * the price of a product on page.
+ */
+function getPrice(meta) {
+  if (meta.currency && meta.price) {
+    const formatted = (new Intl.NumberFormat(void 0, {
+      style: 'currency',
+      currency: meta.currency,
+    })).format(meta.price);
+
+    // It's possible for `price` to already include the currency symbol,
+    // like "$30.00", in which case, formatting it returns NaN; just return
+    // the price in that case, or for whatever other reason the value is
+    // improperly formatted.
+
+    // Number.isNaN doesn't work, but NaN does, since NumberFormat returns
+    // A STRING VERSION OF "NaN" IF IT FAILS. AHHHHHHHHHHH.
+    // And apparently `isNaN("$34.00") === true` so let's just use
+    // a string comparison because we can't have nice things.
+    return formatted === 'NaN' ? meta.price : formatted;
+  } else if (meta.price) {
+    return meta.price;
+  }
+  return void 0;
+}
+
+const ProductCard = function(props) {
   const meta = props.page.meta;
 
   const title = meta.title || props.page.title;
 
+  const price = getPrice(meta);
   const reviewCount = parseInt(meta.review_count, 10);
   const rating = parseFloat(meta.rating, 10) || null;
   const maxRating = parseInt(meta.best_rating || DEFAULT_MAX_RATING, 10) || null;
@@ -31,7 +59,8 @@ const ReviewableCard = function(props) {
 
   return (
     <BaseCard {...props}>
-      <ReviewableSummary title={title}
+      <ProductSummary title={title}
+        price={price}
         reviewCount={reviewCount}
         rating={rating}
         maxRating={maxRating}
@@ -40,13 +69,13 @@ const ReviewableCard = function(props) {
   );
 };
 
-ReviewableCard.displayName = 'ReviewableCard';
+ProductCard.displayName = 'ProductCard';
 
-ReviewableCard.propTypes = {
+ProductCard.propTypes = {
   page: SharedPropTypes.Page.isRequired,
   pageIndex: PropTypes.number.isRequired,
   isSelected: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
 };
 
-export default ReviewableCard;
+export default ProductCard;
