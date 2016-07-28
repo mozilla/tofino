@@ -18,12 +18,12 @@ export function checkNodeVersion(version) {
   }
 
   /* eslint-disable quotes */
-  logger.error(
+  logger.error(`\n` +
     `*****\n` +
-    `You are currently running node ${process.version}. Your version of node ` +
-    `must satisfy ${Node.VALID_NODE_VERSION_RANGE}, or else strange things ` +
-    `could happen. Please upgrade your version of node, or use a ` +
-    `node version manager, such as nvm: https://github.com/creationix/nvm\n` +
+    `You are currently running node ${process.version}.\nYour version of node ` +
+    `must satisfy ${VALID_NODE_VERSION_RANGE}, or else strange things ` +
+    `could happen.\nPlease upgrade your version of node, or use a ` +
+    `node version manager, such as nvm:\nhttps://github.com/creationix/nvm\n` +
     `*****\n`);
   /* eslint-enable quotes */
 
