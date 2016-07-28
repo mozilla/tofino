@@ -60,6 +60,12 @@ const ProductSummary = function(props) {
     </div>
   ) : void 0;
 
+  const ratingsEl = props.rating ? (
+    <Ratings rating={props.rating}
+      maxRating={props.maxRating}
+      minRating={props.minRating} />
+  ) : void 0;
+
   const reviewEl = props.reviewCount ? (
     <div className={REVIEW_COUNT_STYLE}>
       {`${props.reviewCount} reviews`}
@@ -72,9 +78,7 @@ const ProductSummary = function(props) {
         {props.title}
       </div>
       {priceEl}
-      <Ratings rating={props.rating}
-        maxRating={props.maxRating}
-        minRating={props.minRating} />
+      {ratingsEl}
       {reviewEl}
     </div>
   );
