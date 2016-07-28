@@ -4,7 +4,7 @@ platform:
 os: Previous Visual Studio 2015
 
 environment:
-  nodejs_version: "6.3"
+  nodejs_version: "6.1"
 
 skip_commits:
   message: /\[ci skip\]/
