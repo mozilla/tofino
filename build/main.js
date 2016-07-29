@@ -17,7 +17,7 @@ require('babel-polyfill');
 require('babel-register')();
 
 const Tasks = require('./tasks');
-const Node = require('./utils/node');
+const Runtime = require('./utils/runtime');
 const { logger } = require('./logging');
 
 const handleTaskFailed = err => {
@@ -39,6 +39,6 @@ const handleDepsCheckSucceeded = () => {
 // Only auto-run `checkDependencies` if this is *not* imported as a module.
 // If `require.main` is `module`, then this is ran as a script.
 if (require.main === module) {
-  Node.checkNodeVersion(process.version);
-  Node.checkDependencies().then(handleDepsCheckSucceeded, handleDepsCheckFailed);
+  Runtime.checkNodeVersion(process.version);
+  Runtime.checkDependencies().then(handleDepsCheckSucceeded, handleDepsCheckFailed);
 }
