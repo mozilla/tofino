@@ -104,7 +104,7 @@
     "react-addons-test-utils": "15.3.0",
     "react-dom": "15.3.0",
     "react-free-style": "2.2.2",
-    "react-immutable-proptypes": "1.7.1",
+    "react-immutable-proptypes": "1.7.2",
     "react-redux": "4.4.5",
     "redux": "3.5.1",
     "redux-immutable": "3.0.6",
