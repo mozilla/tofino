@@ -7,7 +7,7 @@ import os from 'os';
 import builder from 'electron-builder';
 import zipdir from 'zip-dir';
 import { thenify } from 'thenify-all';
-import { getManifest } from './utils';
+import { getManifest, getAppManifest } from './utils';
 
 import * as Const from './utils/const';
 import { getElectronVersion, getDownloadOptions } from './utils/electron';
@@ -16,31 +16,10 @@ import { logger } from './logging';
 const ARCH = process.arch;
 const PLATFORM = os.platform();
 
-// electron-builder compares these against paths that are rooted in the root
-// but begin with "/", e.g. "/README.md"
-const IGNORE = [
-  // Ignore hidden files
-  '/\\.',
-
-  // Ignore build stuff
-  '^/appveyor.yml',
-  '^/branding($|/)',
-  '^/build($|/)',
-  '^/dist($|/)',
-  '^/scripts($|/)',
-
-  // Ignore the source code and tests
-  '^/app($|/)',
-  '^/test($|/)',
-
-  // Ignore docs
-  '^/docs($|/)',
-  '\\.md$',
-  '^/LICENSE$',
-  '^/NOTICE$',
-];
-
 const archIfNotx64 = ARCH === 'x64' ? '' : `-${ARCH}`;
+
+const EXENAME = getAppManifest().productName;
+const APPNAME = getAppManifest().name;
 
 // electron-builder outputs its targets using different naming schemes depending
 // on architecture and platform. We want them to be fairly consistent so this
@@ -49,11 +28,11 @@ const fileChanges = {
   win32: {
     copies: [
       [path.join(Const.PACKAGED_DIST_DIR, `win${archIfNotx64}`,
-                 `tofino Setup ${getManifest().version}${archIfNotx64}.exe`),
+                 `${EXENAME} Setup ${getAppManifest().version}${archIfNotx64}.exe`),
        path.join(Const.PACKAGED_DIST_DIR, `tofino-win32-${ARCH}.exe`)],
 
       [path.join(Const.PACKAGED_DIST_DIR, `win${archIfNotx64}`,
-                 `tofino-${getManifest().version}-full.nupkg`),
+                 `${APPNAME}-${getAppManifest().version}-full.nupkg`),
        path.join(Const.PACKAGED_DIST_DIR, `tofino-${getManifest().version}-full.nupkg`)],
 
       [path.join(Const.PACKAGED_DIST_DIR, `win${archIfNotx64}`, 'RELEASES'),
@@ -66,10 +45,12 @@ const fileChanges = {
   },
   darwin: {
     copies: [
-      [path.join(Const.PACKAGED_DIST_DIR, 'mac', `tofino-${getManifest().version}-mac.zip`),
+      [path.join(Const.PACKAGED_DIST_DIR, 'mac',
+                 `${EXENAME}-${getAppManifest().version}-mac.zip`),
        path.join(Const.PACKAGED_DIST_DIR, `tofino-${PLATFORM}-${ARCH}.zip`)],
 
-      [path.join(Const.PACKAGED_DIST_DIR, 'mac', `tofino-${getManifest().version}.dmg`),
+      [path.join(Const.PACKAGED_DIST_DIR, 'mac',
+                 `${EXENAME}-${getAppManifest().version}.dmg`),
        path.join(Const.PACKAGED_DIST_DIR, `tofino-${PLATFORM}-${ARCH}.dmg`)],
     ],
   },
@@ -91,17 +72,16 @@ export default async function() {
   await builder.build({
     devMetadata: {
       directories: {
-        app: Const.ROOT,
+        app: Const.LIB_DIR,
         output: Const.PACKAGED_DIST_DIR,
       },
       build: {
         appId: 'tofino',
         'app-category-type': 'web',
-        asar: true,
-        ignore: IGNORE,
+        asar: false,
         electronVersion,
         download: downloadOptions,
-        npmPrune: true,
+        prune: true,
         npmRebuild: false,
         linux: {
           target: [],

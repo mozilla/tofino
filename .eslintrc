@@ -91,7 +91,7 @@
     "import/no-amd": ["error"],
     "import/imports-first": ["error"],
     "import/no-named-as-default": ["off"],
-    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
+    "import/no-extraneous-dependencies": ["off"],
     "import/prefer-default-export": ["off"]
   }
 }

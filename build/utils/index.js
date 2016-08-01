@@ -3,6 +3,7 @@
 
 import fs from 'fs-promise';
 import manifest from '../../package.json';
+import appManifest from '../../app/package.json';
 import { BUILD_CONFIG_PATH } from './const';
 
 export const IS_TRAVIS = process.env.TRAVIS === 'true';
@@ -10,6 +11,10 @@ export const IS_APPVEYOR = process.env.APPVEYOR === 'True';
 
 export function getManifest() {
   return manifest;
+}
+
+export function getAppManifest() {
+  return appManifest;
 }
 
 export function safeGetBuildConfig() {

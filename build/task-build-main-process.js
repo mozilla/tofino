@@ -1,8 +1,12 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
+import os from 'os';
+import path from 'path';
+import fs from 'fs-promise';
 import colors from 'colors/safe';
 import { SRC_DIR } from './config/webpack.main.default';
+import { LIB_DIR } from './utils/const';
 import webpackProdConfig from './config/webpack.main.prod';
 import webpackDevConfig from './config/webpack.main.dev';
 import { getBuildConfig } from './utils';
@@ -20,5 +24,13 @@ export default async function() {
 
   logger.info(colors.cyan(`Building ${id}...`));
   const { development } = getBuildConfig();
-  return await webpackBuild(development ? webpackDevConfig : webpackProdConfig);
+  const result = await webpackBuild(development ? webpackDevConfig : webpackProdConfig);
+
+  if (os.platform() !== 'win32') {
+    // webpack-copy-plugin can't handle file modes:
+    // https://github.com/kevlened/copy-webpack-plugin/issues/35
+    await fs.chmod(path.join(LIB_DIR, 'node'), 0o755);
+  }
+
+  return result;
 }

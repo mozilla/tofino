@@ -30,5 +30,7 @@ export default {
     new webpack.OldWatchingPlugin(),
     new webpack.NoErrorsPlugin(),
   ],
-  externals: [],
+  externals: [
+    'dtrace-provider',
+  ],
 };

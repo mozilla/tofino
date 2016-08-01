@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import React, { Component, PropTypes } from 'react';
 
-import BUILD_CONFIG from '../../../../../build-config';
+import BUILD_CONFIG from '../../../../build-config';
 import Style from '../../../shared/style';
 import * as UIConstants from '../../constants/ui';
 import Btn from '../../../shared/widgets/btn';
