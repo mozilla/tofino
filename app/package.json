@@ -1,0 +1,19 @@
+{
+  "name": "Tofino",
+  "productName": "tofino",
+  "version": "0.1.0",
+  "author": {
+    "name": "Mozilla",
+    "email": "tofino-dev@mozilla.org",
+    "url": "https://mozilla.github.io/tofino/"
+  },
+  "description": "Project Tofino",
+  "main": "main/index.js",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "fs-promise": "0.5.0",
+    "promise-sqlite": "1.2.1",
+    "request": "2.65.0",
+    "yargs": "5.0.0"
+  }
+}

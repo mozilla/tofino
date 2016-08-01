@@ -3,6 +3,7 @@
 
 import webpack from 'webpack';
 import { logger } from '../logging';
+import { dependencies } from '../../app/package.json';
 
 const WEBPACK_OUTPUT_CONFIG = {
   colors: true,
@@ -19,6 +20,22 @@ const WEBPACK_OUTPUT_CONFIG = {
   source: true,
   errorDetails: true,
   chunkOrigins: true,
+};
+
+export const nodeExternals = (context, request, cb) => {
+  if (request.startsWith('.')) {
+    cb(null, false);
+    return;
+  }
+
+  for (const dependency of Object.keys(dependencies)) {
+    if ((request === dependency) || request.startsWith(`${dependency}/`)) {
+      cb(null, true);
+      return;
+    }
+  }
+
+  cb(null, false);
 };
 
 export const webpackBuild = config => new Promise((resolve, reject) => {
