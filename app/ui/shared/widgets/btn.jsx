@@ -101,6 +101,7 @@ const UnfriendlyDomProps = {
   imgPosition: PropTypes.string,
   minWidth: PropTypes.string,
   minHeight: PropTypes.string,
+  onClick: PropTypes.func,
 };
 
 Btn.propTypes = {
