@@ -1,13 +1,42 @@
-<?xml version="1.0"?>
-<!-- This Source Code Form is subject to the terms of the Mozilla Public
-   - License, v. 2.0. If a copy of the MPL was not distributed with this
-   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
-  <style>
-    path {
-      fill: #2d9cdb;
-    }
-  </style>
-
-  <path id="glyph-bookmark-hollow" d="M8,3.6l1.5,2.9l3.3,0.6l-2.4,2.5l0.5,3.4L8,11.5L5.1,13l0.5-3.4L3.2,7.1l3.4-0.6L8,3.6 M8,0C7.7,0,7.4,0.2,7.2,0.7l-2,4.1 L0.9,5.5c-1,0.2-1.2,0.9-0.5,1.6l3.1,3.3L2.8,15c-0.1,0.6,0.2,1,0.7,1c0.2,0,0.4-0.1,0.6-0.2L8,13.7l3.9,2.1 c0.2,0.1,0.5,0.2,0.6,0.2c0.5,0,0.8-0.4,0.7-1.1l-0.7-4.6L15.6,7c0.7-0.7,0.4-1.4-0.5-1.6l-4.3-0.7l-2-4.1C8.6,0.2,8.3,0,8,0L8,0z" />
+<svg width="16" height="16" viewBox="0 0 16 16" version="2.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:figma="http://www.figma.com/figma/ns">
+<title>Half-Star</title>
+<desc>Created using Figma 0.90</desc>
+<g id="Canvas" transform="translate(-2535 766)" figma:type="canvas">
+<mask id="mask0_outline" mask-type="alpha">
+<path d="M 2535 -766L 2551 -766L 2551 -750L 2535 -750L 2535 -766Z" fill="#FFFFFF"/>
+</mask>
+<g id="Half-Star" style="mix-blend-mode:normal;" mask="url(#mask0_outline)" figma:type="frame">
+<g id="Group" style="mix-blend-mode:normal;" figma:type="group">
+<g id="Star 2" style="mix-blend-mode:normal;" figma:type="star">
+<mask id="mask1_outline_ins">
+<use xlink:href="#path0_fill" fill="white" transform="translate(2535 -766)"/>
+</mask>
+<g mask="url(#mask1_outline_ins)">
+<use xlink:href="#path1_stroke_2x" transform="translate(2535 -766)" fill="#F2994A" style="mix-blend-mode:normal;"/>
+</g>
+</g>
+<g id="Mask Group" style="mix-blend-mode:normal;" figma:type="group">
+<mask id="mask2_alpha" mask-type="alpha">
+<g id="Rectangle 13" style="mix-blend-mode:normal;" figma:type="rounded-rectangle">
+<use xlink:href="#path2_fill" transform="translate(2535 -766)" fill="#DADADA" style="mix-blend-mode:normal;"/>
+</g>
+</mask>
+<g id="Star 2" style="mix-blend-mode:normal;" mask="url(#mask2_alpha)" figma:type="star">
+<use xlink:href="#path0_fill" transform="translate(2535 -766)" fill="#F2C94C" style="mix-blend-mode:normal;"/>
+<mask id="mask3_outline_ins">
+<use xlink:href="#path0_fill" fill="white" transform="translate(2535 -766)"/>
+</mask>
+<g mask="url(#mask3_outline_ins)">
+<use xlink:href="#path1_stroke_2x" transform="translate(2535 -766)" fill="#F2994A" style="mix-blend-mode:normal;"/>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<path id="path0_fill" d="M 8 0L 10.6233 4.38932L 15.6085 5.52786L 12.2446 9.37916L 12.7023 14.4721L 8 12.463L 3.29772 14.4721L 3.75539 9.37916L 0.391548 5.52786L 5.37669 4.38932L 8 0Z"/>
+<path id="path1_stroke_2x" d="M 8 0L 8.85838 -0.513017L 8 -1.94925L 7.14162 -0.513017L 8 0ZM 10.6233 4.38932L 9.76493 4.90234L 9.98413 5.26909L 10.4007 5.36422L 10.6233 4.38932ZM 15.6085 5.52786L 16.3616 6.1857L 17.4623 4.92551L 15.8311 4.55297L 15.6085 5.52786ZM 12.2446 9.37916L 11.4914 8.72132L 11.2104 9.04312L 11.2486 9.46866L 12.2446 9.37916ZM 12.7023 14.4721L 12.3094 15.3917L 13.848 16.0491L 13.6983 14.3826L 12.7023 14.4721ZM 8 12.463L 8.3929 11.5435L 8 11.3756L 7.6071 11.5435L 8 12.463ZM 3.29772 14.4721L 2.30173 14.3826L 2.15198 16.0491L 3.69062 15.3917L 3.29772 14.4721ZM 3.75539 9.37916L 4.75138 9.46866L 4.78962 9.04312L 4.50855 8.72132L 3.75539 9.37916ZM 0.391548 5.52786L 0.168893 4.55297L -1.4623 4.92551L -0.361614 6.1857L 0.391548 5.52786ZM 5.37669 4.38932L 5.59934 5.36422L 6.01587 5.26909L 6.23507 4.90234L 5.37669 4.38932ZM 7.14162 0.513017L 9.76493 4.90234L 11.4817 3.8763L 8.85838 -0.513017L 7.14162 0.513017ZM 10.4007 5.36422L 15.3858 6.50276L 15.8311 4.55297L 10.846 3.41442L 10.4007 5.36422ZM 14.8553 4.87003L 11.4914 8.72132L 12.9978 10.037L 16.3616 6.1857L 14.8553 4.87003ZM 11.2486 9.46866L 11.7063 14.5616L 13.6983 14.3826L 13.2406 9.28965L 11.2486 9.46866ZM 13.0952 13.5526L 8.3929 11.5435L 7.6071 13.3826L 12.3094 15.3917L 13.0952 13.5526ZM 7.6071 11.5435L 2.90482 13.5526L 3.69062 15.3917L 8.3929 13.3826L 7.6071 11.5435ZM 4.2937 14.5616L 4.75138 9.46866L 2.7594 9.28965L 2.30173 14.3826L 4.2937 14.5616ZM 4.50855 8.72132L 1.14471 4.87003L -0.361614 6.1857L 3.00223 10.037L 4.50855 8.72132ZM 0.614203 6.50276L 5.59934 5.36422L 5.15403 3.41442L 0.168893 4.55297L 0.614203 6.50276ZM 6.23507 4.90234L 8.85838 0.513017L 7.14162 -0.513017L 4.51831 3.8763L 6.23507 4.90234Z"/>
+<path id="path2_fill" d="M 0 0L 7.52941 0L 7.52941 15.0588L 0 15.0588L 0 0Z"/>
+</defs>
 </svg>
