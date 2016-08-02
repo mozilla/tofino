@@ -85,7 +85,7 @@
     "eslint-config-airbnb": "9.0.1",
     "eslint-plugin-import": "1.12.0",
     "eslint-plugin-jsx-a11y": "1.5.5",
-    "eslint-plugin-react": "5.2.2",
+    "eslint-plugin-react": "6.0.0",
     "expect": "1.20.2",
     "extract-zip": "1.5.0",
     "fathom-web": "1.1.2",
