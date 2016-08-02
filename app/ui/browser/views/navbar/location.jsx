@@ -99,7 +99,7 @@ const INPUT_BAR_STYLE = Style.registerStyle({
 export class Location extends Component {
   componentDidMount() {
     ipcRenderer.on('focus-url-bar', () => {
-      this.refs.input.select();
+      this.input.select();
       this.props.dispatch(actions.setShowURLBar(this.props.page.id, true));
     });
   }
@@ -118,18 +118,18 @@ export class Location extends Component {
     // If we're showing the URL bar, it should be focused. The scenario
     // where this isn't true is immediately after displaying the URL bar,
     // so give it focus.
-    if (this.props.showURLBar && document.activeElement !== this.refs.input) {
-      this.refs.input.focus();
+    if (this.props.showURLBar && document.activeElement !== this.input) {
+      this.input.focus();
     }
 
     // This happens when userTypedLocation changed outside of a 'normal' input
     // change i.e., on location change.  Need to make sure the input is actually set.
     // No tests for this right now, since shallow rendering doesn't support 'refs'.
     const nextLocation = this.getRenderLocation();
-    if (this.refs.input &&
+    if (this.input &&
         this.props.showURLBar &&    // This focuses the element, so don't do if hidden!
         nextLocation &&
-        this.refs.input.value !== nextLocation) {
+        this.input.value !== nextLocation) {
       this.setInputValue(nextLocation);
     }
   }
@@ -178,15 +178,15 @@ export class Location extends Component {
   setInputValue(value) {
     // Can't use input.value here, since it breaks undo in chrome - See
     // http://stackoverflow.com/questions/16195644/in-chrome-undo-does-not-work-properly-for-input-element-after-contents-changed-p
-    this.refs.input.focus();
-    this.refs.input.select();
-    this.refs.input.ownerDocument.execCommand('insertText', false, value);
+    this.input.focus();
+    this.input.select();
+    this.input.ownerDocument.execCommand('insertText', false, value);
   }
 
   selectAutocompleteItem(url) {
     this.setInputValue(url);
     this.props.navigateTo(url);
-    this.refs.input.blur();
+    this.input.blur();
   }
 
   handleBookmarkClick = (e) => {
@@ -210,7 +210,7 @@ export class Location extends Component {
   }
 
   handleURLBarFocus = () => {
-    this.refs.input.select();
+    this.input.select();
     this.props.dispatch(actions.setFocusedURLBar(this.props.page.id, true));
   }
 
@@ -307,7 +307,7 @@ export class Location extends Component {
           }}
           disabled={!this.props.showURLBar}
           type="url"
-          ref="input"
+          ref={i => this.input = i}
           onFocus={this.handleURLBarFocus}
           onBlur={this.handleURLBarBlur}
           onChange={(e) => {

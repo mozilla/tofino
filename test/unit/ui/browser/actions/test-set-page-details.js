@@ -57,6 +57,6 @@ describe('Action - SET_PAGE_DETAILS', () => {
       expect(true).toEqual(true,
         'setPageDetails with an unknown property should throw');
     }
-    expect(getPages().get(2).myVerySpecialProperty).toEqual(void 0);
+    expect(getPages().get(2).myVerySpecialProperty).toEqual(undefined);
   });
 });

@@ -18,6 +18,7 @@ try {
   electron = require('electron');
 } catch (e) {
   const { ipcMain, ipcRenderer } = require('electron-ipc-mock')();
+
   electron = {
     ipcMain,
     ipcRenderer,

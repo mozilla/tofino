@@ -34,7 +34,7 @@ describe('Btn', () => {
       <Btn title="my title"
         onClick={() => {}} />
     );
-    expect(wrapper.prop('data-active')).toEqual(void 0);
+    expect(wrapper.prop('data-active')).toEqual(undefined);
   });
   it('has `disabled` prop if given', () => {
     const wrapper = shallow(
@@ -48,7 +48,7 @@ describe('Btn', () => {
       <Btn title="my title"
         onClick={() => {}} />
     );
-    expect(wrapper.find('button').prop('disabled')).toEqual(void 0);
+    expect(wrapper.find('button').prop('disabled')).toEqual(undefined);
   });
   it('sets `title`', () => {
     const wrapper = shallow(

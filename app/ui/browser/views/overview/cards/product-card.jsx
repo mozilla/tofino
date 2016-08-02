@@ -25,7 +25,7 @@ const DEFAULT_MIN_RATING = 1;
  */
 function getPrice(meta) {
   if (meta.currency && meta.price) {
-    const formatted = (new Intl.NumberFormat(void 0, {
+    const formatted = (new Intl.NumberFormat(undefined, {
       style: 'currency',
       currency: meta.currency,
     })).format(meta.price);
@@ -43,7 +43,7 @@ function getPrice(meta) {
   } else if (meta.price) {
     return meta.price;
   }
-  return void 0;
+  return undefined;
 }
 
 const ProductCard = function(props) {

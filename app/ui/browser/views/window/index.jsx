@@ -49,7 +49,8 @@ class BrowserWindow extends Component {
       return;
     }
 
-    if (ev.metaKey && ev.code === 'KeyF' || (!ev.shiftKey && ev.code === 'Slash')) { // cmd+f or "/"
+    // cmd+f or "/"
+    if ((ev.metaKey && ev.code === 'KeyF') || (!ev.shiftKey && ev.code === 'Slash')) {
       dispatch(actions.setPageDetails(currentPage.id, { isSearching: true }));
     } else if (ev.code === 'Escape') { // esc
       dispatch(actions.setPageDetails(currentPage.id, { isSearching: false }));

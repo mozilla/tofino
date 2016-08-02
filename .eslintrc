@@ -17,7 +17,8 @@
 
   "plugins": [
     "import",
-    "react"
+    "react",
+    "babel"
   ],
 
   "settings": {
@@ -32,7 +33,10 @@
           ".jsx"
         ]
       }
-    }
+    },
+    "import/core-modules": [
+      "electron"
+    ]
   },
 
   "rules": {
@@ -60,6 +64,13 @@
     "no-use-before-define": ["off"],
     "dot-notation": ["off"],
     "eqeqeq": ["error", "allow-null"],
+    "no-continue": ["off"],
+    "require-yield": ["off"],
+
+    // See https://github.com/eslint/eslint/issues/6274
+    "generator-star-spacing": ["off"],
+    "babel/generator-star-spacing": ["error", { before: false, after: true }],
+
     "react/display-name": ["error", { "ignoreTranspilerName": true }],
     "react/jsx-closing-bracket-location": ["error", "after-props"],
     "react/jsx-indent": ["error", 2],
@@ -70,6 +81,7 @@
     "react/jsx-curly-spacing": ["error", "never"],
     "react/jsx-handler-names": ["error"],
     "react/prefer-es6-class": ["off"],
+
     "import/no-unresolved": ["error", {
       "ignore": ["^electron$", "\\./build-config$", "^logging$"],
       "commonjs": true
@@ -77,6 +89,8 @@
     "import/no-commonjs": ["error"],
     "import/no-amd": ["error"],
     "import/imports-first": ["error"],
-    "import/no-named-as-default": ["off"]
+    "import/no-named-as-default": ["off"],
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
+    "import/prefer-default-export": ["off"]
   }
 }

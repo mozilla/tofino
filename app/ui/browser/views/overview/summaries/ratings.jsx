@@ -62,7 +62,7 @@ const Ratings = function(props) {
   // would give us 2.5 stars as the half way point. This is some magic to make things
   // Close To Being Nice.
   const starRating = props.minRating === 1 && props.maxRating === 5 ? props.rating :
-                     (props.rating - props.minRating / props.maxRating - props.minRating);
+                     (props.rating - (props.minRating / props.maxRating) - props.minRating);
   // This doesn't take into account min rating, but I don't think there are common cases
   // where the min isn't 0 or 1.
   const title = `${starRating} of ${props.maxRating} rating`;

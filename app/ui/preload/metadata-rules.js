@@ -40,7 +40,7 @@ function buildRuleset(name, rules) {
         return value.trim ? value.trim() : value;
       }
     }
-    return void 0;
+    return undefined;
   };
 }
 

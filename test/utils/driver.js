@@ -9,6 +9,8 @@ import { getElectronPath } from '../../build/utils/electron';
 import * as Const from '../../build/utils/const';
 import startFixtureServer from '../utils/server';
 
+/* global document */
+
 // WebDriver takes unicode mappings to certain keys,
 // like arrow and return.
 // https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#post-sessionsessionidelementidvalue

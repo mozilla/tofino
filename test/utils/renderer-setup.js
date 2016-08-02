@@ -7,6 +7,8 @@
  * for use with tests.
  */
 
+/* eslint-env browser */
+
 window.$ = (selector, scope = document) => scope.querySelector(selector);
 window.$$ = (selector, scope = document) => scope.querySelectorAll(selector);
 

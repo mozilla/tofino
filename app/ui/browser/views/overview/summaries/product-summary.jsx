@@ -58,19 +58,19 @@ const ProductSummary = function(props) {
     <div className={PRICE_STYLE}>
       {props.price}
     </div>
-  ) : void 0;
+  ) : undefined;
 
   const ratingsEl = props.rating ? (
     <Ratings rating={props.rating}
       maxRating={props.maxRating}
       minRating={props.minRating} />
-  ) : void 0;
+  ) : undefined;
 
   const reviewEl = props.reviewCount ? (
     <div className={REVIEW_COUNT_STYLE}>
       {`${props.reviewCount} reviews`}
     </div>
-  ) : void 0;
+  ) : undefined;
 
   return (
     <div className={CONTAINER_STYLE}>

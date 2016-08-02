@@ -58,7 +58,7 @@ class Page extends Component {
   componentDidMount() {
     const { webViewController, page, dispatch } = this.props;
     const { id } = page;
-    const webview = this.refs.webview;
+    const webview = this.webview;
 
     addListenersToWebView(webview, () => this.props.page, dispatch);
 
@@ -99,7 +99,7 @@ class Page extends Component {
   render() {
     const requestContextData = (event) => {
       const { offsetX: x, offsetY: y } = event.nativeEvent;
-      this.refs.webview.send('get-contextmenu-data', { x, y });
+      this.webview.send('get-contextmenu-data', { x, y });
     };
 
     return (
@@ -110,7 +110,7 @@ class Page extends Component {
           hidden={!this.props.page.isSearching}
           onKeyUp={inPageSearch} />
         <webview is="webview"
-          ref="webview"
+          ref={w => this.webview = w}
           class={`webview-${this.props.page.id} ${WEB_VIEW_STYLE}`}
           preload="../preload/index.js"
           guestInstanceId={this.props.page.guestInstanceId}

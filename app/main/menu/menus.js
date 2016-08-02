@@ -19,6 +19,7 @@ specific language governing permissions and limitations under the License.
 
 import electron from 'electron';
 import items from './submenu-items';
+
 const APP_NAME = electron.app.getName();
 
 const menus = {

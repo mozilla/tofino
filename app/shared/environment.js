@@ -29,7 +29,7 @@ export const argParser = yargs(argv).usage('Usage: $0 [options]').option('P', {
   type: 'string',
 });
 
-let parsedArgs = undefined;
+let parsedArgs;
 
 /**
  * Note that it is important to not call this before all of the necessary
