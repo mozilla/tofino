@@ -96,7 +96,7 @@
     "json-loader": "0.5.4",
     "lodash": "4.14.1",
     "mocha": "2.5.3",
-    "mocha-eslint": "2.1.1",
+    "mocha-eslint": "3.0.0",
     "nyc": "7.1.0",
     "page-metadata-parser": "0.2.1",
     "react": "15.3.0",
