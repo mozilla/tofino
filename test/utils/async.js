@@ -1,15 +1,3 @@
-export function autoFailingAsyncTest(runner) {
-  return async function(done) {
-    let caught;
-    try {
-      await runner();
-    } catch (err) {
-      caught = err;
-    }
-    done(caught);
-  };
-}
-
 export function idleWait(time) {
   return new Promise(resolve => setTimeout(resolve, time));
 }

@@ -5,7 +5,6 @@ import expect from 'expect';
 import fs from 'fs-promise';
 import omit from 'lodash/omit';
 
-import { autoFailingAsyncTest } from '../../utils/async';
 import { overwriteConfig } from '../../../build/task-config-builder';
 import clean from '../../../build/task-clean-package';
 import baseConfig from '../../../build/utils/base-config';
@@ -21,7 +20,7 @@ describe('build tasks', () => {
     expect(BuildUtils.getBuildConfig()).toContain(baseConfigToCheckAgainst);
   });
 
-  it('should have a working `config` task', autoFailingAsyncTest(async function() {
+  it('should have a working `config` task', async function() {
     const initialConfig = BuildUtils.getBuildConfig();
     expect(initialConfig.foo).toNotExist();
 
@@ -35,9 +34,9 @@ describe('build tasks', () => {
     const reloadedConfig = BuildUtils.getBuildConfig();
     expect(reloadedConfig.foo).toNotExist();
     expect(reloadedConfig).toContain(baseConfigToCheckAgainst);
-  }));
+  });
 
-  it('should have a working `clean` task', autoFailingAsyncTest(async function() {
+  it('should have a working `clean` task', async function() {
     fs.ensureDir(Const.PACKAGED_DIST_DIR);
 
     let cleaned = false;
@@ -48,5 +47,5 @@ describe('build tasks', () => {
       cleaned = err;
     }
     expect(cleaned).toMatch(/no such file or directory/);
-  }));
+  });
 });

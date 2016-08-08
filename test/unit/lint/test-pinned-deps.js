@@ -3,10 +3,9 @@
 
 import expect from 'expect';
 import fs from 'fs-promise';
-import { autoFailingAsyncTest } from '../../utils/async';
 
 describe('dependecies', () => {
-  it('should be pinned', autoFailingAsyncTest(async function() {
+  it('should be pinned', async function() {
     const manifest = await fs.readJson('package.json');
     const modules = [
       ...Object.values(manifest.dependencies),
@@ -16,5 +15,5 @@ describe('dependecies', () => {
     for (const module of modules) {
       expect(module).toNotMatch(/^\^/);
     }
-  }));
+  });
 });

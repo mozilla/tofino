@@ -3,7 +3,6 @@
 
 import expect from 'expect';
 import fs from 'fs-promise';
-import { autoFailingAsyncTest } from '../../utils/async';
 import { REQUIRES_REGEX, IMPORTS_REGEX, globMany, regexFiles } from './shared.js';
 
 const all = '/**/';
@@ -74,7 +73,7 @@ const ignored = [
 ];
 
 describe('packages', () => {
-  it('should not be orphaned', autoFailingAsyncTest(async function() {
+  it('should not be orphaned', async function() {
     const manifest = await fs.readJson('package.json');
     const modules = [
       ...native,
@@ -87,5 +86,5 @@ describe('packages', () => {
     const expected = Array.from(new Set([...matches, ...ignored]));
 
     expect(expected.sort()).toEqual(modules.sort());
-  }));
+  });
 });

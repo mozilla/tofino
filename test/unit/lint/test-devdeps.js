@@ -4,7 +4,6 @@
 import expect from 'expect';
 import fs from 'fs-promise';
 import without from 'lodash/without';
-import { autoFailingAsyncTest } from '../../utils/async';
 import { REQUIRES_REGEX, IMPORTS_REGEX, globMany, regexFiles } from './shared';
 
 const all = '/**/';
@@ -22,7 +21,7 @@ const ignored = [
 ];
 
 describe('dev dependecies', () => {
-  it('should not be imported in non-browser processes', autoFailingAsyncTest(async function() {
+  it('should not be imported in non-browser processes', async function() {
     const manifest = await fs.readJson('package.json');
     const modules = Object.keys(manifest.devDependencies);
 
@@ -33,5 +32,5 @@ describe('dev dependecies', () => {
     for (const module of modules) {
       expect(expected).toExclude(module);
     }
-  }));
+  });
 });

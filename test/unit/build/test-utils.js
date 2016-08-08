@@ -5,7 +5,6 @@ import expect from 'expect';
 import path from 'path';
 import os from 'os';
 import fs from 'fs';
-import { autoFailingAsyncTest } from '../../utils/async';
 import * as BuildUtils from '../../../build/utils';
 import * as ElectronUtils from '../../../build/utils/electron';
 import * as ProcessUtils from '../../../build/utils/process';
@@ -72,11 +71,11 @@ describe('build utils', () => {
     expect(typeof version).toEqual('string');
   });
 
-  it('should export `spawn`', autoFailingAsyncTest(async function() {
+  it('should export `spawn`', async function() {
     try {
       await ProcessUtils.spawn('node', ['--version']);
     } catch (e) {
       expect(false).toBe(true);
     }
-  }));
+  });
 });
