@@ -107,7 +107,7 @@
     "react-immutable-proptypes": "2.0.0",
     "react-redux": "4.4.5",
     "redux": "3.5.1",
-    "redux-immutable": "3.0.6",
+    "redux-immutable": "3.0.7",
     "redux-logger": "2.6.1",
     "require-dir": "0.3.0",
     "rimraf": "2.5.4",
