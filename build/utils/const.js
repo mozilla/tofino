@@ -13,7 +13,6 @@ export const LIB_DIR = path.join(ROOT, 'lib');
 export const APP_SHARED_DIR = path.join(SRC_DIR, 'shared');
 
 export const PACKAGED_DIST_DIR = path.join(ROOT, 'dist');
-export const PACKAGED_ICON = path.join(ROOT, 'branding', 'app-icon');
 
 export const CACHE_DIR = path.join(ROOT, '.cache');
 export const ELECTRON_ROOT_DIR = path.join(ROOT, '.electron');
