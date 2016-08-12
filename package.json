@@ -84,7 +84,7 @@
     "eslint": "3.2.2",
     "eslint-config-airbnb": "10.0.0",
     "eslint-plugin-babel": "3.3.0",
-    "eslint-plugin-import": "1.12.0",
+    "eslint-plugin-import": "1.13.0",
     "eslint-plugin-jsx-a11y": "2.1.0",
     "eslint-plugin-react": "6.0.0",
     "expect": "1.20.2",
