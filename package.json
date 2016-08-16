@@ -97,7 +97,7 @@
     "json-loader": "0.5.4",
     "lodash": "4.15.0",
     "mocha": "3.0.2",
-    "nyc": "7.1.0",
+    "nyc": "8.1.0",
     "page-metadata-parser": "0.2.1",
     "react": "15.3.0",
     "react-addons-perf": "15.3.0",
