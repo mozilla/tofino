@@ -40,7 +40,7 @@
     "electron-localshortcut": "0.6.1",
     "express": "4.14.0",
     "express-validator": "2.20.8",
-    "express-ws": "2.0.0-rc.1",
+    "express-ws": "2.0.0",
     "fs-extra": "0.30.0",
     "fs-promise": "0.5.0",
     "immutable": "3.7.6",
