@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 /* eslint import/imports-first: "off" */
 
+import os from 'os';
 import { ipcRenderer } from '../../shared/electron';
 
 // In the case of uncaught error, which is often due to compilation failures, be sure to tell the
@@ -97,3 +98,10 @@ ipcRenderer.on('user-agent-service-info', (_, { port, version, host }) =>
 // Set max listeners to Infinity, because each new tab will listen to more
 // events, and we'll intentionally go beyond the 10 listener default.
 ipcRenderer.setMaxListeners(Infinity);
+
+// Add platform as a class on <body> for platform-specific styling. Possible values:
+// 'aix', 'darwin', 'freebsd', 'linux', 'openbsd', 'sunos', 'win32'
+const platform = os.platform();
+const platformClass = platform === 'darwin' ? 'osx' :
+                      platform === 'win32' ? 'win' : 'linux';
+document.body.classList.add(platformClass);
