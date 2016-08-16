@@ -16,7 +16,7 @@ import Immutable from 'immutable';
 import { logger } from '../../../shared/logging';
 import * as types from '../constants/action-types';
 import { HOME_PAGE } from '../constants/ui';
-import { Pages, Page } from '../model';
+import { Pages, Page, PageState } from '../model';
 import { isUUID } from '../browser-util';
 import { getPageIndexById, getPageIndexBySessionId } from '../selectors';
 
@@ -39,6 +39,9 @@ export default function basic(state = initialState, action) {
 
     case types.CLOSE_TAB:
       return closeTab(state, action.pageId);
+
+    case types.SET_PAGE_STATE:
+      return setPageState(state, action.pageId, action.state);
 
     case types.SET_PAGE_DETAILS:
       return setPageDetails(state, action.pageId, action.payload);
@@ -115,6 +118,29 @@ function closeTab(state, pageId) {
       mut.set('currentPageIndex', current - 1);
       return;
     }
+  });
+}
+
+function setPageState(state, pageId, pageState) {
+  assert(isUUID(pageId), 'SET_PAGE_STATE requires a page id.');
+  const pageIndex = getPageIndexById(state, pageId);
+  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
+
+  assert(Object.values(PageState.STATES).includes(pageState.state),
+    `Page state ${pageState.state} is not a valid page state.`);
+
+  if (pageState.state === PageState.STATES.FAILED) {
+    assert(pageState.code != null);
+    assert(pageState.description != null);
+    assert(pageState.url != null);
+  } else {
+    assert(pageState.code == null);
+    assert(pageState.description == null);
+    assert(pageState.url == null);
+  }
+
+  return state.withMutations(mut => {
+    mut.setIn(['pages', pageIndex, 'state'], pageState);
   });
 }
 

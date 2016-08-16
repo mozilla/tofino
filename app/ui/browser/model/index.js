@@ -42,6 +42,18 @@ export const PageMeta = Immutable.Record({
   currency: undefined,
 }, 'PageMeta');
 
+export const PageState = Immutable.Record({
+  state: undefined,
+  description: undefined,
+  code: undefined,
+  url: undefined,
+}, 'PageState');
+
+PageState.STATES = {};
+PageState.STATES.LOADING = 'loading';
+PageState.STATES.LOADED = 'loaded';
+PageState.STATES.FAILED = 'failed';
+
 /**
  * The data that we store alongside a single web page
  */
@@ -51,22 +63,18 @@ export class Page extends Immutable.Record({
   ancestorId: undefined, // ?number.
   location: undefined,
   title: 'New Tab',
-  state: false,
   isSearching: false,
   canGoBack: false,
   canGoForward: false,
   canRefresh: false,
   chromeMode: 'expanded',
   meta: new PageMeta(),
+  state: new PageState(),
 }, 'Page') {
   constructor(data) {
     super(Object.assign({ id: uuid.v4() }, data));
   }
 }
-
-Page.PAGE_STATE_LOADING = 'loading';
-Page.PAGE_STATE_LOADED = 'loaded';
-Page.PAGE_STATE_FAILED = 'failed';
 
 /**
  * The browser window's view of its profile.

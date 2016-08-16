@@ -20,7 +20,7 @@ import Btn from '../../../shared/widgets/btn';
 import LocationCompletionRow from './location-completion-row';
 
 import { fixURL, getCurrentWebView } from '../../browser-util';
-import { Page } from '../../model';
+import { Page, PageState } from '../../model';
 import * as selectors from '../../selectors';
 import * as actions from '../../actions/main-actions';
 
@@ -333,6 +333,11 @@ export class Location extends Component {
         type="url" />);
     });
 
+    const hasPageError = this.props.page.state.state === PageState.STATES.FAILED;
+    const title = hasPageError
+      ? this.props.page.state.description
+      : this.props.page.title;
+
     return (
       <div className={LOCATION_BAR_CONTAINER_STYLE}>
         <div id="browser-location-bar"
@@ -349,9 +354,7 @@ export class Location extends Component {
             tabIndex={0}
             onClick={this.handleTitleClick}
             onFocus={this.handleTitleFocus}>
-            <span>
-              {this.props.page.title}
-            </span>
+            <span>{title}</span>
           </div>
           {allInputs}
           <Btn title="Bookmark"

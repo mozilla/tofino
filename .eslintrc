@@ -81,6 +81,7 @@
     "react/jsx-curly-spacing": ["error", "never"],
     "react/jsx-handler-names": ["error"],
     "react/prefer-es6-class": ["off"],
+    "react/prefer-stateless-function": ["off"],
 
     "import/no-unresolved": ["error", {
       "ignore": ["^electron$", "\\./build-config$", "^logging$"],
