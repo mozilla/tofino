@@ -23,6 +23,7 @@ import * as menu from './menu/index';
 import * as instrument from '../services/instrument';
 import * as spawn from './spawn';
 import * as BW from './browser-window';
+import * as certs from './certificates';
 import UserAgentClient from '../shared/user-agent-client';
 
 const app = electron.app; // control application life.
@@ -34,6 +35,7 @@ const appStartupTime = Date.now();
 instrument.event('app', 'STARTUP');
 
 protocols.registerStandardSchemes();
+certs.setupCertificateHandlers();
 
 // Start the content and UA services running on a different process
 spawn.startContentService();
