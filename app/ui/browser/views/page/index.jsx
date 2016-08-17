@@ -17,8 +17,9 @@ import Style from '../../../shared/style';
 import * as UIConstants from '../../constants/ui';
 import Status from '../window/status';
 import Search from '../../../shared/widgets/search';
+import ErrorPage from './error-page';
 
-import { Page as PageModel } from '../../model';
+import { PageState } from '../../model';
 import { fixURL } from '../../browser-util';
 import { menuWebViewContext, inPageSearch } from '../../actions/external';
 import * as actions from '../../actions/main-actions';
@@ -102,13 +103,18 @@ class Page extends Component {
       this.webview.send('get-contextmenu-data', { x, y });
     };
 
+    const showPageError = this.props.page.state.state === PageState.STATES.FAILED;
+
     return (
       <div className={`page ${PAGE_STYLE} ${this.props.isActive ? 'active-browser-page' : ''}`}
-        data-page-state={this.props.page.state}>
+        data-page-state={this.props.page.state.state}>
         <Search id="browser-page-search"
           className={SEARCH_STYLE}
           hidden={!this.props.page.isSearching}
           onKeyUp={inPageSearch} />
+        <ErrorPage
+          hidden={!showPageError}
+          {...this.props.page.state} />
         <webview is="webview"
           ref={w => this.webview = w}
           class={`webview-${this.props.page.id} ${WEB_VIEW_STYLE}`}
@@ -142,8 +148,8 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
   });
 
   webview.addEventListener('did-start-loading', () => {
-    dispatch(actions.setPageDetails(pageAccessor().id, {
-      state: PageModel.PAGE_STATE_LOADING,
+    dispatch(actions.setPageState(pageAccessor().id, {
+      state: PageState.STATES.LOADING,
     }));
   });
 
@@ -162,12 +168,23 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
     }));
   });
 
-  webview.addEventListener('did-fail-load', () => {
-    dispatch(actions.setPageDetails(pageAccessor().id, {
-      state: PageModel.PAGE_STATE_FAILED,
+  webview.addEventListener('did-fail-load', e => {
+    const { errorCode, errorDescription, validatedURL, isMainFrame } = e;
+
+    if (!isMainFrame) {
+      return;
+    }
+
+    dispatch(actions.setPageState(pageAccessor().id, {
+      state: PageState.STATES.FAILED,
+      code: errorCode,
+      description: errorDescription,
+      url: validatedURL,
     }));
   });
 
+  // The `did-stop-loading` event fires even when a failure occurs.
+  // The `did-finish-loading` event only fires if successful.
   webview.addEventListener('did-stop-loading', () => {
     const url = webview.getURL();
     const title = webview.getTitle();
@@ -176,7 +193,6 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
       location: url,
       canGoBack: webview.canGoBack(),
       canGoForward: webview.canGoForward(),
-      state: PageModel.PAGE_STATE_LOADED,
       title,
     }));
 
@@ -187,6 +203,12 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
     }));
 
     userAgent.createHistory(pageAccessor(), { url, title });
+  });
+
+  webview.addEventListener('did-finish-loading', () => {
+    dispatch(actions.setPageState(pageAccessor().id, {
+      state: PageState.STATES.LOADED,
+    }));
   });
 
   webview.addEventListener('ipc-message', e => {

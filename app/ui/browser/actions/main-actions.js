@@ -74,6 +74,10 @@ export function closeTab(pageId) {
   };
 }
 
+export function setPageState(pageId, state) {
+  return { type: types.SET_PAGE_STATE, pageId, state, instrument: false };
+}
+
 export function setPageDetails(pageId, payload) {
   return { type: types.SET_PAGE_DETAILS, pageId, payload, instrument: false };
 }
