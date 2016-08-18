@@ -18,7 +18,7 @@ import * as UIConstants from '../../constants/ui';
 import Status from '../window/status';
 import Search from '../../../shared/widgets/search';
 import ErrorPage from './error-page';
-
+import { getCertificateError } from '../../lib/cert';
 import { PageState } from '../../model';
 import { fixURL } from '../../browser-util';
 import { menuWebViewContext, inPageSearch } from '../../actions/external';
@@ -168,19 +168,30 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
     }));
   });
 
-  webview.addEventListener('did-fail-load', e => {
+  webview.addEventListener('did-fail-load', async function(e) {
     const { errorCode, errorDescription, validatedURL, isMainFrame } = e;
 
     if (!isMainFrame) {
       return;
     }
 
-    dispatch(actions.setPageState(pageAccessor().id, {
+    const state = {
       state: PageState.STATES.FAILED,
       code: errorCode,
       description: errorDescription,
       url: validatedURL,
-    }));
+    };
+
+    // Most cert errors are 501 from this event; the true, more descriptive
+    // error description can be retrieved from the main process. Just check
+    // here roughly if the error looks like a cert error.
+    if (Math.abs(errorCode) === 501 || /CERT/.test(errorDescription)) {
+      const { error, certificate } = await getCertificateError(validatedURL);
+      state.certificate = certificate;
+      state.description = error;
+    }
+
+    dispatch(actions.setPageState(pageAccessor().id, state));
   });
 
   // The `did-stop-loading` event fires even when a failure occurs.

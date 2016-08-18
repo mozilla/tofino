@@ -47,6 +47,7 @@ export const PageState = Immutable.Record({
   description: undefined,
   code: undefined,
   url: undefined,
+  certificate: undefined,
 }, 'PageState');
 
 PageState.STATES = {};

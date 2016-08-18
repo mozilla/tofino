@@ -12,6 +12,8 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes, Component } from 'react';
 
+import NetErrorPage from './net-error';
+import CertErrorPage from './cert-error';
 import Style from '../../../shared/style';
 
 const ERROR_PAGE_STYLE = Style.registerStyle({
@@ -21,35 +23,18 @@ const ERROR_PAGE_STYLE = Style.registerStyle({
   color: 'rgb(66, 78, 90)',
   backgroundColor: '#FBFBFB',
   fontSize: '120%',
-});
-
-const CONTAINER_STYLE = Style.registerStyle({
-  width: '500px',
-  margin: '0 auto',
-  display: 'block',
+  overflowY: 'auto',
 });
 
 class ErrorPage extends Component {
   render() {
+    const page = Math.abs(this.props.code) === 501 || /CERT/.test(this.props.description)
+      ? <CertErrorPage {...this.props} />
+      : <NetErrorPage {...this.props} />;
     return (
       <div className={`error-page ${ERROR_PAGE_STYLE}`}
         hidden={this.props.hidden}>
-        <div className={CONTAINER_STYLE}>
-          <h1>Could not connect</h1>
-          <p>Tofino can't find the server at <strong>{this.props.url}</strong></p>
-          <ul>
-            <li>
-              Check the address for typing errors such as <strong>ww</strong>.example.com
-              instead of <strong>www</strong>.example.com
-            </li>
-            <li>If you are unable to load any pages, check your computer’s network connection.</li>
-            <li>
-              If your computer or network is protected by a firewall or proxy,
-              make sure that Tofino is permitted to access the Web.
-            </li>
-            <li>{this.props.description} ({this.props.code})</li>
-          </ul>
-        </div>
+        {page}
       </div>
     );
   }
@@ -61,6 +46,7 @@ ErrorPage.propTypes = {
   url: PropTypes.string,
   code: PropTypes.number,
   description: PropTypes.string,
+  certificate: PropTypes.object,
   hidden: PropTypes.bool,
 };
 
