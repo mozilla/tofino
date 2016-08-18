@@ -18,8 +18,6 @@ import * as ContentPropTypes from '../../model/content-prop-types';
 import ListItem from '../../../shared/widgets/list-item';
 
 const HISTORY_ITEM_STYLE = Style.registerStyle({
-  padding: '6px 8px',
-
   '&:nth-child(odd)': {
     backgroundColor: 'rgba(255,255,255,0.5)',
   },
@@ -35,10 +33,16 @@ const HISTORY_ITEM_STYLE = Style.registerStyle({
   },
 });
 
+const HISTORY_ANCHOR_STYLE = Style.registerStyle({
+  padding: '6px 8px',
+  display: 'block',
+});
+
 const HistoryItem = props => {
   return (
     <ListItem className={HISTORY_ITEM_STYLE}>
-      <a href={props.page.uri}
+      <a className={HISTORY_ANCHOR_STYLE}
+        href={props.page.uri}
         title={props.page.title || props.page.uri}>
         {props.page.title || props.page.uri}
       </a>
