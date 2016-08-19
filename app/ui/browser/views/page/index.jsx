@@ -175,6 +175,12 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
       return;
     }
 
+    // If a page is aborted (like hitting BACK/RELOAD while a page is loading), we'll get a
+    // load failure of ERR_ABORTED with code `-3` -- this is intended, so just ignore it.
+    if (Math.abs(errorCode) === 3) {
+      return;
+    }
+
     const state = {
       state: PageState.STATES.FAILED,
       code: errorCode,
