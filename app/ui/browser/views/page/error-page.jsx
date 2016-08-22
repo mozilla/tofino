@@ -28,9 +28,14 @@ const ERROR_PAGE_STYLE = Style.registerStyle({
 
 class ErrorPage extends Component {
   render() {
-    const page = Math.abs(this.props.code) === 501 || /CERT/.test(this.props.description)
+    const code = Math.abs(this.props.code);
+    const isCertError = code === 501 || // ERR_CERT_AUTHORITY_INVALID
+                        code === 129 || // ERR_SSL_WEAK_SERVER_EPHEMERAL_DH_KEY
+                        /CERT/.test(this.props.description); // Catch all
+    const page = isCertError
       ? <CertErrorPage {...this.props} />
       : <NetErrorPage {...this.props} />;
+
     return (
       <div className={`error-page ${ERROR_PAGE_STYLE}`}
         hidden={this.props.hidden}>
