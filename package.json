@@ -1,6 +1,7 @@
 {
   "name": "Tofino",
   "version": "0.1.0",
+  "private": true,
   "author": {
     "name": "Mozilla",
     "email": "tofino-dev@mozilla.org",
