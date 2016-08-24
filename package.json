@@ -71,7 +71,7 @@
     "babel-preset-react": "6.11.1",
     "babel-preset-react-optimize": "1.0.1",
     "babel-register": "6.11.6",
-    "check-dependencies": "0.12.1",
+    "check-dependencies": "0.12.3",
     "copy-webpack-plugin": "3.0.0",
     "coveralls": "2.11.12",
     "cross-env": "2.0.0",
