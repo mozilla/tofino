@@ -92,7 +92,7 @@
     "extract-zip": "1.5.0",
     "fathom-web": "1.1.2",
     "fetch-mock": "5.1.1",
-    "glob": "7.0.5",
+    "glob": "7.0.6",
     "isomorphic-fetch": "2.2.1",
     "jsdom": "9.4.2",
     "json-loader": "0.5.4",
