@@ -170,6 +170,17 @@ function attachIPCRendererListeners(browserView) {
   ipcRenderer.on('show-history', () => dispatch(actions.createTab(contentURLs.HISTORY_PAGE)));
   ipcRenderer.on('show-credits', () => dispatch(actions.createTab(contentURLs.CREDITS_PAGE)));
   ipcRenderer.on('focus-url-bar', () => {});
+  ipcRenderer.on('go-back', () => {
+    if (browserView.props.currentPage.canGoBack) {
+      webViewController.navigateBack(browserView.props.currentPage.id);
+    }
+  });
+  ipcRenderer.on('go-forward', () => {
+    if (browserView.props.currentPage.canGoForward) {
+      webViewController.navigateForward(browserView.props.currentPage.id);
+    }
+  });
+
   ipcRenderer.on('open-bookmark', (_, bookmark) => dispatch(actions.createTab(bookmark.location)));
 
   ipcRenderer.on('capture-page', () =>
