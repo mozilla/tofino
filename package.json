@@ -12,8 +12,8 @@
   "repository": "https://github.com/mozilla/tofino",
   "_electron": {
     "mirror": "https://mozilla-releng-tofino.s3.amazonaws.com/mozilla/tofino-electron/",
-    "version": "1.2.5",
-    "revision": "d971aaed1bd7"
+    "version": "1.3.4",
+    "revision": "984ff989f1a9"
   },
   "scripts": {
     "clobber": "rm build-config.json; rm -r lib; rm -r .electron; rm -r node_modules",
