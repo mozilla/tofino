@@ -18,6 +18,7 @@ const Lazy = {
   buildDeps: () => require('./task-build-deps').default(),
   config: options => require('./task-config-builder').overwriteConfig(options),
   saveConfig: options => require('./task-config-builder').saveConfigAsPrev(options),
+  buildModules: () => require('./task-build-modules').default(),
   buildServices: () => require('./task-build-services').default(),
   buildMainProcess: () => require('./task-build-main-process').default(),
   buildBrowser: () => require('./task-build-browser').default(),
@@ -43,6 +44,7 @@ const Tasks = {
     await Lazy.config(config);
     const watchers = [];
     try {
+      watchers.push(await Lazy.buildModules());
       watchers.push(await Lazy.buildServices());
       watchers.push(await Lazy.buildMainProcess());
       watchers.push(await Lazy.buildBrowser());
