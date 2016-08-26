@@ -10,6 +10,14 @@
       "presets": ["react"]
     }
   },
+  "only": [
+    "app/main/**",
+    "app/services/**",
+    "app/shared/**",
+    "app/ui/**",
+    "build/**",
+    "test/**"
+  ],
   "plugins": [
     "transform-es2015-destructuring",
     "transform-es2015-parameters",
