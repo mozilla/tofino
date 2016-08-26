@@ -2,7 +2,7 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 /**
- * Creates a `build-config.json` in the lib directory for runtime access to
+ * Creates a `build-config.json` in the root directory for runtime access to
  * build configurations.
  */
 

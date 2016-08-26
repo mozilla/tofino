@@ -10,7 +10,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import os from 'os';
 import colors from 'colors/safe';
 import path from 'path';
 import { spawn } from 'child_process';
@@ -18,13 +17,10 @@ import { logger } from '../shared/logging';
 import * as endpoints from '../shared/constants/endpoints';
 import { parseArgs } from '../shared/environment';
 
-const ROOT = path.join(__dirname, '..');
-const SERVICES_PATH = path.join(ROOT, 'services');
+const ROOT = path.join(__dirname, '..', '..');
+const SERVICES_PATH = path.join(ROOT, 'lib', 'services');
 const UA_SERVICE_BIN = path.join(SERVICES_PATH, 'user-agent-service', 'user-agent-service');
 const CONTENT_SERVICE_PATH = path.join(SERVICES_PATH, 'content-service', 'index.js');
-
-const NODE_CMD = os.platform() === 'win32' ? 'node.exe' : 'node';
-const NODE = path.join(ROOT, NODE_CMD);
 
 // @TODO Use something like `forever` or `pm2` to ensure that this
 // process remains running
@@ -64,8 +60,12 @@ export function startUserAgentService(userAgentClient, options = {}) {
   // outliving the its original parent, which we want to allow in the UAS case.
   const detached = !options.attached; // Detach by default
   const stdio = detached ? ['ignore'] : ['ignore', process.stdout, process.stderr];
+  const env = Object.assign({}, process.env, { ELECTRON_RUN_AS_NODE: 1 });
+  if (detached) {
+    env.ELECTRON_NO_ATTACH_CONSOLE = 1;
+  }
 
-  let command = NODE;
+  let command = process.execPath;
   if (options.command) {
     command = options.command;
   }
@@ -78,6 +78,7 @@ export function startUserAgentService(userAgentClient, options = {}) {
   ], {
     detached,
     stdio,
+    env,
   });
 
   // Connecting to a client immediately is sometimes not necessary,
@@ -90,8 +91,12 @@ export function startUserAgentService(userAgentClient, options = {}) {
 export function startContentService(options = {}) {
   const detached = !options.attached; // Detach by default
   const stdio = detached ? ['ignore'] : ['ignore', process.stdout, process.stderr];
+  const env = Object.assign({}, process.env, { ELECTRON_RUN_AS_NODE: 1 });
+  if (detached) {
+    env.ELECTRON_NO_ATTACH_CONSOLE = 1;
+  }
 
-  let command = NODE;
+  let command = process.execPath;
   if (options.command) {
     command = options.command;
   }
@@ -101,6 +106,7 @@ export function startContentService(options = {}) {
   ], {
     detached,
     stdio,
+    env,
   });
 }
 

@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 /* eslint global-require: 0 */
 
 import { logger } from '../../../shared/logging';
-import BUILD_CONFIG from '../../../build-config';
+import BUILD_CONFIG from '../../../../build-config';
 
 /**
  * This file contains actions used only in development mode -- handling

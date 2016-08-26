@@ -5,13 +5,12 @@ import path from 'path';
 
 export const ROOT = path.resolve(path.dirname(path.join(__dirname, '..')));
 
+export const BUILD_CONFIG_PATH = path.join(ROOT, 'build-config.json');
 export const BUILD_SYSTEM_DIR = path.join(ROOT, 'build');
 
 export const SRC_DIR = path.join(ROOT, 'app');
 export const LIB_DIR = path.join(ROOT, 'lib');
 export const APP_SHARED_DIR = path.join(SRC_DIR, 'shared');
-
-export const BUILD_CONFIG_PATH = path.join(SRC_DIR, 'build-config.json');
 
 export const PACKAGED_DIST_DIR = path.join(ROOT, 'dist');
 

@@ -15,7 +15,7 @@ import electron from 'electron';
 
 import * as hotkeys from './hotkeys';
 import { UI_DIR, fileUrl } from '../shared/paths-util';
-import BUILD_CONFIG from '../build-config';
+import BUILD_CONFIG from '../../build-config';
 
 // Switch 'browser' to 'browser-alt' to test second frontend.  We should have a flag
 // to the application to switch frontends

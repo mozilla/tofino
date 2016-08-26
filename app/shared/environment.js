@@ -16,7 +16,7 @@ import path from 'path';
 import AppDirectory from 'appdirectory';
 import fs from 'fs-extra';
 import manifest from '../../package.json';
-import BUILD_CONFIG from '../build-config.json';
+import BUILD_CONFIG from '../../build-config.json';
 
 // Electron sets a flag to let you know if the path to the app is included in
 // the command line arguments.

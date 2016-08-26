@@ -5,15 +5,15 @@ import colors from 'colors/safe';
 import path from 'path';
 
 import * as Const from './utils/const';
-import { getAppManifest } from './utils';
+import { getManifest } from './utils';
 import { getElectronPath } from './utils/electron';
 import { spawn } from './utils/process';
 import { logger } from './logging';
 
 export default async function(args = []) {
-  const manifest = getAppManifest();
+  const manifest = getManifest();
   const command = getElectronPath();
-  const script = path.join(Const.LIB_DIR, manifest.main);
+  const script = path.join(Const.ROOT, manifest.main);
 
   logger.info(colors.cyan('Executing'), colors.gray(command));
 
