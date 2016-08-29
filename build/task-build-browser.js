@@ -2,47 +2,39 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import colors from 'colors/safe';
+import fs from 'fs-promise';
 
-import * as browserConfig from './config/webpack.browser.default';
-import * as browserAltConfig from './config/webpack.browseralt.default';
-
+import { BROWSER_FRONTENDS_PATH } from './utils/const';
+import { makeDevConfig as dev, makeProdConfig as prod } from './config/webpack.base';
 import { getBuildConfig } from './utils';
 import { shouldRebuild } from './utils/rebuild';
 import { webpackBuild } from './utils/webpack';
 import { logger } from './logging';
 
 export default async function() {
-  const { close: browserClose } = await buildBrowser();
-  const { close: browserAltClose } = await buildBrowserAlt();
+  const frontends = fs.readJsonSync(BROWSER_FRONTENDS_PATH);
+  const watchers = [];
+
+  for (const id of frontends) {
+    watchers.push(await buildFrontend(id));
+  }
+
   return {
-    close: () => Promise.all([browserClose(), browserAltClose()]),
+    close: () => Promise.all(watchers.map(w => w.close())),
   };
 }
 
-async function buildBrowser() {
-  const { SRC_DIR, SHARED_DIR } = browserConfig;
-  const id = 'browser';
+async function buildFrontend(id) {
+  /* eslint-disable global-require */
+  const { default: browserConfig, SRC_DIR, SHARED_DIR } = require(`./config/webpack.${id}`);
+  /* eslint-enable global-require */
 
-  if (!(await shouldRebuild(id, [SRC_DIR, id], [SHARED_DIR, 'browser ui/shared']))) {
+  if (!(await shouldRebuild(id, [SRC_DIR, id], [SHARED_DIR, `${id} ui/shared`]))) {
     logger.info(colors.green(`No changes in ${id}.`));
     return { close: () => {} };
   }
 
   logger.info(colors.cyan(`Building ${id}...`));
   const { development } = getBuildConfig();
-  return await webpackBuild(development ? browserConfig.dev : browserConfig.prod);
-}
-
-async function buildBrowserAlt() {
-  const { SRC_DIR, SHARED_DIR } = browserAltConfig;
-  const id = 'browser-alt';
-
-  if (!(await shouldRebuild(id, [SRC_DIR, id], [SHARED_DIR, 'browser-alt ui/shared']))) {
-    logger.info(colors.green(`No changes in ${id}.`));
-    return { close: () => {} };
-  }
-
-  logger.info(colors.cyan(`Building ${id}...`));
-  const { development } = getBuildConfig();
-  return await webpackBuild(development ? browserAltConfig.dev : browserAltConfig.prod);
+  return await webpackBuild(development ? dev(browserConfig) : prod(browserConfig));
 }

@@ -3,6 +3,8 @@
 
 import webpack from 'webpack';
 import path from 'path';
+import devConfig from './webpack.base.snippets.dev';
+import prodConfig from './webpack.base.snippets.prod';
 import * as Const from '../utils/const';
 
 const root = Const.ROOT;
@@ -34,4 +36,30 @@ export default {
   externals: [
     'dtrace-provider',
   ],
+};
+
+export const makeDevConfig = (baseConfig) => {
+  return {
+    ...devConfig,
+    ...baseConfig,
+    output: {
+      ...devConfig.output,
+      ...baseConfig.output,
+    },
+    plugins: [
+      ...devConfig.plugins,
+      ...baseConfig.plugins,
+    ],
+  };
+};
+
+export const makeProdConfig = (baseConfig) => {
+  return {
+    ...prodConfig,
+    ...baseConfig,
+    plugins: [
+      ...prodConfig.plugins,
+      ...baseConfig.plugins,
+    ],
+  };
 };
