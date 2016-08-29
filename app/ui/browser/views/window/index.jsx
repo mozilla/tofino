@@ -13,6 +13,7 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { ipcRenderer } from '../../../../shared/electron';
+import * as gestures from '../../lib/gestures';
 
 import Style from '../../../shared/style';
 import * as SharedPropTypes from '../../../shared/model/shared-prop-types';
@@ -40,6 +41,7 @@ class BrowserWindow extends Component {
   componentDidMount() {
     document.body.addEventListener('keydown', this.handleKeyDown);
     attachIPCRendererListeners(this);
+    gestures.attachGestureListeners(this);
   }
 
   handleKeyDown = (ev) => {
@@ -132,6 +134,7 @@ BrowserWindow.propTypes = {
 function mapStateToProps(state) {
   const currentPage = selectors.getCurrentPage(state);
   return {
+    showPageSummaries: selectors.getShowPageSummaries(state),
     pages: selectors.getPages(state),
     currentPage,
     currentPageIndex: selectors.getCurrentPageIndex(state),
