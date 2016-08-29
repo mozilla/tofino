@@ -21,6 +21,7 @@ const Lazy = {
   buildModules: () => require('./task-build-modules').default(),
   buildServices: () => require('./task-build-services').default(),
   buildMainProcess: () => require('./task-build-main-process').default(),
+  buildPreload: () => require('./task-build-preload').default(),
   buildBrowser: () => require('./task-build-browser').default(),
   buildContent: () => require('./task-build-content').default(),
   run: args => require('./task-run').default(args),
@@ -48,6 +49,7 @@ const Tasks = {
       watchers.push(await Lazy.buildServices());
       watchers.push(await Lazy.buildMainProcess());
       watchers.push(await Lazy.buildBrowser());
+      watchers.push(await Lazy.buildPreload());
       watchers.push(await Lazy.buildContent());
       logger.info(colors.green('Now watching the filesystem for changes...'));
     } catch (e) {
