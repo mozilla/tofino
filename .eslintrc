@@ -71,17 +71,17 @@
     "generator-star-spacing": ["off"],
     "babel/generator-star-spacing": ["error", { before: false, after: true }],
 
-    "react/display-name": ["error", { "ignoreTranspilerName": true }],
-    "react/jsx-closing-bracket-location": ["error", "after-props"],
-    "react/jsx-indent": ["error", 2],
-    "react/jsx-indent-props": ["error", 2],
-    "react/jsx-max-props-per-line": ["error", { "maximum": 1 }],
-    "react/jsx-equals-spacing": ["error", "never"],
-    "react/jsx-first-prop-new-line": ["off"],
-    "react/jsx-curly-spacing": ["error", "never"],
-    "react/jsx-handler-names": ["error"],
-    "react/prefer-es6-class": ["off"],
+    "react/display-name": ["error", { ignoreTranspilerName: true }],
     "react/prefer-stateless-function": ["off"],
+
+    "react/jsx-closing-bracket-location": ["error", "after-props"],
+    "react/jsx-max-props-per-line": ["error", { "maximum": 1 }],
+    "react/jsx-first-prop-new-line": ["off"],
+    "react/jsx-no-bind": ["error", {
+      "ignoreRefs": true,
+      "allowArrowFunctions": false,
+      "allowBind": false,
+    }],
 
     "import/no-unresolved": ["error", {
       "ignore": ["^electron$", "\\./build-config$", "^logging$"],
@@ -89,7 +89,6 @@
     }],
     "import/no-commonjs": ["error"],
     "import/no-amd": ["error"],
-    "import/imports-first": ["error"],
     "import/no-named-as-default": ["off"],
     "import/no-extraneous-dependencies": ["off"],
     "import/prefer-default-export": ["off"]
