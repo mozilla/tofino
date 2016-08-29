@@ -50,7 +50,7 @@ const parseFloatText = node => parseFloat(node.element.innerText, 10);
 
 /**
  * !!! If you add a new rule here, you should make sure it's also
- * in the page model in app/browser/ui/browser/model/index.js
+ * in the page model in app/ui/browser-blueprint/model/index.js
  */
 const metadataRules = {
   // Overwrite pmp's icon_url ruleset, and add a few more additional rules

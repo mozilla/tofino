@@ -59,7 +59,7 @@ const OverviewBar = (props) => {
         <Btn id="browser-overviewbar-back"
           className={OVERVIEW_BAR_BACK_BUTTON_STYLE}
           title="Back"
-          image="glyph-arrow-nav-back-16.svg"
+          image="glyph-arrow-nav-back.svg"
           imgWidth="22px"
           imgHeight="22px"
           imgPosition="center"
@@ -67,7 +67,7 @@ const OverviewBar = (props) => {
         <Btn id="browser-overviewbar-new-tab"
           className={OVERVIEW_BAR_NEW_TAB_BUTTON_STYLE}
           title="Add new tab"
-          image="glyph-addNew-24-blue.svg"
+          image="glyph-addnew-blue.svg"
           imgWidth="12px"
           imgHeight="12px"
           onClick={() => props.dispatch(actions.createTab())} >

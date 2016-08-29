@@ -143,7 +143,7 @@ export class Location extends Component {
     const { focusedURLBar } = this.props;
 
     if (focusedURLBar) {
-      return 'glyph-search-16.svg';
+      return 'glyph-search.svg';
     }
 
     // The only state we have currently for this is the search icon --
@@ -156,12 +156,12 @@ export class Location extends Component {
     const { page, isBookmarked } = this.props;
 
     if (page.state === Page.PAGE_STATE_LOADING) {
-      return 'glyph-bookmark-unknown-16.svg';
+      return 'glyph-bookmark-unknown.svg';
     }
     if (isBookmarked(page.location)) {
-      return 'glyph-bookmark-filled-16.svg';
+      return 'glyph-bookmark-filled.svg';
     }
-    return 'glyph-bookmark-hollow-16.svg';
+    return 'glyph-bookmark-hollow.svg';
   }
 
   getVisibleCompletionsForLocation() {

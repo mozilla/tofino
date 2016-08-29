@@ -4,8 +4,8 @@
 
 import expect from 'expect';
 import { waitUntil } from '../utils/async';
-import * as actions from '../../app/ui/browser/constants/action-types';
-import * as selectors from '../../app/ui/browser/selectors/index';
+import * as actions from '../../app/ui/browser-blueprint/constants/action-types';
+import * as selectors from '../../app/ui/browser-blueprint/selectors/index';
 
 const fireKeyDown = (ops) => {
   const event = new window.KeyboardEvent('keydown', ops);

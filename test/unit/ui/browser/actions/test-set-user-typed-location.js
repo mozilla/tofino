@@ -6,9 +6,9 @@
 import expect from 'expect';
 import fetchMock from 'fetch-mock';
 
-import { createBrowserStore } from '../../../../../app/ui/browser/store';
-import * as actions from '../../../../../app/ui/browser/actions/main-actions';
-import * as selectors from '../../../../../app/ui/browser/selectors';
+import { createBrowserStore } from '../../../../../app/ui/browser-blueprint/store';
+import * as actions from '../../../../../app/ui/browser-blueprint/actions/main-actions';
+import * as selectors from '../../../../../app/ui/browser-blueprint/selectors';
 
 import * as endpoints from '../../../../../app/shared/constants/endpoints';
 

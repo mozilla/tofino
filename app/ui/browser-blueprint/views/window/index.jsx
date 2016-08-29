@@ -17,8 +17,8 @@ import * as gestures from '../../lib/gestures';
 
 import Style from '../../../shared/style';
 import * as SharedPropTypes from '../../../shared/model/shared-prop-types';
-import BrowserChrome from '../browser/browser-chrome';
-import BrowserContent from '../browser/browser-content';
+import BrowserChrome from './browser-chrome';
+import BrowserContent from './browser-content';
 import DeveloperBar from './developerbar';
 import WebViewController from '../../lib/webview-controller';
 

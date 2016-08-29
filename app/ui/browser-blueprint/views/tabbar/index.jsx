@@ -43,7 +43,7 @@ export const TabBar = (props) => (
     ))}
     <Btn id="new-tab"
       title="Add new tab"
-      image="glyph-addNew-24.svg"
+      image="glyph-addnew.svg"
       imgWidth="8px"
       imgHeight="8px"
       imgPosition="center"

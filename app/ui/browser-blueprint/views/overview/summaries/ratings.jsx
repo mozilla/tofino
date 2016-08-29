@@ -16,9 +16,9 @@ import Style from '../../../../shared/style';
 import Btn from '../../../../shared/widgets/btn';
 
 const STAR_IMAGES = {
-  full: 'glyph-ratings-full-16.svg',
-  half: 'glyph-ratings-half-16.svg',
-  empty: 'glyph-ratings-empty-16.svg',
+  full: 'glyph-ratings-full.svg',
+  half: 'glyph-ratings-half.svg',
+  empty: 'glyph-ratings-empty.svg',
 };
 
 const CONTAINER_STYLE = Style.registerStyle({
