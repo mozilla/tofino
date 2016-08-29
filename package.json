@@ -108,6 +108,7 @@
     "require-dir": "0.3.0",
     "rimraf": "2.5.4",
     "semver": "5.2.0",
+    "sha1": "1.1.1",
     "spectron": "3.3.0",
     "thenify-all": "1.6.0",
     "tmp": "0.0.28",

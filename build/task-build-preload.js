@@ -13,7 +13,7 @@ import { logger } from './logging';
 export default async function() {
   const id = 'preload';
 
-  if (!(await shouldRebuild(id, [SRC_DIR, id]))) {
+  if (!(await shouldRebuild(id, SRC_DIR))) {
     logger.info(colors.green(`No changes in ${id}.`));
     return { close: () => {} };
   }

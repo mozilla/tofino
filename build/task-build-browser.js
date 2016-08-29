@@ -29,7 +29,7 @@ async function buildFrontend(id) {
   const { default: browserConfig, SRC_DIR, SHARED_DIR } = require(`./config/webpack.${id}`);
   /* eslint-enable global-require */
 
-  if (!(await shouldRebuild(id, [SRC_DIR, id], [SHARED_DIR, `${id} ui/shared`]))) {
+  if (!(await shouldRebuild(id, SRC_DIR, SHARED_DIR))) {
     logger.info(colors.green(`No changes in ${id}.`));
     return { close: () => {} };
   }
