@@ -8,7 +8,8 @@ export default {
     pathinfo: true,
   },
   // Something in `fathom-web/utils.js` breaks when eval'd,
-  // so comment out 'eval' tool for now???
+  // so don't use the 'eval' tool for now, even though it's a
+  // cheaper sourcemap generator.
   devtool: 'cheap-source-map',
   plugins: [
     new webpack.DefinePlugin({
