@@ -6,9 +6,9 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import Immutable from 'immutable';
 
-import Tab from '../../../../../../app/ui/browser/views/tabbar/tab';
-import { TabBar } from '../../../../../../app/ui/browser/views/tabbar';
-import { Page } from '../../../../../../app/ui/browser/model/index';
+import Tab from '../../../../../../app/ui/browser-blueprint/views/tabbar/tab';
+import { TabBar } from '../../../../../../app/ui/browser-blueprint/views/tabbar';
+import { Page } from '../../../../../../app/ui/browser-blueprint/model/index';
 
 /**
  * The tab handler methods are executed immediately with the page id

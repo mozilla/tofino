@@ -9,7 +9,7 @@ describe('renderer - sanity checks', function() {
     expect(window).toExist();
     expect(document).toExist();
 
-    // Get globals from the browser/index.jsx app
+    // Get globals from the browser-blueprint/index.jsx app
     expect(window.app).toExist();
     expect(window.app.store).toExist();
 
