@@ -19,7 +19,8 @@ const Lazy = {
   config: options => require('./task-config-builder').overwriteConfig(options),
   saveConfig: options => require('./task-config-builder').saveConfigAsPrev(options),
   buildModules: () => require('./task-build-modules').default(),
-  buildServices: () => require('./task-build-services').default(),
+  buildContentService: () => require('./task-build-service-content').default(),
+  buildUserAgentService: () => require('./task-build-service-ua').default(),
   buildMainProcess: () => require('./task-build-main-process').default(),
   buildPreload: () => require('./task-build-preload').default(),
   buildBrowser: () => require('./task-build-browser').default(),
@@ -46,7 +47,8 @@ const Tasks = {
     const watchers = [];
     try {
       watchers.push(await Lazy.buildModules());
-      watchers.push(await Lazy.buildServices());
+      watchers.push(await Lazy.buildContentService());
+      watchers.push(await Lazy.buildUserAgentService());
       watchers.push(await Lazy.buildMainProcess());
       watchers.push(await Lazy.buildBrowser());
       watchers.push(await Lazy.buildPreload());
@@ -68,7 +70,8 @@ const Tasks = {
   async serve() {
     await Lazy.config();
     const watchers = [
-      await Lazy.buildServices(),
+      await Lazy.buildContentService(),
+      await Lazy.buildUserAgentService(),
     ];
     await unwatch(watchers);
     // Now that we've finished building, store the current configuration

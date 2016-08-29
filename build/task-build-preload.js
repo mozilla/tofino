@@ -2,9 +2,8 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import colors from 'colors/safe';
-import { SRC_DIR } from './config/webpack.preload.default';
-import webpackProdConfig from './config/webpack.preload.prod';
-import webpackDevConfig from './config/webpack.preload.dev';
+import { default as preloadConfig, SRC_DIR } from './config/webpack.preload';
+import { makeDevConfig as dev, makeProdConfig as prod } from './config/webpack.base';
 
 import { getBuildConfig } from './utils';
 import { shouldRebuild } from './utils/rebuild';
@@ -21,5 +20,5 @@ export default async function() {
 
   logger.info(colors.cyan(`Building ${id}...`));
   const { development } = getBuildConfig();
-  return await webpackBuild(development ? webpackDevConfig : webpackProdConfig);
+  return await webpackBuild(development ? dev(preloadConfig) : prod(preloadConfig));
 }
