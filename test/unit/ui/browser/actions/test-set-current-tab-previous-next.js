@@ -4,9 +4,9 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import expect from 'expect';
-import { createBrowserStore } from '../../../../../app/ui/browser/store';
-import * as actions from '../../../../../app/ui/browser/actions/main-actions';
-import * as selectors from '../../../../../app/ui/browser/selectors';
+import { createBrowserStore } from '../../../../../app/ui/browser-blueprint/store';
+import * as actions from '../../../../../app/ui/browser-blueprint/actions/main-actions';
+import * as selectors from '../../../../../app/ui/browser-blueprint/selectors';
 
 describe('Action - SET_CURRENT_TAB_LEFT, SET_CURRENT_TAB_RIGHT', () => {
   beforeEach(function() {

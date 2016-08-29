@@ -4,7 +4,7 @@
 import os from 'os';
 import expect from 'expect';
 import Driver from '../utils/driver';
-import { HOME_PAGE } from '../../app/ui/browser/constants/ui';
+import { HOME_PAGE } from '../../app/ui/browser-blueprint/constants/ui';
 import BUILD_CONFIG from '../../app/build-config';
 
 describe('application launch', function() {

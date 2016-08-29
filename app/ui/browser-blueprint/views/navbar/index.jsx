@@ -71,7 +71,7 @@ const NavBar = (props) => {
         <Btn id="browser-navbar-back"
           className={`${NAVBAR_NAVIGATION_BACK_BUTTON_STYLE}`}
           title="Back"
-          image="glyph-arrow-nav-back-16.svg"
+          image="glyph-arrow-nav-back.svg"
           imgWidth="22px"
           imgHeight="22px"
           imgPosition="center"
@@ -80,7 +80,7 @@ const NavBar = (props) => {
         <Btn id="browser-navbar-forward"
           className={NAVBAR_NAVIGATION_BUTTONS_STYLE}
           title="Forward"
-          image="glyph-arrow-nav-forward-16.svg"
+          image="glyph-arrow-nav-forward.svg"
           imgWidth="22px"
           imgHeight="22px"
           onClick={navForward}
@@ -90,7 +90,7 @@ const NavBar = (props) => {
           title="Refresh"
           imgWidth="22px"
           imgHeight="22px"
-          image="glyph-arrow-reload-16.svg"
+          image="glyph-arrow-reload.svg"
           onClick={navRefresh}
           disabled={!props.page.canRefresh} />
       </div>

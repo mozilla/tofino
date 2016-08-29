@@ -5,8 +5,8 @@ import expect from 'expect';
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { Tab } from '../../../../../../app/ui/browser/views/tabbar/tab';
-import { Page } from '../../../../../../app/ui/browser/model/index';
+import { Tab } from '../../../../../../app/ui/browser-blueprint/views/tabbar/tab';
+import { Page } from '../../../../../../app/ui/browser-blueprint/model/index';
 
 describe('components - Tab', () => {
   it('should render the basic case', () => {
