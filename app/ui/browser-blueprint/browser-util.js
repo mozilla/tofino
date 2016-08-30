@@ -11,30 +11,6 @@ specific language governing permissions and limitations under the License.
 */
 
 /**
- * Given a search query, format it into a search engine's URL
- */
-export function getSearchURL(query) {
-  // See https://dxr.mozilla.org/mozilla-central/source/browser/locales/en-US/searchplugins
-  // for a list of providers.
-  return `https://www.duckduckgo.com/?q=${encodeURIComponent(query)}`;
-}
-
-/**
- * Convert whatever the user typed into the URL bar into an actual URL
- */
-export function fixURL(typed) {
-  if (typed.includes('://') || typed.trim().startsWith('data:')) {
-    return typed;
-  }
-
-  if (!typed.includes(' ') && typed.includes('.')) {
-    return `http://${typed}`;
-  }
-
-  return getSearchURL(typed);
-}
-
-/**
  *
  */
 export function getBestDropItem(dataTransfer) {
