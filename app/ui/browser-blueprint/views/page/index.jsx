@@ -20,7 +20,7 @@ import Search from '../../../shared/widgets/search';
 import ErrorPage from './error-page';
 import { getCertificateError } from '../../lib/cert';
 import { PageState } from '../../model';
-import { fixURL } from '../../browser-util';
+import { fixURL } from '../../../shared/util/location-util';
 import { menuWebViewContext, inPageSearch } from '../../actions/external';
 import * as actions from '../../actions/main-actions';
 import * as userAgent from '../../lib/user-agent';

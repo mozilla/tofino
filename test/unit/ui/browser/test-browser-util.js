@@ -2,7 +2,7 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import expect from 'expect';
-import { fixURL, getSearchURL } from '../../../../app/ui/browser-blueprint/browser-util';
+import { fixURL, getSearchURL } from '../../../../app/ui/shared/util/location-util';
 
 describe('utils', () => {
   describe('fixURL', () => {
