@@ -104,6 +104,7 @@
     "nyc": "8.1.0",
     "promise-sqlite": "1.2.1",
     "react-addons-perf": "15.3.1",
+    "react-addons-pure-render-mixin": "15.3.1",
     "react-addons-test-utils": "15.3.1",
     "require-dir": "0.3.0",
     "rimraf": "2.5.4",
