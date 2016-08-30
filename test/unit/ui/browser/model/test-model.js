@@ -3,7 +3,7 @@
 
 import expect from 'expect';
 import { Page } from '../../../../../app/ui/browser-blueprint/model/index';
-import { isUUID } from '../../../../../app/ui/browser-blueprint/browser-util';
+import { isUUID } from '../../../../../app/ui/shared/util/uuid-util';
 
 describe('Data model: Page', () => {
   it('should get a UUID upon creation', () => {
