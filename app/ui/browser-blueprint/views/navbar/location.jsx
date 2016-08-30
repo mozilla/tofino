@@ -19,7 +19,8 @@ import * as UIConstants from '../../constants/ui';
 import Btn from '../../../shared/widgets/btn';
 import LocationCompletionRow from './location-completion-row';
 
-import { fixURL, getCurrentWebView } from '../../browser-util';
+import { getCurrentWebView } from '../../browser-util';
+import { fixURL } from '../../../shared/util/location-util';
 import { Page, PageState } from '../../model';
 import * as selectors from '../../selectors';
 import * as actions from '../../actions/main-actions';
