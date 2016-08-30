@@ -16,7 +16,7 @@
     "revision": "984ff989f1a9"
   },
   "scripts": {
-    "clobber": "rm build-config.json; rm -r lib; rm -r .electron; rm -r node_modules",
+    "clobber": "rm -r node_modules; rm -r app/node_modules; rm app/build-config.json; rm -r .electron; rm -r lib",
     "serve": "node build/main.js --serve",
     "start": "node build/main.js --run",
     "dev": "node build/main.js --run-dev",
