@@ -14,7 +14,7 @@ import assert from 'assert';
 
 import * as types from '../constants/action-types';
 import { UIState } from '../model';
-import { isUUID } from '../browser-util';
+import { isUUID } from '../../shared/util/uuid-util';
 
 const initialState = new UIState();
 

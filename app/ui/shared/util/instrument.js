@@ -18,7 +18,7 @@ specific language governing permissions and limitations under the License.
  * @module instrument
  */
 
-import { ipcRenderer } from '../../shared/electron';
+import { ipcRenderer } from '../../../shared/electron';
 
 /**
  * Send an instrumentation event to Google Analytics.

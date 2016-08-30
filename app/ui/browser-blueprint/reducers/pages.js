@@ -17,7 +17,7 @@ import { logger } from '../../../shared/logging';
 import * as types from '../constants/action-types';
 import { HOME_PAGE } from '../constants/ui';
 import { Pages, Page, PageState } from '../model';
-import { isUUID } from '../browser-util';
+import { isUUID } from '../../shared/util/uuid-util';
 import { getPageIndexById, getPageIndexBySessionId } from '../selectors';
 
 const initialState = new Pages({
