@@ -48,6 +48,7 @@
     "morgan": "1.7.0",
     "page-metadata-parser": "0.4.1",
     "react": "15.3.1",
+    "react-addons-pure-render-mixin": "15.3.1",
     "react-dom": "15.3.1",
     "react-free-style": "2.2.3",
     "react-immutable-proptypes": "2.1.0",
@@ -114,8 +115,8 @@
     "tmp": "0.0.28",
     "uglify-js": "github:mishoo/UglifyJS2#harmony",
     "webpack": "1.13.2",
-    "zip-dir": "1.0.2",
-    "yargs": "5.0.0"
+    "yargs": "5.0.0",
+    "zip-dir": "1.0.2"
   },
   "engines": {
     "node": ">=6.1.0"
