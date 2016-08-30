@@ -12,7 +12,8 @@ specific language governing permissions and limitations under the License.
 
 import assert from 'assert';
 import { EventEmitter } from 'events';
-import { isUUID } from '../browser-util';
+
+import { isUUID } from './uuid-util';
 
 const getPageIndexById = (pages, id) => pages.findIndex(p => p.id === id);
 
@@ -23,7 +24,7 @@ const getPageIndexById = (pages, id) => pages.findIndex(p => p.id === id);
  * and each Page component listens to it for any actions it should take,
  * like `navigate-back:${pageId}`.
  */
-class WebViewController extends EventEmitter {
+export default class WebViewController extends EventEmitter {
   constructor(getPages) {
     super();
     this.getPages = getPages;
@@ -90,5 +91,3 @@ class WebViewController extends EventEmitter {
     this.emit(`toggle-devtools:${pageId}`, pageId);
   }
 }
-
-export default WebViewController;
