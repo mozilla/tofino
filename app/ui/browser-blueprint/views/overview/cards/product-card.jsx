@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes } from 'react';
 
-import * as SharedPropTypes from '../../../../shared/model/shared-prop-types';
+import * as SharedPropTypes from '../../../model/shared-prop-types';
 import BaseCard from './base-card';
 import ProductSummary from '../summaries/product-summary';
 

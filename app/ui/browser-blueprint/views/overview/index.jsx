@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import * as SharedPropTypes from '../../../shared/model/shared-prop-types';
+import * as SharedPropTypes from '../../model/shared-prop-types';
 import * as UIConstants from '../../constants/ui';
 import Style from '../../../shared/style';
 import OverviewBar from './overview-bar';
