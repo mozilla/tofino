@@ -16,7 +16,7 @@ import React, { PropTypes } from 'react';
  * A factory class used to instantiate Cards displayed in the overview.
  * Calls the appropriate underlying card subclass, depending on metadata.
  */
-import * as SharedPropTypes from '../../../../shared/model/shared-prop-types';
+import * as SharedPropTypes from '../../../model/shared-prop-types';
 import SimpleCard from './simple-card';
 import ProductCard from './product-card';
 
