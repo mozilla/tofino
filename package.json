@@ -34,6 +34,7 @@
     "appdirectory": "0.1.0",
     "backoff": "2.5.0",
     "body-parser": "1.15.2",
+    "browser-request": "^0.3.3",
     "bunyan": "1.8.1",
     "colors": "1.1.2",
     "electron-localshortcut": "0.6.1",
