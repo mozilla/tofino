@@ -6,48 +6,50 @@ import fs from 'fs-promise';
 import pick from 'lodash/pick';
 import isEqual from 'lodash/isEqual';
 import dirsum from 'dirsum';
+import sha1 from 'sha1';
 import { thenify } from 'thenify-all';
 
 import * as Const from './const';
 import { getBuildConfig, writeBuildConfig } from './';
 import { logger } from '../logging';
 
-export async function sourcesChanged(...sources) {
+export async function sourcesChanged(taskId, ...sources) {
   const results = [];
 
-  for (const [source, id] of sources) {
-    const { changed, hash } = await sourceChanged(source, id);
+  for (const source of sources) {
+    const { changed, sourceHash, sourceId } = await sourceChanged(taskId, source);
     if (changed) {
-      results.push({ hash, id });
+      results.push({ hash: sourceHash, id: sourceId });
     }
   }
 
   return results;
 }
 
-export async function sourceChanged(source, id) {
+export async function sourceChanged(taskId, source) {
   logger.info(colors.gray('Checking if source changed', source));
 
-  const { hash } = await thenify(dirsum.digest)(source, 'sha1');
+  const sourceId = sha1(`${taskId} ${source}`);
+  const sourceHash = (await thenify(dirsum.digest)(source, 'sha1')).hash;
   const currentConfig = getBuildConfig();
 
    // The `built` property contains hashes of the previously built sources.
    // These are used to prevent redundant rebuilds.
 
   if (!('built' in currentConfig)) {
-    logger.info(colors.yellow(`No previous '${id}' hash found.`));
-    return { changed: true, hash };
+    logger.info(colors.yellow(`No previous '${sourceId}' hash found.`));
+    return { changed: true, sourceHash, sourceId };
   }
-  if (!(id in currentConfig.built)) {
-    logger.info(colors.yellow(`No previous '${id}' hash found.`));
-    return { changed: true, hash };
+  if (!(sourceId in currentConfig.built)) {
+    logger.info(colors.yellow(`No previous '${sourceId}' hash found.`));
+    return { changed: true, sourceHash, sourceId };
   }
-  if (currentConfig.built[id] !== hash) {
-    logger.info(colors.yellow(`Source changed for '${id}'.`));
-    return { changed: true, hash };
+  if (currentConfig.built[sourceId] !== sourceHash) {
+    logger.info(colors.yellow(`Source changed for '${sourceId}'.`));
+    return { changed: true, sourceHash, sourceId };
   }
 
-  return { changed: false, hash };
+  return { changed: false, sourceHash, sourceId };
 }
 
 export function buildConfigChanged() {
@@ -90,10 +92,10 @@ export async function shouldRebuild(taskId, ...sources) {
   }
 
   // Always also check for changes in the app/shared and build system as well.
-  sources.push([Const.APP_SHARED_DIR, `${taskId} app/shared`]);
-  sources.push([Const.BUILD_SYSTEM_DIR, `${taskId} build task`]);
+  sources.push(Const.APP_SHARED_DIR);
+  sources.push(Const.BUILD_SYSTEM_DIR);
 
-  const changedSources = await sourcesChanged(...sources);
+  const changedSources = await sourcesChanged(taskId, ...sources);
   const currentConfig = getBuildConfig();
 
   for (const { hash, id } of changedSources) {
