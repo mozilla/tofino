@@ -31,11 +31,24 @@ class Search extends Component {
     return !isEqual(this.props, nextProps);
   }
 
+  focus() {
+    this.input.focus();
+  }
+
+  blur() {
+    this.input.blur();
+  }
+
+  select() {
+    this.input.select();
+  }
+
   render() {
     return (
       <div {...this.props}
         className={`${SEARCH_STYLE} ${this.props.className || ''}`}>
-        <input className={INPUT_STYLE}
+        <input ref={e => this.input = e}
+          className={INPUT_STYLE}
           type="text"
           placeholder="Search..."
           onKeyUp={this.props.onKeyUp} />
