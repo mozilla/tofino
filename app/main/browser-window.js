@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import path from 'path';
-import electron from 'electron';
+import { BrowserWindow } from 'electron';
 
 import * as hotkeys from './hotkeys';
 import { UI_DIR, fileUrl } from '../shared/paths-util';
@@ -20,7 +20,6 @@ import BUILD_CONFIG from '../build-config';
 // Switch 'browser' to 'browser-alt' to test second frontend.  We should have a flag
 // to the application to switch frontends
 const BROWSER_CHROME_URL = fileUrl(path.join(UI_DIR, 'browser', 'browser.html'));
-const BrowserWindow = electron.BrowserWindow;  // create native browser window.
 
 /**
  * Top-level list of Browser Windows.
@@ -83,6 +82,7 @@ export async function createBrowserWindow(userAgentClient, onload) {
   // Start loading browser chrome.
   browser.loadURL(BROWSER_CHROME_URL);
 
+  bindBrowserWindowEvents(browser);
   hotkeys.bindBrowserWindowHotkeys(browser);
   browser.once('closed', () => {
     hotkeys.unbindBrowserWindowHotkeys(browser);
@@ -132,4 +132,11 @@ export function onlyWhenFromBrowserWindow(handler) {
 
     handler(bw, ...args);
   };
+}
+
+const EVENTS_TO_PROPAGATE = ['scroll-touch-begin', 'scroll-touch-end'];
+function bindBrowserWindowEvents(bw) {
+  EVENTS_TO_PROPAGATE.forEach(event => {
+    bw.on(event, () => bw.webContents.send(event));
+  });
 }
