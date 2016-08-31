@@ -31,6 +31,11 @@ export default {
       flatten: true,
     }]),
     new CopyWebpackPlugin([{
+      from: path.join(SRC_DIR, 'favicon.ico'),
+      to: path.join(DST_DIR, 'favicon.ico'),
+      flatten: true,
+    }]),
+    new CopyWebpackPlugin([{
       from: path.join(SRC_DIR, 'css', '*.css'),
       to: path.join(DST_DIR, 'css'),
       flatten: true,
