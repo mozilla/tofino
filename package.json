@@ -115,8 +115,9 @@
     "tmp": "0.0.28",
     "uglify-js": "github:mishoo/UglifyJS2#harmony",
     "webpack": "1.13.2",
-    "zip-dir": "1.0.2",
-    "yargs": "5.0.0"
+    "why-did-you-update": "github:victorporof/why-did-you-update#immutable",
+    "yargs": "5.0.0",
+    "zip-dir": "1.0.2"
   },
   "engines": {
     "node": ">=6.1.0"
