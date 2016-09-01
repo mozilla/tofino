@@ -16,42 +16,41 @@ import { ipcRenderer, remote } from '../../../shared/electron';
 
 const { systemPreferences } = remote;
 
+// Check only on startup -- can handle changes in the future, but not
+// something people are toggling in the OS while using this prototype.
+// Only OSX has this function.
+const SWIPE_ENABLED = systemPreferences.isSwipeTrackingFromScrollEventsEnabled ?
+  systemPreferences.isSwipeTrackingFromScrollEventsEnabled() :
+  false;
+
 // The duration of the swipe must atleast be this value, in ms.
 const SWIPE_TIME_THRESHOLD = 50;
 
 // The Y movement of the swipe must be less than this, in pixels.
 // This is to distinguish from scrolling up/down a page.
-const SWIPE_DELTA_Y_THRESHOLD = 50;
+const SWIPE_DELTA_Y_THRESHOLD = 100;
 
 // The X movement of the swipe must be greater than this, in pixels.
 const SWIPE_DELTA_X_THRESHOLD = 100;
 
 export const attachGestureListeners = (browserView) => {
-  // In Electron 1.3.3, the system preferences method `isSwipeTrackingFromScrollEventsEnabled`
-  // is available, letting us hook into OS preferences. Until then, just assume it's on.
-  const SWIPE_SETTING_EXISTS = systemPreferences.isSwipeTrackingFromScrollEventsEnabled;
-  if (SWIPE_SETTING_EXISTS) {
-    console.warn('isSwipeTrackingFromScrollEventsEnabled now implemented in Electron.\
-                  Remove this conditional.');
-  }
-
-  const SWIPE_ENABLED = SWIPE_SETTING_EXISTS ?
-    systemPreferences.isSwipeTrackingFromScrollEventsEnabled() :
-    true;
-
   let moving = false;
   let startTime = 0;
   let time = 0;
   let deltaX = 0;
   let deltaY = 0;
 
+  /**
+   * Handle swipe logic similar to Brave
+   * https://github.com/brave/browser-laptop/blob/83088187d968b23d6f10b0583b6b0d3a23b4b1ba/js/components/main.js#L139
+   */
   window.addEventListener('wheel', (e) => {
     if (moving) {
       deltaX += e.deltaX;
       deltaY += e.deltaY;
       time = Date.now() - startTime;
     }
-  });
+  }, { passive: true });
 
   ipcRenderer.on('scroll-touch-begin', () => {
     if (SWIPE_ENABLED) {
@@ -65,9 +64,9 @@ export const attachGestureListeners = (browserView) => {
         time > SWIPE_TIME_THRESHOLD &&
         moving &&
         Math.abs(deltaY) < SWIPE_DELTA_Y_THRESHOLD) {
-      if (deltaX > SWIPE_DELTA_X_THRESHOLD) {
+      if (deltaX > SWIPE_DELTA_X_THRESHOLD && SWIPE_ENABLED) {
         ipcRenderer.emit('go-forward');
-      } else if (deltaX < -SWIPE_DELTA_X_THRESHOLD) {
+      } else if (deltaX < -SWIPE_DELTA_X_THRESHOLD && SWIPE_ENABLED) {
         ipcRenderer.emit('go-back');
       }
     }
