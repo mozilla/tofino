@@ -12,8 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import rootReducer from '../reducers';
 import * as model from '../model/index';
-
-import configureStore from '../../shared/configure-store';
+import configureStore from '../../shared/util/redux/configure-store';
 
 export function createBrowserStore() {
   // This creates a "blank" state that may not be renderable.
