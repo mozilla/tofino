@@ -61,7 +61,7 @@ class Page extends Component {
     const { id } = page;
     const webview = this.webview;
 
-    addListenersToWebView(webview, () => this.props.page, dispatch);
+    addListenersToWebView(webview, () => this.props, dispatch);
 
     webViewController.on(`navigate-back:${id}`, () => webview.goBack());
     webViewController.on(`navigate-forward:${id}`, () => webview.goForward());
@@ -130,6 +130,7 @@ class Page extends Component {
 Page.displayName = 'Page';
 
 Page.propTypes = {
+  index: PropTypes.number.isRequired,
   page: PropTypes.object.isRequired,
   isActive: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
@@ -138,23 +139,28 @@ Page.propTypes = {
 
 export default Page;
 
-function addListenersToWebView(webview, pageAccessor, dispatch) {
+function addListenersToWebView(webview, propsAccessor, dispatch) {
   // 'new-window' is fired when a navigation request that should happen in a new frame is made. See
   // https://github.com/electron/electron/blob/master/docs/api/web-contents.md#event-new-window
   webview.addEventListener('new-window', (e) => {
     // TODO: differentiate more thoroughly based on e.disposition.
     const selected = e.disposition && e.disposition === 'foreground-tab';
-    dispatch(actions.createTab(e.url, pageAccessor().sessionId, { selected }));
+    // Increment the index for the new page to be adjacent to this one
+    const index = propsAccessor().index + 1;
+    dispatch(actions.createTab(e.url, propsAccessor().page.sessionId, {
+      selected,
+      index,
+    }));
   });
 
   webview.addEventListener('did-start-loading', () => {
-    dispatch(actions.setPageState(pageAccessor().id, {
+    dispatch(actions.setPageState(propsAccessor().page.id, {
       state: PageState.STATES.LOADING,
     }));
   });
 
   webview.addEventListener('dom-ready', () => {
-    dispatch(actions.setPageDetails(pageAccessor().id, {
+    dispatch(actions.setPageDetails(propsAccessor().page.id, {
       canGoBack: webview.canGoBack(),
       canGoForward: webview.canGoForward(),
       canRefresh: true,
@@ -162,7 +168,7 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
   });
 
   webview.addEventListener('page-title-set', e => {
-    dispatch(actions.setPageDetails(pageAccessor().id, {
+    dispatch(actions.setPageDetails(propsAccessor().page.id, {
       title: e.title,
       location: webview.getURL(),
     }));
@@ -197,7 +203,7 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
       state.description = error;
     }
 
-    dispatch(actions.setPageState(pageAccessor().id, state));
+    dispatch(actions.setPageState(propsAccessor().page.id, state));
   });
 
   // The `did-stop-loading` event fires even when a failure occurs.
@@ -206,7 +212,7 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
     const url = webview.getURL();
     const title = webview.getTitle();
 
-    dispatch(actions.setPageDetails(pageAccessor().id, {
+    dispatch(actions.setPageDetails(propsAccessor().page.id, {
       location: url,
       canGoBack: webview.canGoBack(),
       canGoForward: webview.canGoForward(),
@@ -215,15 +221,15 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
 
     dispatch(actions.setStatusText(null));
 
-    dispatch(actions.locationChanged(pageAccessor().id, {
+    dispatch(actions.locationChanged(propsAccessor().page.id, {
       text: null,
     }));
 
-    userAgent.createHistory(pageAccessor(), { url, title });
+    userAgent.createHistory(propsAccessor().page, { url, title });
   });
 
   webview.addEventListener('did-finish-loading', () => {
-    dispatch(actions.setPageState(pageAccessor().id, {
+    dispatch(actions.setPageState(propsAccessor().page.id, {
       state: PageState.STATES.LOADED,
     }));
   });
@@ -234,13 +240,13 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
         dispatch(actions.setStatusText(e.args[0]));
         break;
       case 'contextmenu-data':
-        menuWebViewContext(webview, e.args[0], dispatch, pageAccessor().sessionId);
+        menuWebViewContext(webview, e.args[0], dispatch, propsAccessor().page.sessionId);
         break;
       case 'show-bookmarks':
         logger.warn('@TODO: ipc-message:show-bookmarks');
         break;
       case 'metadata':
-        dispatch(actions.setPageDetails(pageAccessor().id, {
+        dispatch(actions.setPageDetails(propsAccessor().page.id, {
           meta: e.args[0],
         }));
         break;
@@ -251,6 +257,6 @@ function addListenersToWebView(webview, pageAccessor, dispatch) {
   });
 
   webview.addEventListener('destroyed', () => {
-    dispatch(actions.closeTab(pageAccessor().id));
+    dispatch(actions.closeTab(propsAccessor().page.id));
   });
 }

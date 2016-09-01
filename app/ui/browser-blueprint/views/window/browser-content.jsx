@@ -30,6 +30,7 @@ const BrowserContent = function(props) {
       {props.pages.map((page, pageIndex) => (
         <Page key={`page-${page.id}`}
           page={page}
+          index={pageIndex}
           isActive={pageIndex === props.currentPageIndex}
           {...props} />
       ))}
