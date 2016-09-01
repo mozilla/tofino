@@ -12,23 +12,24 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes } from 'react';
 
-import * as SharedPropTypes from '../../../model/shared-prop-types';
-import * as UIConstants from '../../../constants/ui';
+import Style from '../../../style';
+import Thumbnail from '../../thumbnail';
+import FittedImage from '../../fitted-image';
+
 import * as Endpoints from '../../../../../shared/constants/endpoints';
-import Style from '../../../../shared/style';
-import Thumbnail from '../../../../shared/widgets/thumbnail';
-import FittedImage from '../../../../shared/widgets/fitted-image';
 
 const TOFINO_LOGO = 'assets/logo-tofino.png';
 
 const CARD_STYLE_NORMAL = {
-  boxShadow: `var(--theme-default-shadow),
-              var(--theme-content-border-color) 0 0 0 1px inset`,
+  boxShadow: `
+    var(--theme-default-shadow),
+    var(--theme-content-border-color) 0 0 0 1px inset`,
 };
 
 const CARD_STYLE_ACTIVE = {
-  boxShadow: `var(--theme-default-selected-shadow),
-              var(--theme-content-selected-border-color) 0 0 0 1px inset`,
+  boxShadow: `
+    var(--theme-default-selected-shadow),
+    var(--theme-content-selected-border-color) 0 0 0 1px inset`,
 };
 
 const CARD_STYLE = Style.registerStyle({
@@ -65,11 +66,12 @@ const SUMMARY_STYLE = Style.registerStyle({
   bottom: 0,
   left: 0,
   right: 0,
+  margin: '1px',
   padding: '5px',
   paddingTop: '15px',
 });
 
-const BaseCard = function(props) {
+const BaseCard = props => {
   let backgroundImage;
   let badgeImage;
 
@@ -84,8 +86,8 @@ const BaseCard = function(props) {
     <Thumbnail className={CARD_STYLE}
       data-selected={props.isSelected}
       src={backgroundImage}
-      imgWidth={`${UIConstants.CARD_WIDTH}px`}
-      imgHeight={`${UIConstants.CARD_HEIGHT}px`}
+      imgWidth={`${props.width}px`}
+      imgHeight={`${props.height}px`}
       imgMode="100% auto"
       imgPosition="top center"
       onClick={() => props.onClick(props.page.id)}>
@@ -100,11 +102,11 @@ const BaseCard = function(props) {
         }}
         src={badgeImage}
         width={backgroundImage
-          ? `${UIConstants.CARD_BADGE_WIDTH}px`
-          : `${UIConstants.CARD_BADGE_LARGE_WIDTH}px`}
+          ? `${props.badgeWidth}px`
+          : `${props.badgeLargeWidth}px`}
         height={backgroundImage
-          ? `${UIConstants.CARD_BADGE_HEIGHT}px`
-          : `${UIConstants.CARD_BADGE_LARGE_HEIGHT}px`}
+          ? `${props.badgeHeight}px`
+          : `${props.badgeLargeHeight}px`}
         mode="contain" />
       <div className={BACKGROUND_STYLE}
         style={{
@@ -120,7 +122,13 @@ const BaseCard = function(props) {
 BaseCard.displayName = 'BaseCard';
 
 BaseCard.propTypes = {
-  page: SharedPropTypes.Page.isRequired,
+  page: PropTypes.object.isRequired,
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+  badgeWidth: PropTypes.number.isRequired,
+  badgeHeight: PropTypes.number.isRequired,
+  badgeLargeWidth: PropTypes.number.isRequired,
+  badgeLargeHeight: PropTypes.number.isRequired,
   isSelected: PropTypes.bool.isRequired,
   backgroundColor: PropTypes.string,
   backgroundImage: PropTypes.string,
