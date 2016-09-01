@@ -28,27 +28,27 @@ const CONTAINER_STYLE = Style.registerStyle({
 const STAR_STYLE = Style.registerStyle({
 });
 
-function Star({ index, title, type }) {
+const Star = ({ title, type }) => {
   const image = STAR_IMAGES[type];
-  return (<Btn title={title}
-    key={index}
-    className={STAR_STYLE}
-    image={image}
-    imgWidth="16px"
-    imgHeight="16px"
-    disabled={false}
-    onClick={() => {}} />);
-}
+  return (
+    <Btn title={title}
+      className={STAR_STYLE}
+      image={image}
+      imgWidth="16px"
+      imgHeight="16px"
+      disabled={false}
+      onClick={() => {}} />
+  );
+};
 
 Star.displayName = 'Star';
 
 Star.propTypes = {
-  index: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
 };
 
-const Ratings = function(props) {
+const Ratings = props => {
   // Sanity checks
   if (props.minRating >= props.maxRating ||
       props.rating < props.minRating ||
@@ -56,31 +56,43 @@ const Ratings = function(props) {
     return (<div />);
   }
 
-  // Since the default for these values are 1 and 5, use the rating as the pure star value,
-  // otherwise normalize it as you would. This is a bit weird, since "1" is the lower default
-  // rating, so properly normalizing 3 of 5 stars, where 1 is the minimum, traditional normalization
-  // would give us 2.5 stars as the half way point. This is some magic to make things
-  // Close To Being Nice.
-  const starRating = props.minRating === 1 && props.maxRating === 5 ? props.rating :
-                     (props.rating - (props.minRating / props.maxRating) - props.minRating);
-  // This doesn't take into account min rating, but I don't think there are common cases
-  // where the min isn't 0 or 1.
-  const title = `${starRating} of ${props.maxRating} rating`;
+  // Since the default for these values are 1 and 5, use the rating as the
+  // pure star value, otherwise normalize it as you would. This is a bit weird,
+  // since "1" is the lower default rating, so properly normalizing 3 of 5 stars,
+  // where 1 is the minimum, traditional normalization would give us 2.5 stars as
+  // the half way point. This is some magic to make things Close To Being Nice.
+  const starRating = props.minRating === 1 && props.maxRating === 5
+    ? props.rating
+    : props.rating - (props.minRating / props.maxRating) - props.minRating;
 
-  const stars = new Array(5).fill(0).map((_, i) => {
-    const starNumber = i + 1;
-    if (starRating >= starNumber) {
-      return new Star({ title, type: 'full', key: i });
-    }
-    if (starRating > (starNumber - 1)) {
-      return new Star({ title, type: 'half', key: i });
-    }
-    return new Star({ title, type: 'empty', key: i });
-  });
+  // This doesn't take into account min rating, but I don't think there are
+  // common cases where the min isn't 0 or 1.
+  const title = `${starRating} of ${props.maxRating} rating`;
 
   return (
     <div className={CONTAINER_STYLE}>
-      {stars}
+      {Array(5).fill().map((_, i) => {
+        const starNumber = i + 1;
+        if (starRating >= starNumber) {
+          return (
+            <Star title={title}
+              type="full"
+              key={i} />
+          );
+        }
+        if (starRating > (starNumber - 1)) {
+          return (
+            <Star title={title}
+              type="half"
+              key={i} />
+          );
+        }
+        return (
+          <Star title={title}
+            type="empty"
+            key={i} />
+        );
+      })}
     </div>
   );
 };

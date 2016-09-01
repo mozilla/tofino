@@ -15,8 +15,9 @@ import { connect } from 'react-redux';
 
 import * as SharedPropTypes from '../../model/shared-prop-types';
 import Style from '../../../shared/style';
-import OverviewCard from './cards/overview-card';
+import OverviewCard from '../../../shared/widgets/overview/cards/overview-card';
 
+import * as UIConstants from '../../constants/ui';
 import * as actions from '../../actions/main-actions';
 
 const OVERVIEW_CARDS_STYLE = Style.registerStyle({
@@ -32,7 +33,12 @@ const OverviewCards = function(props) {
       {props.pages.map((page, pageIndex) => (
         <OverviewCard key={`page-${page.id}`}
           page={page}
-          pageIndex={pageIndex}
+          width={UIConstants.CARD_WIDTH}
+          height={UIConstants.CARD_HEIGHT}
+          badgeWidth={UIConstants.CARD_BADGE_WIDTH}
+          badgeHeight={UIConstants.CARD_BADGE_HEIGHT}
+          badgeLargeWidth={UIConstants.CARD_BADGE_LARGE_WIDTH}
+          badgeLargeHeight={UIConstants.CARD_BADGE_LARGE_HEIGHT}
           isSelected={pageIndex === props.currentPageIndex}
           onClick={pageId => props.dispatch(actions.setCurrentTab(pageId))} />
       ))}
