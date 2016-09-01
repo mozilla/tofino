@@ -13,11 +13,11 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes } from 'react';
 
 import Style from '../../../../shared/style';
-import Ratings from './ratings';
 
-const GRADIENT_MASK = `-webkit-gradient(linear, center top, center bottom,
-                       color-stop(0.8, rgba(255,255,255,1)),
-                       color-stop(1, rgba(255,255,255,0)))`;
+const GRADIENT_MASK = `
+  -webkit-gradient(linear, center top, center bottom,
+  color-stop(0.8, rgba(255,255,255,1)),
+  color-stop(1, rgba(255,255,255,0)))`;
 
 const CONTAINER_STYLE = Style.registerStyle({
   flex: 1,
@@ -31,19 +31,10 @@ const TITLE_STYLE = Style.registerStyle({
   textOverflow: 'ellipsis',
   paddingBottom: '1px',
   color: 'var(--theme-overview-summary-title-color)',
-  '-webkit-mask-image': GRADIENT_MASK,
+  WebkitMaskImage: GRADIENT_MASK,
 });
 
-const PRICE_STYLE = Style.registerStyle({
-  fontWeight: 'bold',
-  flexShrink: 0,
-  display: 'block',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
-});
-
-const REVIEW_COUNT_STYLE = Style.registerStyle({
+const URL_STYLE = Style.registerStyle({
   flexShrink: 0,
   display: 'block',
   overflow: 'hidden',
@@ -53,46 +44,24 @@ const REVIEW_COUNT_STYLE = Style.registerStyle({
   color: 'var(--theme-overview-summary-subtitle-color)',
 });
 
-const ProductSummary = function(props) {
-  const priceEl = props.price ? (
-    <div className={PRICE_STYLE}>
-      {props.price}
-    </div>
-  ) : undefined;
-
-  const ratingsEl = props.rating ? (
-    <Ratings rating={props.rating}
-      maxRating={props.maxRating}
-      minRating={props.minRating} />
-  ) : undefined;
-
-  const reviewEl = props.reviewCount ? (
-    <div className={REVIEW_COUNT_STYLE}>
-      {`${props.reviewCount} reviews`}
-    </div>
-  ) : undefined;
-
+const SimpleSummary = props => {
   return (
     <div className={CONTAINER_STYLE}>
       <div className={TITLE_STYLE}>
         {props.title}
       </div>
-      {priceEl}
-      {ratingsEl}
-      {reviewEl}
+      <div className={URL_STYLE}>
+        {props.url}
+      </div>
     </div>
   );
 };
 
-ProductSummary.displayName = 'ProductSummary';
+SimpleSummary.displayName = 'SimpleSummary';
 
-ProductSummary.propTypes = {
-  price: PropTypes.string,
+SimpleSummary.propTypes = {
   title: PropTypes.string.isRequired,
-  reviewCount: PropTypes.number,
-  rating: PropTypes.number,
-  maxRating: PropTypes.number,
-  minRating: PropTypes.number,
+  url: PropTypes.string.isRequired,
 };
 
-export default ProductSummary;
+export default SimpleSummary;

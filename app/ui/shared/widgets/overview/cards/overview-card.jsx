@@ -12,30 +12,27 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes } from 'react';
 
-import * as SharedPropTypes from '../../../model/shared-prop-types';
-import BaseCard from './base-card';
-import SimpleSummary from '../summaries/simple-summary';
+/**
+ * A factory class used to instantiate Cards displayed in the overview.
+ * Calls the appropriate underlying card subclass, depending on metadata.
+ */
+import SimpleCard from './simple-card';
+import ProductCard from './product-card';
 
-const SimpleCard = function(props) {
+const OverviewCard = props => {
   const meta = props.page.meta;
 
-  const title = meta.title || props.page.title;
+  if (meta.rating || meta.price) {
+    return (<ProductCard {...props} />);
+  }
 
-  return (
-    <BaseCard {...props}>
-      <SimpleSummary title={title}
-        url={props.page.location} />
-    </BaseCard>
-  );
+  return (<SimpleCard {...props} />);
 };
 
-SimpleCard.displayName = 'SimpleCard';
+OverviewCard.displayName = 'OverviewCard';
 
-SimpleCard.propTypes = {
-  page: SharedPropTypes.Page.isRequired,
-  pageIndex: PropTypes.number.isRequired,
-  isSelected: PropTypes.bool.isRequired,
-  onClick: PropTypes.func.isRequired,
+OverviewCard.propTypes = {
+  page: PropTypes.object.isRequired,
 };
 
-export default SimpleCard;
+export default OverviewCard;

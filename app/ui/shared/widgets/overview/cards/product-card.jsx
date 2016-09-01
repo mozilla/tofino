@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes } from 'react';
 
-import * as SharedPropTypes from '../../../model/shared-prop-types';
 import BaseCard from './base-card';
 import ProductSummary from '../summaries/product-summary';
 
@@ -46,11 +45,9 @@ function getPrice(meta) {
   return undefined;
 }
 
-const ProductCard = function(props) {
+const ProductCard = props => {
   const meta = props.page.meta;
-
   const title = meta.title || props.page.title;
-
   const price = getPrice(meta);
   const reviewCount = parseInt(meta.review_count, 10);
   const rating = parseFloat(meta.rating, 10) || null;
@@ -72,10 +69,7 @@ const ProductCard = function(props) {
 ProductCard.displayName = 'ProductCard';
 
 ProductCard.propTypes = {
-  page: SharedPropTypes.Page.isRequired,
-  pageIndex: PropTypes.number.isRequired,
-  isSelected: PropTypes.bool.isRequired,
-  onClick: PropTypes.func.isRequired,
+  page: PropTypes.object.isRequired,
 };
 
 export default ProductCard;
