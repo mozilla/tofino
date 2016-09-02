@@ -35,7 +35,7 @@ const FittedImage = props => {
       style={{
         width: props.width,
         height: props.height,
-        backgroundImage: `url(${props.src})`,
+        backgroundImage: props.src ? `url(${props.src})` : 'none',
         backgroundRepeat: props.repeat || BKG_REPEAT_DEFAULT,
         backgroundPosition: props.position || BKG_POSIITON_DEFAULT,
         backgroundSize: props.mode,

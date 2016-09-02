@@ -5,8 +5,8 @@ import expect from 'expect';
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import NavBar from '../../../../../../app/ui/browser/views/navbar';
-import { Page } from '../../../../../../app/ui/browser/model/index';
+import NavBar from '../../../../../../app/ui/browser-blueprint/views/navbar';
+import { Page } from '../../../../../../app/ui/browser-blueprint/model/index';
 
 function createSpyProps() {
   return {

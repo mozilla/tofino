@@ -104,6 +104,7 @@
     "nyc": "8.1.0",
     "promise-sqlite": "1.2.1",
     "react-addons-perf": "15.3.1",
+    "react-addons-pure-render-mixin": "15.3.1",
     "react-addons-test-utils": "15.3.1",
     "require-dir": "0.3.0",
     "rimraf": "2.5.4",
@@ -114,8 +115,9 @@
     "tmp": "0.0.28",
     "uglify-js": "github:mishoo/UglifyJS2#harmony",
     "webpack": "1.13.2",
-    "zip-dir": "1.0.2",
-    "yargs": "5.0.0"
+    "why-did-you-update": "github:victorporof/why-did-you-update#immutable",
+    "yargs": "5.0.0",
+    "zip-dir": "1.0.2"
   },
   "engines": {
     "node": ">=6.1.0"

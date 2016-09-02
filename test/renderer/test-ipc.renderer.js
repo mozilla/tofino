@@ -5,7 +5,7 @@
 import expect from 'expect';
 import { ipcRenderer } from 'electron';
 import { waitUntil } from '../utils/async';
-import * as actions from '../../app/ui/browser/constants/action-types';
+import * as actions from '../../app/ui/browser-blueprint/constants/action-types';
 
 describe('renderer - ipc messages', function() {
   it('[new-tab] fires CREATE_TAB', async function() {

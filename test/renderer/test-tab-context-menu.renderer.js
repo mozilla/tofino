@@ -3,8 +3,8 @@
 
 import expect from 'expect';
 import { waitUntil } from '../utils/async';
-import { tabContextFunctions } from '../../app/ui/browser/actions/external';
-import * as actions from '../../app/ui/browser/constants/action-types';
+import { tabContextFunctions } from '../../app/ui/browser-blueprint/actions/external';
+import * as actions from '../../app/ui/browser-blueprint/constants/action-types';
 
 describe('renderer - tab context menu', function() {
   it('New Tab fires a CREATE_TAB action', async function() {

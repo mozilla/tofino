@@ -17,9 +17,9 @@ import * as hotkeys from './hotkeys';
 import { UI_DIR, fileUrl } from '../shared/paths-util';
 import BUILD_CONFIG from '../build-config';
 
-// Switch 'browser' to 'browser-alt' to test second frontend.  We should have a flag
-// to the application to switch frontends
-const BROWSER_CHROME_URL = fileUrl(path.join(UI_DIR, 'browser', 'browser.html'));
+// Switch to 'browser-blueprint' or 'browser-alt' to test different frontends.
+// We should have a flag to the application to switch frontends
+const BROWSER_CHROME_URL = fileUrl(path.join(UI_DIR, 'browser-australis', 'browser.html'));
 
 /**
  * Top-level list of Browser Windows.

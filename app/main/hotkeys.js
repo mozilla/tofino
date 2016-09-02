@@ -37,6 +37,8 @@ const HOTKEYS = new Map([
   ['Ctrl+Shift+Tab', bw => () => bw.webContents.send('select-tab-previous')],
   ['CmdOrCtrl+Alt+Right', bw => () => bw.webContents.send('select-tab-next')],
   ['Ctrl+Tab', bw => () => bw.webContents.send('select-tab-next')],
+  ['CmdOrCtrl+F', bw => () => bw.webContents.send('show-page-search')],
+  ['Escape', bw => () => bw.webContents.send('hide-page-search')],
 ]);
 
 export function bindBrowserWindowHotkeys(browserWindow) {
