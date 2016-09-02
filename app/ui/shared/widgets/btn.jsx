@@ -10,9 +10,10 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { PropTypes } from 'react';
-
+import React, { Component, PropTypes } from 'react';
+import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
+
 import Style from '../style';
 
 export const MIN_WIDTH = '16px';
@@ -42,52 +43,58 @@ const BUTTON_STYLE = Style.registerStyle({
   textRendering: 'inherit',
 });
 
-const Btn = (props) => {
-  const { minWidth, minHeight } = props;
-  const { image, imgWidth, imgHeight, imgRepeat, imgPosition } = props;
-
-  const internal = {
-    minWidth: minWidth || imgWidth || MIN_WIDTH,
-    minHeight: minHeight || imgHeight || MIN_HEIGHT,
-  };
-
-  // Check for null or undefined here, so that we can use a default background
-  // when an asset is intended, but not supplied yet. Simply checking for a
-  // falsy value would render BKG_IMAGE_DEFAULT useless.
-  if (image != null) {
-    internal.backgroundImage = image ? `url(assets/${image})` : `url(${BKG_IMAGE_DEFAULT})`;
-    internal.backgroundRepeat = imgRepeat || BKG_REPEAT_DEFAULT;
-    internal.backgroundPosition = imgPosition || BKG_POSIITON_DEFAULT;
-    internal.backgroundSize = imgWidth || imgHeight ? `${imgWidth} ${imgHeight}` : BKG_SIZE_DEFAULT;
-
-    // Make sure the text doesn't overlap the image.
-    if (props.children) {
-      const bkgWidth = imgWidth || MIN_WIDTH;
-      internal.paddingLeft = `${parseInt(bkgWidth, 10) + BKG_VS_CHILDREN_DISTANCE}px`;
-      internal.paddingRight = '0px';
-    }
+class Btn extends Component {
+  shouldComponentUpdate(nextProps) {
+    return !isEqual(this.props, nextProps);
   }
 
-  return (
-    <div {...omit(props, Object.keys(UnfriendlyDomProps))}
-      className={`${BUTTON_WRAPPER_STYLE} ${props.className || ''}`}
-      style={{
-        opacity: props.disabled ? DISABLED_OPACITY : ENABLED_OPACITY,
-        ...props.style,
-      }}
-      data-title={props.title}
-      data-disabled={props.disabled}>
-      <button type="button"
-        className={BUTTON_STYLE}
-        style={internal}
-        title={props.title}
-        disabled={props.disabled}
-        onClick={props.disabled ? null : props.onClick}>
-        {props.children}
-      </button>
-    </div>
-  );
-};
+  render() {
+    const { minWidth, minHeight } = this.props;
+    const { image, imgWidth, imgHeight, imgRepeat, imgPosition } = this.props;
+
+    const custom = {
+      minWidth: minWidth || imgWidth || MIN_WIDTH,
+      minHeight: minHeight || imgHeight || MIN_HEIGHT,
+    };
+
+    // Check for null or undefined here, so that we can use a default background
+    // when an asset is intended, but not supplied yet. Simply checking for a
+    // falsy value would render BKG_IMAGE_DEFAULT useless.
+    if (image != null) {
+      custom.backgroundImage = image ? `url(assets/${image})` : `url(${BKG_IMAGE_DEFAULT})`;
+      custom.backgroundRepeat = imgRepeat || BKG_REPEAT_DEFAULT;
+      custom.backgroundPosition = imgPosition || BKG_POSIITON_DEFAULT;
+      custom.backgroundSize = imgWidth || imgHeight ? `${imgWidth} ${imgHeight}` : BKG_SIZE_DEFAULT;
+
+      // Make sure the text doesn't overlap the image.
+      if (this.props.children) {
+        const bkgWidth = imgWidth || MIN_WIDTH;
+        custom.paddingLeft = `${parseInt(bkgWidth, 10) + BKG_VS_CHILDREN_DISTANCE}px`;
+        custom.paddingRight = '0px';
+      }
+    }
+
+    return (
+      <div {...omit(this.props, Object.keys(UnfriendlyDomProps))}
+        className={`${BUTTON_WRAPPER_STYLE} ${this.props.className || ''}`}
+        style={{
+          opacity: this.props.disabled ? DISABLED_OPACITY : ENABLED_OPACITY,
+          ...this.props.style,
+        }}
+        data-title={this.props.title}
+        data-disabled={this.props.disabled}>
+        <button type="button"
+          className={BUTTON_STYLE}
+          style={custom}
+          title={this.props.title}
+          disabled={this.props.disabled}
+          onClick={this.props.disabled ? null : this.props.onClick}>
+          {this.props.children}
+        </button>
+      </div>
+    );
+  }
+}
 
 Btn.displayName = 'Btn';
 

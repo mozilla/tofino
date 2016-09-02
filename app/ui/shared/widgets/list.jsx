@@ -10,7 +10,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import isEqual from 'lodash/isEqual';
 
 import Style from '../style';
 
@@ -22,14 +23,20 @@ const LIST_STYLE = Style.registerStyle({
   padding: 0,
 });
 
-const List = props => {
-  return (
-    <ul {...props}
-      className={`${LIST_STYLE} ${props.className || ''}`}>
-      {props.children}
-    </ul>
-  );
-};
+class List extends Component {
+  shouldComponentUpdate(nextProps) {
+    return !isEqual(this.props, nextProps);
+  }
+
+  render() {
+    return (
+      <ul {...this.props}
+        className={`${LIST_STYLE} ${this.props.className || ''}`}>
+        {this.props.children}
+      </ul>
+    );
+  }
+}
 
 List.displayName = 'List';
 

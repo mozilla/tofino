@@ -10,7 +10,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import isEqual from 'lodash/isEqual';
 
 import omit from 'lodash/omit';
 import Style from '../style';
@@ -29,23 +30,29 @@ const FITTED_IMAGE_STYLE = Style.registerStyle({
  * - 'contain'
  * - '100% auto'
  */
-const FittedImage = props => {
-  return (
-    <div {...omit(props, Object.keys(UnfriendlyDomProps))}
-      style={{
-        width: props.width,
-        height: props.height,
-        backgroundImage: props.src ? `url(${props.src})` : 'none',
-        backgroundRepeat: props.repeat || BKG_REPEAT_DEFAULT,
-        backgroundPosition: props.position || BKG_POSIITON_DEFAULT,
-        backgroundSize: props.mode,
-        ...props.style,
-      }}
-      className={`${FITTED_IMAGE_STYLE} ${props.className || ''}`}>
-      {props.children}
-    </div>
-  );
-};
+class FittedImage extends Component {
+  shouldComponentUpdate(nextProps) {
+    return !isEqual(this.props, nextProps);
+  }
+
+  render() {
+    return (
+      <div {...omit(this.props, Object.keys(UnfriendlyDomProps))}
+        style={{
+          width: this.props.width,
+          height: this.props.height,
+          backgroundImage: this.props.src ? `url(${this.props.src})` : 'none',
+          backgroundRepeat: this.props.repeat || BKG_REPEAT_DEFAULT,
+          backgroundPosition: this.props.position || BKG_POSIITON_DEFAULT,
+          backgroundSize: this.props.mode,
+          ...this.props.style,
+        }}
+        className={`${FITTED_IMAGE_STYLE} ${this.props.className || ''}`}>
+        {this.props.children}
+      </div>
+    );
+  }
+}
 
 FittedImage.displayName = 'FittedImage';
 

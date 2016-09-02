@@ -10,7 +10,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import isEqual from 'lodash/isEqual';
 
 import Style from '../style';
 
@@ -25,15 +26,23 @@ const INPUT_STYLE = Style.registerStyle({
   borderRadius: 'var(--theme-default-roundness)',
 });
 
-const Search = props => (
-  <div {...props}
-    className={`${SEARCH_STYLE} ${props.className || ''}`}>
-    <input className={INPUT_STYLE}
-      type="text"
-      placeholder="Search..."
-      onKeyUp={props.onKeyUp} />
-  </div>
-);
+class Search extends Component {
+  shouldComponentUpdate(nextProps) {
+    return !isEqual(this.props, nextProps);
+  }
+
+  render() {
+    return (
+      <div {...this.props}
+        className={`${SEARCH_STYLE} ${this.props.className || ''}`}>
+        <input className={INPUT_STYLE}
+          type="text"
+          placeholder="Search..."
+          onKeyUp={this.props.onKeyUp} />
+      </div>
+    );
+  }
+}
 
 Search.displayName = 'Search';
 
