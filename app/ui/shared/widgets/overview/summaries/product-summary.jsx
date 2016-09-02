@@ -10,7 +10,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Style from '../../../../shared/style';
 import Ratings from './ratings';
@@ -54,36 +55,43 @@ const REVIEW_COUNT_STYLE = Style.registerStyle({
   color: 'var(--theme-overview-summary-subtitle-color)',
 });
 
-const ProductSummary = props => {
-  const priceEl = props.price ? (
-    <div className={PRICE_STYLE}>
-      {props.price}
-    </div>
-  ) : undefined;
+class ProductSummary extends Component {
+  constructor(props) {
+    super(props);
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+  }
 
-  const ratingsEl = props.rating ? (
-    <Ratings rating={props.rating}
-      maxRating={props.maxRating}
-      minRating={props.minRating} />
-  ) : undefined;
-
-  const reviewEl = props.reviewCount ? (
-    <div className={REVIEW_COUNT_STYLE}>
-      {`${props.reviewCount} reviews`}
-    </div>
-  ) : undefined;
-
-  return (
-    <div className={CONTAINER_STYLE}>
-      <div className={TITLE_STYLE}>
-        {props.title}
+  render() {
+    const priceEl = this.props.price ? (
+      <div className={PRICE_STYLE}>
+        {this.props.price}
       </div>
-      {priceEl}
-      {ratingsEl}
-      {reviewEl}
-    </div>
-  );
-};
+    ) : undefined;
+
+    const ratingsEl = this.props.rating ? (
+      <Ratings rating={this.props.rating}
+        maxRating={this.props.maxRating}
+        minRating={this.props.minRating} />
+    ) : undefined;
+
+    const reviewEl = this.props.reviewCount ? (
+      <div className={REVIEW_COUNT_STYLE}>
+        {`${this.props.reviewCount} reviews`}
+      </div>
+    ) : undefined;
+
+    return (
+      <div className={CONTAINER_STYLE}>
+        <div className={TITLE_STYLE}>
+          {this.props.title}
+        </div>
+        {priceEl}
+        {ratingsEl}
+        {reviewEl}
+      </div>
+    );
+  }
+}
 
 ProductSummary.displayName = 'ProductSummary';
 
