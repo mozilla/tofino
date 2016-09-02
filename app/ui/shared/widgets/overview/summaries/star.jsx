@@ -27,6 +27,9 @@ class Star extends Component {
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
 
+  handleClick = () => {
+  }
+
   render() {
     const image = STAR_IMAGES[this.props.type];
     return (
@@ -35,7 +38,7 @@ class Star extends Component {
         imgWidth="16px"
         imgHeight="16px"
         disabled={false}
-        onClick={() => {}} />
+        onClick={this.handleClick} />
     );
   }
 }

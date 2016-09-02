@@ -78,6 +78,10 @@ class BaseCard extends Component {
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
 
+  handleThumbnailClick = () => {
+    this.props.onClick(this.props.page.id);
+  }
+
   render() {
     let backgroundImage;
     let badgeImage;
@@ -97,7 +101,7 @@ class BaseCard extends Component {
         imgHeight={`${this.props.height}px`}
         imgMode="100% auto"
         imgPosition="top center"
-        onClick={() => this.props.onClick(this.props.page.id)}>
+        onClick={this.handleThumbnailClick}>
         <FittedImage className={BADGE_STYLE}
           style={backgroundImage ? {
             top: 0,
