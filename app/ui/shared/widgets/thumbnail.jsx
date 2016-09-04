@@ -39,7 +39,7 @@ class Thumbnail extends Component {
 
   render() {
     return (
-      <div {...omit(this.props, Object.keys(UnfriendlyDomProps))}
+      <div {...omit(this.props, Object.keys(OmittedContainerProps))}
         className={`${THUMBNAIL_STYLE} ${this.props.className || ''}`}>
         <FittedImage className={IMAGE_STYLE}
           src={this.props.src}
@@ -56,7 +56,7 @@ class Thumbnail extends Component {
 
 Thumbnail.displayName = 'Thumbnail';
 
-const UnfriendlyDomProps = {
+const OmittedContainerProps = {
   src: PropTypes.string,
   imgWidth: PropTypes.string.isRequired,
   imgHeight: PropTypes.string.isRequired,
@@ -66,16 +66,16 @@ const UnfriendlyDomProps = {
 };
 
 Thumbnail.propTypes = {
-  ...UnfriendlyDomProps,
+  ...OmittedContainerProps,
   id: PropTypes.string,
   className: PropTypes.string,
   style: PropTypes.object,
   hidden: PropTypes.bool,
+  onClick: PropTypes.func,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,
   ]),
-  onClick: PropTypes.func,
 };
 
 export default Thumbnail;

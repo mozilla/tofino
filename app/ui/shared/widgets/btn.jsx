@@ -75,7 +75,7 @@ class Btn extends Component {
     }
 
     return (
-      <div {...omit(this.props, Object.keys(UnfriendlyDomProps))}
+      <div {...omit(this.props, Object.keys(OmittedContainerProps))}
         className={`${BUTTON_WRAPPER_STYLE} ${this.props.className || ''}`}
         style={{
           opacity: this.props.disabled ? DISABLED_OPACITY : ENABLED_OPACITY,
@@ -98,7 +98,7 @@ class Btn extends Component {
 
 Btn.displayName = 'Btn';
 
-const UnfriendlyDomProps = {
+const OmittedContainerProps = {
   title: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
   image: PropTypes.string,
@@ -108,11 +108,11 @@ const UnfriendlyDomProps = {
   imgPosition: PropTypes.string,
   minWidth: PropTypes.string,
   minHeight: PropTypes.string,
-  onClick: PropTypes.func,
+  onClick: PropTypes.func.isRequired,
 };
 
 Btn.propTypes = {
-  ...UnfriendlyDomProps,
+  ...OmittedContainerProps,
   id: PropTypes.string,
   className: PropTypes.string,
   style: PropTypes.object,
@@ -121,7 +121,6 @@ Btn.propTypes = {
     React.PropTypes.arrayOf(React.PropTypes.node),
     React.PropTypes.node,
   ]),
-  onClick: PropTypes.func.isRequired,
 };
 
 export default Btn;
