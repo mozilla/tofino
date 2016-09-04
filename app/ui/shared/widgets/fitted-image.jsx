@@ -37,7 +37,7 @@ class FittedImage extends Component {
 
   render() {
     return (
-      <div {...omit(this.props, Object.keys(UnfriendlyDomProps))}
+      <div {...omit(this.props, Object.keys(OmittedContainerProps))}
         style={{
           width: this.props.width,
           height: this.props.height,
@@ -56,7 +56,7 @@ class FittedImage extends Component {
 
 FittedImage.displayName = 'FittedImage';
 
-const UnfriendlyDomProps = {
+const OmittedContainerProps = {
   src: PropTypes.string,
   width: PropTypes.string.isRequired,
   height: PropTypes.string.isRequired,
@@ -66,7 +66,7 @@ const UnfriendlyDomProps = {
 };
 
 FittedImage.propTypes = {
-  ...UnfriendlyDomProps,
+  ...OmittedContainerProps,
   id: PropTypes.string,
   className: PropTypes.string,
   style: PropTypes.object,
