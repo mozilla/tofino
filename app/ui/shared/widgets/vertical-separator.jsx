@@ -31,7 +31,7 @@ class VerticalSeparator extends Component {
   render() {
     return (
       <div {...this.props}
-        className={`${VERTICAL_SEPARATOR_STYLE} ${this.props.className || ''}`} />
+        className={`widget-vseparator ${VERTICAL_SEPARATOR_STYLE} ${this.props.className || ''}`} />
     );
   }
 }

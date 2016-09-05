@@ -76,7 +76,7 @@ class Btn extends Component {
 
     return (
       <div {...omit(this.props, Object.keys(OmittedContainerProps))}
-        className={`${BUTTON_WRAPPER_STYLE} ${this.props.className || ''}`}
+        className={`widget-btn ${BUTTON_WRAPPER_STYLE} ${this.props.className || ''}`}
         style={{
           opacity: this.props.disabled ? DISABLED_OPACITY : ENABLED_OPACITY,
           ...this.props.style,

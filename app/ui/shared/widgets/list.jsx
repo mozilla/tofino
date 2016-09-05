@@ -31,7 +31,7 @@ class List extends Component {
   render() {
     return (
       <ul {...this.props}
-        className={`${LIST_STYLE} ${this.props.className || ''}`}>
+        className={`widget-list ${LIST_STYLE} ${this.props.className || ''}`}>
         {this.props.children}
       </ul>
     );
