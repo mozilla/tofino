@@ -23,7 +23,7 @@ import { PageState } from '../../model';
 import { fixURL } from '../../../shared/util/location-util';
 import { menuWebViewContext, inPageSearch } from '../../actions/external';
 import * as actions from '../../actions/main-actions';
-import * as userAgent from '../../lib/user-agent';
+import * as userAgent from '../../../shared/util/user-agent';
 
 const PAGE_STYLE = Style.registerStyle({
   // Mark this as the relative anchor for floating children (e.g. search bar).

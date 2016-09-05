@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import * as uuid from 'uuid';
-import * as userAgent from '../lib/user-agent';
+import * as userAgent from '../../shared/util/user-agent';
 
 import * as types from '../constants/action-types';
 import * as profileDiffs from '../../../shared/profile-diffs';

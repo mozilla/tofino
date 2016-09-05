@@ -81,8 +81,6 @@ export async function createPage(page, { url, readerResult }) {
 export async function createStar(page, { url, title }) {
   const session = await waitForSession(page);
   return request(`/stars/${encodeURIComponent(url)}`, {
-    // @TODO Shouldn't this be a POST, in terms of creating
-    // a new resource?
     method: 'PUT',
     json: { title, session },
   });
