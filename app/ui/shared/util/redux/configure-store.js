@@ -17,8 +17,8 @@ import instrumenter from './middleware/instrumenter';
 import history from './middleware/history';
 import BUILD_CONFIG from '../../../../build-config';
 
-export default function(rootReducer, initialState) {
-  const middleware = [instrumenter, thunk];
+export default function(rootReducer, initialState, customMiddleware = []) {
+  const middleware = [instrumenter, thunk, ...customMiddleware];
   const historyStore = [];
 
   if (BUILD_CONFIG.development && !process.env.TEST) {
