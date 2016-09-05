@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import React, { Component, PropTypes } from 'react';
 import isEqual from 'lodash/isEqual';
+import omit from 'lodash/omit';
 
 import Style from '../style';
 
@@ -24,10 +25,30 @@ class ListItem extends Component {
     return !isEqual(this.props, nextProps);
   }
 
+  handleMouseClick = e => {
+    if (this.props.onClick) {
+      this.props.onClick(e);
+    }
+    if (this.props.onClickOnComponent) {
+      this.props.onClickOnComponent(this);
+    }
+  }
+
+  handleMouseOver = e => {
+    if (this.props.onMouseOver) {
+      this.props.onMouseOver(e);
+    }
+    if (this.props.onMouseOverComponent) {
+      this.props.onMouseOverComponent(this);
+    }
+  }
+
   render() {
     return (
-      <li {...this.props}
-        className={`${LIST_ITEM_STYLE} ${this.props.className || ''}`}>
+      <li {...omit(this.props, Object.keys(OmittedContainerProps))}
+        className={`${LIST_ITEM_STYLE} ${this.props.className || ''}`}
+        onClick={this.handleMouseClick}
+        onMouseOver={this.handleMouseOver}>
         {this.props.children}
       </li>
     );
@@ -36,7 +57,15 @@ class ListItem extends Component {
 
 ListItem.displayName = 'ListItem';
 
+const OmittedContainerProps = {
+  onClick: PropTypes.func,
+  onClickOnComponent: PropTypes.func,
+  onMouseOver: PropTypes.func,
+  onMouseOverComponent: PropTypes.func,
+};
+
 ListItem.propTypes = {
+  ...OmittedContainerProps,
   id: PropTypes.string,
   className: PropTypes.string,
   style: PropTypes.object,
