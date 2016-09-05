@@ -59,7 +59,7 @@ class Search extends Component {
   render() {
     return (
       <div {...omit(this.props, Object.keys(OmittedContainerProps))}
-        className={`${SEARCH_STYLE} ${this.props.className || ''}`}>
+        className={`widget-search ${SEARCH_STYLE} ${this.props.className || ''}`}>
         <input ref={e => this.input = e}
           className={INPUT_STYLE}
           type="text"

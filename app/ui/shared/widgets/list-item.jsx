@@ -46,7 +46,7 @@ class ListItem extends Component {
   render() {
     return (
       <li {...omit(this.props, Object.keys(OmittedContainerProps))}
-        className={`${LIST_ITEM_STYLE} ${this.props.className || ''}`}
+        className={`widget-list-item ${LIST_ITEM_STYLE} ${this.props.className || ''}`}
         onClick={this.handleMouseClick}
         onMouseOver={this.handleMouseOver}>
         {this.props.children}
