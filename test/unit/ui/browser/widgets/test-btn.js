@@ -8,52 +8,54 @@ import { shallow } from 'enzyme';
 import Btn, * as Const from '../../../../../app/ui/shared/widgets/btn';
 
 describe('Btn', () => {
+  const noop = () => {};
+
   it('sets `id` if given', () => {
     const wrapper = shallow(
       <Btn id="my-btn"
-        onClick={() => {}}
+        onClick={noop}
         title="my title" />);
     expect(wrapper.prop('id')).toEqual('my-btn');
   });
   it('sets `className` if given', () => {
     const wrapper = shallow(
       <Btn className="my-btn-cls"
-        onClick={() => {}}
+        onClick={noop}
         title="my title" />);
     expect(wrapper.prop('className')).toMatch(/my-btn-cls/);
   });
   it('has `data-active` prop if given', () => {
     const wrapper = shallow(
       <Btn data-active
-        onClick={() => {}}
+        onClick={noop}
         title="my title" />);
     expect(wrapper.prop('data-active')).toEqual(true);
   });
   it('does not have `data-active` if not given', () => {
     const wrapper = shallow(
       <Btn title="my title"
-        onClick={() => {}} />
+        onClick={noop} />
     );
     expect(wrapper.prop('data-active')).toEqual(undefined);
   });
   it('has `disabled` prop if given', () => {
     const wrapper = shallow(
       <Btn disabled
-        onClick={() => {}}
+        onClick={noop}
         title="my title" />);
     expect(wrapper.find('button').prop('disabled')).toEqual(true);
   });
   it('does not have `disabled` if not given', () => {
     const wrapper = shallow(
       <Btn title="my title"
-        onClick={() => {}} />
+        onClick={noop} />
     );
     expect(wrapper.find('button').prop('disabled')).toEqual(undefined);
   });
   it('sets `title`', () => {
     const wrapper = shallow(
       <Btn title="my title"
-        onClick={() => {}} />
+        onClick={noop} />
     );
     expect(wrapper.find('button').prop('title')).toEqual('my title');
   });
@@ -81,7 +83,7 @@ describe('Btn', () => {
   it('sets `image` if given', () => {
     const wrapper = shallow(
       <Btn image="some-file.svg"
-        onClick={() => {}}
+        onClick={noop}
         title="my title" />
     );
     expect(wrapper.find('button').prop('style')).toContain({
@@ -94,7 +96,7 @@ describe('Btn', () => {
   it('sets a default `image` if given a falsy prop', () => {
     const wrapper = shallow(
       <Btn image=""
-        onClick={() => {}}
+        onClick={noop}
         title="my title" />
     );
     expect(wrapper.find('button').prop('style')).toContain({
@@ -110,7 +112,7 @@ describe('Btn', () => {
         imgWidth="100px"
         imgHeight="200px"
         imgPosition="center"
-        onClick={() => {}}
+        onClick={noop}
         title="my title" />
     );
     expect(wrapper.find('button').prop('style')).toContain({
@@ -125,7 +127,7 @@ describe('Btn', () => {
       <Btn image=""
         imgWidth="100px"
         imgHeight="200px"
-        onClick={() => {}}
+        onClick={noop}
         title="my title" />
     );
     expect(wrapper.find('button').prop('style')).toContain({
@@ -138,7 +140,7 @@ describe('Btn', () => {
       <Btn image=""
         minWidth="300px"
         minHeight="400px"
-        onClick={() => {}}
+        onClick={noop}
         title="my title" />
     );
     expect(wrapper.find('button').prop('style')).toContain({
@@ -153,7 +155,7 @@ describe('Btn', () => {
         imgHeight="200px"
         minWidth="300px"
         minHeight="400px"
-        onClick={() => {}}
+        onClick={noop}
         title="my title" />
     );
     expect(wrapper.find('button').prop('style')).toContain({
@@ -166,7 +168,7 @@ describe('Btn', () => {
       <Btn image=""
         imgWidth="100px"
         imgHeight="200px"
-        onClick={() => {}}
+        onClick={noop}
         title="my title" />
     );
     expect(wrapper.find('button').prop('style')).toExclude([
@@ -179,7 +181,7 @@ describe('Btn', () => {
       <Btn image=""
         imgWidth="100px"
         imgHeight="200px"
-        onClick={() => {}}
+        onClick={noop}
         title="my title">
         Test
       </Btn>
