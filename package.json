@@ -82,7 +82,7 @@
     "cross-env": "2.0.1",
     "datascript-mori": "0.16.0",
     "dirsum": "0.1.1",
-    "electron-builder": "5.34.1",
+    "electron-builder": "6.4.1",
     "electron-download": "2.1.2",
     "electron-ipc-mock": "0.0.2",
     "electron-mocha": "3.0.5",
