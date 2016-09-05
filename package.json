@@ -56,6 +56,7 @@
     "redux": "3.6.0",
     "redux-immutable": "3.0.8",
     "redux-logger": "2.6.1",
+    "redux-saga": "0.11.1",
     "source-map-support": "ncalexan/node-source-map-support#fileUrls-plus",
     "true-html-escape": "0.0.2",
     "uuid": "2.0.2",
