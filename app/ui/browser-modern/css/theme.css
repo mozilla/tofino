@@ -1,0 +1,44 @@
+:root {
+  /* Window */
+
+  --theme-window-background: #bbb;
+
+  /* Navbar */
+
+  --theme-navbar-background: #999;
+
+  /* Tabbar */
+
+  --theme-tabbar-background: #999;
+
+  --theme-tab-active-background: #ccc;
+  --theme-tab-active-color: #000;
+  --theme-tab-active-opacity: 1;
+
+  --theme-tab-inactive-background: #aaa;
+  --theme-tab-inactive-color: #222;
+  --theme-tab-inactive-opacity: 0.9;
+
+  /* Content */
+
+  --theme-content-background: #fff;
+  --theme-content-color: #000;
+  --theme-content-link-color: #00f;
+
+  --theme-content-selection-background: #f00;
+  --theme-content-selection-color: #fff;
+
+  --theme-content-border-color: rgba(255,255,255,0.25);
+  --theme-content-selected-border-color: #f00;
+
+  /* Overview */
+
+  --theme-overview-summary-background: linear-gradient(to bottom, rgba(255,255,255,0) 0px, rgba(255,255,255,1) 20px);
+  --theme-overview-summary-title-color: #000;
+  --theme-overview-summary-subtitle-color: #222;
+
+  /* Misc */
+
+  --theme-default-shadow: 0px 2px 4px 0px rgba(0,0,0,0.5);
+  --theme-default-selected-shadow: 0px 0px 6px 0px #f00;
+}
