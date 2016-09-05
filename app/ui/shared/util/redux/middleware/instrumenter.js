@@ -10,11 +10,11 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import rootReducer from '../reducers';
-import * as model from '../model/index';
-import configureStore from '../../shared/util/redux/configure-store';
+import * as instrument from '../../instrument';
 
-export function createContentStore() {
-  const initialState = new model.State(rootReducer(undefined, { type: null }));
-  return configureStore(rootReducer, initialState);
-}
+export default _store => next => action => {
+  if (action.instrument) {
+    instrument.event('event', action.type);
+  }
+  return next(action);
+};

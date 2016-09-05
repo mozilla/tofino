@@ -12,28 +12,10 @@ specific language governing permissions and limitations under the License.
 
 import { applyMiddleware, createStore } from 'redux';
 import createLogger from 'redux-logger';
-import thunk from './thunk';
-import * as instrument from './util/instrument';
-import BUILD_CONFIG from '../../build-config';
-
-const instrumenter = _store => next => action => {
-  if (action.instrument) {
-    instrument.event('event', action.type);
-  }
-  return next(action);
-};
-
-/**
- * Record actions in the `history` property on the store
- * for tests.
- */
-const history = historyStore => _store => next => action => {
-  if (typeof action !== 'function') {
-    historyStore.push(action);
-  }
-
-  return next(action);
-};
+import thunk from './middleware/thunk';
+import instrumenter from './middleware/instrumenter';
+import history from './middleware/history';
+import BUILD_CONFIG from '../../../../build-config';
 
 export default function(rootReducer, initialState) {
   const middleware = [instrumenter, thunk];
@@ -54,8 +36,7 @@ export default function(rootReducer, initialState) {
 
   const store = createStore(rootReducer, initialState, applyMiddleware(...middleware));
 
-  // Store action history on the exposed store
-  // for tests
+  // Store action history on the exposed store for tests.
   if (process.env.TEST) {
     store.history = historyStore;
   }
