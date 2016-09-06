@@ -14,7 +14,7 @@ import * as uuid from 'uuid';
 import * as userAgent from '../../shared/util/user-agent';
 
 import * as types from '../constants/action-types';
-import * as profileDiffs from '../../../shared/profile-diffs';
+import * as actions from '../actions/main-actions';
 import { getPageById } from '../selectors/index';
 
 export function createTab(location = undefined, ancestorId = undefined,
@@ -147,7 +147,7 @@ export function setUserTypedLocation(pageId, payload) {
     // state is going to be reset.
     if (payload.text) {
       userAgent.query({ text: payload.text }).then(({ results }) =>
-        dispatch(profileDiffs.completions(payload.text, results)));
+        dispatch(actions.completions(payload.text, results)));
     }
   };
 }
@@ -178,4 +178,14 @@ export function didStartSession(pageId, sessionId, ancestorId) {
 
 export function setShowPageSummaries(visible) {
   return { type: types.SET_PAGE_SUMMARIES_VISIBLE, payload: { visible } };
+}
+
+export function completions(text, completionList) {
+  return {
+    type: types.COMPLETIONS,
+    payload: {
+      text,
+      completionList,
+    },
+  };
 }

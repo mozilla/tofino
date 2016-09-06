@@ -18,13 +18,3 @@ export function bookmarks(bookmarkSet) {
     payload: bookmarkSet,
   };
 }
-
-export function completions(text, completionList) {
-  return {
-    type: profileDiffTypes.COMPLETIONS,
-    payload: {
-      text,
-      completionList,
-    },
-  };
-}
