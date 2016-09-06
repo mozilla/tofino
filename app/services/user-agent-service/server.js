@@ -13,7 +13,7 @@
 import { logger } from '../../shared/logging';
 import { makeServer, autoCaughtRouteError } from '../common';
 import { SnippetSize, StarOp } from './storage';
-import * as profileDiffs from '../../shared/profile-diffs';
+import * as profileDiffs from '../../shared/actions/profile-diffs';
 
 const allowCrossDomain = contentServiceOrigin => function(req, res, next) {
   const origin = req.get('origin');
@@ -39,12 +39,6 @@ const allowCrossDomain = contentServiceOrigin => function(req, res, next) {
 function configure(app, router, storage, contentServiceOrigin) {
   app.use(allowCrossDomain(contentServiceOrigin));
 
-  async function initial() {
-    const stars = await storage.starredURLs();
-    const recentStars = await storage.recentlyStarred();
-    return { stars, recentStars };
-  }
-
   const wsClients = [];
 
   router.ws('/ws', async function(ws, _req) {
@@ -57,10 +51,10 @@ function configure(app, router, storage, contentServiceOrigin) {
     }));
 
     ws.send(JSON.stringify({
-      message: 'diff',
-      type: 'initial',
-      payload: await initial(),
+      type: 'connected',
     }));
+
+    dispatchBookmarkDiffs();
 
     ws.on('close', () => {
       const index = wsClients.indexOf(ws);
@@ -81,9 +75,8 @@ function configure(app, router, storage, contentServiceOrigin) {
 
   async function dispatchBookmarkDiffs() {
     // TODO: only send add/remove starredness for `url`, rather than grabbing the whole set.
-    const stars = await storage.starredURLs();
-    sendDiff(profileDiffs.bookmarks(stars));
-    sendDiff({ type: '/stars/recent', payload: await storage.recentlyStarred() });
+    sendDiff(profileDiffs.bookmarks(await storage.starredURLs()));
+    sendDiff(profileDiffs.recentBookmarks(await storage.recentlyStarred()));
   }
 
   router.post('/session/start', autoCaughtRouteError({
