@@ -31,7 +31,6 @@ import { Provider } from 'react-redux';
 import App from './views/app';
 import { createBrowserStore } from './store';
 import * as actions from './actions/main-actions';
-import * as profileDiffs from '../../shared/profile-diffs';
 import UserAgentClient from '../../shared/user-agent-client';
 
 const userAgentClient = new UserAgentClient();
@@ -72,20 +71,14 @@ store.dispatch(actions.createTab());
 // that if an error occurs while we connect, we at least have some UI in place.
 ReactDOM.render(chrome, container);
 
+// When we've connected to the UA service and (synchronously) rendered
+// the initial UI, this window is ready to display.
+userAgentClient.on('connected', () => {
+  onWindowReady();
+});
+
+// It's dangerous to trust the service in this way, but good enough for now.
 userAgentClient.on('diff', (command) => {
-  if (command.type === 'initial') {
-    if (command.payload.stars) {
-      store.dispatch(profileDiffs.bookmarks(command.payload.stars));
-    }
-
-    // We've connected to the UA service, received the initial state, and (synchronously)
-    // rendered the initial UI.  This window is ready to display!
-    onWindowReady();
-
-    return;
-  }
-
-  // It's dangerous to trust the service in this way, but good enough for now.
   store.dispatch(command);
 });
 

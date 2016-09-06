@@ -10,11 +10,18 @@
  specific language governing permissions and limitations under the License.
  */
 
-import * as profileDiffTypes from './constants/profile-diff-types';
+import * as profileDiffTypes from '../constants/profile-diff-types';
 
 export function bookmarks(bookmarkSet) {
   return {
     type: profileDiffTypes.BOOKMARKS,
+    payload: bookmarkSet,
+  };
+}
+
+export function recentBookmarks(bookmarkSet) {
+  return {
+    type: profileDiffTypes.RECENT_BOOKMARKS,
     payload: bookmarkSet,
   };
 }
