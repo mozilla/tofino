@@ -40,7 +40,7 @@ class Thumbnail extends Component {
   render() {
     return (
       <div {...omit(this.props, Object.keys(OmittedContainerProps))}
-        className={`${THUMBNAIL_STYLE} ${this.props.className || ''}`}>
+        className={`widget-thumbnail ${THUMBNAIL_STYLE} ${this.props.className || ''}`}>
         <FittedImage className={IMAGE_STYLE}
           src={this.props.src}
           width={this.props.imgWidth}

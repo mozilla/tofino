@@ -1,8 +1,8 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-import expect from 'expect';
 import React from 'react';
+import expect from 'expect';
 import { shallow } from 'enzyme';
 
 import Btn, * as Const from '../../../../../app/ui/shared/widgets/btn';

@@ -25,7 +25,7 @@ export default function profile(state = initialState, action) {
     case profileDiffTypes.BOOKMARKS:
       return setBookmarks(state, Immutable.Set(action.payload));
 
-    case profileDiffTypes.COMPLETIONS:
+    case types.COMPLETIONS:
       return setCompletion(state, action.payload.text, action.payload.completionList);
 
     default:

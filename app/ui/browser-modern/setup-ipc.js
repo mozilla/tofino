@@ -1,0 +1,96 @@
+/*
+Copyright 2016 Mozilla
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+*/
+
+import { ipcRenderer } from '../../shared/electron';
+
+import * as ContentURLs from '../../shared/constants/content-pages-locations';
+import * as PageActions from './actions/page-actions';
+import * as PageEffects from './actions/page-effects';
+import * as UIActions from './actions/ui-actions';
+import * as UIEffects from './actions/ui-effects';
+
+export default function({ store, userAgentClient }) {
+  // Set max listeners to Infinity, because each new page will listen to more
+  // events, and we'll intentionally go beyond the 10 listener default.
+  ipcRenderer.setMaxListeners(Infinity);
+
+  // Wait until the main process negotiates an address for the UA service, and
+  // then subsequently connect.
+  ipcRenderer.on('user-agent-service-info', (_, { port, version, host }) => {
+    userAgentClient.connect({ port, version, host });
+  });
+
+  // Add other various main process event listeners.
+  ipcRenderer.on('new-tab', () => {
+    store.dispatch(PageEffects.createPageSession());
+  });
+
+  ipcRenderer.on('close-tab', () => {
+    store.dispatch(PageEffects.destroyCurrentPageSession());
+  });
+
+  ipcRenderer.on('go-back', () => {
+    store.dispatch(PageEffects.navigateCurrentPageBack());
+  });
+
+  ipcRenderer.on('go-forward', () => {
+    store.dispatch(PageEffects.navigateCurrentPageForward());
+  });
+
+  ipcRenderer.on('page-refresh', () => {
+    store.dispatch(PageEffects.navigateCurrentPageRefresh());
+  });
+
+  ipcRenderer.on('toggle-devtools', () => {
+    store.dispatch(PageEffects.toggleCurrentPageDevtools());
+  });
+
+  ipcRenderer.on('select-tab-previous', () => {
+    store.dispatch(PageActions.setSelectedPagePrevious());
+  });
+
+  ipcRenderer.on('select-tab-next', () => {
+    store.dispatch(PageActions.setSelectedPageNext());
+  });
+
+  ipcRenderer.on('select-tab-index', (_, index) => {
+    store.dispatch(PageActions.setSelectedPageIndex(index));
+  });
+
+  ipcRenderer.on('focus-url-bar', () => {
+    store.dispatch(UIEffects.focusCurrentURLBar({ select: true }));
+  });
+
+  ipcRenderer.on('show-page-search', () => {
+    store.dispatch(UIActions.showPageSearch());
+  });
+
+  ipcRenderer.on('hide-page-search', () => {
+    store.dispatch(UIActions.hidePageSearch());
+  });
+
+  ipcRenderer.on('show-stars', () => {
+    store.dispatch(PageEffects.createPageSession(ContentURLs.STARS_PAGE));
+  });
+
+  ipcRenderer.on('show-history', () => {
+    store.dispatch(PageEffects.createPageSession(ContentURLs.HISTORY_PAGE));
+  });
+
+  ipcRenderer.on('show-credits', () => {
+    store.dispatch(PageEffects.createPageSession(ContentURLs.CREDITS_PAGE));
+  });
+
+  ipcRenderer.on('capture-page', () => {
+    store.dispatch(PageEffects.captureCurrentPage());
+  });
+}

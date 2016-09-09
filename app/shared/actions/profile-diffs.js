@@ -10,7 +10,7 @@
  specific language governing permissions and limitations under the License.
  */
 
-import * as profileDiffTypes from './constants/profile-diff-types';
+import * as profileDiffTypes from '../constants/profile-diff-types';
 
 export function bookmarks(bookmarkSet) {
   return {
@@ -19,12 +19,9 @@ export function bookmarks(bookmarkSet) {
   };
 }
 
-export function completions(text, completionList) {
+export function recentBookmarks(bookmarkSet) {
   return {
-    type: profileDiffTypes.COMPLETIONS,
-    payload: {
-      text,
-      completionList,
-    },
+    type: profileDiffTypes.RECENT_BOOKMARKS,
+    payload: bookmarkSet,
   };
 }

@@ -47,7 +47,7 @@ class FittedImage extends Component {
           backgroundSize: this.props.mode,
           ...this.props.style,
         }}
-        className={`${FITTED_IMAGE_STYLE} ${this.props.className || ''}`}>
+        className={`widget-fitted-image ${FITTED_IMAGE_STYLE} ${this.props.className || ''}`}>
         {this.props.children}
       </div>
     );
