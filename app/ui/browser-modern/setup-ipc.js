@@ -17,8 +17,13 @@ import * as PageActions from './actions/page-actions';
 import * as PageEffects from './actions/page-effects';
 import * as UIActions from './actions/ui-actions';
 import * as UIEffects from './actions/ui-effects';
+import * as Gestures from '../shared/util/gestures';
 
 export default function({ store, userAgentClient }) {
+  // Attach listeners to the window to emit events on IPC during
+  // some UI events (like swiping)
+  Gestures.attachGestureListeners();
+
   // Set max listeners to Infinity, because each new page will listen to more
   // events, and we'll intentionally go beyond the 10 listener default.
   ipcRenderer.setMaxListeners(Infinity);
