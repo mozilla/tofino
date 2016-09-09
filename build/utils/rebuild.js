@@ -86,20 +86,14 @@ export async function buildDirectoryExists() {
   }
 }
 
-export async function shouldRebuild(taskId, ...sources) {
-  // Check if the `lib` directory exists. If it doesn't, need to rebuild.
-  if (!(await buildDirectoryExists())) {
-    logger.info(colors.gray('Deleting hashes from the build config.'));
-    const currentConfig = getBuildConfig();
-    delete currentConfig.built;
-    writeBuildConfig(currentConfig);
-  }
+export function deleteBuildConfigHashes() {
+  logger.info(colors.gray('Deleting hashes from the build config.'));
+  const currentConfig = getBuildConfig();
+  delete currentConfig.built;
+  writeBuildConfig(currentConfig);
+}
 
-  // Always also check for changes in the app/shared and build system as well.
-  sources.push(Const.APP_SHARED_DIR);
-  sources.push(Const.BUILD_SYSTEM_DIR);
-
-  const changedSources = await sourcesChanged(taskId, ...sources);
+export function updateBuildConfigHashes(changedSources) {
   const currentConfig = getBuildConfig();
 
   for (const { hash, id } of changedSources) {
@@ -107,9 +101,18 @@ export async function shouldRebuild(taskId, ...sources) {
     currentConfig.built[id] = hash;
   }
 
+  logger.info(colors.gray('Updating hashes in the build config.'));
+  writeBuildConfig(currentConfig);
+}
+
+export async function shouldRebuild(taskId, ...sources) {
+  // Always also check for changes in the app/shared and build system as well.
+  sources.push(Const.APP_SHARED_DIR);
+  sources.push(Const.BUILD_SYSTEM_DIR);
+
+  const changedSources = await sourcesChanged(taskId, ...sources);
   if (changedSources.length) {
-    logger.info(colors.gray('Updating hashes in the build config.'));
-    writeBuildConfig(currentConfig);
+    updateBuildConfigHashes(changedSources);
     return true;
   }
 
