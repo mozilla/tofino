@@ -9,8 +9,6 @@
 /* eslint-disable strict */
 /* eslint-disable import/no-commonjs */
 
-/* eslint-disable global-require */
-
 'use strict';
 
 require('babel-polyfill');

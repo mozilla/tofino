@@ -2,6 +2,7 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import colors from 'colors/safe';
+import path from 'path';
 import fs from 'fs-promise';
 import pick from 'lodash/pick';
 import isEqual from 'lodash/isEqual';
@@ -27,7 +28,8 @@ export async function sourcesChanged(taskId, ...sources) {
 }
 
 export async function sourceChanged(taskId, source) {
-  logger.info(colors.gray('Checking if source changed', source));
+  logger.info(colors.gray('Checking if source changed:'),
+    colors.green(path.relative(Const.ROOT, source)));
 
   const sourceId = sha1(`${taskId} ${source}`);
   const sourceHash = (await thenify(dirsum.digest)(source, 'sha1')).hash;
@@ -53,7 +55,8 @@ export async function sourceChanged(taskId, source) {
 }
 
 export function buildConfigChanged() {
-  logger.info(colors.gray('Checking if build config changed', Const.BUILD_CONFIG_PATH));
+  logger.info(colors.gray('Checking if build config changed:'),
+    colors.green(path.relative(Const.ROOT, Const.BUILD_CONFIG_PATH)));
 
   // Use `require` to import the base configuration file
   // to avoid a circular dependency.
@@ -71,7 +74,8 @@ export function buildConfigChanged() {
 }
 
 export async function buildDirectoryExists() {
-  logger.info(colors.gray('Checking if build directory exists', Const.LIB_DIR));
+  logger.info(colors.gray('Checking if build directory exists:'),
+    colors.green(path.relative(Const.ROOT, Const.LIB_DIR)));
 
   try {
     await fs.stat(Const.LIB_DIR);

@@ -12,7 +12,8 @@ export const PACKAGED_DIST_DIR = path.join(ROOT, 'dist');
 
 export const APP_SHARED_DIR = path.join(SRC_DIR, 'shared');
 export const BUILD_CONFIG_PATH = path.join(SRC_DIR, 'build-config.json');
-export const BROWSER_FRONTENDS_PATH = path.join(BUILD_SYSTEM_DIR, 'config', 'frontends.json');
+export const BUILD_WEBPACK_CONFIGS_PATH = path.join(BUILD_SYSTEM_DIR, 'config');
+export const BROWSER_FRONTENDS_PATH = path.join(BUILD_WEBPACK_CONFIGS_PATH, 'frontends.json');
 
 export const CACHE_DIR = path.join(ROOT, '.cache');
 export const ELECTRON_ROOT_DIR = path.join(ROOT, '.electron');

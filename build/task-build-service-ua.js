@@ -2,15 +2,17 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import colors from 'colors/safe';
-import { default as serviceConfig, SRC_DIR } from './config/webpack.services.ua';
-import { makeDevConfig as dev, makeProdConfig as prod } from './config/webpack.base';
-import { getBuildConfig } from './utils';
+import path from 'path';
+
+import { BUILD_WEBPACK_CONFIGS_PATH } from './utils/const';
 import { shouldRebuild } from './utils/rebuild';
 import { webpackBuild } from './utils/webpack';
 import { logger } from './logging';
 
 export default async function() {
   const id = 'user agent service';
+  const configPath = path.resolve(BUILD_WEBPACK_CONFIGS_PATH, 'webpack.services.ua');
+  const { SRC_DIR } = require(configPath); // eslint-disable-line
 
   if (!(await shouldRebuild(id, SRC_DIR))) {
     logger.info(colors.green(`No changes in ${id}.`));
@@ -18,6 +20,5 @@ export default async function() {
   }
 
   logger.info(colors.cyan(`Building ${id}...`));
-  const { development } = getBuildConfig();
-  return await webpackBuild(development ? dev(serviceConfig) : prod(serviceConfig));
+  return await webpackBuild(configPath);
 }

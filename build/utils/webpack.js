@@ -1,26 +1,11 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-import webpack from 'webpack';
-import { logger } from '../logging';
-import { dependencies } from '../../app/package.json';
+/* eslint-disable no-shadow */
 
-const WEBPACK_OUTPUT_CONFIG = {
-  colors: true,
-  hash: true,
-  version: true,
-  timings: true,
-  assets: true,
-  chunks: true,
-  chunkModules: false,
-  modules: true,
-  children: true,
-  cached: true,
-  reasons: true,
-  source: true,
-  errorDetails: true,
-  chunkOrigins: true,
-};
+import path from 'path';
+import childProcess from 'child_process';
+import { dependencies } from '../../app/package.json';
 
 export const nodeExternals = (context, request, cb) => {
   if (request.startsWith('.')) {
@@ -38,43 +23,41 @@ export const nodeExternals = (context, request, cb) => {
   cb(null, false);
 };
 
-export const webpackBuild = config => new Promise((resolve, reject) => {
-  let incremental = false;
+export const webpackBuild = configPath => new Promise((resolve, reject) => {
+  const child = childProcess.fork(path.join(__dirname, 'webpack-process'));
 
-  const watcher = webpack(config).watch({}, (err, stats) => {
-    if (err) {
-      // Failed with a fatal error.
-      reject(err);
-      return;
+  child.on('message', e => {
+    if (e.message === 'fatal-error' || e.message === 'build-error') {
+      reject(e.err);
     }
-
-    if (stats.hasErrors()) {
-      // Failed with a build error.
-      const output = stats.toString(WEBPACK_OUTPUT_CONFIG);
-      // Rejecting immediately would result in garbled text if other
-      // logging operations follow. Furthermore, if the process exits,
-      // it will stop the logging midway, resulting in incomplete output.
-      logger.error(`\n${output}\n`);
-      process.stderr.once('drain', () => reject('Compilation unsuccessful.'));
-      return;
-    }
-
-    /* eslint-disable no-shadow */
-    resolve({
-      close: () => new Promise(resolve => watcher.close(resolve)),
-    });
-    /* eslint-enable no-shadow */
-
-    // Per webpack's documentation, this handler can be called multiple times,
-    // e.g. when a build has been completed, or an error or warning has occurred.
-    // It even can occur that handler is called for the same bundle multiple times.
-    // So just keep that in mind.
-    if (!incremental) {
-      incremental = true;
-      return;
-    }
-
-    const { time } = stats.toJson();
-    logger.info(`Incremental build succeeded in ${time} ms.`);
   });
+
+  const stopped = new Promise(resolve => {
+    child.on('message', e => {
+      if (e.message === 'stopped-watching') {
+        child.kill();
+        resolve();
+      }
+    });
+  });
+
+  const started = new Promise(resolve => {
+    child.on('message', e => {
+      if (e.message === 'started-watching') {
+        resolve();
+      }
+    });
+  });
+
+  const start = () => {
+    child.send({ message: 'start', configPath });
+    return started;
+  };
+
+  const close = () => {
+    child.send({ message: 'stop' });
+    return stopped;
+  };
+
+  start().then(() => resolve({ close }));
 });
