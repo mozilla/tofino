@@ -41,6 +41,7 @@ const PAGE_CONTAINER_STYLE = Style.registerStyle({
   right: 0,
   '&[data-is-hidden=true]': {
     opacity: 0,
+    pointerEvents: 'none',
   },
 });
 
