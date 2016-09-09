@@ -18,7 +18,7 @@ import * as actions from '../actions/main-actions';
 import { getPageById } from '../selectors/index';
 
 export function createTab(location = undefined, ancestorId = undefined,
-                          options = { selected: true }) {
+                          options = { selected: true, index: undefined }) {
   const reason = undefined;
 
   return (dispatch) => {

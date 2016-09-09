@@ -49,8 +49,10 @@ class Page extends Component {
     // See http://electron.atom.io/docs/api/web-view-tag/#dom-events
 
     this.webview.addEventListener('new-window', e => {
+      // Increment the index for the new page to be adjacent to this one
+      const index = this.props.pageIndex + 1;
       const selected = e.disposition && e.disposition === 'foreground-tab';
-      this.props.dispatch(PageEffects.createPageSession(e.url, { selected }));
+      this.props.dispatch(PageEffects.createPageSession(e.url, { selected, index }));
     });
 
     this.webview.addEventListener('did-start-loading', () => {
@@ -143,6 +145,7 @@ Page.propTypes = {
   dispatch: PropTypes.func.isRequired,
   pageId: PropTypes.string.isRequired,
   pageLocation: PropTypes.string.isRequired,
+  pageIndex: PropTypes.number.isRequired,
   onMount: PropTypes.func.isRequired,
 };
 
@@ -150,6 +153,7 @@ function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
   return {
     pageLocation: page ? page.location : '',
+    pageIndex: PagesSelectors.getPageIndexById(state, ownProps.pageId),
   };
 }
 

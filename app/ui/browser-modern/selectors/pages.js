@@ -34,3 +34,7 @@ export function getSelectedPage(state) {
 export function getSelectedPageIndex(state) {
   return getOrderedPageIds(state).findIndex(id => id === getSelectedPageId(state));
 }
+
+export function getPageIndexById(state, id) {
+  return getOrderedPageIds(state).indexOf(id);
+}

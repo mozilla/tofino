@@ -60,12 +60,22 @@ export default function basic(state = initialState, action) {
   }
 }
 
-function createTab(state, location = HOME_PAGE, id = undefined, { selected = true }) {
+/* eslint-disable */
+function createTab(state, location = HOME_PAGE, id = undefined, { selected = true, index = undefined }) {
+/* eslint-enable */
   return state.withMutations(mut => {
     const page = new Page({ id, location });
-    mut.update('pages', pages => pages.push(page));
+    index = index != null ? index : state.pages.size;
+
+    mut.update('pages', pages => pages.insert(index, page));
+
+    // Update the selected index if this new page is to be selected,
+    // or if the current page has a higher index than where we are inserting
+    // this page (so to maintain the current page's selection)
     if (selected) {
-      mut.set('currentPageIndex', state.pages.size);
+      mut.set('currentPageIndex', index);
+    } else if (mut.get('currentPageIndex') >= index) {
+      mut.set('currentPageIndex', index + 1);
     }
   });
 }

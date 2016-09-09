@@ -57,10 +57,14 @@ export default function(state = new Pages(), action) {
   }
 }
 
-function createPage(state, id, location = UIConstants.HOME_PAGE, options = { selected: true }) {
+/* eslint-disable */
+function createPage(state, id, location = UIConstants.HOME_PAGE, options = { selected: true, index: null }) {
+/* eslint-enable */
   return state.withMutations(mut => {
     const page = new Page({ id, location });
-    mut.update('orderedIds', l => l.push(page.id));
+    const index = options.index != null ? options.index : state.orderedIds.size;
+
+    mut.update('orderedIds', l => l.insert(index, page.id));
     mut.update('map', m => m.set(page.id, page));
 
     if (options.selected) {
