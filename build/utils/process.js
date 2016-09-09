@@ -24,6 +24,7 @@ export async function normalizeCommand(command) {
 
 export async function spawn(command, args, options = {}) {
   command = await normalizeCommand(command);
+
   return new Promise((resolve, reject) => {
     const child = childProcess.spawn(command, args, options);
 

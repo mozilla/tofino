@@ -34,15 +34,15 @@ async function downloadElectron() {
 }
 
 export default async function() {
-  let currentElectron = null;
+  let currentElectronVersion = null;
   try {
-    currentElectron = ElectronUtils.getElectronVersion();
+    currentElectronVersion = ElectronUtils.getElectronVersion();
   } catch (e) {
     // Fall through and download
   }
 
   const electron = BuildUtils.getManifest()._electron;
-  if (electron.version !== currentElectron) {
+  if (electron.version !== currentElectronVersion) {
     await downloadElectron();
   }
 }

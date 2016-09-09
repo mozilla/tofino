@@ -4,6 +4,7 @@
 import path from 'path';
 import fs from 'fs-promise';
 import colors from 'colors/safe';
+
 import { SRC_DIR, LIB_DIR, BUILD_CONFIG_PATH } from './utils/const';
 import { logger } from './logging';
 

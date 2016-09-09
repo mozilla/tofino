@@ -3,10 +3,9 @@
 
 import colors from 'colors/safe';
 import fs from 'fs-promise';
+import path from 'path';
 
-import { BROWSER_FRONTENDS_PATH } from './utils/const';
-import { makeDevConfig as dev, makeProdConfig as prod } from './config/webpack.base';
-import { getBuildConfig } from './utils';
+import { BUILD_WEBPACK_CONFIGS_PATH, BROWSER_FRONTENDS_PATH } from './utils/const';
 import { shouldRebuild } from './utils/rebuild';
 import { webpackBuild } from './utils/webpack';
 import { logger } from './logging';
@@ -25,9 +24,8 @@ export default async function() {
 }
 
 async function buildFrontend(id) {
-  /* eslint-disable global-require */
-  const { default: browserConfig, SRC_DIR, SHARED_DIR } = require(`./config/webpack.${id}`);
-  /* eslint-enable global-require */
+  const configPath = path.resolve(BUILD_WEBPACK_CONFIGS_PATH, `webpack.${id}`);
+  const { SRC_DIR, SHARED_DIR } = require(configPath); // eslint-disable-line
 
   if (!(await shouldRebuild(id, SRC_DIR, SHARED_DIR))) {
     logger.info(colors.green(`No changes in ${id}.`));
@@ -35,6 +33,5 @@ async function buildFrontend(id) {
   }
 
   logger.info(colors.cyan(`Building ${id}...`));
-  const { development } = getBuildConfig();
-  return await webpackBuild(development ? dev(browserConfig) : prod(browserConfig));
+  return await webpackBuild(configPath);
 }
