@@ -20,7 +20,7 @@ Unit tests are the fastest tests to run, and are encouraged over other tests if 
 
 #### Testing UI Components
 
-The browser React app can be tested via unit tests. Explore [/test/unit/ui/browser/](/test/unit/ui/browser), where we have action, model, views and widget tests, having a similar directory structure to the app. For the React views, we use [enzyme](https://www.npmjs.com/package/enzyme) to test shallow renderings of the React components.
+The browser React app can be tested via unit tests. Explore [/test/unit/ui/browser*/](/test/unit/ui), where we have action, model, views and widget tests, having a similar directory structure to the app. For the React views, we use [enzyme](https://www.npmjs.com/package/enzyme) to test shallow renderings of the React components.
 
 ### Renderer Tests
 

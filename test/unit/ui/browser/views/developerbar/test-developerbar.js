@@ -5,7 +5,7 @@ import expect from 'expect';
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import DeveloperBar from '../../../../../../app/ui/browser/views/window/developerbar.jsx';
+import DeveloperBar from '../../../../../../app/ui/browser-blueprint/views/window/developerbar.jsx';
 import Btn from '../../../../../../app/ui/shared/widgets/btn';
 
 describe('components - DeveloperBar', () => {

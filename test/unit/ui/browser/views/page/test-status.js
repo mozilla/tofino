@@ -5,7 +5,7 @@ import expect from 'expect';
 import React from 'react';
 import { render } from 'enzyme';
 
-import { Status } from '../../../../../../app/ui/browser/views/window/status';
+import { Status } from '../../../../../../app/ui/browser-blueprint/views/window/status';
 
 describe('components - Status', () => {
   it('should render status text when given', () => {

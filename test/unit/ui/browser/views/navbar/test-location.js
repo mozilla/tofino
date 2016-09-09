@@ -6,11 +6,11 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import Immutable from 'immutable';
 
-import { Location } from '../../../../../../app/ui/browser/views/navbar/location';
+import { Location } from '../../../../../../app/ui/browser-blueprint/views/navbar/location';
 import { LocationCompletionRow } from
-  '../../../../../../app/ui/browser/views/navbar/location-completion-row';
-import { Page, Profile } from '../../../../../../app/ui/browser/model/index';
-import { createBrowserStore } from '../../../../../../app/ui/browser/store';
+  '../../../../../../app/ui/browser-blueprint/views/navbar/location-completion-row';
+import { Page, Profile } from '../../../../../../app/ui/browser-blueprint/model/index';
+import { createBrowserStore } from '../../../../../../app/ui/browser-blueprint/store';
 
 function createSpyProps(store) {
   const props = {

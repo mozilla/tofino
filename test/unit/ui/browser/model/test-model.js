@@ -2,8 +2,8 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import expect from 'expect';
-import { Page } from '../../../../../app/ui/browser/model/index';
-import { isUUID } from '../../../../../app/ui/browser/browser-util';
+import { Page } from '../../../../../app/ui/browser-blueprint/model/index';
+import { isUUID } from '../../../../../app/ui/shared/util/uuid-util';
 
 describe('Data model: Page', () => {
   it('should get a UUID upon creation', () => {
