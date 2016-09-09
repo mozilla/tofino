@@ -43,7 +43,7 @@ export default class WebViewController extends EventEmitter {
 
   navigateForward(pageId) {
     const pages = this.getPages();
-    const index = getPageIndexById(this.getPages(), pageId);
+    const index = getPageIndexById(pages, pageId);
     assert(index >= 0, `Page ${pageId} not found in current state.`);
     assert(isUUID(pageId), `Invalid page id: ${pageId}`);
     assert(pages.get(index).canGoForward, 'Page cannot go forward.');
@@ -53,7 +53,8 @@ export default class WebViewController extends EventEmitter {
   }
 
   navigateTo(pageId, location) {
-    const index = getPageIndexById(this.getPages(), pageId);
+    const pages = this.getPages();
+    const index = getPageIndexById(pages, pageId);
     assert(index >= 0, `Page ${pageId} not found in current state.`);
     assert(isUUID(pageId), `Invalid page id: ${pageId}`);
     assert(typeof location === 'string', '`location` must be a string.');
@@ -64,7 +65,7 @@ export default class WebViewController extends EventEmitter {
 
   navigateRefresh(pageId) {
     const pages = this.getPages();
-    const index = getPageIndexById(this.getPages(), pageId);
+    const index = getPageIndexById(pages, pageId);
     assert(index >= 0, `Page ${pageId} not found in current state.`);
     assert(isUUID(pageId), `Invalid page id: ${pageId}`);
     assert(pages.get(index).canRefresh, 'Page cannot go forward.');
@@ -74,7 +75,8 @@ export default class WebViewController extends EventEmitter {
   }
 
   capturePage(pageId) {
-    const index = getPageIndexById(this.getPages(), pageId);
+    const pages = this.getPages();
+    const index = getPageIndexById(pages, pageId);
     assert(index >= 0, `Page ${pageId} not found in current state.`);
     assert(isUUID(pageId), `Invalid page id: ${pageId}`);
 
@@ -83,7 +85,8 @@ export default class WebViewController extends EventEmitter {
   }
 
   toggleDevtools(pageId) {
-    const index = getPageIndexById(this.getPages(), pageId);
+    const pages = this.getPages();
+    const index = getPageIndexById(pages, pageId);
     assert(index >= 0, `Page ${pageId} not found in current state.`);
     assert(isUUID(pageId), `Invalid page id: ${pageId}`);
 

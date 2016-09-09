@@ -51,7 +51,7 @@ class History extends Component {
   render() {
     return (
       <div className={HISTORY_STYLE}>
-        <Search hidden={false}
+        <Search placeholder="Search history..."
           className={SEARCH_STYLE}
           onKeyUp={this.handleSearch} />
         <List className={LIST_STYLE}>

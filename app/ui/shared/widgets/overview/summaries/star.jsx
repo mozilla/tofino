@@ -13,34 +13,41 @@ specific language governing permissions and limitations under the License.
 import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-/**
- * A factory class used to instantiate Cards displayed in the overview.
- * Calls the appropriate underlying card subclass, depending on metadata.
- */
-import SimpleCard from './simple-card';
-import ProductCard from './product-card';
+import Btn from '../../../../shared/widgets/btn';
 
-class OverviewCard extends Component {
+const STAR_IMAGES = {
+  full: 'glyph-ratings-full.svg',
+  half: 'glyph-ratings-half.svg',
+  empty: 'glyph-ratings-empty.svg',
+};
+
+class Star extends Component {
   constructor(props) {
     super(props);
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
 
+  handleClick = () => {
+  }
+
   render() {
-    const meta = this.props.page.meta;
-
-    if (meta.rating || meta.price) {
-      return (<ProductCard {...this.props} />);
-    }
-
-    return (<SimpleCard {...this.props} />);
+    const image = STAR_IMAGES[this.props.type];
+    return (
+      <Btn title={this.props.title}
+        image={image}
+        imgWidth="16px"
+        imgHeight="16px"
+        disabled={false}
+        onClick={this.handleClick} />
+    );
   }
 }
 
-OverviewCard.displayName = 'OverviewCard';
+Star.displayName = 'Star';
 
-OverviewCard.propTypes = {
-  page: PropTypes.object.isRequired,
+Star.propTypes = {
+  title: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
 };
 
-export default OverviewCard;
+export default Star;

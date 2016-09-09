@@ -10,22 +10,30 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import BaseCard from './base-card';
 import SimpleSummary from '../summaries/simple-summary';
 
-const SimpleCard = props => {
-  const meta = props.page.meta;
-  const title = meta.title || props.page.title;
+class SimpleCard extends Component {
+  constructor(props) {
+    super(props);
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+  }
 
-  return (
-    <BaseCard {...props}>
-      <SimpleSummary title={title}
-        url={props.page.location} />
-    </BaseCard>
-  );
-};
+  render() {
+    const meta = this.props.page.meta;
+    const title = meta.title || this.props.page.title;
+
+    return (
+      <BaseCard {...this.props}>
+        <SimpleSummary title={title}
+          url={this.props.page.location} />
+      </BaseCard>
+    );
+  }
+}
 
 SimpleCard.displayName = 'SimpleCard';
 

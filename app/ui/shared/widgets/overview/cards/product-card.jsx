@@ -10,7 +10,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import BaseCard from './base-card';
 import ProductSummary from '../summaries/product-summary';
@@ -45,26 +46,33 @@ function getPrice(meta) {
   return undefined;
 }
 
-const ProductCard = props => {
-  const meta = props.page.meta;
-  const title = meta.title || props.page.title;
-  const price = getPrice(meta);
-  const reviewCount = parseInt(meta.review_count, 10);
-  const rating = parseFloat(meta.rating, 10) || null;
-  const maxRating = parseInt(meta.best_rating || DEFAULT_MAX_RATING, 10) || null;
-  const minRating = parseInt(meta.worst_rating || DEFAULT_MIN_RATING, 10) || null;
+class ProductCard extends Component {
+  constructor(props) {
+    super(props);
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+  }
 
-  return (
-    <BaseCard {...props}>
-      <ProductSummary title={title}
-        price={price}
-        reviewCount={reviewCount}
-        rating={rating}
-        maxRating={maxRating}
-        minRating={minRating} />
-    </BaseCard>
-  );
-};
+  render() {
+    const meta = this.props.page.meta;
+    const title = meta.title || this.props.page.title;
+    const price = getPrice(meta);
+    const reviewCount = parseInt(meta.review_count, 10);
+    const rating = parseFloat(meta.rating, 10) || null;
+    const maxRating = parseInt(meta.best_rating || DEFAULT_MAX_RATING, 10) || null;
+    const minRating = parseInt(meta.worst_rating || DEFAULT_MIN_RATING, 10) || null;
+
+    return (
+      <BaseCard {...this.props}>
+        <ProductSummary title={title}
+          price={price}
+          reviewCount={reviewCount}
+          rating={rating}
+          maxRating={maxRating}
+          minRating={minRating} />
+      </BaseCard>
+    );
+  }
+}
 
 ProductCard.displayName = 'ProductCard';
 

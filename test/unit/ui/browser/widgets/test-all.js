@@ -16,10 +16,6 @@ const RequiredProps = {
     onClick: () => {},
     title: 'my title',
   },
-  Search: {
-    onKeyUp: () => {},
-    hidden: false,
-  },
   FittedImage: {
     src: 'url()',
     mode: 'cover',

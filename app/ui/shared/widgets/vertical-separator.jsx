@@ -10,7 +10,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import isEqual from 'lodash/isEqual';
 
 import Style from '../style';
 
@@ -22,12 +23,18 @@ const VERTICAL_SEPARATOR_STYLE = Style.registerStyle({
   background: 'var(--theme-separator-color)',
 });
 
-const VerticalSeparator = props => {
-  return (
-    <div {...props}
-      className={`${VERTICAL_SEPARATOR_STYLE} ${props.className || ''}`} />
-  );
-};
+class VerticalSeparator extends Component {
+  shouldComponentUpdate(nextProps) {
+    return !isEqual(this.props, nextProps);
+  }
+
+  render() {
+    return (
+      <div {...this.props}
+        className={`${VERTICAL_SEPARATOR_STYLE} ${this.props.className || ''}`} />
+    );
+  }
+}
 
 VerticalSeparator.displayName = 'VerticalSeparator';
 

@@ -10,7 +10,9 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import isEqual from 'lodash/isEqual';
+import omit from 'lodash/omit';
 
 import Style from '../style';
 
@@ -25,24 +27,71 @@ const INPUT_STYLE = Style.registerStyle({
   borderRadius: 'var(--theme-default-roundness)',
 });
 
-const Search = props => (
-  <div {...props}
-    className={`${SEARCH_STYLE} ${props.className || ''}`}>
-    <input className={INPUT_STYLE}
-      type="text"
-      placeholder="Search..."
-      onKeyUp={props.onKeyUp} />
-  </div>
-);
+class Search extends Component {
+  shouldComponentUpdate(nextProps) {
+    return !isEqual(this.props, nextProps);
+  }
+
+  set value(textContent) {
+    this.input.value = textContent;
+  }
+
+  focus() {
+    this.input.focus();
+  }
+
+  blur() {
+    this.input.blur();
+  }
+
+  select() {
+    this.input.select();
+  }
+
+  handleClick = () => {
+    this.select();
+
+    if (this.props.onClick) {
+      this.props.onClick();
+    }
+  }
+
+  render() {
+    return (
+      <div {...omit(this.props, Object.keys(OmittedContainerProps))}
+        className={`${SEARCH_STYLE} ${this.props.className || ''}`}>
+        <input ref={e => this.input = e}
+          className={INPUT_STYLE}
+          type="text"
+          placeholder={this.props.placeholder}
+          defaultValue={this.props.defaultValue}
+          onClick={this.handleClick}
+          onChange={this.props.onChange}
+          onKeyDown={this.props.onKeyDown}
+          onKeyUp={this.props.onKeyUp}
+          onKeyPress={this.props.onKeyPress} />
+      </div>
+    );
+  }
+}
 
 Search.displayName = 'Search';
 
+const OmittedContainerProps = {
+  onClick: PropTypes.func,
+  onChange: PropTypes.func,
+  onKeyDown: PropTypes.func,
+  onKeyUp: PropTypes.func,
+  placeholder: PropTypes.string,
+  defaultValue: PropTypes.string,
+};
+
 Search.propTypes = {
+  ...OmittedContainerProps,
   id: PropTypes.string,
   style: PropTypes.object,
   className: PropTypes.string,
-  hidden: PropTypes.bool.isRequired,
-  onKeyUp: PropTypes.func.isRequired,
+  hidden: PropTypes.bool,
 };
 
 export default Search;

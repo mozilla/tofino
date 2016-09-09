@@ -10,7 +10,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import isEqual from 'lodash/isEqual';
 
 import omit from 'lodash/omit';
 import Style from '../style';
@@ -31,25 +32,31 @@ const IMAGE_STYLE = Style.registerStyle({
  * A component that joins a fitted image and some children together
  * under the same parent.
  */
-const Thumbnail = props => {
-  return (
-    <div {...omit(props, Object.keys(UnfriendlyDomProps))}
-      className={`${THUMBNAIL_STYLE} ${props.className || ''}`}>
-      <FittedImage className={IMAGE_STYLE}
-        src={props.src}
-        width={props.imgWidth}
-        height={props.imgHeight}
-        mode={props.imgMode}
-        repeat={props.imgRepeat}
-        position={props.imgPosition} />
-      {props.children}
-    </div>
-  );
-};
+class Thumbnail extends Component {
+  shouldComponentUpdate(nextProps) {
+    return !isEqual(this.props, nextProps);
+  }
+
+  render() {
+    return (
+      <div {...omit(this.props, Object.keys(OmittedContainerProps))}
+        className={`${THUMBNAIL_STYLE} ${this.props.className || ''}`}>
+        <FittedImage className={IMAGE_STYLE}
+          src={this.props.src}
+          width={this.props.imgWidth}
+          height={this.props.imgHeight}
+          mode={this.props.imgMode}
+          repeat={this.props.imgRepeat}
+          position={this.props.imgPosition} />
+        {this.props.children}
+      </div>
+    );
+  }
+}
 
 Thumbnail.displayName = 'Thumbnail';
 
-const UnfriendlyDomProps = {
+const OmittedContainerProps = {
   src: PropTypes.string,
   imgWidth: PropTypes.string.isRequired,
   imgHeight: PropTypes.string.isRequired,
@@ -59,16 +66,16 @@ const UnfriendlyDomProps = {
 };
 
 Thumbnail.propTypes = {
-  ...UnfriendlyDomProps,
+  ...OmittedContainerProps,
   id: PropTypes.string,
   className: PropTypes.string,
   style: PropTypes.object,
   hidden: PropTypes.bool,
+  onClick: PropTypes.func,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,
   ]),
-  onClick: PropTypes.func,
 };
 
 export default Thumbnail;

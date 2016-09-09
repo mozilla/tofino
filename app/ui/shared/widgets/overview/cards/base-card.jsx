@@ -10,7 +10,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Style from '../../../style';
 import Thumbnail from '../../thumbnail';
@@ -71,53 +72,64 @@ const SUMMARY_STYLE = Style.registerStyle({
   paddingTop: '15px',
 });
 
-const BaseCard = props => {
-  let backgroundImage;
-  let badgeImage;
-
-  if (props.page.location.startsWith(Endpoints.TOFINO_PROTOCOL)) {
-    badgeImage = TOFINO_LOGO;
-  } else {
-    backgroundImage = props.backgroundImage || props.page.meta.image_url;
-    badgeImage = props.badgeImage || props.page.meta.icon_url;
+class BaseCard extends Component {
+  constructor(props) {
+    super(props);
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
 
-  return (
-    <Thumbnail className={CARD_STYLE}
-      data-selected={props.isSelected}
-      src={backgroundImage}
-      imgWidth={`${props.width}px`}
-      imgHeight={`${props.height}px`}
-      imgMode="100% auto"
-      imgPosition="top center"
-      onClick={() => props.onClick(props.page.id)}>
-      <FittedImage className={BADGE_STYLE}
-        style={backgroundImage ? {
-          top: 0,
-          left: 0,
-        } : {
-          top: '30%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-        }}
-        src={badgeImage}
-        width={backgroundImage
-          ? `${props.badgeWidth}px`
-          : `${props.badgeLargeWidth}px`}
-        height={backgroundImage
-          ? `${props.badgeHeight}px`
-          : `${props.badgeLargeHeight}px`}
-        mode="contain" />
-      <div className={BACKGROUND_STYLE}
-        style={{
-          backgroundImage: `url(${backgroundImage || badgeImage})`,
-        }} />
-      <div className={SUMMARY_STYLE}>
-        {props.children}
-      </div>
-    </Thumbnail>
-  );
-};
+  handleThumbnailClick = () => {
+    this.props.onClick(this.props.page.id);
+  }
+
+  render() {
+    let backgroundImage;
+    let badgeImage;
+
+    if (this.props.page.location.startsWith(Endpoints.TOFINO_PROTOCOL)) {
+      badgeImage = TOFINO_LOGO;
+    } else {
+      backgroundImage = this.props.backgroundImage || this.props.page.meta.image_url;
+      badgeImage = this.props.badgeImage || this.props.page.meta.icon_url;
+    }
+
+    return (
+      <Thumbnail className={CARD_STYLE}
+        data-selected={this.props.isSelected}
+        src={backgroundImage}
+        imgWidth={`${this.props.width}px`}
+        imgHeight={`${this.props.height}px`}
+        imgMode="100% auto"
+        imgPosition="top center"
+        onClick={this.handleThumbnailClick}>
+        <FittedImage className={BADGE_STYLE}
+          style={backgroundImage ? {
+            top: 0,
+            left: 0,
+          } : {
+            top: '30%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+          }}
+          src={badgeImage}
+          width={backgroundImage
+            ? `${this.props.badgeWidth}px`
+            : `${this.props.badgeLargeWidth}px`}
+          height={backgroundImage
+            ? `${this.props.badgeHeight}px`
+            : `${this.props.badgeLargeHeight}px`}
+          mode="contain" />
+        <div className={BACKGROUND_STYLE}
+          style={{
+            backgroundImage: `url(${backgroundImage || badgeImage})`,
+          }} />
+        <div className={SUMMARY_STYLE}>
+          {this.props.children}
+        </div>
+      </Thumbnail>
+    );
+  }
+}
 
 BaseCard.displayName = 'BaseCard';
 
