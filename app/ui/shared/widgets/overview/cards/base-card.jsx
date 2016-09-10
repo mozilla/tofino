@@ -78,8 +78,8 @@ class BaseCard extends Component {
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
 
-  handleThumbnailClick = () => {
-    this.props.onClick(this.props.page.id);
+  handleThumbnailClick = e => {
+    this.props.onClick({ page: this.props.page, event: e });
   }
 
   render() {
