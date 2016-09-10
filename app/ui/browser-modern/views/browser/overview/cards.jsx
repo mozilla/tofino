@@ -20,6 +20,7 @@ import OverviewCard from '../../../../shared/widgets/overview/cards/overview-car
 
 import * as UIConstants from '../../../constants/ui';
 import * as PageActions from '../../../actions/page-actions';
+import * as PageEffects from '../../../actions/page-effects';
 import * as PagesSelectors from '../../../selectors/pages';
 
 const OVERVIEW_CARDS_STYLE = Style.registerStyle({
@@ -34,8 +35,12 @@ class Cards extends Component {
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
 
-  handleCardClick = pageId => {
-    this.props.dispatch(PageActions.setSelectedPage(pageId));
+  handleCardClick = ({ page, event }) => {
+    if (event.metaKey || event.ctrlKey) {
+      this.props.dispatch(PageEffects.createPageSession(page.location));
+    } else {
+      this.props.dispatch(PageActions.setSelectedPage(page.id));
+    }
   }
 
   render() {
