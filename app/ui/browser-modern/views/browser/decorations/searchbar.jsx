@@ -53,15 +53,15 @@ class SearchBar extends Component {
   }
 
   handleInputChange = (e) => {
-    const doc = e.target.ownerDocument;
     const text = e.target.value;
-    this.props.dispatch(PageEffects.performCurrentPageSearch(text, doc));
+    this.props.dispatch(PageEffects.performCurrentPageSearch(text));
   }
 
   handleInputKeyDown = e => {
     if (e.key === 'Enter') {
       this.handleInputChange(e);
     } else if (e.key === 'Escape') {
+      this.props.dispatch(PageEffects.performCurrentPageSearch(null));
       this.props.dispatch(UIActions.hidePageSearch());
     }
   }

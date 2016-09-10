@@ -102,9 +102,9 @@ function* toggleDevtools({ webview }) {
 
 function* performPageSearch({ webview, text }) {
   if (!text) {
-    webview.executeJavaScript('window.getSelection().empty()');
+    webview.stopFindInPage('clearSelection');
   } else {
-    webview.executeJavaScript(`window.find('${text}', 0, 0, 1)`);
+    webview.findInPage(text);
   }
 }
 
