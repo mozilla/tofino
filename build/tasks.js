@@ -4,6 +4,7 @@
 import colors from 'colors/safe';
 import { logger } from './logging';
 import { safeGetBuildConfig } from './utils';
+import { buildDirectoryExists, deleteBuildConfigHashes } from './utils/rebuild';
 import argv from './utils/argv';
 
 /**
@@ -39,6 +40,12 @@ const Tasks = {
 
   async build(config = {}, options = {}) {
     await Lazy.config(config);
+
+    // Check if the `lib` directory exists. If it doesn't, need to rebuild.
+    if (!(await buildDirectoryExists())) {
+      deleteBuildConfigHashes();
+    }
+
     const watchers = [];
     try {
       watchers.push(await Lazy.buildModules());
@@ -65,6 +72,7 @@ const Tasks = {
   async serve() {
     await Lazy.config();
     const watchers = [
+      await Lazy.buildModules(),
       await Lazy.buildContentService(),
       await Lazy.buildUserAgentService(),
     ];
