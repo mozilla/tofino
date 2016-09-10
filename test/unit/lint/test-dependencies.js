@@ -32,8 +32,13 @@ describe('dependencies', () => {
       `app/ui${all}${valid}`,
     ];
 
+    const implicit = [
+      // These aren't specified in package.json but the are installed anyway.
+      'fbjs',
+    ];
+
     const temporary = [
-      // These aren't yet referenced by the main app.
+      // These aren't yet referenced by the main app, but we plan to do so.
       'datascript-mori',
     ];
 
@@ -42,7 +47,7 @@ describe('dependencies', () => {
 
     const appPackages = Object.keys(appManifest.dependencies);
     const mainPackages = Object.keys(mainManifest.dependencies);
-    const packages = without([...appPackages, ...mainPackages], ...temporary).sort();
+    const packages = without([...appPackages, ...mainPackages, ...implicit], ...temporary).sort();
 
     const sources = await globMany(paths);
     const matches = await regexFiles(sources, REQUIRES_REGEX, IMPORTS_REGEX);
@@ -57,8 +62,12 @@ describe('dependencies', () => {
       `test${all}${valid}`,
     ];
 
+    const implicit = [
+      // These aren't specified in the package.json but are installed anyway.
+    ];
+
     const temporary = [
-      // These aren't yet referenced by the main app.
+      // These aren't yet referenced by the main app, but we plan to do so.
     ];
 
     const ignored = [
@@ -106,7 +115,7 @@ describe('dependencies', () => {
     const mainPackages = Object.keys(mainManifest.dependencies);
     const mainDevPackages = Object.keys(mainManifest.devDependencies);
 
-    const packages = without(mainDevPackages, ...temporary, ...ignored).sort();
+    const packages = without([...mainDevPackages, ...implicit], ...temporary, ...ignored).sort();
 
     const sources = await globMany(paths);
     const matches = await regexFiles(sources, REQUIRES_REGEX, IMPORTS_REGEX);

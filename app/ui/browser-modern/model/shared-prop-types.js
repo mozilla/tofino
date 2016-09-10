@@ -17,18 +17,12 @@ import WebViewControllerModel from '../../shared/util/webview-controller';
 import ProfileModel from './profile';
 import PageModel from './page';
 import PageMetaModel from './page-meta';
+import LocationAutocompletionModel from './location-autocompletion';
 
 export const WebViewController = PropTypes.instanceOf(WebViewControllerModel);
 
 export const Profile = PropTypes.instanceOf(ProfileModel);
 export const Profiles = ImmutablePropTypes.listOf(Profile.isRequired);
-
-export const LocationAutocompletion = PropTypes.shape({
-  uri: PropTypes.string.isRequired,
-  title: PropTypes.string,
-});
-
-export const LocationAutocompletions = ImmutablePropTypes.listOf(LocationAutocompletion);
 
 export const PageIds = ImmutablePropTypes.listOf(PropTypes.string.isRequired);
 
@@ -37,3 +31,6 @@ export const Pages = ImmutablePropTypes.listOf(Page.isRequired);
 
 export const PageMeta = PropTypes.instanceOf(PageMetaModel);
 export const PageMetas = ImmutablePropTypes.listOf(PageMeta.isRequired);
+
+export const LocationAutocompletion = PropTypes.instanceOf(LocationAutocompletionModel);
+export const LocationAutocompletions = ImmutablePropTypes.listOf(LocationAutocompletion);
