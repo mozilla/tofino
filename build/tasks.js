@@ -1,7 +1,6 @@
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-import colors from 'colors/safe';
 import { logger } from './logging';
 import { safeGetBuildConfig } from './utils';
 import { buildDirectoryExists, deleteBuildConfigHashes } from './utils/rebuild';
@@ -20,12 +19,12 @@ const Lazy = {
   config: options => require('./task-config-builder').overwriteConfig(options),
   saveConfig: options => require('./task-config-builder').saveConfigAsPrev(options),
   buildModules: () => require('./task-build-modules').default(),
-  buildContentService: () => require('./task-build-service-content').default(),
-  buildUserAgentService: () => require('./task-build-service-ua').default(),
-  buildMainProcess: () => require('./task-build-main-process').default(),
-  buildPreload: () => require('./task-build-preload').default(),
-  buildBrowser: () => require('./task-build-browser').default(),
-  buildContent: () => require('./task-build-content').default(),
+  buildContentService: options => require('./task-build-service-content').default(options),
+  buildUserAgentService: options => require('./task-build-service-ua').default(options),
+  buildMainProcess: options => require('./task-build-main-process').default(options),
+  buildPreload: options => require('./task-build-preload').default(options),
+  buildBrowser: options => require('./task-build-browser').default(options),
+  buildContent: options => require('./task-build-content').default(options),
   run: args => require('./task-run').default(args),
   test: args => require('./task-test').default(args),
   serve: () => require('./task-serve').default(),
@@ -46,37 +45,36 @@ const Tasks = {
       deleteBuildConfigHashes();
     }
 
-    const watchers = [];
+    const builders = [];
     try {
-      watchers.push(await Lazy.buildModules());
-      watchers.push(await Lazy.buildContentService());
-      watchers.push(await Lazy.buildUserAgentService());
-      watchers.push(await Lazy.buildMainProcess());
-      watchers.push(await Lazy.buildBrowser());
-      watchers.push(await Lazy.buildPreload());
-      watchers.push(await Lazy.buildContent());
-      logger.info(colors.blue('Now watching the filesystem for changes...'));
+      builders.push(await Lazy.buildModules());
+      builders.push(await Lazy.buildContentService(options));
+      builders.push(await Lazy.buildUserAgentService(options));
+      builders.push(await Lazy.buildMainProcess(options));
+      builders.push(await Lazy.buildBrowser(options));
+      builders.push(await Lazy.buildPreload(options));
+      builders.push(await Lazy.buildContent(options));
     } catch (e) {
-      await Promise.all(watchers.map(w => w.close()));
+      await Promise.all(builders.map(w => w.close()));
       throw e;
     }
     if (!options.watch) {
-      await Promise.all(watchers.map(w => w.close()));
+      await Promise.all(builders.map(w => w.close()));
     }
     // Now that we've finished building, store the current configuration
     // so that we may diff in the future to avoid unnecessary builds.
     await Lazy.saveConfig();
-    return watchers;
+    return builders;
   },
 
   async serve() {
     await Lazy.config();
-    const watchers = [
+    const builders = [
       await Lazy.buildModules(),
       await Lazy.buildContentService(),
       await Lazy.buildUserAgentService(),
     ];
-    await Promise.all(watchers.map(w => w.close()));
+    await Promise.all(builders.map(w => w.close()));
     // Now that we've finished building, store the current configuration
     // so that we may diff in the future to avoid unnecessary builds.
     await Lazy.saveConfig();
@@ -84,15 +82,15 @@ const Tasks = {
   },
 
   async run(args = []) {
-    const watchers = await this.build({}, { watch: true });
+    const builders = await this.build({}, { watch: true });
     await Lazy.run(args);
-    await Promise.all(watchers.map(w => w.close()));
+    await Promise.all(builders.map(w => w.close()));
   },
 
   async runDev(args = []) {
-    const watchers = await this.build({ development: true }, { watch: true });
+    const builders = await this.build({ development: true }, { watch: true });
     await Lazy.run(args);
-    await Promise.all(watchers.map(w => w.close()));
+    await Promise.all(builders.map(w => w.close()));
   },
 
   async test(args = []) {

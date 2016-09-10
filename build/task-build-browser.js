@@ -10,20 +10,20 @@ import { shouldRebuild } from './utils/rebuild';
 import { webpackBuild } from './utils/webpack';
 import { logger } from './logging';
 
-export default async function() {
+export default async function(options) {
   const frontends = fs.readJsonSync(BROWSER_FRONTENDS_PATH);
-  const watchers = [];
+  const builders = [];
 
   for (const id of frontends) {
-    watchers.push(await buildFrontend(id));
+    builders.push(await buildFrontend(id, options));
   }
 
   return {
-    close: () => Promise.all(watchers.map(w => w.close())),
+    close: () => Promise.all(builders.map(w => w.close())),
   };
 }
 
-async function buildFrontend(id) {
+async function buildFrontend(id, options) {
   const configPath = path.resolve(BUILD_WEBPACK_CONFIGS_PATH, `webpack.${id}`);
   const { SRC_DIR, SHARED_DIR } = require(configPath); // eslint-disable-line
 
@@ -33,5 +33,5 @@ async function buildFrontend(id) {
   }
 
   logger.info(colors.cyan(`Building ${id}...`));
-  return await webpackBuild(configPath);
+  return await webpackBuild(configPath, options);
 }

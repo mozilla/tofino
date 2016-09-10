@@ -40,35 +40,70 @@ const WEBPACK_OUTPUT_CONFIG = {
   chunkOrigins: true,
 };
 
-let gConfig;
+let gSource;
 let gWatcher;
 
 process.on('message', e => {
   switch (e.message) {
-    case 'start': {
-      const { development } = getBuildConfig();
-      gConfig = require(e.configPath).default; // eslint-disable-line
-      gConfig = development ? makeDevConfig(gConfig) : makeProdConfig(gConfig);
-      gWatcher = startWebpackBuild(gConfig);
+    case 'build':
+      onProcessBuildMessage(e.configPath, e.options);
       break;
-    }
-    case 'stop': {
-      stopWebpackWatch(gConfig, gWatcher);
+    case 'will-close':
+      onProcessWillCloseMessage();
       break;
-    }
     default:
       break;
   }
 });
 
-function startWebpackBuild(config, incremental = false) {
+function onProcessBuildMessage(configPath, options) {
+  let config = require(configPath).default; // eslint-disable-line
+
+  const { development } = getBuildConfig();
+  config = development ? makeDevConfig(config) : makeProdConfig(config);
+  gSource = path.relative(Const.ROOT, path.dirname(config.entry));
+
+  if (options.watch) {
+    gWatcher = doWebpackWatchBuild(config);
+  } else {
+    doWebpackOneTimeBuild(config);
+  }
+}
+
+function onProcessWillCloseMessage() {
+  if (gWatcher) {
+    stopWebpackWatch(gWatcher).then(onFinishedCleaningUp);
+  } else {
+    onFinishedCleaningUp();
+  }
+}
+
+function onFinishedCleaningUp() {
+  process.send({ message: 'cleaned-up' });
+}
+
+function doWebpackOneTimeBuild(config) {
+  webpack(config).run((err, stats) => {
+    if (err) {
+      onFatalError(err);
+      return;
+    }
+    if (stats.hasErrors()) {
+      onBuildError(stats);
+      return;
+    }
+    onInitialBuild(stats);
+  });
+}
+
+function doWebpackWatchBuild(config, incremental = false) {
   return webpack(config).watch({}, (err, stats) => {
     if (err) {
       onFatalError(err);
       return;
     }
     if (stats.hasErrors()) {
-      onBuildError(config, stats);
+      onBuildError(stats);
       return;
     }
     // Per webpack's documentation, this handler can be called multiple times,
@@ -77,18 +112,20 @@ function startWebpackBuild(config, incremental = false) {
     // So just keep that in mind.
     if (!incremental) {
       incremental = true;
-      onInitialBuild(config, stats);
+      onInitialBuild(stats);
+      logger.info('Now watching:', colors.green(gSource));
     } else {
-      onIncrementalBuild(config, stats);
+      onIncrementalBuild(stats);
     }
   });
 }
 
-function stopWebpackWatch(config, watcher) {
-  const source = path.relative(Const.ROOT, path.dirname(config.entry));
-  watcher.close(() => {
-    logger.info('Stopped watching:', colors.green(source));
-    process.send({ message: 'stopped-watching' });
+function stopWebpackWatch(watcher) {
+  return new Promise(resolve => {
+    watcher.close(() => {
+      logger.info('Stopped watching:', colors.green(gSource));
+      resolve();
+    });
   });
 }
 
@@ -96,7 +133,7 @@ function onFatalError(err) {
   process.send({ message: 'fatal-error', err });
 }
 
-function onBuildError(config, stats) {
+function onBuildError(stats) {
   const output = stats.toString(WEBPACK_OUTPUT_CONFIG);
   const err = new Error('Compilation unsuccessful.');
 
@@ -107,16 +144,14 @@ function onBuildError(config, stats) {
   process.stderr.once('drain', () => process.send({ message: 'build-error', err }));
 }
 
-function onInitialBuild(config, stats) {
-  const source = path.relative(Const.ROOT, path.dirname(config.entry));
+function onInitialBuild(stats) {
   const { time } = stats.toJson();
-  logger.info('Build succeeded:', colors.green(source), colors.gray(`[${time} ms]`));
-  process.send({ message: 'started-watching' });
+  logger.info('Build succeeded:', colors.green(gSource), colors.gray(`[${time} ms]`));
+  process.send({ message: 'finished-build' });
 }
 
-function onIncrementalBuild(config, stats) {
-  const source = path.relative(Const.ROOT, path.dirname(config.entry));
+function onIncrementalBuild(stats) {
   const { time } = stats.toJson();
-  logger.info('Incremental build succeeded:', colors.green(source), colors.gray(`[${time} ms]`));
-  process.send({ message: 'still-watching' });
+  logger.info('Incremental build succeeded:', colors.green(gSource), colors.gray(`[${time} ms]`));
+  process.send({ message: 'finished-incremental-build' });
 }
