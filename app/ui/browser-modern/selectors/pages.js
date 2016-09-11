@@ -10,31 +10,54 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-// You might just want to use `getOrderedPageIds` instead.
-export function getPages(state) {
-  return getOrderedPageIds(state).map(id => getPageById(state, id));
-}
+// Pages maps and lists getters.
 
-export function getPageById(state, id) {
-  return state.pages.map.get(id);
+export function getUnorderedPages(state) {
+  return state.pages.map;
 }
 
 export function getOrderedPageIds(state) {
   return state.pages.orderedIds;
 }
 
-export function getSelectedPageId(state) {
-  return state.pages.selectedId;
+export function getPageCount(state) {
+  return getOrderedPageIds(state).size;
 }
 
-export function getSelectedPage(state) {
-  return getPageById(state, getSelectedPageId(state));
+// You might just want to use `getOrderedPageIds` instead, unless you need
+// access to the entire page models themselves (not just a handful of props).
+export function getPages(state) {
+  return getOrderedPageIds(state).map(id => getPageById(state, id));
 }
 
-export function getSelectedPageIndex(state) {
-  return getOrderedPageIds(state).findIndex(id => id === getSelectedPageId(state));
+// Specific page getters.
+
+export function getPageById(state, id) {
+  return getUnorderedPages(state).get(id);
+}
+
+export function getPageByIndex(state, index) {
+  return getPageById(state, getPageIdByIndex(index));
 }
 
 export function getPageIndexById(state, id) {
   return getOrderedPageIds(state).indexOf(id);
+}
+
+export function getPageIdByIndex(state, index) {
+  return getOrderedPageIds(state).get(index);
+}
+
+// Selected page getters.
+
+export function getSelectedPageId(state) {
+  return state.pages.selectedId;
+}
+
+export function getSelectedPageIndex(state) {
+  return getPageIndexById(state, getSelectedPageId(state));
+}
+
+export function getSelectedPage(state) {
+  return getPageById(state, getSelectedPageId(state));
 }

@@ -30,15 +30,6 @@ export default function(state = new Pages(), action) {
     case ActionTypes.SET_SELECTED_PAGE:
       return setSelectedPage(state, action.pageId);
 
-    case ActionTypes.SET_SELECTED_PAGE_INDEX:
-      return setSelectedPageIndex(state, action.pageIndex);
-
-    case ActionTypes.SET_SELECTED_PAGE_PREVIOUS:
-      return setSelectedPagePrevious(state);
-
-    case ActionTypes.SET_SELECTED_PAGE_NEXT:
-      return setSelectedPageNext(state);
-
     case ActionTypes.RESET_PAGE_DATA:
       return resetPageData(state, action.pageId);
 
@@ -101,33 +92,6 @@ function removePage(state, pageId) {
 
 function setSelectedPage(state, pageId) {
   return state.set('selectedId', pageId);
-}
-
-function setSelectedPageIndex(state, pageIndex) {
-  const selectedPageId = state.orderedIds.get(pageIndex);
-  if (selectedPageId) {
-    return state.set('selectedId', selectedPageId);
-  }
-  return state;
-}
-
-function setSelectedPagePrevious(state) {
-  const selectedId = state.selectedId;
-  const selectedIndex = state.orderedIds.findIndex(id => id === selectedId);
-
-  // Immutable handles looping for us via negative indexes.
-  const prevIndex = selectedIndex - 1;
-  return setSelectedPageIndex(state, prevIndex);
-}
-
-function setSelectedPageNext(state) {
-  const selectedId = state.selectedId;
-  const selectedIndex = state.orderedIds.findIndex(id => id === selectedId);
-
-  // Manually handle looping when going out of bounds rightward.
-  const pageCount = state.orderedIds.size;
-  const nextIndex = selectedIndex === pageCount - 1 ? 0 : selectedIndex + 1;
-  return setSelectedPageIndex(state, nextIndex);
 }
 
 function resetPageData(state, pageId) {

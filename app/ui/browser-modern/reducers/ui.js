@@ -29,9 +29,6 @@ export default function(state = new UIState(), action) {
 
     case ActionTypes.CREATE_PAGE:
     case ActionTypes.SET_SELECTED_PAGE:
-    case ActionTypes.SET_SELECTED_PAGE_INDEX:
-    case ActionTypes.SET_SELECTED_PAGE_PREVIOUS:
-    case ActionTypes.SET_SELECTED_PAGE_NEXT:
       state = setPageSearchVisibility(state, false);
       state = setOverviewVisibility(state, false);
       return state;
