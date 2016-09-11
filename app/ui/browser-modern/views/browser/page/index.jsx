@@ -73,6 +73,18 @@ class Page extends Component {
       this.props.dispatch(UIEffects.focusURLBar(this.props.pageId, { select: isTofino }));
     });
 
+    this.webview.addEventListener('did-navigate-in-page', e => {
+      // Like `did-navigate`, but fired only when an in-page navigation happens,
+      // meaning that the page URL changes but does not cause navigation outside
+      // of the page (e.g. when the hashchange event is triggered).
+      if (!e.isMainFrame || e.url === this.props.pageLocation) {
+        return;
+      }
+      this.props.dispatch(PageActions.setPageDetails(this.props.pageId, { location: e.url }));
+      this.props.dispatch(UIEffects.setURLBarValue(this.props.pageId, e.url));
+      this.props.dispatch(ProfileEffects.addRemoteHistory(this.props.pageId));
+    });
+
     this.webview.addEventListener('did-finish-load', () => {
       // Event fired when the navigation is done and onload event is dispatched.
       // May be emitted multiple times for every single frame.
@@ -100,6 +112,8 @@ class Page extends Component {
 
     this.webview.addEventListener('page-title-set', e => {
       this.props.dispatch(PageActions.setPageDetails(this.props.pageId, { title: e.title }));
+      // Make sure we record this page navigation in the remote history
+      // only after we have a title available.
       this.props.dispatch(ProfileEffects.addRemoteHistory(this.props.pageId));
     });
 
