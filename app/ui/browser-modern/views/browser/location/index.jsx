@@ -61,7 +61,9 @@ class Location extends Component {
   }
 
   handleInputChange = e => {
-    this.props.dispatch(ProfileEffects.fetchLocationAutocompletions(e.target.value));
+    const pageId = this.props.pageId;
+    const text = e.target.value;
+    this.props.dispatch(ProfileEffects.fetchLocationAutocompletions(pageId, text));
   }
 
   handleInputKeyDown = e => {
@@ -119,7 +121,7 @@ Location.propTypes = {
   pageId: PropTypes.string.isRequired,
   pageLocation: PropTypes.string.isRequired,
   pageIsBookmarked: PropTypes.bool.isRequired,
-  locationAutocompletions: SharedPropTypes.LocationAutocompletions.isRequired,
+  locationAutocompletions: SharedPropTypes.LocationAutocompletions,
   onNavigate: PropTypes.func.isRequired,
 };
 
@@ -128,7 +130,7 @@ function mapStateToProps(state, ownProps) {
   return {
     pageLocation: page ? page.location : '',
     pageIsBookmarked: page ? ProfileSelectors.isBookmarked(state, page.location) : false,
-    locationAutocompletions: UISelectors.getLocationAutocompletions(state),
+    locationAutocompletions: page ? UISelectors.getLocationAutocompletions(state, page.id) : null,
   };
 }
 

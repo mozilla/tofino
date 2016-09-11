@@ -36,13 +36,13 @@ export default function() {
   ];
 }
 
-function* fetchCompletions({ text }) {
+function* fetchCompletions({ pageId, text }) {
   const autocompletions = [{ uri: text }];
   if (text) {
     const { results } = yield call(UserAgent.query, { text });
     autocompletions.push(...results);
   }
-  yield put(UIActions.setLocationAutocompletions(autocompletions));
+  yield put(UIActions.setLocationAutocompletions(pageId, autocompletions));
 }
 
 function* setRemoteBookmarkState({ page, bookmarked }) {

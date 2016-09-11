@@ -35,13 +35,14 @@ export default function(state = new UIState(), action) {
       return state;
 
     case ActionTypes.SET_LOCATION_AUTOCOMPLETIONS:
-      return setLocationAutocompletions(state, action.autocompletions);
+      return setLocationAutocompletions(state, action.pageId, action.autocompletions);
 
+    case ActionTypes.REMOVE_PAGE:
     case EffectTypes.NAVIGATE_PAGE_TO:
     case EffectTypes.NAVIGATE_PAGE_BACK:
     case EffectTypes.NAVIGATE_PAGE_FORWARD:
     case EffectTypes.NAVIGATE_PAGE_REFRESH:
-      return setLocationAutocompletions(state, []);
+      return setLocationAutocompletions(state, action.pageId, null);
 
     default:
       return state;
@@ -60,7 +61,10 @@ function setOverviewVisibility(state, visibility) {
   return state.set('overviewVisible', visibility);
 }
 
-function setLocationAutocompletions(state, autocompletions) {
+function setLocationAutocompletions(state, pageId, autocompletions) {
+  if (!autocompletions || !autocompletions.length) {
+    return state.deleteIn(['locationAutocompletions', pageId]);
+  }
   const records = autocompletions.map(e => new LocationAutocompletion(e));
-  return state.set('locationAutocompletions', Immutable.List(records));
+  return state.setIn(['locationAutocompletions', pageId], Immutable.List(records));
 }

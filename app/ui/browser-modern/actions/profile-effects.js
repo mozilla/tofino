@@ -13,9 +13,10 @@ specific language governing permissions and limitations under the License.
 import * as EffectTypes from '../constants/effect-types';
 import * as PagesSelectors from '../selectors/pages';
 
-export function fetchLocationAutocompletions(text) {
+export function fetchLocationAutocompletions(pageId, text) {
   return {
     type: EffectTypes.FETCH_LOCATION_AUTOCOMPLETIONS,
+    pageId,
     text,
   };
 }

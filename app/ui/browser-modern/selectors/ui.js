@@ -22,6 +22,6 @@ export function getOverviewVisible(state) {
   return state.ui.overviewVisible;
 }
 
-export function getLocationAutocompletions(state) {
-  return state.ui.locationAutocompletions;
+export function getLocationAutocompletions(state, pageId) {
+  return state.ui.locationAutocompletions.get(pageId);
 }
