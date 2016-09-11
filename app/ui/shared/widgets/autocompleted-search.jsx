@@ -48,10 +48,11 @@ class AutocompletedSearch extends Component {
   handleInputKeyDown = e => {
     const { showAutocompletions, selectedIndex } = this.state;
     const { autocompletionResults } = this.props;
+    const hasAutocompletionResults = autocompletionResults && autocompletionResults.size;
 
     switch (e.key) {
       case 'Enter': {
-        if (showAutocompletions && autocompletionResults.size) {
+        if (showAutocompletions && hasAutocompletionResults) {
           const data = this.props.autocompletionResults.get(this.state.selectedIndex);
           this.props.onAutocompletionSelect(data);
           // Don't call any `onKeyDown` event handler on a parent component.
@@ -69,7 +70,7 @@ class AutocompletedSearch extends Component {
         }
         break;
       case 'ArrowUp':
-        if (showAutocompletions && autocompletionResults.size) {
+        if (showAutocompletions && hasAutocompletionResults) {
           if (selectedIndex === 0) {
             this.setState({ selectedIndex: autocompletionResults.size - 1 });
           } else {
@@ -81,7 +82,7 @@ class AutocompletedSearch extends Component {
         break;
       case 'Tab':
       case 'ArrowDown':
-        if (showAutocompletions && autocompletionResults.size) {
+        if (showAutocompletions && hasAutocompletionResults) {
           if (selectedIndex === autocompletionResults.size - 1) {
             this.setState({ selectedIndex: 0 });
           } else {
@@ -121,6 +122,7 @@ class AutocompletedSearch extends Component {
   }
 
   render() {
+    const results = this.props.autocompletionResults;
     return (
       <div className={`widget-autocompleted-search ${AUTOCOMPLETED_SEARCH_STYLE}`}>
         <Search {...omit(this.props, Object.keys(AutocompletionProps))}
@@ -131,7 +133,7 @@ class AutocompletedSearch extends Component {
           selectedIndex={this.state.selectedIndex}
           onMouseOverChildComponent={this.handleMouseOverChildComponent}
           onClickOnChildComponent={this.handleClickOnChildComponent}>
-          {this.props.autocompletionResults.map(this.createAutocompletionListItem).toArray()}
+          {results && results.map(this.createAutocompletionListItem).toArray()}
         </AutocompletionList>
       </div>
     );
@@ -141,7 +143,7 @@ class AutocompletedSearch extends Component {
 AutocompletedSearch.displayName = 'AutocompletedSearch';
 
 const AutocompletionProps = {
-  autocompletionResults: ImmutablePropTypes.list.isRequired,
+  autocompletionResults: ImmutablePropTypes.list,
   autocompletionListItemComponent: PropTypes.func.isRequired,
   onAutocompletionSelect: PropTypes.func.isRequired,
 };
