@@ -117,7 +117,8 @@ class Tab extends Component {
           ) : (
             null
           )}
-          <div className={`tab-title ${TAB_TITLE_STYLE}`}>
+          <div className={`tab-title ${TAB_TITLE_STYLE}`}
+            title={this.props.pageTitle}>
             {this.props.pageTitle || this.props.pageLocation}
           </div>
           <Btn className="tab-close-button"
