@@ -39,7 +39,7 @@ const PAGE_CONTAINER_STYLE = Style.registerStyle({
   bottom: 0,
   left: 0,
   right: 0,
-  '&[data-is-hidden=true]': {
+  '&[data-is-active=false]': {
     opacity: 0,
     pointerEvents: 'none',
   },
@@ -59,7 +59,6 @@ class ContentArea extends Component {
         {this.props.pageIds.map(pageId => (
           <div key={`browser-page-container-${pageId}`}
             className={`browser-page-container ${PAGE_CONTAINER_STYLE}`}
-            data-is-hidden={pageId !== this.props.selectedPageId}
             data-is-active={pageId === this.props.selectedPageId}>
             <NavBar pageId={pageId}
               onNavigateBack={this.props.onNavigateBack}
