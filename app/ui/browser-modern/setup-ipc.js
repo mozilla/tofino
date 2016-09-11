@@ -15,6 +15,7 @@ import { ipcRenderer } from '../../shared/electron';
 import * as ContentURLs from '../../shared/constants/content-pages-locations';
 import * as PageActions from './actions/page-actions';
 import * as PageEffects from './actions/page-effects';
+import * as UISelectors from './selectors/ui';
 import * as UIActions from './actions/ui-actions';
 import * as UIEffects from './actions/ui-effects';
 import * as Gestures from '../shared/util/gestures';
@@ -40,23 +41,33 @@ export default function({ store, userAgentClient }) {
   });
 
   ipcRenderer.on('close-tab', () => {
-    store.dispatch(PageEffects.destroyCurrentPageSession());
+    if (!UISelectors.getOverviewVisible(store.getState())) {
+      store.dispatch(PageEffects.destroyCurrentPageSession());
+    }
   });
 
   ipcRenderer.on('go-back', () => {
-    store.dispatch(PageEffects.navigateCurrentPageBack());
+    if (!UISelectors.getOverviewVisible(store.getState())) {
+      store.dispatch(PageEffects.navigateCurrentPageBack());
+    }
   });
 
   ipcRenderer.on('go-forward', () => {
-    store.dispatch(PageEffects.navigateCurrentPageForward());
+    if (!UISelectors.getOverviewVisible(store.getState())) {
+      store.dispatch(PageEffects.navigateCurrentPageForward());
+    }
   });
 
   ipcRenderer.on('page-refresh', () => {
-    store.dispatch(PageEffects.navigateCurrentPageRefresh());
+    if (!UISelectors.getOverviewVisible(store.getState())) {
+      store.dispatch(PageEffects.navigateCurrentPageRefresh());
+    }
   });
 
   ipcRenderer.on('toggle-devtools', () => {
-    store.dispatch(PageEffects.toggleCurrentPageDevtools());
+    if (!UISelectors.getOverviewVisible(store.getState())) {
+      store.dispatch(PageEffects.toggleCurrentPageDevtools());
+    }
   });
 
   ipcRenderer.on('select-tab-previous', () => {
@@ -76,11 +87,15 @@ export default function({ store, userAgentClient }) {
   });
 
   ipcRenderer.on('show-page-search', () => {
-    store.dispatch(UIActions.showPageSearch());
+    if (!UISelectors.getOverviewVisible(store.getState())) {
+      store.dispatch(UIActions.showPageSearch());
+    }
   });
 
   ipcRenderer.on('hide-page-search', () => {
-    store.dispatch(UIActions.hidePageSearch());
+    if (!UISelectors.getOverviewVisible(store.getState())) {
+      store.dispatch(UIActions.hidePageSearch());
+    }
   });
 
   ipcRenderer.on('show-stars', () => {
