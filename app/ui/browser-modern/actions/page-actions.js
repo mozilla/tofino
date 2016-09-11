@@ -11,6 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import * as ActionTypes from '../constants/action-types';
+import * as PagesSelectors from '../selectors/pages';
 
 export function createPage(id, location, options) {
   return {
@@ -36,21 +37,29 @@ export function setSelectedPage(pageId) {
 }
 
 export function setSelectedPageIndex(pageIndex) {
-  return {
-    type: ActionTypes.SET_SELECTED_PAGE_INDEX,
-    pageIndex,
+  return (dispatch, getState) => {
+    dispatch(setSelectedPage(PagesSelectors.getPageIdByIndex(getState(), pageIndex)));
   };
 }
 
 export function setSelectedPagePrevious() {
-  return {
-    type: ActionTypes.SET_SELECTED_PAGE_PREVIOUS,
+  return (dispatch, getState) => {
+    const selectedIndex = PagesSelectors.getSelectedPageIndex(getState());
+
+    // Immutable handles looping for us via negative indexes.
+    const prevIndex = selectedIndex - 1;
+    dispatch(setSelectedPageIndex(prevIndex));
   };
 }
 
 export function setSelectedPageNext() {
-  return {
-    type: ActionTypes.SET_SELECTED_PAGE_NEXT,
+  return (dispatch, getState) => {
+    const selectedIndex = PagesSelectors.getSelectedPageIndex(getState());
+    const pageCount = PagesSelectors.getPageCount(getState());
+
+    // Manually handle looping when going out of bounds rightward.
+    const nextIndex = selectedIndex === pageCount - 1 ? 0 : selectedIndex + 1;
+    dispatch(setSelectedPageIndex(nextIndex));
   };
 }
 
