@@ -14,6 +14,9 @@ import Immutable from 'immutable';
 
 const PageState = Immutable.Record({
   load: undefined,
+  canGoBack: false,
+  canGoForward: false,
+  canRefresh: false,
 }, 'PageState');
 
 PageState.STATES = {

@@ -118,7 +118,7 @@ class Page extends Component {
     });
 
     this.webview.addEventListener('dom-ready', () => {
-      this.props.dispatch(PageActions.setPageDetails(this.props.pageId, {
+      this.props.dispatch(PageActions.setPageState(this.props.pageId, {
         canGoBack: this.webview.canGoBack(),
         canGoForward: this.webview.canGoForward(),
         canRefresh: true,

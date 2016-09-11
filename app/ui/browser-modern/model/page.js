@@ -21,9 +21,6 @@ export default class Page extends Immutable.Record({
   id: undefined,
   location: '',
   title: '',
-  canGoBack: false,
-  canGoForward: false,
-  canRefresh: false,
   meta: new PageMeta(),
   state: new PageState(),
 }, 'Page') {
