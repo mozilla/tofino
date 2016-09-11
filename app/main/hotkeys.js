@@ -38,6 +38,9 @@ const HOTKEYS = new Map([
   ['CmdOrCtrl+Alt+Right', bw => () => bw.webContents.send('select-tab-next')],
   ['Ctrl+Tab', bw => () => bw.webContents.send('select-tab-next')],
   ['CmdOrCtrl+F', bw => () => bw.webContents.send('show-page-search')],
+  ['CmdOrCtrl+=', bw => () => bw.webContents.send('zoom-in')],
+  ['CmdOrCtrl+-', bw => () => bw.webContents.send('zoom-out')],
+  ['CmdOrCtrl+0', bw => () => bw.webContents.send('zoom-reset')],
 ]);
 
 export function bindBrowserWindowHotkeys(browserWindow) {

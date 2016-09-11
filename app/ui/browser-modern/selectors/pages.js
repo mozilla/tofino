@@ -61,3 +61,13 @@ export function getSelectedPageIndex(state) {
 export function getSelectedPage(state) {
   return getPageById(state, getSelectedPageId(state));
 }
+
+// Page data getters.
+
+export function getPageState(state, id) {
+  return getPageById(state, id).state;
+}
+
+export function getPageZoomLevel(state, id) {
+  return getPageState(state, id).zoomLevel;
+}

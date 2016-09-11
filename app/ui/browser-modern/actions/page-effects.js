@@ -15,6 +15,7 @@ import uuid from 'uuid';
 import { getWebViewForPageId } from '../util';
 import * as EffectTypes from '../constants/effect-types';
 import * as PagesSelectors from '../selectors/pages';
+import PageState from '../model/page-state';
 
 export function createPageSession(location, options) {
   return {
@@ -108,6 +109,61 @@ export function toggleDevtools(pageId, doc = document) {
 export function toggleCurrentPageDevtools() {
   return (dispatch, getState) => {
     dispatch(toggleDevtools(PagesSelectors.getSelectedPageId(getState())));
+  };
+}
+
+export function setPageZoomLevel(pageId, zoomLevel, doc = document) {
+  return {
+    type: EffectTypes.SET_PAGE_ZOOM_LEVEL,
+    webview: getWebViewForPageId(doc, pageId),
+    pageId,
+    zoomLevel,
+  };
+}
+
+export function setCurrentPageZoomLevel(zoomLevel) {
+  return (dispatch, getState) => {
+    dispatch(setPageZoomLevel(PagesSelectors.getSelectedPageId(getState()), zoomLevel));
+  };
+}
+
+export function performPageZoomIn(pageId) {
+  return (dispatch, getState) => {
+    let zoomLevel = PagesSelectors.getPageZoomLevel(getState(), pageId);
+    zoomLevel += PageState.ZOOM_LEVEL_10_PERCENT;
+    dispatch(setPageZoomLevel(pageId, zoomLevel));
+  };
+}
+
+export function performCurrentPageZoomIn() {
+  return (dispatch, getState) => {
+    dispatch(performPageZoomIn(PagesSelectors.getSelectedPageId(getState())));
+  };
+}
+
+export function performPageZoomOut(pageId) {
+  return (dispatch, getState) => {
+    let zoomLevel = PagesSelectors.getPageZoomLevel(getState(), pageId);
+    zoomLevel -= PageState.ZOOM_LEVEL_10_PERCENT;
+    dispatch(setPageZoomLevel(pageId, zoomLevel));
+  };
+}
+
+export function performCurrentPageZoomOut() {
+  return (dispatch, getState) => {
+    dispatch(performPageZoomOut(PagesSelectors.getSelectedPageId(getState())));
+  };
+}
+
+export function performPageZoomReset(pageId) {
+  return (dispatch) => {
+    dispatch(setPageZoomLevel(pageId, PageState.ZOOM_LEVEL_DEFAULT));
+  };
+}
+
+export function performCurrentPageZoomReset() {
+  return (dispatch, getState) => {
+    dispatch(performPageZoomReset(PagesSelectors.getSelectedPageId(getState())));
   };
 }
 
