@@ -119,7 +119,11 @@ function setPageDetails(state, pageId, pageDetails) {
 }
 
 function setPageMeta(state, pageId, pageMeta) {
-  return setPageDetails(state, pageId, { meta: new PageMeta(pageMeta) });
+  return state.withMutations(mut => {
+    for (const [key, value] of Object.entries(pageMeta)) {
+      mut.update('map', m => m.setIn([pageId, 'meta', key], value));
+    }
+  });
 }
 
 function setPageState(state, pageId, pageState) {
