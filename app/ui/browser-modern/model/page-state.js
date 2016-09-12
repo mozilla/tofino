@@ -12,12 +12,18 @@ specific language governing permissions and limitations under the License.
 
 import Immutable from 'immutable';
 
+import SSLCertificate from './ssl-certificate';
+
 const PageState = Immutable.Record({
   load: undefined,
   canGoBack: false,
   canGoForward: false,
   canRefresh: false,
   zoomLevel: 0,
+  code: undefined,
+  description: undefined,
+  certificate: new SSLCertificate(),
+  error: undefined,
 }, 'PageState');
 
 PageState.STATES = {

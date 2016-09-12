@@ -17,6 +17,7 @@ import Page from '../model/page';
 import Pages from '../model/pages';
 import PageMeta from '../model/page-meta';
 import PageState from '../model/page-state';
+import SSLCertificateModel from '../model/ssl-certificate';
 import * as UIConstants from '../constants/ui';
 import * as ActionTypes from '../constants/action-types';
 
@@ -138,7 +139,12 @@ function setPageState(state, pageId, pageState) {
         logger.warn(`Skipping setting of \`${key}\` on page state.`);
         continue;
       }
-      mut.update('map', m => m.setIn([pageId, 'state', key], value));
+
+      let setValue = value;
+      if (key === 'certificate') {
+        setValue = new SSLCertificateModel(value);
+      }
+      mut.update('map', m => m.setIn([pageId, 'state', key], setValue));
     }
   });
 }

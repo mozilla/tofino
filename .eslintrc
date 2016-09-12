@@ -72,7 +72,7 @@
     "babel/generator-star-spacing": ["error", { before: false, after: true }],
 
     "react/display-name": ["error", { ignoreTranspilerName: true }],
-
+    "react/prefer-stateless-function": ["off"],
     "react/jsx-closing-bracket-location": ["error", "after-props"],
     "react/jsx-max-props-per-line": ["error", { "maximum": 1 }],
     "react/jsx-first-prop-new-line": ["off"],

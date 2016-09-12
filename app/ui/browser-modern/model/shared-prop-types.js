@@ -18,6 +18,8 @@ import ProfileModel from './profile';
 import PageModel from './page';
 import PageMetaModel from './page-meta';
 import LocationAutocompletionModel from './location-autocompletion';
+import PageStateModel from './page-state';
+import SSLCertificateModel from './ssl-certificate';
 
 export const WebViewController = PropTypes.instanceOf(WebViewControllerModel);
 
@@ -30,7 +32,9 @@ export const Page = PropTypes.instanceOf(PageModel);
 export const Pages = ImmutablePropTypes.listOf(Page.isRequired);
 
 export const PageMeta = PropTypes.instanceOf(PageMetaModel);
+export const PageState = PropTypes.instanceOf(PageStateModel);
 export const PageMetas = ImmutablePropTypes.listOf(PageMeta.isRequired);
+export const SSLCertificate = PropTypes.instanceOf(SSLCertificateModel);
 
 export const LocationAutocompletion = PropTypes.instanceOf(LocationAutocompletionModel);
 export const LocationAutocompletions = ImmutablePropTypes.listOf(LocationAutocompletion);
