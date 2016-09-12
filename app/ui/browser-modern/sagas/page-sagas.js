@@ -69,26 +69,26 @@ function* destroyPageSession({ page, currentPageCount }) {
 }
 
 function* naviatePageTo({ pageId, webview, location }) {
-  put(PageActions.resetPageData(pageId));
-  put(PageActions.setPageState(pageId, { load: PageState.STATES.PRE_LOADING }));
+  yield put(PageActions.resetPageData(pageId));
+  yield put(PageActions.setPageState(pageId, { load: PageState.STATES.PRE_LOADING }));
   webview.setAttribute('src', location);
 }
 
 function* navigatePageBack({ pageId, webview }) {
-  put(PageActions.resetPageData(pageId));
-  put(PageActions.setPageState(pageId, { load: PageState.STATES.PRE_LOADING }));
+  yield put(PageActions.resetPageData(pageId));
+  yield put(PageActions.setPageState(pageId, { load: PageState.STATES.PRE_LOADING }));
   webview.goBack();
 }
 
 function* navigatePageForward({ pageId, webview }) {
-  put(PageActions.resetPageData(pageId));
-  put(PageActions.setPageState(pageId, { load: PageState.STATES.PRE_LOADING }));
+  yield put(PageActions.resetPageData(pageId));
+  yield put(PageActions.setPageState(pageId, { load: PageState.STATES.PRE_LOADING }));
   webview.goForward();
 }
 
 function* navigatePageRefresh({ pageId, webview }) {
-  put(PageActions.resetPageData(pageId));
-  put(PageActions.setPageState(pageId, { load: PageState.STATES.PRE_LOADING }));
+  yield put(PageActions.resetPageData(pageId));
+  yield put(PageActions.setPageState(pageId, { load: PageState.STATES.PRE_LOADING }));
   webview.reload();
 }
 

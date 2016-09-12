@@ -16,7 +16,6 @@ import { logger } from '../../../shared/logging';
 import Page from '../model/page';
 import Pages from '../model/pages';
 import PageMeta from '../model/page-meta';
-import PageState from '../model/page-state';
 import * as UIConstants from '../constants/ui';
 import * as ActionTypes from '../constants/action-types';
 
@@ -132,14 +131,11 @@ function setSelectedPageNext(state) {
 }
 
 function resetPageData(state, pageId) {
-  return setPageDetails(state, pageId, {
-    location: '',
-    title: '',
-    canGoBack: false,
-    canGoForward: false,
-    canRefresh: false,
-    meta: new PageMeta(),
-    state: new PageState(),
+  return state.withMutations(mut => {
+    const fresh = new Page({ id: pageId }).entries();
+    for (const [key, value] of fresh) {
+      mut.update('map', m => m.setIn([pageId, key], value));
+    }
   });
 }
 
