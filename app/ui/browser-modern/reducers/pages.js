@@ -16,6 +16,7 @@ import { logger } from '../../../shared/logging';
 import Page from '../model/page';
 import Pages from '../model/pages';
 import PageMeta from '../model/page-meta';
+import PageState from '../model/page-state';
 import * as UIConstants from '../constants/ui';
 import * as ActionTypes from '../constants/action-types';
 
@@ -121,6 +122,10 @@ function setPageDetails(state, pageId, pageDetails) {
 function setPageMeta(state, pageId, pageMeta) {
   return state.withMutations(mut => {
     for (const [key, value] of Object.entries(pageMeta)) {
+      if (!(key in PageMeta.prototype)) {
+        logger.warn(`Skipping setting of \`${key}\` on page meta.`);
+        continue;
+      }
       mut.update('map', m => m.setIn([pageId, 'meta', key], value));
     }
   });
@@ -129,6 +134,10 @@ function setPageMeta(state, pageId, pageMeta) {
 function setPageState(state, pageId, pageState) {
   return state.withMutations(mut => {
     for (const [key, value] of Object.entries(pageState)) {
+      if (!(key in PageState.prototype)) {
+        logger.warn(`Skipping setting of \`${key}\` on page state.`);
+        continue;
+      }
       mut.update('map', m => m.setIn([pageId, 'state', key], value));
     }
   });
