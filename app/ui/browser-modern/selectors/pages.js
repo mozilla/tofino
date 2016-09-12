@@ -64,6 +64,10 @@ export function getSelectedPage(state) {
 
 // Page data getters.
 
+export function getPageMeta(state, id) {
+  return getPageById(state, id).meta;
+}
+
 export function getPageState(state, id) {
   return getPageById(state, id).state;
 }

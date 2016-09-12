@@ -117,6 +117,12 @@ class Page extends Component {
       this.props.dispatch(ProfileEffects.addRemoteHistory(this.props.pageId));
     });
 
+    this.webview.addEventListener('page-favicon-updated', e => {
+      this.props.dispatch(PageActions.setPageDetails(this.props.pageId, {
+        favicon_url: e.favicons[0],
+      }));
+    });
+
     this.webview.addEventListener('dom-ready', () => {
       this.props.dispatch(PageActions.setPageState(this.props.pageId, {
         canGoBack: this.webview.canGoBack(),

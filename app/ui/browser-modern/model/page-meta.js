@@ -13,12 +13,19 @@ specific language governing permissions and limitations under the License.
 import Immutable from 'immutable';
 
 export default Immutable.Record({
-  description: undefined,
+  // Page data.
+  url: undefined,
+  title: undefined,
+
+  // Page media.
   icon_url: undefined,
   image_url: undefined,
-  title: undefined,
-  type: undefined,
-  url: undefined,
+
+  // Page info.
+  description: undefined,
+  keywords: undefined,
+
+  // Product pages properties.
   rating: undefined,
   worst_rating: undefined,
   best_rating: undefined,

@@ -153,7 +153,7 @@ function mapStateToProps(state, ownProps) {
   return {
     pageTitle: page ? page.title : '',
     pageLocation: page ? page.location : '',
-    pageFavicon: page ? page.meta.icon_url : '',
+    pageFavicon: page ? page.favicon_url : '',
     pageLoadState: page ? page.state.load : '',
     isActive: PagesSelectors.getSelectedPageId(state) === ownProps.pageId,
     isOverviewVisible: UISelectors.getOverviewVisible(state),

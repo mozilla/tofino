@@ -90,7 +90,7 @@ class BaseCard extends Component {
       badgeImage = TOFINO_LOGO;
     } else {
       backgroundImage = this.props.backgroundImage || this.props.page.meta.image_url;
-      badgeImage = this.props.badgeImage || this.props.page.meta.icon_url;
+      badgeImage = this.props.badgeImage || this.props.page.favicon_url;
     }
 
     return (
