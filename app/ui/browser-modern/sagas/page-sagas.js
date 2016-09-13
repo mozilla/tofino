@@ -73,25 +73,37 @@ function* destroyPageSession({ page, currentPageCount }) {
 
 function* naviatePageTo({ pageId, webview, location }) {
   yield put(PageActions.resetPageData(pageId));
-  yield put(PageActions.setPageState(pageId, { load: PageState.STATES.PRE_LOADING }));
+  yield put(PageActions.setPageState(pageId, {
+    load: PageState.STATES.PRE_LOADING,
+    navigationType: PageState.NAVIGATION_TYPES.NAVIGATED_TO_LOCATION,
+  }));
   webview.setAttribute('src', location);
 }
 
 function* navigatePageBack({ pageId, webview }) {
   yield put(PageActions.resetPageData(pageId));
-  yield put(PageActions.setPageState(pageId, { load: PageState.STATES.PRE_LOADING }));
+  yield put(PageActions.setPageState(pageId, {
+    load: PageState.STATES.PRE_LOADING,
+    navigationType: PageState.NAVIGATION_TYPES.NAVIGATED_BACK,
+  }));
   webview.goBack();
 }
 
 function* navigatePageForward({ pageId, webview }) {
   yield put(PageActions.resetPageData(pageId));
-  yield put(PageActions.setPageState(pageId, { load: PageState.STATES.PRE_LOADING }));
+  yield put(PageActions.setPageState(pageId, {
+    load: PageState.STATES.PRE_LOADING,
+    navigationType: PageState.NAVIGATION_TYPES.NAVIGATED_FORWARD,
+  }));
   webview.goForward();
 }
 
 function* navigatePageRefresh({ pageId, webview }) {
   yield put(PageActions.resetPageData(pageId));
-  yield put(PageActions.setPageState(pageId, { load: PageState.STATES.PRE_LOADING }));
+  yield put(PageActions.setPageState(pageId, {
+    load: PageState.STATES.PRE_LOADING,
+    navigationType: PageState.NAVIGATION_TYPES.REFRESHED,
+  }));
   webview.reload();
 }
 

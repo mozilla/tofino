@@ -24,9 +24,11 @@ export default class Page extends Immutable.Record({
   favicon_url: undefined,
   meta: new PageMeta(),
   state: new PageState(),
+  history: Immutable.List(),
+  historyIndex: -1,
 }, 'Page') {
   constructor(data) {
-    if (!data.id) {
+    if (!data || !data.id) {
       logger.warn('Required property `id` missing from page constructor.');
       super({ id: uuid.v4(), ...data });
     } else {

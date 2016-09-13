@@ -74,9 +74,26 @@ class Page extends Component {
       // Only emitted once.
       const url = this.webview.getURL();
       const isTofino = url.startsWith(Endpoints.TOFINO_PROTOCOL);
-      this.props.dispatch(PageActions.setPageDetails(this.props.pageId, { location: url }));
-      this.props.dispatch(UIEffects.setURLBarValue(this.props.pageId, url));
-      this.props.dispatch(UIEffects.focusURLBar(this.props.pageId, { select: isTofino }));
+
+      this.props.dispatch((dispatch, getState) => {
+        dispatch(PageActions.setPageDetails(this.props.pageId, { location: url }));
+        dispatch(UIEffects.setURLBarValue(this.props.pageId, url));
+        dispatch(UIEffects.focusURLBar(this.props.pageId, { select: isTofino }));
+
+        switch (PagesSelectors.getPageNavigationType(getState(), this.props.pageId)) {
+          case PageState.NAVIGATION_TYPES.NAVIGATED_TO_LOCATION:
+            dispatch(PageActions.pushLocalPageHistory(this.props.pageId, { url }));
+            break;
+          case PageState.NAVIGATION_TYPES.NAVIGATED_BACK:
+            dispatch(PageActions.setLocalPageHistoryIndex(this.props.pageId, { delta: -1 }));
+            break;
+          case PageState.NAVIGATION_TYPES.NAVIGATED_FORWARD:
+            dispatch(PageActions.setLocalPageHistoryIndex(this.props.pageId, { delta: 1 }));
+            break;
+          default:
+            break;
+        }
+      });
     });
 
     this.webview.addEventListener('did-navigate-in-page', e => {

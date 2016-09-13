@@ -11,12 +11,14 @@ specific language governing permissions and limitations under the License.
 */
 
 import Immutable from 'immutable';
+import assert from 'assert';
 
 import { logger } from '../../../shared/logging';
 import Page from '../model/page';
 import Pages from '../model/pages';
 import PageMeta from '../model/page-meta';
 import PageState from '../model/page-state';
+import PageLocalHistoryItem from '../model/page-local-history-item';
 import * as UIConstants from '../constants/ui';
 import * as ActionTypes from '../constants/action-types';
 
@@ -42,6 +44,12 @@ export default function(state = new Pages(), action) {
 
     case ActionTypes.SET_PAGE_STATE:
       return setPageState(state, action.pageId, action.pageState);
+
+    case ActionTypes.PUSH_LOCAL_PAGE_HISTORY:
+      return pushLocalPageHistory(state, action.pageId, action.data);
+
+    case ActionTypes.SET_LOCAL_PAGE_HISTORY_INDEX:
+      return setLocalPageHistoryIndex(state, action.pageId, action.index);
 
     default:
       return state;
@@ -99,7 +107,10 @@ function resetPageData(state, pageId) {
   return state.withMutations(mut => {
     const fresh = new Page({ id: pageId }).entries();
     for (const [key, value] of fresh) {
-      mut.update('map', m => m.setIn([pageId, key], value));
+      // Don't reset the `history` and `historyIndex` properties on the page.
+      if (key !== 'history' && key !== 'historyIndex') {
+        mut.update('map', m => m.setIn([pageId, key], value));
+      }
     }
   });
 }
@@ -141,4 +152,42 @@ function setPageState(state, pageId, pageState) {
       mut.update('map', m => m.setIn([pageId, 'state', key], value));
     }
   });
+}
+
+function pushLocalPageHistory(state, pageId, data) {
+  const currentIndex = state.getIn(['map', pageId, 'historyIndex']);
+  const historyCount = state.getIn(['map', pageId, 'history']).size;
+
+  if (currentIndex === -1) {
+    assert(historyCount === 0, 'There no history for fresh pages.');
+  } else {
+    assert(currentIndex >= 0, 'The current history index is valid.');
+    assert(currentIndex <= historyCount - 1, 'The current history index is in bounds.');
+    assert(historyCount > 0, 'There is a valid number of history items.');
+  }
+
+  return state.withMutations(mut => {
+    // When not adding a history item at the end of the list, purge the
+    // entries after the current history index to give the list a new head.
+    if (currentIndex < historyCount - 1) {
+      mut.updateIn(['map', pageId, 'history'], l => l.take(currentIndex + 1));
+    }
+    const historyItem = new PageLocalHistoryItem(data);
+    mut.updateIn(['map', pageId, 'history'], l => l.push(historyItem));
+    mut.setIn(['map', pageId, 'historyIndex'], currentIndex + 1);
+  });
+}
+
+function setLocalPageHistoryIndex(state, pageId, index) {
+  const historyCount = state.getIn(['map', pageId, 'history']).size;
+  const historyItem = state.getIn(['map', pageId, 'history', index]);
+  const currentURL = state.getIn(['map', pageId, 'location']);
+
+  assert(index >= 0, 'The new history index is valid.');
+  assert(index <= historyCount - 1, 'The new history index is in bounds.');
+  assert(historyCount > 0, 'There is a valid number of history items.');
+  assert(historyItem, 'A history item exists for the given index.');
+  assert(historyItem.url === currentURL, 'The history item has the correct url.');
+
+  return state.setIn(['map', pageId, 'historyIndex'], index);
 }
