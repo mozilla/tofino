@@ -93,3 +93,22 @@ export function setPageState(pageId, pageState) {
     pageState,
   };
 }
+
+export function pushLocalPageHistory(pageId, { url }) {
+  return {
+    type: ActionTypes.PUSH_LOCAL_PAGE_HISTORY,
+    data: { url },
+    pageId,
+  };
+}
+
+export function setLocalPageHistoryIndex(pageId, { delta }) {
+  return (dispatch, getState) => {
+    const currentIndex = PagesSelectors.getPageHistoryIndex(getState(), pageId);
+    dispatch({
+      type: ActionTypes.SET_LOCAL_PAGE_HISTORY_INDEX,
+      index: currentIndex + delta,
+      pageId,
+    });
+  };
+}

@@ -14,6 +14,7 @@ import Immutable from 'immutable';
 
 const PageState = Immutable.Record({
   load: undefined,
+  navigationType: undefined,
   canGoBack: false,
   canGoForward: false,
   canRefresh: false,
@@ -25,6 +26,13 @@ PageState.STATES = {
   LOADING: 'loading',
   LOADED: 'loaded',
   FAILED: 'failed',
+};
+
+PageState.NAVIGATION_TYPES = {
+  NAVIGATED_TO_LOCATION: 'to-location',
+  NAVIGATED_BACK: 'back',
+  NAVIGATED_FORWARD: 'forward',
+  REFRESHED: 'refresh',
 };
 
 // See http://electron.atom.io/docs/api/web-view-tag/#webviewsetzoomlevellevel
