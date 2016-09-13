@@ -111,10 +111,8 @@ class Page extends Component {
     });
 
     this.webview.addEventListener('page-title-set', e => {
+      // Not emitted when pages don't have a title.
       this.props.dispatch(PageActions.setPageDetails(this.props.pageId, { title: e.title }));
-      // Make sure we record this page navigation in the remote history
-      // only after we have a title available.
-      this.props.dispatch(ProfileEffects.addRemoteHistory(this.props.pageId));
     });
 
     this.webview.addEventListener('page-favicon-updated', e => {
@@ -129,6 +127,12 @@ class Page extends Component {
         canGoForward: this.webview.canGoForward(),
         canRefresh: true,
       }));
+
+      // Make sure we record this page navigation in the remote history
+      // only after we have a title available. However, we can't do it in
+      // the `page-title-set` because that event isn't fired when no title
+      // is available.
+      this.props.dispatch(ProfileEffects.addRemoteHistory(this.props.pageId));
     });
 
     this.webview.addEventListener('update-target-url', e => {
