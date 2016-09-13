@@ -14,6 +14,10 @@ import Immutable from 'immutable';
 
 const PageState = Immutable.Record({
   load: undefined,
+  canGoBack: false,
+  canGoForward: false,
+  canRefresh: false,
+  zoomLevel: 0,
 }, 'PageState');
 
 PageState.STATES = {
@@ -22,5 +26,9 @@ PageState.STATES = {
   LOADED: 'loaded',
   FAILED: 'failed',
 };
+
+// See http://electron.atom.io/docs/api/web-view-tag/#webviewsetzoomlevellevel
+PageState.ZOOM_LEVEL_DEFAULT = 0;
+PageState.ZOOM_LEVEL_10_PERCENT = 0.5;
 
 export default PageState;

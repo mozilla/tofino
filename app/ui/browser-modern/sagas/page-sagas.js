@@ -48,6 +48,9 @@ export default function() {
       yield* takeLatest(...wrapped(EffectTypes.PERFORM_PAGE_SEARCH, performPageSearch));
     },
     function*() {
+      yield* takeLatest(...wrapped(EffectTypes.SET_PAGE_ZOOM_LEVEL, setPageZoomLevel));
+    },
+    function*() {
       yield* takeLatest(...wrapped(EffectTypes.CAPTURE_PAGE, capturePage));
     },
   ];
@@ -106,6 +109,11 @@ function* performPageSearch({ webview, text }) {
   } else {
     webview.findInPage(text);
   }
+}
+
+function* setPageZoomLevel({ pageId, webview, zoomLevel }) {
+  webview.setZoomLevel(zoomLevel);
+  yield put(PageActions.setPageState(pageId, { zoomLevel }));
 }
 
 function* capturePage({ pageId, webview }) {
