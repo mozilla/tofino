@@ -23,6 +23,10 @@ export default function() {
     function*() {
       yield* takeLatest(...wrapped(EffectTypes.SET_URL_BAR_VALUE, setURLBarValue));
     },
+    function*() {
+      yield* takeLatest(...wrapped(EffectTypes.SHOW_DOWNLOAD_NOTIFICATION,
+            showDownloadNotification));
+    },
   ];
 }
 
@@ -35,4 +39,19 @@ function* focusURLBar({ urlbar, options = {} }) {
 
 function* setURLBarValue({ urlbar, value }) {
   urlbar.value = value;
+}
+
+function* showDownloadNotification({ filename, status }) {
+  let message;
+  const title = `Download ${status === 'success' ? 'completed' : 'failed'}`;
+
+  if (status === 'success') {
+    message = `Download for ${filename} is completed.`;
+  } else if (status === 'error') {
+    message = `Download for ${filename} has failed.`;
+  }
+
+  // Spawn a Web Notification
+  // https://developer.mozilla.org/en-US/docs/Web/API/notification
+  new Notification(title, { body: message }); //eslint-disable-line
 }
