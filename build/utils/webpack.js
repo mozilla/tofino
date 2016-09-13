@@ -23,41 +23,31 @@ export const nodeExternals = (context, request, cb) => {
   cb(null, false);
 };
 
-export const webpackBuild = configPath => new Promise((resolve, reject) => {
+export const webpackBuild = (configPath, options) => new Promise((resolve, reject) => {
   const child = childProcess.fork(path.join(__dirname, 'webpack-process'));
 
-  child.on('message', e => {
-    if (e.message === 'fatal-error' || e.message === 'build-error') {
-      reject(e.err);
-    }
-  });
-
-  const stopped = new Promise(resolve => {
+  const once = expected => new Promise(resolve => {
     child.on('message', e => {
-      if (e.message === 'stopped-watching') {
-        child.kill();
-        resolve();
+      if (e.message === expected) {
+        resolve(e);
       }
     });
   });
 
-  const started = new Promise(resolve => {
-    child.on('message', e => {
-      if (e.message === 'started-watching') {
-        resolve();
-      }
-    });
-  });
+  once('fatal-error', e => reject(e.err));
+  once('build-error', e => reject(e.err));
 
-  const start = () => {
-    child.send({ message: 'start', configPath });
-    return started;
+  const build = () => {
+    const finishedBuild = once('finished-build');
+    child.send({ message: 'build', configPath, options });
+    return finishedBuild;
   };
 
   const close = () => {
-    child.send({ message: 'stop' });
-    return stopped;
+    const cleanedUp = once('cleaned-up');
+    child.send({ message: 'will-close' });
+    return cleanedUp.then(() => child.kill());
   };
 
-  start().then(() => resolve({ close }));
+  build().then(() => resolve({ close }));
 });

@@ -9,7 +9,7 @@ import { shouldRebuild } from './utils/rebuild';
 import { webpackBuild } from './utils/webpack';
 import { logger } from './logging';
 
-export default async function() {
+export default async function(options) {
   const id = 'content service';
   const configPath = path.resolve(BUILD_WEBPACK_CONFIGS_PATH, 'webpack.services.content');
   const { SRC_DIR } = require(configPath); // eslint-disable-line
@@ -20,5 +20,5 @@ export default async function() {
   }
 
   logger.info(colors.cyan(`Building ${id}...`));
-  return await webpackBuild(configPath);
+  return await webpackBuild(configPath, options);
 }
