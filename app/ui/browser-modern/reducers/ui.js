@@ -13,6 +13,7 @@ specific language governing permissions and limitations under the License.
 import Immutable from 'immutable';
 
 import UIState from '../model/ui';
+import LocationAutocompletion from '../model/location-autocompletion';
 import * as ActionTypes from '../constants/action-types';
 import * as EffectTypes from '../constants/effect-types';
 
@@ -60,5 +61,6 @@ function setOverviewVisibility(state, visibility) {
 }
 
 function setLocationAutocompletions(state, autocompletions) {
-  return state.set('locationAutocompletions', Immutable.List(autocompletions));
+  const records = autocompletions.map(e => new LocationAutocompletion(e));
+  return state.set('locationAutocompletions', Immutable.List(records));
 }
