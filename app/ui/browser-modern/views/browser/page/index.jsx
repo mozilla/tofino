@@ -111,11 +111,12 @@ class Page extends Component {
       }));
     });
 
+    this.webview.addEventListener('update-target-url', e => {
+      this.props.dispatch(UIActions.setStatusText(e.url));
+    });
+
     this.webview.addEventListener('ipc-message', e => {
       switch (e.channel) {
-        case 'status':
-          this.props.dispatch(UIActions.setStatusText(e.args[0]));
-          break;
         case 'metadata':
           this.props.dispatch(PageActions.setPageMeta(this.props.pageId, e.args[0]));
           break;

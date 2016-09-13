@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 import { ipcRenderer as ipc } from 'electron';
 
-import './hover-status';
 import './context-menu';
 import { readerify } from './reader';
 import Readability from './readability';
