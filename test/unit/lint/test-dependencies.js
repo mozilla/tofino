@@ -4,6 +4,7 @@
 import expect from 'expect';
 import fs from 'fs-promise';
 import without from 'lodash/without';
+import intersection from 'lodash/intersection';
 import path from 'path';
 import { REQUIRES_REGEX, IMPORTS_REGEX, globMany, regexFiles } from './shared';
 
@@ -44,30 +45,26 @@ describe('dependencies', () => {
 
     const appManifest = await fs.readJson(path.join('app', 'package.json'));
     const mainManifest = await fs.readJson(path.join('package.json'));
-
     const appPackages = Object.keys(appManifest.dependencies);
     const mainPackages = Object.keys(mainManifest.dependencies);
-    const packages = without([...appPackages, ...mainPackages, ...implicit], ...temporary).sort();
+
+    const listedPackages = [...appPackages, ...mainPackages, ...implicit];
+    const installedPackages = without(listedPackages, ...temporary).sort();
 
     const sources = await globMany(paths);
     const matches = await regexFiles(sources, REQUIRES_REGEX, IMPORTS_REGEX);
     const usedPackages = without(matches, ...native).sort();
 
-    expect(usedPackages).toEqual(packages);
+    expect(usedPackages).toEqual(installedPackages);
+
+    const installedTemporary = intersection(temporary, [...appPackages, ...mainPackages]);
+    expect(installedTemporary).toEqual(temporary);
   });
 
   it('– build and test code only use main dependencies or devDependencies', async function() {
     const paths = [
       `build${all}${valid}`,
       `test${all}${valid}`,
-    ];
-
-    const implicit = [
-      // These aren't specified in the package.json but are installed anyway.
-    ];
-
-    const temporary = [
-      // These aren't yet referenced by the main app, but we plan to do so.
     ];
 
     const ignored = [
@@ -115,13 +112,16 @@ describe('dependencies', () => {
     const mainPackages = Object.keys(mainManifest.dependencies);
     const mainDevPackages = Object.keys(mainManifest.devDependencies);
 
-    const packages = without([...mainDevPackages, ...implicit], ...temporary, ...ignored).sort();
+    const installedPackages = without(mainDevPackages, ...ignored).sort();
 
     const sources = await globMany(paths);
     const matches = await regexFiles(sources, REQUIRES_REGEX, IMPORTS_REGEX);
 
     // Strip out the main dependencies should leave only the devDependencies.
     const usedPackages = without(matches, ...native, ...mainPackages).sort();
-    expect(usedPackages).toEqual(packages);
+    expect(usedPackages).toEqual(installedPackages);
+
+    const installedIgnored = intersection(ignored, [...mainPackages, ...mainDevPackages]);
+    expect(installedIgnored).toEqual(ignored);
   });
 });
