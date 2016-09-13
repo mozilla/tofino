@@ -119,7 +119,7 @@ class Tab extends Component {
           )}
           <div className={`tab-title ${TAB_TITLE_STYLE}`}
             title={this.props.pageTitle}>
-            {this.props.pageTitle || this.props.pageLocation}
+            {this.props.pageTitle || this.props.pageLocation || 'Loading...'}
           </div>
           <Btn className="tab-close-button"
             title="Close tab"

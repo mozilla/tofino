@@ -19,6 +19,7 @@ import * as UserAgent from '../../shared/util/user-agent';
 import * as PageActions from '../actions/page-actions';
 import * as PageEffects from '../actions/page-effects';
 import * as ProfileEffects from '../actions/profile-effects';
+import * as UIEffects from '../actions/ui-effects';
 import * as EffectTypes from '../constants/effect-types';
 
 export default function() {
@@ -74,6 +75,11 @@ function* destroyPageSession({ page, currentPageCount }) {
 function* naviatePageTo({ pageId, webview, location }) {
   yield put(PageActions.resetPageData(pageId));
   yield put(PageActions.setPageState(pageId, { load: PageState.STATES.PRE_LOADING }));
+  // Optimistically set page location and update the urlbar before the actual
+  // navigation happens, so that the UI shows the intended location instead of
+  // just some blank text.
+  yield put(PageActions.setPageDetails(pageId, { location }));
+  yield put(UIEffects.setURLBarValue(pageId, location));
   webview.setAttribute('src', location);
 }
 
