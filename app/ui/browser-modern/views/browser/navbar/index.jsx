@@ -61,11 +61,14 @@ class NavBar extends Component {
   }
 
   handleOverviewButtonClick = () => {
-    if (this.props.isOverviewVisible) {
-      this.props.dispatch(UIActions.hideOverview());
-    } else {
-      this.props.dispatch(UIActions.showOverview());
-    }
+    this.props.dispatch((dispatch, getState) => {
+      const isOverviewVisible = UISelectors.getOverviewVisible(getState());
+      if (isOverviewVisible) {
+        dispatch(UIActions.hideOverview());
+      } else {
+        dispatch(UIActions.showOverview());
+      }
+    });
   }
 
   handleAppMenuClick = () => {
@@ -128,7 +131,6 @@ NavBar.propTypes = {
   onNavigateForward: PropTypes.func.isRequired,
   onNavigateRefresh: PropTypes.func.isRequired,
   onNavigateTo: PropTypes.func.isRequired,
-  isOverviewVisible: PropTypes.bool.isRequired,
 };
 
 function mapStateToProps(state, ownProps) {
@@ -137,7 +139,6 @@ function mapStateToProps(state, ownProps) {
     pageCanGoBack: page ? page.state.canGoBack : false,
     pageCanGoForward: page ? page.state.canGoForward : false,
     pageCanRefresh: page ? page.state.canRefresh : false,
-    isOverviewVisible: UISelectors.getOverviewVisible(state),
   };
 }
 
