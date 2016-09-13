@@ -15,6 +15,7 @@ import { ipcRenderer } from '../../shared/electron';
 import * as ContentURLs from '../../shared/constants/content-pages-locations';
 import * as PageActions from './actions/page-actions';
 import * as PageEffects from './actions/page-effects';
+import * as PagesSelectors from './selectors/pages';
 import * as UISelectors from './selectors/ui';
 import * as UIActions from './actions/ui-actions';
 import * as UIEffects from './actions/ui-effects';
@@ -47,19 +48,25 @@ export default function({ store, userAgentClient }) {
   });
 
   ipcRenderer.on('go-back', () => {
-    if (!UISelectors.getOverviewVisible(store.getState())) {
+    const pageId = PagesSelectors.getSelectedPageId(store.getState());
+    const pageState = PagesSelectors.getPageState(store.getState(), pageId);
+    if (pageState.canGoBack && !UISelectors.getOverviewVisible(store.getState())) {
       store.dispatch(PageEffects.navigateCurrentPageBack());
     }
   });
 
   ipcRenderer.on('go-forward', () => {
-    if (!UISelectors.getOverviewVisible(store.getState())) {
+    const pageId = PagesSelectors.getSelectedPageId(store.getState());
+    const pageState = PagesSelectors.getPageState(store.getState(), pageId);
+    if (pageState.canGoForward && !UISelectors.getOverviewVisible(store.getState())) {
       store.dispatch(PageEffects.navigateCurrentPageForward());
     }
   });
 
   ipcRenderer.on('page-refresh', () => {
-    if (!UISelectors.getOverviewVisible(store.getState())) {
+    const pageId = PagesSelectors.getSelectedPageId(store.getState());
+    const pageState = PagesSelectors.getPageState(store.getState(), pageId);
+    if (pageState.canRefresh && !UISelectors.getOverviewVisible(store.getState())) {
       store.dispatch(PageEffects.navigateCurrentPageRefresh());
     }
   });
