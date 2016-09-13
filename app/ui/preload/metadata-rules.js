@@ -53,19 +53,6 @@ const parseFloatText = node => parseFloat(node.element.innerText, 10);
  * in the page model in app/ui/browser-blueprint/model/index.js
  */
 const metadataRules = {
-  // Overwrite pmp's icon_url ruleset, and add a few more additional rules
-  icon_url: buildRuleset('icon_url', [
-    ['link[rel="apple-touch-icon"]', node => node.element.href],
-    ['link[rel="apple-touch-icon-precomposed"]', node => node.element.href],
-    ['link[rel="icon"]', node => node.element.href],
-    ['link[rel="fluid-icon"]', node => node.element.href],
-    ['link[rel="shortcut icon"]', node => node.element.href],
-    ['link[rel="Shortcut Icon"]', node => node.element.href],
-    ['link[rel="mask-icon"]', node => node.element.href],
-    // Fallback to just checking root favicon.ico
-    ['body', node => `${node.element.ownerDocument.location.origin}/favicon.ico`],
-  ]),
-
   // title takes some properties from page-metadata-parser,
   // and adds additional rules, like for Amazon.
   title: buildRuleset('title', [
