@@ -42,17 +42,23 @@ class Page extends Component {
 
   componentDidMount() {
     this.addWebviewListeners();
-    this.props.onMount(this.props.pageId, this.props.pageLocation);
+    this.props.dispatch((_, getState) => {
+      const pageId = this.props.pageId;
+      const pageLocation = PagesSelectors.getPageById(getState(), pageId).location;
+      this.props.onMount(pageId, pageLocation);
+    });
   }
 
   addWebviewListeners() {
     // See http://electron.atom.io/docs/api/web-view-tag/#dom-events
 
     this.webview.addEventListener('new-window', e => {
-      // Increment the index for the new page to be adjacent to this one
-      const index = this.props.pageIndex + 1;
-      const selected = e.disposition && e.disposition === 'foreground-tab';
-      this.props.dispatch(PageEffects.createPageSession(e.url, { selected, index }));
+      this.props.dispatch((dispatch, getState) => {
+        // Increment the index for the new page to be adjacent to this one.
+        const selected = e.disposition && e.disposition === 'foreground-tab';
+        const index = PagesSelectors.getPageIndexById(getState(), this.props.pageId) + 1;
+        dispatch(PageEffects.createPageSession(e.url, { selected, index }));
+      });
     });
 
     this.webview.addEventListener('did-start-loading', () => {
@@ -77,12 +83,15 @@ class Page extends Component {
       // Like `did-navigate`, but fired only when an in-page navigation happens,
       // meaning that the page URL changes but does not cause navigation outside
       // of the page (e.g. when the hashchange event is triggered).
-      if (!e.isMainFrame || e.url === this.props.pageLocation) {
-        return;
-      }
-      this.props.dispatch(PageActions.setPageDetails(this.props.pageId, { location: e.url }));
-      this.props.dispatch(UIEffects.setURLBarValue(this.props.pageId, e.url));
-      this.props.dispatch(ProfileEffects.addRemoteHistory(this.props.pageId));
+      this.props.dispatch((dispatch, getState) => {
+        const location = PagesSelectors.getPageById(getState(), this.props.pageId);
+        if (!e.isMainFrame || e.url === location) {
+          return;
+        }
+        dispatch(PageActions.setPageDetails(this.props.pageId, { location: e.url }));
+        dispatch(UIEffects.setURLBarValue(this.props.pageId, e.url));
+        dispatch(ProfileEffects.addRemoteHistory(this.props.pageId));
+      });
     });
 
     this.webview.addEventListener('did-finish-load', () => {
@@ -165,17 +174,7 @@ Page.displayName = 'Page';
 Page.propTypes = {
   dispatch: PropTypes.func.isRequired,
   pageId: PropTypes.string.isRequired,
-  pageLocation: PropTypes.string.isRequired,
-  pageIndex: PropTypes.number.isRequired,
   onMount: PropTypes.func.isRequired,
 };
 
-function mapStateToProps(state, ownProps) {
-  const page = PagesSelectors.getPageById(state, ownProps.pageId);
-  return {
-    pageLocation: page ? page.location : '',
-    pageIndex: PagesSelectors.getPageIndexById(state, ownProps.pageId),
-  };
-}
-
-export default connect(mapStateToProps)(Page);
+export default connect()(Page);
