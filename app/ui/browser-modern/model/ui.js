@@ -16,5 +16,5 @@ export default Immutable.Record({
   statusText: '',
   pageSearchVisible: false,
   overviewVisible: false,
-  locationAutocompletions: Immutable.List(),
+  locationAutocompletions: Immutable.Map(),
 }, 'UIState');

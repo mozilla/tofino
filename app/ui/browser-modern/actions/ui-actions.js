@@ -47,9 +47,10 @@ export function hideOverview() {
   };
 }
 
-export function setLocationAutocompletions(autocompletions) {
+export function setLocationAutocompletions(pageId, autocompletions) {
   return {
     type: ActionTypes.SET_LOCATION_AUTOCOMPLETIONS,
+    pageId,
     autocompletions,
   };
 }
