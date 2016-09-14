@@ -14,7 +14,7 @@ import { takeLatest } from 'redux-saga';
 import { put, call } from 'redux-saga/effects';
 
 import { wrapped } from './helpers';
-import * as UserAgent from '../../shared/util/user-agent';
+import userAgentHttpClient from '../../../shared/user-agent-http-client';
 import * as UIActions from '../actions/ui-actions';
 import * as ProfileActions from '../actions/profile-actions';
 import * as EffectTypes from '../constants/effect-types';
@@ -39,7 +39,7 @@ export default function() {
 function* fetchCompletions({ pageId, text }) {
   const autocompletions = [{ uri: text }];
   if (text) {
-    const { results } = yield call(UserAgent.query, { text });
+    const { results } = yield call(userAgentHttpClient.query.bind(userAgentHttpClient), { text });
     autocompletions.push(...results);
   }
   yield put(UIActions.setLocationAutocompletions(pageId, autocompletions));
@@ -55,18 +55,18 @@ function* setRemoteBookmarkState({ page, bookmarked }) {
   // After sending the bookmark state to the profile service, it will send
   // back an action updating the local profile model with the truth.
   if (bookmarked) {
-    yield call(UserAgent.createStar, page, { url, title });
+    yield call(userAgentHttpClient.createStar.bind(userAgentHttpClient), page, { url, title });
   } else {
-    yield call(UserAgent.destroyStar, page, { url });
+    yield call(userAgentHttpClient.destroyStar.bind(userAgentHttpClient), page, { url });
   }
 }
 
 function* addRemoteHistory({ page }) {
   const { location: url, title } = page;
-  yield call(UserAgent.createHistory, page, { url, title });
+  yield call(userAgentHttpClient.createHistory.bind(userAgentHttpClient), page, { url, title });
 }
 
 function* addCapturedPage({ page, readerResult }) {
   const { location: url } = page;
-  yield call(UserAgent.createPage, page, { url, readerResult });
+  yield call(userAgentHttpClient.createPage.bind(userAgentHttpClient), page, { url, readerResult });
 }
