@@ -28,7 +28,7 @@ Alternatively, use any fixed integer scope (such as scope 0).
 Full-text indexing is currently opt-in: see
 [POST /v1/pages/:url](#post-v1pagesurl).  The data store will return
 snippets, which for now are HTML escaped string with bold tags
-wrapping highlighted words.  It's safe to use `innerContent` and
+wrapping highlighted words.  It's safe to use `innerHTML` and
 friends to render snippets in privileged UI.
 
 Throughout, timestamps are integer milliseconds since the Unix epoch.
@@ -77,7 +77,7 @@ TODO: diffs WebSocket API documentation
 
 * Sessions
     * [POST /v1/session/start](#post-v1sessionstart)
-    * [POST /v1/session/end](#get-v1sessionend)
+    * [POST /v1/session/end](#post-v1sessionend)
 
 * History visits
     * [POST /v1/visits](#post-v1visits)
@@ -195,7 +195,7 @@ returned.  See also [GET /v1/query](#get-v1query).
 
 ___Query parameters___
 
-* limit - (optional) integer maximum number of visits to return.
+* limit - integer maximum number of visits to return.
 
 ### Request
 
@@ -212,7 +212,7 @@ curl -v \
 
 Successful requests will produce a "200 OK" response with a JSON body
 containing a pages array.  Each page will contain keys `url` (string),
-and `lastVisited` (integer timestamp), optional `title` (string), and
+`lastVisited` (integer timestamp), optional `title` (string), and
 optional `snippet` (string).
 
 ```json
@@ -222,13 +222,13 @@ optional `snippet` (string).
       "url": "https://www.mozilla.org/en-US/firefox/new/",
       "title": "Download Firefox - Free Web Browser",
       "lastVisited": 14000000,
-    "snippet": "HTML escaped string with <b>bold tags</b> wrapping highlighted words"
+      "snippet": "HTML escaped string with <b>bold tags</b> wrapping highlighted words"
     },
     {
       "url": "https://reddit.com/",
       "title": "reddit - the front page of the internet",
       "lastVisited": 15000000
-    },
+    }
   ]
 }
 ```
@@ -258,7 +258,8 @@ curl -v \
   "page": {
     "title": "reddit - the front page of the internet",
     "excerpt": <string excerpt, for example as extracted by Readability.js>,
-    "textContent": <string full text content, for example as extracted by Readability.js>,
+    "textContent": <string full text content, for example as extracted by Readability.js>
+  }
 }'
 ```
 
@@ -414,7 +415,7 @@ Get recently starred URLs, ordered from most to least recent.
 
 ___Query parameters___
 
-* limit - (optional) integer maximum number of starred URLs to return.
+* limit - integer maximum number of starred URLs to return.
 
 ### Request
 
@@ -441,7 +442,7 @@ Successful requests will produce a "200 OK" response with an array
     {
       "location": "https://www.mozilla.org/en-US/firefox/new/",
       "title": "Download Firefox - Free Web Browser",
-      "lastVisited": 14000000
+      "visitedAt": 14000000
     }
   ]
 }
