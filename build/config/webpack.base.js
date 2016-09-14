@@ -25,12 +25,14 @@ export default {
   resolve: {
     root,
     extensions: ['', '.js', '.jsx', '.json'],
+    alias: {
+      'dtrace-provider': path.join(Const.BUILD_SYSTEM_DIR, 'config', 'empty_module.js'),
+    },
   },
   plugins: [
     new webpack.NoErrorsPlugin(),
   ],
   externals: [
-    'dtrace-provider',
   ],
 };
 
