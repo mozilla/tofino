@@ -18,6 +18,7 @@ import Pages from '../model/pages';
 import PageMeta from '../model/page-meta';
 import PageState from '../model/page-state';
 import SSLCertificateModel from '../model/ssl-certificate';
+import PageLocalHistoryItem from '../model/page-local-history-item';
 import * as UIConstants from '../constants/ui';
 import * as ActionTypes from '../constants/action-types';
 
@@ -46,6 +47,9 @@ export default function(state = new Pages(), action) {
 
     case ActionTypes.SET_PAGE_SEARCH_VISIBILITY:
       return setPageState(state, action.pageId, { searchVisible: action.visibility });
+
+    case ActionTypes.SET_LOCAL_PAGE_HISTORY:
+      return setLocalPageHistory(state, action.pageId, action.history, action.historyIndex);
 
     default:
       return state;
@@ -103,7 +107,10 @@ function resetPageData(state, pageId) {
   return state.withMutations(mut => {
     const fresh = new Page({ id: pageId }).entries();
     for (const [key, value] of fresh) {
-      mut.update('map', m => m.setIn([pageId, key], value));
+      // Don't reset the `history` and `historyIndex` properties on the page.
+      if (key !== 'history' && key !== 'historyIndex') {
+        mut.update('map', m => m.setIn([pageId, key], value));
+      }
     }
   });
 }
@@ -144,10 +151,23 @@ function setPageState(state, pageId, pageState) {
       }
 
       let setValue = value;
+
       if (key === 'certificate') {
         setValue = new SSLCertificateModel(value);
       }
+
       mut.update('map', m => m.setIn([pageId, 'state', key], setValue));
     }
+  });
+}
+
+function setLocalPageHistory(state, pageId, history, historyIndex) {
+  return state.withMutations(mut => {
+    const records = history.map((location, index) => new PageLocalHistoryItem({
+      uri: location,
+      active: index === historyIndex,
+    }));
+    mut.setIn(['map', pageId, 'history'], Immutable.List(records));
+    mut.setIn(['map', pageId, 'historyIndex'], historyIndex);
   });
 }

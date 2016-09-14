@@ -121,3 +121,12 @@ export function hideCurrentPageSearch() {
     dispatch(hidePageSearch(PagesSelectors.getSelectedPageId(getState())));
   };
 }
+
+export function setLocalPageHistory(pageId, history, historyIndex) {
+  return {
+    type: ActionTypes.SET_LOCAL_PAGE_HISTORY,
+    pageId,
+    history,
+    historyIndex,
+  };
+}

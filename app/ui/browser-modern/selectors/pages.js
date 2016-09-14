@@ -84,6 +84,14 @@ export function getPageSearchVisible(state, id) {
   return getPageState(state, id).searchVisible;
 }
 
+export function getPageHistoryIndex(state, id) {
+  return getPageById(state, id).historyIndex;
+}
+
+export function getPageNavigationType(state, id) {
+  return getPageState(state, id).navigationType;
+}
+
 export function getPageZoomLevel(state, id) {
   return getPageState(state, id).zoomLevel;
 }
