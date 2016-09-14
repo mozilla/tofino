@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 
 import Style from '../../../../shared/style';
 import Btn from '../../../../shared/widgets/btn';
+import SecurityBadge from './security-badge';
 import AutocompletedSearch from '../../../../shared/widgets/autocompleted-search';
 import AutocompletionListItem from './autocompletion-list-item';
 
@@ -80,6 +81,10 @@ class Location extends Component {
     // TODO
   }
 
+  handleConnectionButtonClick= () => {
+    // TODO
+  }
+
   handleBookmarkButtonClick = () => {
     const pageId = this.props.pageId;
     const bookmarked = this.props.pageIsBookmarked;
@@ -95,6 +100,12 @@ class Location extends Component {
           imgWidth="16px"
           imgHeight="16px"
           onClick={this.handleInfoButtonClick} />
+        <SecurityBadge title="Connection"
+          url={this.props.pageLocation}
+          pageState={this.props.pageState}
+          imgWidth="16px"
+          imgHeight="16px"
+          onClick={this.handleConnectionButtonClick} />
         <AutocompletedSearch ref={e => this.awesomebar = e}
           className={LOCATION_BAR_INPUT_STYLE}
           defaultValue={this.props.pageLocation}
@@ -121,6 +132,7 @@ Location.propTypes = {
   pageId: PropTypes.string.isRequired,
   pageLocation: PropTypes.string.isRequired,
   pageIsBookmarked: PropTypes.bool.isRequired,
+  pageState: SharedPropTypes.PageState,
   locationAutocompletions: SharedPropTypes.LocationAutocompletions,
   onNavigate: PropTypes.func.isRequired,
 };
@@ -129,6 +141,7 @@ function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
   return {
     pageLocation: page ? page.location : '',
+    pageState: PagesSelectors.getPageState(state, ownProps.pageId),
     pageIsBookmarked: page ? ProfileSelectors.isBookmarked(state, page.location) : false,
     locationAutocompletions: page ? UISelectors.getLocationAutocompletions(state, page.id) : null,
   };
