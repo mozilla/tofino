@@ -37,9 +37,9 @@ const RequiredProps = {
     height: '200px',
   },
   AutocompletedSearch: {
-    autocompletionResults: Immutable.List(),
-    autocompletionListItemComponent: Minimal,
-    onAutocompletionSelect: () => {},
+    dataSrc: Immutable.List(),
+    childComponent: Minimal,
+    onAutocompletionPick: () => {},
   },
   SelectionList: {
     selectedIndex: 0,

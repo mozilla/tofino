@@ -68,11 +68,11 @@ class Location extends Component {
 
   handleInputKeyDown = e => {
     if (e.key === 'Enter') {
-      this.handleAutocompletionSelect({ uri: e.target.value });
+      this.handleAutocompletionPick({ uri: e.target.value });
     }
   }
 
-  handleAutocompletionSelect = data => {
+  handleAutocompletionPick = ({ data }) => {
     this.props.onNavigate(LocationUtil.fixURL(data.uri));
   }
 
@@ -110,9 +110,9 @@ class Location extends Component {
           defaultValue={this.props.pageLocation}
           onChange={this.handleInputChange}
           onKeyDown={this.handleInputKeyDown}
-          onAutocompletionSelect={this.handleAutocompletionSelect}
-          autocompletionResults={this.props.locationAutocompletions}
-          autocompletionListItemComponent={AutocompletionListItem} />
+          onAutocompletionPick={this.handleAutocompletionPick}
+          dataSrc={this.props.locationAutocompletions}
+          childComponent={AutocompletionListItem} />
         <Btn title="Bookmark"
           className={LOCATION_BAR_BUTTONS_STYLE}
           image={this.getBookmarkIcon()}
