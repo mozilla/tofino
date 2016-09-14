@@ -26,7 +26,7 @@ export default class Page extends Immutable.Record({
   state: new PageState(),
 }, 'Page') {
   constructor(data) {
-    if (!data.id) {
+    if (!data || !data.id) {
       logger.warn('Required property `id` missing from page constructor.');
       super({ id: uuid.v4(), ...data });
     } else {
