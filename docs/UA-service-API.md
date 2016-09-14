@@ -282,10 +282,8 @@ ___Query parameters___
 * limit - (optional) integer maximum number of results to return.
 * since - (optional) integer timestamp; if present, only return
   results more recently visited than this.
-* snippetSize - (optional) integer, one of -5/-15/-40/-64 for tiny,
-  medium, large, and huge snippet extracts, respectively.  In the
-  future, we will clarify this -- right now, it's a direct translation
-  to SQLite's numeric range.
+* snippetSize - (optional) string, one of "tiny", "medium", "large",
+  "huge".  Defaults to "medium".
 
 ### Request
 
