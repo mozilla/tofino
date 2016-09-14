@@ -41,3 +41,12 @@ export function setCurrentURLBarValue(value) {
     dispatch(setURLBarValue(PagesSelectors.getSelectedPageId(getState()), value));
   };
 }
+
+export function showDownloadNotification({ url, filename, status }) {
+  return {
+    type: EffectTypes.SHOW_DOWNLOAD_NOTIFICATION,
+    url,
+    filename,
+    status,
+  };
+}

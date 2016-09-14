@@ -14,6 +14,8 @@ import path from 'path';
 import { BrowserWindow } from 'electron';
 
 import * as hotkeys from './hotkeys';
+import * as downloads from './downloads';
+
 import { UI_DIR, fileUrl } from '../shared/paths-util';
 import BUILD_CONFIG from '../build-config';
 
@@ -84,6 +86,8 @@ export async function createBrowserWindow(userAgentClient, onload) {
 
   bindBrowserWindowEvents(browser);
   hotkeys.bindBrowserWindowHotkeys(browser);
+  downloads.registerDownloadHandlers(browser);
+
   browser.once('closed', () => {
     hotkeys.unbindBrowserWindowHotkeys(browser);
   });

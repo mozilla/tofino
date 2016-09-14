@@ -137,4 +137,12 @@ export default function({ store, userAgentClient }) {
   ipcRenderer.on('capture-page', () => {
     store.dispatch(PageEffects.captureCurrentPage());
   });
+
+  ipcRenderer.on('download-completed', (_, { url, filename }) => {
+    store.dispatch(UIEffects.showDownloadNotification({ url, filename, status: 'success' }));
+  });
+
+  ipcRenderer.on('download-error', (_, { url, filename }) => {
+    store.dispatch(UIEffects.showDownloadNotification({ url, filename, status: 'error' }));
+  });
 }
