@@ -40,6 +40,7 @@ PageState.NAVIGATION_TYPES = {
   NAVIGATED_BACK: 'navigated-back',
   NAVIGATED_FORWARD: 'navigated-forward',
   REFRESHED: 'refreshed',
+  NAVIGATED_IN_HISTORY: 'navigated-in-history',
 };
 
 // See http://electron.atom.io/docs/api/web-view-tag/#webviewsetzoomlevellevel

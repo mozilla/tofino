@@ -65,7 +65,8 @@ class ContentArea extends Component {
               onNavigateBack={this.props.onNavigateBack}
               onNavigateForward={this.props.onNavigateForward}
               onNavigateRefresh={this.props.onNavigateRefresh}
-              onNavigateTo={this.props.onNavigateTo} />
+              onNavigateTo={this.props.onNavigateTo}
+              onNavigateInHistory={this.props.onNavigateInHistory} />
             <Page pageId={pageId}
               onMount={this.props.onPageMount} />
             <SearchBar pageId={pageId} />
@@ -84,6 +85,7 @@ ContentArea.propTypes = {
   onNavigateForward: PropTypes.func.isRequired,
   onNavigateRefresh: PropTypes.func.isRequired,
   onNavigateTo: PropTypes.func.isRequired,
+  onNavigateInHistory: PropTypes.func.isRequired,
   pageIds: SharedPropTypes.PageIds.isRequired,
   selectedPageId: PropTypes.string.isRequired,
   isOverviewVisible: PropTypes.bool.isRequired,

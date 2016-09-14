@@ -41,6 +41,11 @@ const RequiredProps = {
     childComponent: Minimal,
     onAutocompletionPick: () => {},
   },
+  DropdownMenuBtn: {
+    dataSrc: Immutable.List(),
+    childComponent: Minimal,
+    onMenuItemPick: () => {},
+  },
   SelectionList: {
     selectedIndex: 0,
   },
@@ -48,6 +53,7 @@ const RequiredProps = {
 
 const DOMGetters = {
   AutocompletedSearch: e => e.find('.widget-search'),
+  DropdownMenuBtn: e => e.find('.widget-btn'),
   SelectionList: e => e.find('.widget-list'),
   Btn: e => e.find('.widget-btn'),
   FittedImage: e => e.find('.widget-fitted-image'),

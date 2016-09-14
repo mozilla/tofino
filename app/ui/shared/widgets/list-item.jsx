@@ -16,7 +16,6 @@ import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 
 import Style from '../style';
-import Btn from './btn';
 
 const LIST_ITEM_STYLE = Style.registerStyle({
   // Nothing here yet.
@@ -33,6 +32,24 @@ class ListItem extends Component {
     // while doing deep equality checks using lodash's `deepEqual`.
     return !shallowEqual(this.props.children, nextProps.children) ||
       !isEqual(omit(this.props, ['children']), omit(nextProps, ['children']));
+  }
+
+  handleMouseDown = e => {
+    if (this.props.onMouseDown) {
+      this.props.onMouseDown(e);
+    }
+    if (this.props.onMouseDownOnComponent) {
+      this.props.onMouseDownOnComponent(this);
+    }
+  }
+
+  handleMouseUp = e => {
+    if (this.props.onMouseUp) {
+      this.props.onMouseUp(e);
+    }
+    if (this.props.onMouseUpOnComponent) {
+      this.props.onMouseUpOnComponent(this);
+    }
   }
 
   handleMouseClick = e => {
@@ -55,14 +72,16 @@ class ListItem extends Component {
 
   render() {
     return (
+      /* eslint-disable jsx-a11y/no-static-element-interactions */
       <li {...omit(this.props, Object.keys(OmittedContainerProps))}
-        className={`widget-list-item ${LIST_ITEM_STYLE} ${this.props.className || ''}`}>
-        <Btn title=""
-          onClick={this.handleMouseClick}
-          onMouseOver={this.handleMouseOver}>
-          {this.props.children}
-        </Btn>
+        className={`widget-list-item ${LIST_ITEM_STYLE} ${this.props.className || ''}`}
+        onMouseDown={this.handleMouseDown}
+        onMouseUp={this.handleMouseUp}
+        onClick={this.handleMouseClick}
+        onMouseOver={this.handleMouseOver}>
+        {this.props.children}
       </li>
+      /* eslint-enable jsx-a11y/no-static-element-interactions */
     );
   }
 }
@@ -70,6 +89,10 @@ class ListItem extends Component {
 ListItem.displayName = 'ListItem';
 
 const OmittedContainerProps = {
+  onMouseDown: PropTypes.func,
+  onMouseDownOnComponent: PropTypes.func,
+  onMouseUp: PropTypes.func,
+  onMouseUpOnComponent: PropTypes.func,
   onClick: PropTypes.func,
   onClickOnComponent: PropTypes.func,
   onMouseOver: PropTypes.func,

@@ -45,6 +45,9 @@ export default function() {
       yield* takeLatest(...wrapped(EffectTypes.NAVIGATE_PAGE_REFRESH, navigatePageRefresh));
     },
     function*() {
+      yield* takeLatest(...wrapped(EffectTypes.NAVIGATE_PAGE_IN_HISTORY, navigatePageInHistory));
+    },
+    function*() {
       yield* takeLatest(...wrapped(EffectTypes.TOGGLE_DEVTOOLS, toggleDevtools));
     },
     function*() {
@@ -119,6 +122,15 @@ function* navigatePageRefresh({ pageId, webview }) {
     navigationType: PageState.NAVIGATION_TYPES.REFRESHED,
   }));
   webview.reload();
+}
+
+function* navigatePageInHistory({ pageId, webview, historyIndex }) {
+  yield put(PageActions.resetPageData(pageId));
+  yield put(PageActions.setPageState(pageId, {
+    load: PageState.STATES.PRE_LOADING,
+    navigationType: PageState.NAVIGATION_TYPES.NAVIGATED_IN_HISTORY,
+  }));
+  webview.goToIndex(historyIndex);
 }
 
 function* toggleDevtools({ webview }) {

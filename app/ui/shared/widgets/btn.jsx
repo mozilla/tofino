@@ -95,7 +95,8 @@ class Btn extends Component {
         }}
         data-title={this.props.title}
         data-disabled={this.props.disabled}>
-        <button type="button"
+        <button ref={e => this.node = e}
+          type="button"
           className={BUTTON_STYLE}
           style={custom}
           title={this.props.title}

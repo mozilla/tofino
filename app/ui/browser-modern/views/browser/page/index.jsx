@@ -124,11 +124,12 @@ class Page extends Component {
       // May be emitted multiple times for every single frame.
       // Only emitted when a failure occurs, unlike `did-stop-loading`.
       // Is fired before did-finish-load and did-stop-loading when failure occurs.
-      const { errorCode, errorDescription, validatedURL, isMainFrame } = e;
-
-      if (!isMainFrame) {
+      if (!e.isMainFrame) {
         return;
       }
+
+      const pageId = this.props.pageId;
+      const { errorCode, errorDescription, validatedURL } = e;
 
       // If a page is aborted (like hitting BACK/RELOAD while a page is loading), we'll get a
       // load failure of ERR_ABORTED with code `-3` -- this is intended, so just ignore it.
@@ -142,15 +143,20 @@ class Page extends Component {
         description: errorDescription,
       };
 
+      const details = {
+        location: validatedURL,
+      };
+
       // Most cert errors are 501 from this event; the true, more descriptive
       // error description can be retrieved from the main process. Just check
       // here roughly if the error looks like a cert error.
       if (Math.abs(errorCode) === 501 || /CERT/.test(errorDescription)) {
-        this.props.dispatch(PageEffects.getCertificateError(this.props.pageId, validatedURL));
+        this.props.dispatch(PageEffects.getCertificateError(pageId, validatedURL));
       }
 
-      this.props.dispatch(PageActions.setPageState(this.props.pageId, state));
-      this.props.dispatch(UIEffects.setURLBarValue(this.props.pageId, validatedURL));
+      this.props.dispatch(PageActions.setPageState(pageId, state));
+      this.props.dispatch(PageActions.setPageDetails(pageId, details));
+      this.props.dispatch(UIEffects.setURLBarValue(pageId, validatedURL));
     });
 
     this.webview.addEventListener('did-finish-load', () => {

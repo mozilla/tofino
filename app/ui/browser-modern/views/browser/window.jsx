@@ -39,7 +39,8 @@ class BrowserWindow extends Component {
           onNavigateBack={this.props.onNavigateBack}
           onNavigateForward={this.props.onNavigateForward}
           onNavigateRefresh={this.props.onNavigateRefresh}
-          onNavigateTo={this.props.onNavigateTo} />
+          onNavigateTo={this.props.onNavigateTo}
+          onNavigateInHistory={this.props.onNavigateInHistory} />
         <Overview />
       </div>
     );
@@ -54,6 +55,7 @@ BrowserWindow.propTypes = {
   onNavigateForward: PropTypes.func.isRequired,
   onNavigateRefresh: PropTypes.func.isRequired,
   onNavigateTo: PropTypes.func.isRequired,
+  onNavigateInHistory: PropTypes.func.isRequired,
 };
 
 export default BrowserWindow;

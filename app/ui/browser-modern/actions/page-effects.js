@@ -99,6 +99,21 @@ export function navigateCurrentPageRefresh() {
   };
 }
 
+export function navigatePageInHistory(pageId, historyIndex, doc = document) {
+  return {
+    type: EffectTypes.NAVIGATE_PAGE_IN_HISTORY,
+    webview: getWebViewForPageId(doc, pageId),
+    pageId,
+    historyIndex,
+  };
+}
+
+export function navigateCurrentPageInHistory(historyIndex) {
+  return (dispatch, getState) => {
+    dispatch(navigatePageInHistory(PagesSelectors.getSelectedPageId(getState()), historyIndex));
+  };
+}
+
 export function toggleDevtools(pageId, doc = document) {
   return {
     type: EffectTypes.TOGGLE_DEVTOOLS,

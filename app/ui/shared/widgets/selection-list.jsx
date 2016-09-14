@@ -46,6 +46,8 @@ class SelectionList extends Component {
             data-index={i}
             data-selected={this.props.selectedIndex === i}
             onMouseOverComponent={this.props.onMouseOverChildComponent}
+            onMouseDownOnComponent={this.props.onMouseDownOnChildComponent}
+            onMouseUpOnComponent={this.props.onMouseUpOnChildComponent}
             onClickOnComponent={this.props.onClickOnChildComponent}>
             {child}
           </ListItem>
@@ -60,6 +62,8 @@ SelectionList.displayName = 'SelectionList';
 const OmittedContainerProps = {
   selectedIndex: PropTypes.number.isRequired,
   onMouseOverChildComponent: PropTypes.func,
+  onMouseDownOnChildComponent: PropTypes.func,
+  onMouseUpOnChildComponent: PropTypes.func,
   onClickOnChildComponent: PropTypes.func,
 };
 
