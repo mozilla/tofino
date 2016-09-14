@@ -17,12 +17,20 @@ import omit from 'lodash/omit';
 
 import Style from '../style';
 import Search from './search';
-import AutocompletionList from './autocompletion-list';
+import SelectionList from './selection-list';
 
 const AUTOCOMPLETED_SEARCH_STYLE = Style.registerStyle({
   position: 'relative',
   flex: 1,
   flexDirection: 'column',
+});
+
+const SELECTION_LIST_STYLE = Style.registerStyle({
+  position: 'absolute',
+  top: '100%',
+  left: 0,
+  right: 0,
+  boxShadow: 'var(--theme-default-shadow)',
 });
 
 class AutocompletedSearch extends Component {
@@ -129,12 +137,13 @@ class AutocompletedSearch extends Component {
           ref={e => this.inputbar = e}
           onChange={this.handleInputChange}
           onKeyDown={this.handleInputKeyDown} />
-        <AutocompletionList hidden={!this.state.showAutocompletions}
+        <SelectionList className={SELECTION_LIST_STYLE}
+          hidden={!this.state.showAutocompletions}
           selectedIndex={this.state.selectedIndex}
           onMouseOverChildComponent={this.handleMouseOverChildComponent}
           onClickOnChildComponent={this.handleClickOnChildComponent}>
           {results && results.map(this.createAutocompletionListItem).toArray()}
-        </AutocompletionList>
+        </SelectionList>
       </div>
     );
   }

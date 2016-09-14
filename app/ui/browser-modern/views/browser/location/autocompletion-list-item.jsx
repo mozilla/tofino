@@ -20,9 +20,6 @@ import * as SharedPropTypes from '../../../model/shared-prop-types';
 const AUTOCOMPLETIONS_LIST_ITEM_STYLE = Style.registerStyle({
   overflow: 'hidden',
   padding: '10px',
-  '&[data-is-selected=true] *': {
-    color: 'var(--theme-content-selection-color)',
-  },
 });
 
 const TITLE_STYLE = Style.registerStyle({
@@ -52,8 +49,7 @@ class AutocompletionsListItem extends Component {
 
   render() {
     return (
-      <div className={AUTOCOMPLETIONS_LIST_ITEM_STYLE}
-        data-is-selected={this.props.selected}>
+      <div className={AUTOCOMPLETIONS_LIST_ITEM_STYLE}>
         {this.props.data.title
         ? (
           <div>
