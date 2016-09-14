@@ -437,12 +437,12 @@ Successful requests will produce a "200 OK" response with an array
     {
       "url": "https://reddit.com/",
       "title": "reddit - the front page of the internet",
-      "visitedAt": 15000000
+      "lastVisited": 15000000
     },
     {
       "location": "https://www.mozilla.org/en-US/firefox/new/",
       "title": "Download Firefox - Free Web Browser",
-      "visitedAt": 14000000
+      "lastVisited": 14000000
     }
   ]
 }
