@@ -21,8 +21,6 @@ import SelectionList from './selection-list';
 
 const AUTOCOMPLETED_SEARCH_STYLE = Style.registerStyle({
   position: 'relative',
-  flex: 1,
-  flexDirection: 'column',
 });
 
 const SELECTION_LIST_STYLE = Style.registerStyle({
@@ -132,11 +130,11 @@ class AutocompletedSearch extends Component {
   render() {
     const results = this.props.autocompletionResults;
     return (
-      <div className={`widget-autocompleted-search ${AUTOCOMPLETED_SEARCH_STYLE}`}>
-        <Search {...omit(this.props, Object.keys(AutocompletionProps))}
-          ref={e => this.inputbar = e}
-          onChange={this.handleInputChange}
-          onKeyDown={this.handleInputKeyDown} />
+      <Search {...omit(this.props, Object.keys(AutocompletionProps))}
+        className={`${AUTOCOMPLETED_SEARCH_STYLE} ${this.props.className || ''}`}
+        ref={e => this.inputbar = e}
+        onChange={this.handleInputChange}
+        onKeyDown={this.handleInputKeyDown}>
         <SelectionList className={SELECTION_LIST_STYLE}
           hidden={!this.state.showAutocompletions}
           selectedIndex={this.state.selectedIndex}
@@ -144,7 +142,7 @@ class AutocompletedSearch extends Component {
           onClickOnChildComponent={this.handleClickOnChildComponent}>
           {results && results.map(this.createAutocompletionListItem).toArray()}
         </SelectionList>
-      </div>
+      </Search>
     );
   }
 }
