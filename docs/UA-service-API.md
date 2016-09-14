@@ -452,4 +452,4 @@ https://github.com/mozilla/tofino/blob/master/app/services/user-agent-service/se
 
 # Example client
 
-https://github.com/mozilla/tofino/blob/master/app/ui/browser/lib/user-agent.js
+https://github.com/mozilla/tofino/blob/master/app/ui/browser/lib/user-agent-http-client.js

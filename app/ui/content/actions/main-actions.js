@@ -10,21 +10,21 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import UA from '../lib/ua';
+import userAgentHttpClient from '../../../shared/user-agent-http-client';
 import * as types from '../constants/action-types';
 
 export function showHistory({ query, limit }) {
   return async function(dispatch) {
     const visitedPages = query
-      ? (await UA.query({ query, limit, snippetSize: 'large' }))
-      : (await UA.visited({ limit }));
+      ? (await userAgentHttpClient.query({ query, limit, snippetSize: 'large' })).results
+      : (await userAgentHttpClient.visited({ limit })).pages;
     dispatch({ type: types.SHOW_HISTORY, visitedPages });
   };
 }
 
 export function showStars({ limit }) {
   return async function(dispatch) {
-    const starredItems = await UA.recentStars({ limit });
+    const starredItems = (await userAgentHttpClient.recentStars({ limit })).stars;
     dispatch({ type: types.SHOW_STARS, starredItems });
   };
 }
