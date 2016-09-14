@@ -16,6 +16,5 @@ export const Bookmark = Immutable.Record({
   guid: undefined,
   location: undefined,
   title: undefined,
-  createdAt: null,
-  visitedAt: null,
+  lastVisited: null,
 });

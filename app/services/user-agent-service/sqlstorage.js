@@ -434,7 +434,7 @@ export class ProfileStorage {
     const rows = await this.getStarredWithOrderByAndLimit(true, limit);
     return rows.map(row =>
       new Bookmark({
-        title: row.title, location: row.url, visitedAt: row.ts,
+        title: row.title, location: row.url, lastVisited: row.ts,
       }));
   }
 
