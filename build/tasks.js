@@ -68,7 +68,8 @@ const Tasks = {
   },
 
   async serve() {
-    await Lazy.config();
+    // Make sure we'll run in development mode to enable logging.
+    await Lazy.config({ development: true });
 
     // Check if the `lib` directory exists. If it doesn't, need to rebuild.
     if (!(await buildDirectoryExists())) {
