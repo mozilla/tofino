@@ -358,10 +358,14 @@ export class ProfileStorage {
                     .replace(/╡/g, '</b>');
     }
 
-    rows.forEach(row => {
-      row.snippet = escape(row.snippet);
-    });
-    return rows;
+    return rows.map(row =>
+      ({
+        uri: row.uri,
+        title: row.title,
+        snippet: escape(row.snippet),
+        lastVisited: row.lastVisited,
+      })
+    );
   }
 
   async visitedMatches(substring, since = 0, limit = 10) {
