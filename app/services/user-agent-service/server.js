@@ -210,7 +210,7 @@ export async function start({ storage, options }) {
   const port = options.port;
   const contentServiceOrigin = options.contentServiceOrigin;
 
-  const { setup } = makeServer(version, port);
+  const { setup, stop } = makeServer(version, port);
 
   await setup((app, router) => {
     logger.info(`Enabling CORS for the Content service on ${options.contentServiceOrigin}`);
@@ -220,4 +220,6 @@ export async function start({ storage, options }) {
       storage.db.db.on('trace', logger.trace);
     }
   });
+
+  return stop;
 }

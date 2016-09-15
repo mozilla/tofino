@@ -41,7 +41,7 @@ export async function UserAgentService(options = {}) {
   const contentServiceOrigin = options.contentServiceOrigin;
   const profileStorage = await ProfileStorage.open(db);
 
-  await userAgentService.start({
+  const stop = await userAgentService.start({
     storage: profileStorage,
     options: {
       debug: false,
@@ -53,4 +53,6 @@ export async function UserAgentService(options = {}) {
 
   const msg = `Started a User Agent service running on ${port}`;
   logger.info(colors.green(msg));
+
+  return stop;
 }
