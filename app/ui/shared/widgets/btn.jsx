@@ -113,10 +113,8 @@ const OmittedContainerProps = {
 
 Btn.propTypes = {
   ...OmittedContainerProps,
-  id: PropTypes.string,
   className: PropTypes.string,
-  style: PropTypes.object,
-  hidden: PropTypes.bool,
+  style: PropTypes.object, // eslint-disable-line
   children: React.PropTypes.oneOfType([
     React.PropTypes.arrayOf(React.PropTypes.node),
     React.PropTypes.node,

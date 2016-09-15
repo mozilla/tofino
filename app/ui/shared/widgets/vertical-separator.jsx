@@ -39,10 +39,7 @@ class VerticalSeparator extends Component {
 VerticalSeparator.displayName = 'VerticalSeparator';
 
 VerticalSeparator.propTypes = {
-  id: PropTypes.string,
   className: PropTypes.string,
-  style: PropTypes.object,
-  hidden: PropTypes.bool,
 };
 
 export default VerticalSeparator;

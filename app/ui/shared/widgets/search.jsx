@@ -82,16 +82,15 @@ const OmittedContainerProps = {
   onChange: PropTypes.func,
   onKeyDown: PropTypes.func,
   onKeyUp: PropTypes.func,
+  onKeyPress: PropTypes.func,
   placeholder: PropTypes.string,
   defaultValue: PropTypes.string,
 };
 
 Search.propTypes = {
   ...OmittedContainerProps,
-  id: PropTypes.string,
-  style: PropTypes.object,
+  style: PropTypes.object, // eslint-disable-line
   className: PropTypes.string,
-  hidden: PropTypes.bool,
 };
 
 export default Search;
