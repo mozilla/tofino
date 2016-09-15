@@ -86,7 +86,9 @@ export default function({ store, userAgentClient }) {
   });
 
   ipcRenderer.on('select-tab-index', (_, index) => {
-    store.dispatch(PageActions.setSelectedPageIndex(index));
+    if (PagesSelectors.hasPageAtIndex(store.getState(), index)) {
+      store.dispatch(PageActions.setSelectedPageIndex(index));
+    }
   });
 
   ipcRenderer.on('focus-url-bar', () => {

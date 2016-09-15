@@ -40,6 +40,14 @@ export function getPageByIndex(state, index) {
   return getPageById(state, getPageIdByIndex(index));
 }
 
+export function hasPageWithId(state, id) {
+  return getUnorderedPages(state).has(id);
+}
+
+export function hasPageAtIndex(state, index) {
+  return getOrderedPageIds(state).has(index);
+}
+
 export function getPageIndexById(state, id) {
   return getOrderedPageIds(state).indexOf(id);
 }
