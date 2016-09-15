@@ -85,6 +85,11 @@ export default function({ store, userAgentClient }) {
     store.dispatch(PageActions.setSelectedPageNext());
   });
 
+  ipcRenderer.on('select-tab-last', () => {
+    const index = PagesSelectors.getPageCount(store.getState()) - 1;
+    store.dispatch(PageActions.setSelectedPageIndex(index));
+  });
+
   ipcRenderer.on('select-tab-index', (_, index) => {
     store.dispatch(PageActions.setSelectedPageIndex(index));
   });
