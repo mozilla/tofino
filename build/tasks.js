@@ -69,12 +69,19 @@ const Tasks = {
 
   async serve() {
     await Lazy.config();
+
+    // Check if the `lib` directory exists. If it doesn't, need to rebuild.
+    if (!(await buildDirectoryExists())) {
+      deleteBuildConfigHashes();
+    }
+
     const builders = [
       await Lazy.buildModules(),
       await Lazy.buildContentService(),
       await Lazy.buildUserAgentService(),
     ];
     await Promise.all(builders.map(w => w.close()));
+
     // Now that we've finished building, store the current configuration
     // so that we may diff in the future to avoid unnecessary builds.
     await Lazy.saveConfig();
