@@ -29,7 +29,6 @@ import * as ProfileEffects from '../../../actions/profile-effects';
 
 const LOCATION_BAR_STYLE = Style.registerStyle({
   flex: 1,
-  alignItems: 'center',
   backgroundColor: 'var(--theme-content-background)',
 });
 

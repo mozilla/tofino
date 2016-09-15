@@ -16,6 +16,7 @@ import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 
 import Style from '../style';
+import Btn from './btn';
 
 const LIST_ITEM_STYLE = Style.registerStyle({
   // Nothing here yet.
@@ -55,10 +56,12 @@ class ListItem extends Component {
   render() {
     return (
       <li {...omit(this.props, Object.keys(OmittedContainerProps))}
-        className={`widget-list-item ${LIST_ITEM_STYLE} ${this.props.className || ''}`}
-        onClick={this.handleMouseClick}
-        onMouseOver={this.handleMouseOver}>
-        {this.props.children}
+        className={`widget-list-item ${LIST_ITEM_STYLE} ${this.props.className || ''}`}>
+        <Btn title=""
+          onClick={this.handleMouseClick}
+          onMouseOver={this.handleMouseOver}>
+          {this.props.children}
+        </Btn>
       </li>
     );
   }

@@ -29,13 +29,7 @@ const TAB_STYLE = Style.registerStyle({
   WebkitUserSelect: 'none',
   WebkitAppRegion: 'no-drag',
   overflow: 'hidden',
-});
-
-const TAB_CONTENTS_STYLE = Style.registerStyle({
-  overflow: 'hidden',
-  width: `${UIConstants.TAB_DEFAULT_WIDTH}vw`,
   padding: '0 10px',
-  alignItems: 'center',
   backgroundColor: 'var(--theme-tab-inactive-background)',
   color: 'var(--theme-tab-inactive-color)',
   opacity: 'var(--theme-tab-inactive-opacity)',
@@ -44,6 +38,11 @@ const TAB_CONTENTS_STYLE = Style.registerStyle({
     color: 'var(--theme-tab-active-color)',
     opacity: 'var(--theme-tab-active-opacity)',
   },
+});
+
+const TAB_CONTENTS_STYLE = Style.registerStyle({
+  flexShrink: 'initial',
+  width: `${UIConstants.TAB_DEFAULT_WIDTH}vw`,
 });
 
 const FAVICON_STYLE = Style.registerStyle({
@@ -86,9 +85,10 @@ class Tab extends Component {
   render() {
     return (
       <div className={`browser-tab ${TAB_STYLE}`}
-        onClick={this.handleTabClick}>
-        <div className={`tab-contents ${TAB_CONTENTS_STYLE}`}
-          data-active-tab={this.props.isActive && !this.props.isOverviewVisible}>
+        data-active-tab={this.props.isActive && !this.props.isOverviewVisible}>
+        <Btn className={`tab-contents ${TAB_CONTENTS_STYLE}`}
+          title={this.props.pageTitle || this.props.pageLocation}
+          onClick={this.handleTabClick}>
           {this.props.pageLoadState === PageState.STATES.PRE_LOADING
           ? (
             <i className={`fa fa-spinner fa-pulse ${LOADING_INDICATOR_STYLE}`} />
@@ -117,19 +117,18 @@ class Tab extends Component {
           ) : (
             null
           )}
-          <div className={`tab-title ${TAB_TITLE_STYLE}`}
-            title={this.props.pageTitle}>
+          <div className={`tab-title ${TAB_TITLE_STYLE}`}>
             {this.props.pageTitle || this.props.pageLocation || 'Loading...'}
           </div>
-          <Btn className="tab-close-button"
-            title="Close tab"
-            image="glyph-addnew.svg"
-            imgWidth="14px"
-            imgHeight="14px"
-            imgPosition="center"
-            style={{ transform: 'rotate(45deg)' }}
-            onClick={this.handleTabClose} />
-        </div>
+        </Btn>
+        <Btn className="tab-close-button"
+          title="Close tab"
+          image="glyph-addnew.svg"
+          imgWidth="14px"
+          imgHeight="14px"
+          imgPosition="center"
+          style={{ transform: 'rotate(45deg)' }}
+          onClick={this.handleTabClose} />
       </div>
     );
   }
