@@ -32,6 +32,7 @@ describe('Action - unbookmark', () => {
   });
 
   afterEach(fetchMock.reset);
+  after(fetchMock.restore);
 
   it('Should remove bookmarks from profile state', function() {
     const { dispatch, getState, getPages } = this;

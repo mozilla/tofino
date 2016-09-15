@@ -37,6 +37,9 @@ describe('Action - SET_USER_TYPED_LOCATION', () => {
     dispatch(actions.setCurrentTab(this.getPages().get(0).id));
   });
 
+  afterEach(fetchMock.reset);
+  after(fetchMock.restore);
+
   it('Should update page values', function() {
     const { dispatch, getPages, getUserTypedLocation } = this;
 

@@ -25,6 +25,7 @@ describe('Action - CREATE_TAB', () => {
   });
 
   afterEach(fetchMock.reset);
+  after(fetchMock.restore);
 
   it('Should create a new tab with default location and select it', function() {
     const { getCurrentPageIndex, getPages, dispatch } = this;
