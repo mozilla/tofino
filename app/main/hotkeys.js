@@ -33,6 +33,7 @@ const HOTKEYS = new Map([
   ['CmdOrCtrl+6', bw => () => bw.webContents.send('select-tab-index', 5)],
   ['CmdOrCtrl+7', bw => () => bw.webContents.send('select-tab-index', 6)],
   ['CmdOrCtrl+8', bw => () => bw.webContents.send('select-tab-index', 7)],
+  ['CmdOrCtrl+9', bw => () => bw.webContents.send('select-tab-last')],
   ['CmdOrCtrl+Alt+Left', bw => () => bw.webContents.send('select-tab-previous')],
   ['Ctrl+Shift+Tab', bw => () => bw.webContents.send('select-tab-previous')],
   ['CmdOrCtrl+Alt+Right', bw => () => bw.webContents.send('select-tab-next')],
