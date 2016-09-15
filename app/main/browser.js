@@ -24,6 +24,7 @@ import * as instrument from '../services/instrument';
 import * as spawn from './spawn';
 import * as BW from './browser-window';
 import * as certs from './certificates';
+import * as ProfileDiffTypes from '../shared/constants/profile-diff-types';
 import UserAgentClient from '../shared/user-agent-client';
 
 const app = electron.app; // control application life.
@@ -112,13 +113,7 @@ ipc.on('instrument-event', (event, args) => {
 const menuData = {};
 
 userAgentClient.on('diff', (command) => {
-  if (command.type === 'initial') {
-    menuData.recentBookmarks = command.payload.recentStars;
-    menu.buildAppMenu(menuData);
-    return;
-  }
-
-  if (command.type === '/stars/recent') {
+  if (command.type === ProfileDiffTypes.RECENT_BOOKMARKS) {
     menuData.recentBookmarks = command.payload;
     menu.buildAppMenu(menuData);
   }
