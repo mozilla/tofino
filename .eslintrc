@@ -65,8 +65,10 @@
     "no-use-before-define": ["off"],
     "dot-notation": ["off"],
     "eqeqeq": ["error", "allow-null"],
+    "no-plusplus": ["off"],
     "no-continue": ["off"],
     "require-yield": ["off"],
+    "class-methods-use-this": ["off"],
 
     // See https://github.com/eslint/eslint/issues/6274
     "generator-star-spacing": ["off"],
@@ -89,8 +91,8 @@
     }],
     "import/no-commonjs": ["error"],
     "import/no-amd": ["error"],
-    "import/no-named-as-default": ["off"],
     "import/no-extraneous-dependencies": ["off"],
+    "import/no-named-as-default": ["off"],
     "import/prefer-default-export": ["off"]
   }
 }
