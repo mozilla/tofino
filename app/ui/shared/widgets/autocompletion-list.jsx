@@ -71,10 +71,8 @@ const OmittedContainerProps = {
 
 AutocompletionList.propTypes = {
   ...OmittedContainerProps,
-  id: PropTypes.string,
   className: PropTypes.string,
-  style: PropTypes.object,
-  hidden: PropTypes.bool,
+  style: PropTypes.object, // eslint-disable-line
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,

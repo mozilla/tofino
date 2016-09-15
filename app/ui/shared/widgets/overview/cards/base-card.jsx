@@ -134,7 +134,7 @@ class BaseCard extends Component {
 BaseCard.displayName = 'BaseCard';
 
 BaseCard.propTypes = {
-  page: PropTypes.object.isRequired,
+  page: PropTypes.object.isRequired, // eslint-disable-line
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   badgeWidth: PropTypes.number.isRequired,
@@ -142,7 +142,6 @@ BaseCard.propTypes = {
   badgeLargeWidth: PropTypes.number.isRequired,
   badgeLargeHeight: PropTypes.number.isRequired,
   isSelected: PropTypes.bool.isRequired,
-  backgroundColor: PropTypes.string,
   backgroundImage: PropTypes.string,
   badgeImage: PropTypes.string,
   children: PropTypes.oneOfType([
