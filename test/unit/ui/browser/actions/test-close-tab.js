@@ -30,6 +30,7 @@ describe('Action - CLOSE_TAB', () => {
   });
 
   afterEach(fetchMock.reset);
+  after(fetchMock.restore);
 
   it('Should maintain tab selection when destroying a tab before the selected tab', function() {
     const { getCurrentPageIndex, getPages, dispatch } = this;

@@ -30,6 +30,7 @@ describe('Action - bookmark', () => {
   });
 
   afterEach(fetchMock.reset);
+  after(fetchMock.restore);
 
   it('Should add bookmarks to profile state', function() {
     const { dispatch, getProfile, getPages } = this;
