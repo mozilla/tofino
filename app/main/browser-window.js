@@ -9,6 +9,7 @@ under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
+/* global LIBDIR */
 
 import path from 'path';
 import { BrowserWindow } from 'electron';
@@ -16,11 +17,12 @@ import { BrowserWindow } from 'electron';
 import * as hotkeys from './hotkeys';
 import * as downloads from './downloads';
 
-import { UI_DIR, fileUrl } from '../shared/paths-util';
+import { fileUrl } from '../shared/paths-util';
 import BUILD_CONFIG from '../build-config';
 
 // Switch to 'browser-blueprint' or 'browser-alt' to test different frontends.
 // We should have a flag to the application to switch frontends
+const UI_DIR = path.join(LIBDIR, 'ui');
 const BROWSER_CHROME_URL = fileUrl(path.join(UI_DIR, 'browser-modern', 'browser.html'));
 
 /**

@@ -9,6 +9,7 @@ under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
+/* global LIBDIR */
 
 import os from 'os';
 import colors from 'colors/safe';
@@ -18,13 +19,7 @@ import { logger } from '../shared/logging';
 import * as endpoints from '../shared/constants/endpoints';
 import { parseArgs } from '../shared/environment';
 
-const ROOT = path.join(__dirname, '..');
-const SERVICES_PATH = path.join(ROOT, 'services');
-const UA_SERVICE_BIN = path.join(SERVICES_PATH, 'user-agent-service', 'user-agent-service');
-const CONTENT_SERVICE_PATH = path.join(SERVICES_PATH, 'content-service', 'index.js');
-
 const NODE_CMD = os.platform() === 'win32' ? 'node.exe' : 'node';
-const NODE = path.join(ROOT, NODE_CMD);
 
 // @TODO Use something like `forever` or `pm2` to ensure that this
 // process remains running
@@ -64,15 +59,15 @@ export function startUserAgentService(userAgentClient, options = {}) {
   // outliving the its original parent, which we want to allow in the UAS case.
   const detached = !options.attached; // Detach by default
   const stdio = detached ? ['ignore'] : ['ignore', process.stdout, process.stderr];
+  const lib = options.libdir || LIBDIR;
+  const profile = options.profiledir || parseArgs().profile;
 
-  let command = NODE;
-  if (options.command) {
-    command = options.command;
-  }
+  const NODE = path.join(lib, NODE_CMD);
+  const UA_SERVICE_BIN = path.join(lib, 'services', 'user-agent-service', 'user-agent-service');
 
-  spawnProcess('UA Service', command, [UA_SERVICE_BIN,
+  spawnProcess('UA Service', NODE, [UA_SERVICE_BIN,
     '--port', port,
-    '--profile', parseArgs().profile,
+    '--profile', profile,
     '--version', version,
     '--content-service-origin', `${endpoints.TOFINO_PROTOCOL}://`,
   ], {
@@ -90,14 +85,14 @@ export function startUserAgentService(userAgentClient, options = {}) {
 export function startContentService(options = {}) {
   const detached = !options.attached; // Detach by default
   const stdio = detached ? ['ignore'] : ['ignore', process.stdout, process.stderr];
+  const lib = options.libdir || LIBDIR;
+  const profile = options.profiledir || parseArgs().profile;
 
-  let command = NODE;
-  if (options.command) {
-    command = options.command;
-  }
+  const NODE = path.join(lib, NODE_CMD);
+  const CONTENT_SERVICE_PATH = path.join(lib, 'services', 'content-service', 'index.js');
 
-  spawnProcess('Content service', command, [CONTENT_SERVICE_PATH,
-    '--profile', parseArgs().profile,
+  spawnProcess('Content service', NODE, [CONTENT_SERVICE_PATH,
+    '--profile', profile,
   ], {
     detached,
     stdio,

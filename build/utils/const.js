@@ -8,6 +8,7 @@ export const ROOT = path.resolve(path.dirname(path.join(__dirname, '..')));
 export const BUILD_SYSTEM_DIR = path.join(ROOT, 'build');
 export const SRC_DIR = path.join(ROOT, 'app');
 export const LIB_DIR = path.join(ROOT, 'lib');
+export const PROFILE_DIR = path.join(ROOT, 'profile');
 export const PACKAGED_DIST_DIR = path.join(ROOT, 'dist');
 
 export const APP_SHARED_DIR = path.join(SRC_DIR, 'shared');

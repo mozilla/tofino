@@ -18,8 +18,16 @@ import * as userAgentService from './server';
 import { ProfileStorage } from './sqlstorage';
 import meta from './meta.json';
 
-process.on('uncaughtException', logger.error);
-process.on('unhandledRejection', logger.error);
+process.on('uncaughtException', (err) => {
+  logger.error(err.stack);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, p) => {
+  logger.error(`Unhandled Rejection at: Promise ${JSON.stringify(p)}`);
+  logger.error(reason.stack);
+  process.exit(2);
+});
 
 export async function UserAgentService(options = {}) {
   if (typeof options.port !== 'number') {

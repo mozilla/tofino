@@ -18,8 +18,16 @@ import * as contentService from './server';
 import * as endpoints from '../../shared/constants/endpoints';
 import { parseArgs } from '../../shared/environment';
 
-process.on('uncaughtException', logger.error);
-process.on('unhandledRejection', logger.error);
+process.on('uncaughtException', (err) => {
+  logger.error(err.stack);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, p) => {
+  logger.error(`Unhandled Rejection at: Promise ${JSON.stringify(p)}`);
+  logger.error(reason.stack);
+  process.exit(2);
+});
 
 const fileStream = fs.createWriteStream(path.join(parseArgs().profile, 'content-service.log'));
 logger.addStream(pipeToStream(fileStream, 'debug'));
