@@ -9,12 +9,15 @@
  CONDITIONS OF ANY KIND, either express or implied. See the License for the
  specific language governing permissions and limitations under the License.
  */
+/* global LIBDIR */
 
 import path from 'path';
 import express from 'express';
+import { logger } from '../../shared/logging';
 import { makeServer, autoCaughtRouteError } from '../common';
 import * as endpoints from '../../shared/constants/endpoints';
-import { UI_DIR } from '../../shared/paths-util';
+
+const UI_DIR = path.join(LIBDIR, 'ui');
 
 const VALID_PAGES = [
   'history',
@@ -22,7 +25,9 @@ const VALID_PAGES = [
 ];
 
 function configure(app, router) {
-  router.use(express.static(path.join(UI_DIR, 'content')));
+  const content = path.join(UI_DIR, 'content');
+  router.use(express.static(content));
+  logger.info(`Serving static content from ${content}`);
 
   for (const page of VALID_PAGES) {
     const route = `${endpoints.CONTENT_SERVER_VERSION}/${page}`;

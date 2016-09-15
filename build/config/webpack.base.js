@@ -14,8 +14,13 @@ export default {
   module: {
     loaders: [{
       test: /\.jsx?$/,
-      include: [path.join(root, 'app')],
-      exclude: [path.join(root, 'app', 'node_modules')],
+      include: [
+        path.join(root, 'app'),
+      ],
+      exclude: [
+        path.join(root, 'node_modules'),
+        path.join(root, 'app', 'node_modules'),
+      ],
       loader: 'babel-loader',
     }, {
       test: /\.json$/,

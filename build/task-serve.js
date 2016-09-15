@@ -2,7 +2,7 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 import * as spawn from '../app/main/spawn';
-import { getElectronPath } from './utils/electron';
+import { LIB_DIR, PROFILE_DIR } from './utils/const';
 
 export function startUserAgentService(options = {}) {
   spawn.startUserAgentService(null, options);
@@ -13,6 +13,6 @@ export function startContentService(options = {}) {
 }
 
 export default function() {
-  startUserAgentService({ attached: true, command: getElectronPath() });
-  startContentService({ attached: true, command: getElectronPath() });
+  startUserAgentService({ attached: true, libdir: LIB_DIR, profiledir: PROFILE_DIR });
+  startContentService({ attached: true, libdir: LIB_DIR, profiledir: PROFILE_DIR });
 }
