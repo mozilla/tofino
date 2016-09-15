@@ -1,6 +1,11 @@
 {
   "rules": {
+    "arrow-parens": ["off"],
+    "arrow-body-style": ["off"],
     "react/prefer-stateless-function": ["off"],
+    "react/forbid-prop-types": ["off"],
+    "react/no-unused-prop-types": ["off"],
     "react/jsx-no-bind": ["off"],
+    "jsx-a11y/no-static-element-interactions": ["off"],
   }
 }
