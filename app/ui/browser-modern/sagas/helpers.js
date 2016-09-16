@@ -18,12 +18,14 @@ import { logger } from '../../../shared/logging';
 export const failed = type => ({ type: `${type}_FAILED` });
 
 export const wrapped = function(type, fn) {
-  return [type, function*(...args) {
+  const generator = function*(...args) {
     try {
       yield* fn(...args);
     } catch (e) {
       yield put(failed(type));
       logger.error(e);
     }
-  }];
+  };
+  Object.defineProperty(generator, 'name', { value: type });
+  return [type, generator];
 };
