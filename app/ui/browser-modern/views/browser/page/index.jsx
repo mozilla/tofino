@@ -83,7 +83,7 @@ class Page extends Component {
       // Like `did-navigate`, but fired only when an in-page navigation happens,
       // meaning that the page URL changes but does not cause navigation outside
       // of the page (e.g. when the hashchange event is triggered).
-      if (!e.isMainFrame || e.url === this.props.pageLocation) {
+      if (!e.isMainFrame) {
         return;
       }
       this.props.dispatch(PageActions.setPageDetails(this.props.pageId, { location: e.url }));
@@ -102,15 +102,13 @@ class Page extends Component {
       // May be emitted multiple times for every single frame.
       // Emitted regardless of whether or not a failure occurs.
       const title = this.webview.getTitle();
-      const url = this.webview.getURL();
+      const location = this.webview.getURL();
 
-      // `page-title-set` is not called on error pages, nor is
-      // `did-navigate` called, so we must set these properties to
+      // The `page-title-set` event is not called on error pages, nor is
+      // the `did-navigate` event called, so we must set these properties to
       // properly render our error pages
-      this.props.dispatch(PageActions.setPageDetails(this.props.pageId, {
-        title,
-        location: url,
-      }));
+      this.props.dispatch(PageActions.setPageDetails(this.props.pageId, { title, location }));
+      this.props.dispatch(UIEffects.setURLBarValue(this.props.pageId, location));
 
       // If the page state is still LOADING, and we haven't hit a
       // failure state, mark this page as LOADED.
