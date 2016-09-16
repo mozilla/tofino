@@ -7,7 +7,7 @@ import { waitUntil } from '../utils/async';
 import * as actions from '../../app/ui/browser-blueprint/constants/action-types';
 import * as selectors from '../../app/ui/browser-blueprint/selectors/index';
 
-const fireKeyDown = (ops) => {
+const fireKeyDown = ops => {
   const event = new window.KeyboardEvent('keydown', ops);
   document.body.dispatchEvent(event);
 };

@@ -41,28 +41,24 @@ export default {
   ],
 };
 
-export const makeDevConfig = (baseConfig) => {
-  return {
-    ...devConfig,
-    ...baseConfig,
-    output: {
-      ...devConfig.output,
-      ...baseConfig.output,
-    },
-    plugins: [
-      ...devConfig.plugins,
-      ...baseConfig.plugins,
-    ],
-  };
-};
+export const makeDevConfig = baseConfig => ({
+  ...devConfig,
+  ...baseConfig,
+  output: {
+    ...devConfig.output,
+    ...baseConfig.output,
+  },
+  plugins: [
+    ...devConfig.plugins,
+    ...baseConfig.plugins,
+  ],
+});
 
-export const makeProdConfig = (baseConfig) => {
-  return {
-    ...prodConfig,
-    ...baseConfig,
-    plugins: [
-      ...prodConfig.plugins,
-      ...baseConfig.plugins,
-    ],
-  };
-};
+export const makeProdConfig = baseConfig => ({
+  ...prodConfig,
+  ...baseConfig,
+  plugins: [
+    ...prodConfig.plugins,
+    ...baseConfig.plugins,
+  ],
+});

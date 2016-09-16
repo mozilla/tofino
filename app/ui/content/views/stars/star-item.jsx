@@ -35,7 +35,7 @@ const STAR_ITEM_STYLE = Style.registerStyle({
   },
 });
 
-const StarItem = props => {
+function StarItem(props) {
   return (
     <ListItem className={STAR_ITEM_STYLE}>
       <a href={props.star.location || ''}
@@ -44,7 +44,7 @@ const StarItem = props => {
       </a>
     </ListItem>
   );
-};
+}
 
 StarItem.displayName = 'StarItem';
 

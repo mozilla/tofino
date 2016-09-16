@@ -21,7 +21,7 @@ const { DB_ADD, TEMPIDS } = helpers;
 const perfTesting = false;
 
 describe('Storage.recentlyStarred', () => {
-  it('Stars and unstars.', async () => {
+  it('Stars and unstars.', async function() {
     const db = new ProfileDatomStorage('.');
     const A = await db.recentlyStarred();
     expect(mori.count(A)).toBe(0);
@@ -39,7 +39,7 @@ describe('Storage.recentlyStarred', () => {
     expect(mori.count(C)).toBe(0);
   });
 
-  it('Cannot re-star.', async () => {
+  it('Cannot re-star.', async function() {
     const db = new ProfileDatomStorage('.');
     await db.starPage('http://foo.com/bar', 0, StarOp.star, 1234567892);
     expect(mori.first(await db.recentlyStarred()).visitedAt).toBe(1234567892);
@@ -50,13 +50,13 @@ describe('Storage.recentlyStarred', () => {
 });
 
 describe('Storage.visited', () => {
-  it('Empty fetches with no limit.', async () => {
+  it('Empty fetches with no limit.', async function() {
     const db = new ProfileDatomStorage('.');
     const result = await db.visited();
     expect(mori.isEmpty(result)).toBeTruthy();
   });
 
-  it('Smushes URLs for multiple transacts.', async () => {
+  it('Smushes URLs for multiple transacts.', async function() {
     const db = new ProfileDatomStorage('.');
     const resultA = datascript.core.transact_BANG_(db.conn, vector(
       vector(DB_ADD, -1, 'page/url', 'http://example.com')
@@ -68,7 +68,7 @@ describe('Storage.visited', () => {
     expect(getIn(resultA, [TEMPIDS, -1])).toBe(getIn(resultB, [TEMPIDS, -2]));
   });
 
-  it('Fetches a single row with more than one visit.', async () => {
+  it('Fetches a single row with more than one visit.', async function() {
     const db = new ProfileDatomStorage('.');
     const session = await db.startSession('here', null, 1234567890);
     const pageA = await db.visit('http://example.com/foo/', session, 'Example Páge', 1234567900);
@@ -92,7 +92,7 @@ describe('Storage.visited', () => {
     console.log(`Fetching one visited took ${end - start} ms.\n`);
   });
 
-  it('Matches substrings.', async () => {
+  it('Matches substrings.', async function() {
     const db = new ProfileDatomStorage('.');
     const session = await db.startSession('here', null, 1234567890);
     await db.visit('http://example.com/foo/', session, 'Example Páge', 1234567900);
@@ -110,7 +110,7 @@ describe('Storage.visited', () => {
   });
 
   if (perfTesting) {
-    it('Performs reasonably well with lots of data.', async() => {
+    it('Performs reasonably well with lots of data.', async function() {
       const db = new ProfileDatomStorage('.');
       const session = await db.startSession('here', null, 1234567890);
 
@@ -133,7 +133,7 @@ describe('Storage.visited', () => {
     });
   }
 
-  it('Obeys limits.', async () => {
+  it('Obeys limits.', async function() {
     const db = new ProfileDatomStorage('.');
     const session = await db.startSession('here', null, 1234567890);
     await db.visit('http://example.com/foo/', session, 'Example Páge', 1234567900);
@@ -143,7 +143,7 @@ describe('Storage.visited', () => {
 
     async function urlsWithLimit(limit) {
       const results = await db.visited(0, limit);
-      return mori.toJs(results).map((x) => x.uri);
+      return mori.toJs(results).map(x => x.uri);
     }
 
     const urls = [

@@ -156,7 +156,7 @@ export function performCurrentPageZoomOut() {
 }
 
 export function performPageZoomReset(pageId) {
-  return (dispatch) => {
+  return dispatch => {
     dispatch(setPageZoomLevel(pageId, PageState.ZOOM_LEVEL_DEFAULT));
   };
 }

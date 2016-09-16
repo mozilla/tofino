@@ -14,7 +14,7 @@ import { VisitType } from '../../../app/services/user-agent-service/storage';
 import { ProfileStorage } from '../../../app/services/user-agent-service/sqlstorage';
 
 describe('Utility tests', () => {
-  it('Compares sets correctly.', (done) => {
+  it('Compares sets correctly.', done => {
     expect(Immutable.Set(['a', 'b']).equals(Immutable.Set(['b', 'a']))).toBe(true);
     done();
   });
@@ -45,7 +45,7 @@ describe('DB.open', () => {
 });
 
 describe('ProfileStorage.open', () => {
-  it('Should be accessible through the directory only, including creating dirs.', (done) => {
+  it('Should be accessible through the directory only, including creating dirs.', done => {
     (async function () {
       try {
         const parent = tmp.dirSync({}).name;
@@ -83,7 +83,7 @@ describe('ProfileStorage data access', () => {
     fs.rmdirSync(tempDir);
   });
 
-  it('Is created with the current version.', (done) => {
+  it('Is created with the current version.', done => {
     (async function () {
       try {
         const storage = await ProfileStorage.open(tempDir);
@@ -116,7 +116,7 @@ describe('ProfileStorage data access', () => {
     }());
   });
 
-  it('Can save places across opens.', (done) => {
+  it('Can save places across opens.', done => {
     (async function () {
       try {
         const storageA = await ProfileStorage.open(tempDir);
@@ -168,7 +168,7 @@ describe('ProfileStorage data access', () => {
     }());
   });
 
-  it('Handles sessions with null and non-null values.', (done) => {
+  it('Handles sessions with null and non-null values.', done => {
     (async function () {
       try {
         const storage = await ProfileStorage.open(tempDir);
@@ -208,7 +208,7 @@ describe('ProfileStorage data access', () => {
     }());
   });
 
-  it('Saves visits.', (done) => {
+  it('Saves visits.', done => {
     (async function () {
       try {
         const storage = await ProfileStorage.open(tempDir);
@@ -224,7 +224,7 @@ describe('ProfileStorage data access', () => {
         // We only record non-undefined titles.
         expect((await storage.db
                              .all('SELECT title FROM titleEvents'))
-          .map((row) => row.title))
+          .map(row => row.title))
           .toEqual(['Some title']);
 
         await storage.close();
@@ -236,7 +236,7 @@ describe('ProfileStorage data access', () => {
     }());
   });
 
-  it('Stars pages.', (done) => {
+  it('Stars pages.', done => {
     (async function () {
       try {
         const storage = await ProfileStorage.open(tempDir);
@@ -262,7 +262,7 @@ describe('ProfileStorage data access', () => {
     }());
   });
 
-  it('Can extract the set of starredURLs pages.', (done) => {
+  it('Can extract the set of starredURLs pages.', done => {
     (async function () {
       try {
         const storage = await ProfileStorage.open(tempDir);
@@ -313,7 +313,7 @@ describe('ProfileStorage data access', () => {
     }());
   });
 
-  it('Can query by URL match.', (done) => {
+  it('Can query by URL match.', done => {
     (async function () {
       try {
         const storage = await ProfileStorage.open(tempDir);
@@ -339,7 +339,7 @@ describe('ProfileStorage data access', () => {
 });
 
 describe('Schema upgrades', () => {
-  it('Can upgrade from v1 to current.', (done) => {
+  it('Can upgrade from v1 to current.', done => {
     (async function () {
       try {
         const tempPath = tmp.tmpNameSync();
@@ -367,7 +367,7 @@ describe('Schema upgrades', () => {
     }());
   });
 
-  it('Can upgrade from v2 to current.', (done) => {
+  it('Can upgrade from v2 to current.', done => {
     (async function () {
       try {
         const tempPath = tmp.tmpNameSync();
@@ -395,7 +395,7 @@ describe('Schema upgrades', () => {
     }());
   });
 
-  it('Can upgrade from v4 to current  .', (done) => {
+  it('Can upgrade from v4 to current  .', done => {
     (async function () {
       try {
         const tempPath = tmp.tmpNameSync();

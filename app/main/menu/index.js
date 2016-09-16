@@ -21,7 +21,7 @@ import menus from './menus';
 let currentMenu = null;
 
 function buildTemplate(items, data) {
-  const buildItem = (itemTemplate) => {
+  const buildItem = itemTemplate => {
     if (typeof itemTemplate === 'function') {
       itemTemplate = itemTemplate(data);
     }

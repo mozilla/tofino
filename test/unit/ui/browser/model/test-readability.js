@@ -7,7 +7,7 @@ import jsdom from 'jsdom';
 import Readability from '../../../../../app/ui/preload/readability';
 
 describe('Readability', () => {
-  it('Is barely functional', (done) => {
+  it('Is barely functional', done => {
     const sampleDoc = `
 <html>
 <head>

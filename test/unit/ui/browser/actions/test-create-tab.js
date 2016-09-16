@@ -19,8 +19,8 @@ describe('Action - CREATE_TAB', () => {
     this.getPages = () => selectors.getPages(this.store.getState());
     this.getCurrentPageIndex = () => selectors.getCurrentPageIndex(this.store.getState());
     this.getCurrentPageId = () => selectors.getCurrentPage(this.store.getState()).id;
-    this.showURLBar = (pageId) => selectors.showURLBar(this.store.getState(), pageId);
-    this.focusedURLBar = (pageId) => selectors.focusedURLBar(this.store.getState(), pageId);
+    this.showURLBar = pageId => selectors.showURLBar(this.store.getState(), pageId);
+    this.focusedURLBar = pageId => selectors.focusedURLBar(this.store.getState(), pageId);
     this.dispatch = this.store.dispatch;
   });
 

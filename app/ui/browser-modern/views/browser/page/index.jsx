@@ -119,7 +119,7 @@ class Page extends Component {
       }
     });
 
-    this.webview.addEventListener('did-fail-load', (e) => {
+    this.webview.addEventListener('did-fail-load', e => {
       // Like 'did-finish-load', but fired when the load failed or was cancelled.
       // May be emitted multiple times for every single frame.
       // Only emitted when a failure occurs, unlike `did-stop-loading`.

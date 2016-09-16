@@ -129,7 +129,7 @@ export class ProfileStorage {
     }
 
     return this.savePlaceWithoutEstablishingTransaction(url, now)
-               .then((id) => this.savePlaceIDMapping(url, id));
+               .then(id => this.savePlaceIDMapping(url, id));
   }
 
   /**
@@ -225,7 +225,7 @@ export class ProfileStorage {
       return Promise.reject(new Error(`Unknown action ${action}.`));
     }
 
-    const star = (place) =>
+    const star = place =>
       this.db
           .run('INSERT INTO starEvents (place, session, action, ts) VALUES (?, ?, ?, ?)',
             [place, session, action, now])
@@ -244,7 +244,7 @@ export class ProfileStorage {
                      .then(star))
 
                // If the transaction committed, keep the URL -> ID mapping in memory.
-               .then((id) => this.savePlaceIDMapping(url, id));
+               .then(id => this.savePlaceIDMapping(url, id));
   }
 
   async recordVisitWithoutEstablishingTransaction(url, session, title, now = microtime.now()) {
@@ -285,7 +285,7 @@ export class ProfileStorage {
       this.recordVisitWithoutEstablishingTransaction(url, session, title, now)
 
           // If the transaction committed, keep the URL -> ID mapping in memory.
-          .then((place) => this.savePlaceIDMapping(url, place)));
+          .then(place => this.savePlaceIDMapping(url, place)));
   }
 
   collectURLs(rows) {
@@ -446,6 +446,6 @@ export class ProfileStorage {
   userVersion() {
     return this.db
                .get('PRAGMA user_version')
-               .then((row) => Promise.resolve(row.user_version));
+               .then(row => Promise.resolve(row.user_version));
   }
 }
