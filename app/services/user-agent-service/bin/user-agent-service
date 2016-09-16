@@ -5,6 +5,18 @@ var repl = require('repl');
 var meta = require('../meta.json');
 var endpoints = require('../../../shared/constants/endpoints');
 var { argParser, parseArgs } = require('../../../shared/environment');
+var { logger } = require('../../../shared/logging');
+
+process.on('uncaughtException', (err) => {
+  logger.error(err.stack);
+  process.exit(101);
+});
+
+process.on('unhandledRejection', (reason, p) => {
+  logger.error(`Unhandled Rejection at: Promise ${JSON.stringify(p)}`);
+  logger.error(reason.stack);
+  process.exit(102);
+});
 
 argParser.option('p', {
   alias: 'port',
