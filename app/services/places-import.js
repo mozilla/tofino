@@ -38,7 +38,7 @@ export class PlacesImporter {
     ORDER BY p.id, hv.visit_date
     ${limit ? ' LIMIT ?' : ''}
     `;
-    await this.db.each(placeQuery, limit ? [limit] : [], (row) => {
+    await this.db.each(placeQuery, limit ? [limit] : [], row => {
       let place = this.places.get(row.id);
       if (!place) {
         place = {
@@ -59,7 +59,7 @@ export class PlacesImporter {
   }
 
   writePlacesTo(conn) {
-    this.places.forEach((place) => {
+    this.places.forEach(place => {
       let assertions = vector(
         vector(DB_ADD, -1, 'page/url', place.url),
         vector(DB_ADD, -1, 'page/guid', place.guid));

@@ -33,7 +33,7 @@ export default function start() {
     const app = express();
     app.use(express.static(FIXTURES_PATH));
 
-    server = app.listen(PORT, (err) => {
+    server = app.listen(PORT, err => {
       if (err) {
         reject(err);
       } else {

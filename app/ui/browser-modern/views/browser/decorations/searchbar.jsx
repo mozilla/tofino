@@ -52,7 +52,7 @@ class SearchBar extends Component {
     }
   }
 
-  handleInputChange = (e) => {
+  handleInputChange = e => {
     const text = e.target.value;
     this.props.dispatch(PageEffects.performCurrentPageSearch(text));
   }

@@ -38,7 +38,7 @@ const HISTORY_ANCHOR_STYLE = Style.registerStyle({
   display: 'block',
 });
 
-const HistoryItem = props => {
+function HistoryItem(props) {
   return (
     <ListItem className={HISTORY_ITEM_STYLE}>
       <a className={HISTORY_ANCHOR_STYLE}
@@ -54,7 +54,7 @@ const HistoryItem = props => {
       )}
     </ListItem>
   );
-};
+}
 
 HistoryItem.displayName = 'HistoryItem';
 

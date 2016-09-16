@@ -73,7 +73,7 @@ export async function createBrowserWindow(userAgentClient, onload) {
 
   // 'window-ready' is called if an error occurred loading the client, or once
   // the client has connected to the User Agent Service correctly.
-  browser.once('window-ready', (error) => {
+  browser.once('window-ready', error => {
     // Show this BW (and a devtools window on error).
     if (!browser.isDestroyed()) {
       browser.show();

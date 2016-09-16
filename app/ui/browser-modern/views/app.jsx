@@ -63,15 +63,15 @@ class App extends Component {
       this.props.dispatch(PageEffects.navigatePageTo(pageId, location));
     });
 
-    this.webViewController.on('navigate-back', (pageId) => {
+    this.webViewController.on('navigate-back', pageId => {
       this.props.dispatch(PageEffects.navigatePageBack(pageId));
     });
 
-    this.webViewController.on('navigate-forward', (pageId) => {
+    this.webViewController.on('navigate-forward', pageId => {
       this.props.dispatch(PageEffects.navigatePageForward(pageId));
     });
 
-    this.webViewController.on('navigate-refresh', (pageId) => {
+    this.webViewController.on('navigate-refresh', pageId => {
       this.props.dispatch(PageEffects.navigatePageRefresh(pageId));
     });
   }

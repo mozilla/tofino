@@ -38,7 +38,7 @@ export const attachGestureListeners = () => {
   let deltaX = 0;
   let deltaY = 0;
 
-  window.addEventListener('wheel', (e) => {
+  window.addEventListener('wheel', e => {
     if (moving) {
       deltaX += e.deltaX;
       deltaY += e.deltaY;

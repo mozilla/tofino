@@ -18,7 +18,7 @@ import * as userAgentService from './server';
 import { ProfileStorage } from './sqlstorage';
 import meta from './meta.json';
 
-process.on('uncaughtException', (err) => {
+process.on('uncaughtException', err => {
   logger.error(err.stack);
   process.exit(1);
 });

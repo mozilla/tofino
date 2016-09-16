@@ -26,7 +26,7 @@ export default function(rootReducer, initialState, customMiddleware = []) {
       duration: true,
       collapsed: true,
       predicate: (getState, action) => typeof action !== 'function',
-      stateTransformer: (state) => state.toJS(),
+      stateTransformer: state => state.toJS(),
     }));
   }
 
