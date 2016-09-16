@@ -56,7 +56,7 @@ const menus = {
       items.separator,
     ],
   },
-  bookmarks: (data) => {
+  bookmarks: data => {
     const bookmarksMenu = {
       label: 'Bookmarks',
       submenu: [

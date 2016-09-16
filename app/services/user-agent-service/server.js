@@ -65,7 +65,7 @@ function configure(app, router, storage, contentServiceOrigin) {
   });
 
   function sendDiff(diff) {
-    wsClients.forEach((ws) => {
+    wsClients.forEach(ws => {
       ws.send(JSON.stringify({
         message: 'diff',
         ...diff,

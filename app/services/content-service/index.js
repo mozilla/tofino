@@ -18,7 +18,7 @@ import * as contentService from './server';
 import * as endpoints from '../../shared/constants/endpoints';
 import { parseArgs } from '../../shared/environment';
 
-process.on('uncaughtException', (err) => {
+process.on('uncaughtException', err => {
   logger.error(err.stack);
   process.exit(1);
 });

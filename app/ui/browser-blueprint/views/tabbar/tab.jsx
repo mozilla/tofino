@@ -47,7 +47,7 @@ const TAB_CONTENTS_STYLE = Style.registerStyle({
 });
 
 const TAB_TITLE_STYLE = Style.registerStyle({
-  flex: '1',
+  flex: 1,
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',

@@ -21,7 +21,7 @@ export function createTab(location = undefined, ancestorId = undefined,
                           options = { selected: true, index: undefined }) {
   const reason = undefined;
 
-  return (dispatch) => {
+  return dispatch => {
     // We use the Page ID to associate the User Agent allocated session ID with the Page.
     const id = uuid.v4();
 
@@ -101,44 +101,44 @@ export function setStatusText(text) {
 // Just like setUserTypedLocation, but the user didn't type it, so we
 // don't trigger a search.
 export function locationChanged(pageId, payload) {
-  return (dispatch) => {
+  return dispatch => {
     // Update this window's state.
     dispatch({ type: types.LOCATION_CHANGED, pageId, payload, instrument: false });
   };
 }
 
 export function resetUIState() {
-  return (dispatch) => {
+  return dispatch => {
     dispatch({ type: types.RESET_UI_STATE, instrument: false });
   };
 }
 
 export function clearCompletions() {
-  return (dispatch) => {
+  return dispatch => {
     dispatch({ type: types.CLEAR_COMPLETIONS, instrument: false });
   };
 }
 
 export function setShowURLBar(pageId, visible) {
-  return (dispatch) => {
+  return dispatch => {
     dispatch({ type: types.SET_URL_INPUT_VISIBLE, pageId, payload: { visible } });
   };
 }
 
 export function setFocusedURLBar(pageId, focused) {
-  return (dispatch) => {
+  return dispatch => {
     dispatch({ type: types.SET_URL_INPUT_FOCUSED, pageId, payload: { focused } });
   };
 }
 
 export function setFocusedResultIndex(index) {
-  return (dispatch) => {
+  return dispatch => {
     dispatch({ type: types.SET_URL_INPUT_AUTOCOMPLETE_INDEX, payload: { index } });
   };
 }
 
 export function setUserTypedLocation(pageId, payload) {
-  return (dispatch) => {
+  return dispatch => {
     // Update this window's state before telling the profile service.
     dispatch({ type: types.SET_USER_TYPED_LOCATION, pageId, payload, instrument: false });
 

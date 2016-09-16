@@ -26,14 +26,17 @@ export const BKG_SIZE_DEFAULT = 'contain';
 export const BKG_VS_CHILDREN_DISTANCE = 5; // px
 
 const BUTTON_WRAPPER_STYLE = Style.registerStyle({
+  overflow: 'hidden',
   flexShrink: 0,
   alignItems: 'center',
-  justifyContent: 'center',
   WebkitUserSelect: 'none',
   WebkitAppRegion: 'no-drag',
 });
 
 const BUTTON_STYLE = Style.registerStyle({
+  display: 'flex',
+  flex: 1,
+  alignItems: 'center',
   margin: '0',
   padding: '0',
   border: '0',
@@ -113,10 +116,8 @@ const OmittedContainerProps = {
 
 Btn.propTypes = {
   ...OmittedContainerProps,
-  id: PropTypes.string,
   className: PropTypes.string,
-  style: PropTypes.object,
-  hidden: PropTypes.bool,
+  style: PropTypes.object, // eslint-disable-line
   children: React.PropTypes.oneOfType([
     React.PropTypes.arrayOf(React.PropTypes.node),
     React.PropTypes.node,

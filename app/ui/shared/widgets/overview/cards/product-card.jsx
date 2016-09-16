@@ -77,7 +77,8 @@ class ProductCard extends Component {
 ProductCard.displayName = 'ProductCard';
 
 ProductCard.propTypes = {
-  page: PropTypes.object.isRequired,
+  // FIXME: Don't use object prop types for this component.
+  page: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 export default ProductCard;

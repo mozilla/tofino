@@ -125,7 +125,7 @@ items.showBookmarks = {
   },
 };
 
-items.openBookmark = (bookmark) => ({
+items.openBookmark = bookmark => ({
   label: bookmark.title || bookmark.location,
   click(item, focusedWindow) {
     if (focusedWindow) {

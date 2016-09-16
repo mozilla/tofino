@@ -21,7 +21,7 @@ const SEARCH_STYLE = Style.registerStyle({
 });
 
 const INPUT_STYLE = Style.registerStyle({
-  flex: '1',
+  flex: 1,
   padding: '2px 4px',
   border: '1px solid var(--theme-content-border-color)',
   borderRadius: 'var(--theme-default-roundness)',
@@ -86,16 +86,15 @@ const OmittedContainerProps = {
   onChange: PropTypes.func,
   onKeyDown: PropTypes.func,
   onKeyUp: PropTypes.func,
+  onKeyPress: PropTypes.func,
   placeholder: PropTypes.string,
   defaultValue: PropTypes.string,
 };
 
 Search.propTypes = {
   ...OmittedContainerProps,
-  id: PropTypes.string,
-  style: PropTypes.object,
+  style: PropTypes.object, // eslint-disable-line
   className: PropTypes.string,
-  hidden: PropTypes.bool,
 };
 
 export default Search;

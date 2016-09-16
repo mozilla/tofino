@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
 import { logger } from '../shared/logging';
 import 'source-map-support/register';
 
-process.on('uncaughtException', (err) => {
+process.on('uncaughtException', err => {
   logger.error(err.stack);
   process.exit(1);
 });

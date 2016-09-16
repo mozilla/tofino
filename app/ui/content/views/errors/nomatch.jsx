@@ -22,13 +22,13 @@ const NO_MATCH_STYLE = Style.registerStyle({
   fontSize: '500%',
 });
 
-const NoMatch = () => {
+function NoMatch() {
   return (
     <div className={NO_MATCH_STYLE}>
       404
     </div>
   );
-};
+}
 
 NoMatch.displayName = 'NoMatch';
 

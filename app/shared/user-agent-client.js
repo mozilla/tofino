@@ -85,7 +85,7 @@ class UserAgentClient extends EventEmitter {
 
     const url = `ws://${this.host}:${this.port}/${this.version}/ws`;
 
-    this._connect = new Promise((resolve) => {
+    this._connect = new Promise(resolve => {
       const call = backoff.call(this._connectAttempt, url, (err, ws) => {
         if (err) {
           logger.error(`UserAgentClient: ${err}`);
@@ -104,7 +104,7 @@ class UserAgentClient extends EventEmitter {
 
     await this._connect;
 
-    this.ws.on('message', (data) => {
+    this.ws.on('message', data => {
       data = JSON.parse(data);
       const message = data.message;
       delete data.message;
@@ -125,7 +125,7 @@ class UserAgentClient extends EventEmitter {
       ws.on('error', reject);
       ws.on('open', () => {
         // The first message should be protocol information
-        ws.once('message', (data) => {
+        ws.once('message', data => {
           data = JSON.parse(data);
 
           if (data.message !== 'protocol' || data.version !== 'v1') {

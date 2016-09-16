@@ -32,11 +32,11 @@ function spawnProcess(name, command, args, options) {
   const child = spawn(command, args, options);
   children.add(child);
 
-  child.on('error', (error) => {
+  child.on('error', error => {
     logger.error(`${name} threw error ${error}`);
   });
 
-  child.on('exit', (code) => {
+  child.on('exit', code => {
     children.delete(child);
 
     // The code is missing when the child was killed by a signal

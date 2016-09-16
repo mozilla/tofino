@@ -51,10 +51,7 @@ class List extends Component {
 List.displayName = 'List';
 
 List.propTypes = {
-  id: PropTypes.string,
   className: PropTypes.string,
-  style: PropTypes.object,
-  hidden: PropTypes.bool,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,

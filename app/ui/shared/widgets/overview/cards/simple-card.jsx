@@ -38,7 +38,8 @@ class SimpleCard extends Component {
 SimpleCard.displayName = 'SimpleCard';
 
 SimpleCard.propTypes = {
-  page: PropTypes.object.isRequired,
+  // FIXME: Don't use object prop types for this component.
+  page: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 export default SimpleCard;

@@ -26,7 +26,7 @@ const SWIPE_DELTA_Y_THRESHOLD = 50;
 // The X movement of the swipe must be greater than this, in pixels.
 const SWIPE_DELTA_X_THRESHOLD = 100;
 
-export const attachGestureListeners = (browserView) => {
+export const attachGestureListeners = browserView => {
   // In Electron 1.3.3, the system preferences method `isSwipeTrackingFromScrollEventsEnabled`
   // is available, letting us hook into OS preferences. Until then, just assume it's on.
   const SWIPE_SETTING_EXISTS = systemPreferences.isSwipeTrackingFromScrollEventsEnabled;
@@ -45,7 +45,7 @@ export const attachGestureListeners = (browserView) => {
   let deltaX = 0;
   let deltaY = 0;
 
-  window.addEventListener('wheel', (e) => {
+  window.addEventListener('wheel', e => {
     if (moving) {
       deltaX += e.deltaX;
       deltaY += e.deltaY;

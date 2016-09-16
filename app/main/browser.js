@@ -112,7 +112,7 @@ ipc.on('instrument-event', (event, args) => {
 
 const menuData = {};
 
-userAgentClient.on('diff', (command) => {
+userAgentClient.on('diff', command => {
   if (command.type === ProfileDiffTypes.RECENT_BOOKMARKS) {
     menuData.recentBookmarks = command.payload;
     menu.buildAppMenu(menuData);
