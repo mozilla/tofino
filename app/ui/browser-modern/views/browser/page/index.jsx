@@ -14,6 +14,8 @@ import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
 import { logger } from '../../../../../shared/logging';
+import ErrorPage from './error-page';
+import * as SharedPropTypes from '../../../model/shared-prop-types';
 
 import Style from '../../../../shared/style';
 import PageState from '../../../model/page-state';
@@ -97,26 +99,65 @@ class Page extends Component {
     this.webview.addEventListener('did-finish-load', () => {
       // Event fired when the navigation is done and onload event is dispatched.
       // May be emitted multiple times for every single frame.
-      // Not emitted when a failure occurs, unlike `did-stop-loading`.
       // Might not always be emitted after a `did-start-loading`.
-    });
-
-    this.webview.addEventListener('did-fail-load', () => {
-      // Like 'did-finish-load', but fired when the load failed or was cancelled.
-      // May be emitted multiple times for every single frame.
-      // Only emitted when a failure occurs, unlike `did-stop-loading`.
-      this.props.dispatch(PageActions.setPageState(this.props.pageId, {
-        load: PageState.STATES.FAILED,
-      }));
     });
 
     this.webview.addEventListener('did-stop-loading', () => {
       // Event fired when a page finishes loading.
       // May be emitted multiple times for every single frame.
       // Emitted regardless of whether or not a failure occurs.
-      this.props.dispatch(PageActions.setPageState(this.props.pageId, {
-        load: PageState.STATES.LOADED,
+      const title = this.webview.getTitle();
+      const url = this.webview.getURL();
+
+      // `page-title-set` is not called on error pages, nor is
+      // `did-navigate` called, so we must set these properties to
+      // properly render our error pages
+      this.props.dispatch(PageActions.setPageDetails(this.props.pageId, {
+        title,
+        location: url,
       }));
+
+      // If the page state is still LOADING, and we haven't hit a
+      // failure state, mark this page as LOADED.
+      if (this.props.pageState.load === PageState.STATES.LOADING) {
+        this.props.dispatch(PageActions.setPageState(this.props.pageId, {
+          load: PageState.STATES.LOADED,
+        }));
+      }
+    });
+
+    this.webview.addEventListener('did-fail-load', (e) => {
+      // Like 'did-finish-load', but fired when the load failed or was cancelled.
+      // May be emitted multiple times for every single frame.
+      // Only emitted when a failure occurs, unlike `did-stop-loading`.
+      // Is fired before did-finish-load and did-stop-loading when failure occurs.
+      const { errorCode, errorDescription, validatedURL, isMainFrame } = e;
+
+      if (!isMainFrame) {
+        return;
+      }
+
+      // If a page is aborted (like hitting BACK/RELOAD while a page is loading), we'll get a
+      // load failure of ERR_ABORTED with code `-3` -- this is intended, so just ignore it.
+      if (Math.abs(errorCode) === 3) {
+        return;
+      }
+
+      const state = {
+        load: PageState.STATES.FAILED,
+        code: errorCode,
+        description: errorDescription,
+      };
+
+      // Most cert errors are 501 from this event; the true, more descriptive
+      // error description can be retrieved from the main process. Just check
+      // here roughly if the error looks like a cert error.
+      if (Math.abs(errorCode) === 501 || /CERT/.test(errorDescription)) {
+        this.props.dispatch(PageEffects.getCertificateError(this.props.pageId, validatedURL));
+      }
+
+      this.props.dispatch(PageActions.setPageState(this.props.pageId, state));
+      this.props.dispatch(UIEffects.setURLBarValue(this.props.pageId, validatedURL));
     });
 
     this.webview.addEventListener('page-title-set', e => {
@@ -164,6 +205,10 @@ class Page extends Component {
     return (
       <div id={`browser-page-${this.props.pageId}`}
         className={`browser-page ${PAGE_STYLE}`}>
+        <ErrorPage
+          hidden={this.props.pageState.load !== PageState.STATES.FAILED}
+          url={this.props.pageLocation}
+          pageState={this.props.pageState} />
         <webview is="webview"
           ref={e => this.webview = e}
           class={WEB_VIEW_STYLE}
@@ -177,8 +222,18 @@ Page.displayName = 'Page';
 
 Page.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  pageId: PropTypes.string.isRequired,
   onMount: PropTypes.func.isRequired,
+  pageId: PropTypes.string.isRequired,
+  pageLocation: PropTypes.string.isRequired,
+  pageState: SharedPropTypes.PageState.isRequired,
 };
 
-export default connect()(Page);
+function mapStateToProps(state, ownProps) {
+  const page = PagesSelectors.getPageById(state, ownProps.pageId);
+  return {
+    pageLocation: page ? page.location : '',
+    pageState: PagesSelectors.getPageState(state, ownProps.pageId),
+  };
+}
+
+export default connect(mapStateToProps)(Page);

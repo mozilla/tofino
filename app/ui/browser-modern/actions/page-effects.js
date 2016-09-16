@@ -194,3 +194,11 @@ export function captureCurrentPage() {
     dispatch(capturePage(PagesSelectors.getSelectedPageId(getState())));
   };
 }
+
+export function getCertificateError(pageId, url) {
+  return {
+    type: EffectTypes.GET_CERTIFICATE_ERROR,
+    pageId,
+    url,
+  };
+}

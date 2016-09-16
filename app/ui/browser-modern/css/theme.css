@@ -41,4 +41,10 @@
 
   --theme-default-shadow: 0px 2px 4px 0px rgba(0,0,0,0.5);
   --theme-default-selected-shadow: 0px 0px 6px 0px #f00;
+
+  /* Error Pages */
+
+  --theme-error-page-background-color: #FBFBFB;
+  --theme-error-page-color: rgb(66, 78, 90);
+  --theme-error-page-cert-background-color: '#ddd';
 }

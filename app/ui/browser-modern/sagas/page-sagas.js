@@ -14,6 +14,7 @@ import { takeLatest, takeEvery } from 'redux-saga';
 import { put, call } from 'redux-saga/effects';
 
 import { wrapped } from './helpers';
+import * as Certificate from '../../shared/util/cert';
 import PageState from '../model/page-state';
 import * as UserAgent from '../../shared/util/user-agent';
 import * as PageActions from '../actions/page-actions';
@@ -53,6 +54,9 @@ export default function() {
     },
     function*() {
       yield* takeLatest(...wrapped(EffectTypes.CAPTURE_PAGE, capturePage));
+    },
+    function*() {
+      yield* takeEvery(...wrapped(EffectTypes.GET_CERTIFICATE_ERROR, getCertificateError));
     },
   ];
 }
@@ -136,4 +140,9 @@ function* capturePage({ pageId, webview }) {
   });
 
   yield put(ProfileEffects.addCapturedPage(pageId, readerResult));
+}
+
+function* getCertificateError({ pageId, url }) {
+  const { error, certificate } = yield call(Certificate.getCertificateError, url);
+  yield put(PageActions.setPageState(pageId, { error, certificate }));
 }
