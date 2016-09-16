@@ -15,6 +15,7 @@ import { put, call } from 'redux-saga/effects';
 
 import { wrapped } from './helpers';
 import * as Certificate from '../../shared/util/cert';
+import * as ContentScriptUtils from '../../shared/util/content-script-utils';
 import PageState from '../model/page-state';
 import * as UserAgent from '../../shared/util/user-agent';
 import * as PageActions from '../actions/page-actions';
@@ -54,6 +55,9 @@ export default function() {
     },
     function*() {
       yield* takeLatest(...wrapped(EffectTypes.CAPTURE_PAGE, capturePage));
+    },
+    function*() {
+      yield* takeLatest(...wrapped(EffectTypes.PARSE_PAGE_META_DATA, parsePageMetaData));
     },
     function*() {
       yield* takeEvery(...wrapped(EffectTypes.GET_CERTIFICATE_ERROR, getCertificateError));
@@ -128,18 +132,14 @@ function* setPageZoomLevel({ pageId, webview, zoomLevel }) {
 
 function* capturePage({ pageId, webview }) {
   const script = 'window._readerify(window.document)';
-
-  const readerResult = yield new Promise((resolve, reject) => {
-    webview.executeJavaScript(script, false, result => {
-      if (!result) {
-        reject(new Error(`Could not capture page ${pageId}.`));
-      } else {
-        resolve(result);
-      }
-    });
-  });
-
+  const readerResult = yield call(ContentScriptUtils.executeJS, webview, script);
   yield put(ProfileEffects.addCapturedPage(pageId, readerResult));
+}
+
+function* parsePageMetaData({ pageId, webview }) {
+  const script = 'window._parseMetadata(window.document)';
+  const metadataResult = yield call(ContentScriptUtils.executeJS, webview, script);
+  yield put(PageActions.setPageMeta(pageId, metadataResult));
 }
 
 function* getCertificateError({ pageId, url }) {

@@ -22,6 +22,7 @@ export default Immutable.Record({
   image_url: undefined,
 
   // Page info.
+  type: undefined,
   description: undefined,
   keywords: undefined,
 

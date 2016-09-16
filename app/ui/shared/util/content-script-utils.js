@@ -10,10 +10,14 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import './context-menu';
-import Readability from './readability';
-import { readerify } from './reader';
-import { parseMetadata } from './metadata-parsing';
-
-window._readerify = readerify.bind(null, Readability);
-window._parseMetadata = parseMetadata;
+export const executeJS = function(webview, script) {
+  return new Promise((resolve, reject) => {
+    webview.executeJavaScript(script, false, result => {
+      if (!result) {
+        reject(new Error(`Could execute script ${script}.`));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
