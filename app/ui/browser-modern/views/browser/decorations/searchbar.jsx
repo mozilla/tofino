@@ -18,8 +18,8 @@ import Style from '../../../../shared/style';
 import Search from '../../../../shared/widgets/search';
 
 import * as UIConstants from '../../../constants/ui';
-import * as UISelectors from '../../../selectors/ui';
-import * as UIActions from '../../../actions/ui-actions';
+import * as PagesSelectors from '../../../selectors/pages';
+import * as PageActions from '../../../actions/page-actions';
 import * as PageEffects from '../../../actions/page-effects';
 
 const SEARCH_STYLE = Style.registerStyle({
@@ -39,30 +39,32 @@ class SearchBar extends Component {
   }
 
   componentDidMount() {
-    if (this.props.isVisible) {
+    if (this.props.isTargetPageSelected && this.props.isVisible) {
       this.searchbar.focus();
     }
   }
 
   componentDidUpdate() {
-    if (this.props.isVisible) {
-      this.searchbar.focus();
-    } else {
-      this.searchbar.blur();
+    if (this.props.isTargetPageSelected) {
+      if (this.props.isVisible) {
+        this.props.dispatch(PageEffects.performPageSearch(this.props.pageId, this.searchbar.value));
+        this.searchbar.focus();
+      } else {
+        this.props.dispatch(PageEffects.performPageSearch(this.props.pageId, null));
+        this.searchbar.blur();
+      }
     }
   }
 
-  handleInputChange = (e) => {
-    const text = e.target.value;
-    this.props.dispatch(PageEffects.performCurrentPageSearch(text));
+  handleInputChange = () => {
+    this.props.dispatch(PageEffects.performPageSearch(this.props.pageId, this.searchbar.value));
   }
 
   handleInputKeyDown = e => {
     if (e.key === 'Enter') {
       this.handleInputChange(e);
     } else if (e.key === 'Escape') {
-      this.props.dispatch(PageEffects.performCurrentPageSearch(null));
-      this.props.dispatch(UIActions.hidePageSearch());
+      this.props.dispatch(PageActions.hidePageSearch(this.props.pageId));
     }
   }
 
@@ -83,12 +85,15 @@ SearchBar.displayName = 'SearchBar';
 
 SearchBar.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  pageId: PropTypes.string.isRequired,
   isVisible: PropTypes.bool,
+  isTargetPageSelected: PropTypes.bool,
 };
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
   return {
-    isVisible: UISelectors.getPageSearchVisible(state),
+    isVisible: PagesSelectors.getPageSearchVisible(state, ownProps.pageId),
+    isTargetPageSelected: PagesSelectors.getSelectedPageId(state) === ownProps.pageId,
   };
 }
 

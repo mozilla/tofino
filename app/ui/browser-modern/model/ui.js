@@ -14,7 +14,6 @@ import Immutable from 'immutable';
 
 export default Immutable.Record({
   statusText: '',
-  pageSearchVisible: false,
   overviewVisible: false,
   locationAutocompletions: Immutable.Map(),
 }, 'UIState');

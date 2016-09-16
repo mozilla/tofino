@@ -44,6 +44,9 @@ export default function(state = new Pages(), action) {
     case ActionTypes.SET_PAGE_STATE:
       return setPageState(state, action.pageId, action.pageState);
 
+    case ActionTypes.SET_PAGE_SEARCH_VISIBILITY:
+      return setPageState(state, action.pageId, { searchVisible: action.visibility });
+
     default:
       return state;
   }

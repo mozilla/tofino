@@ -20,6 +20,7 @@ const PageState = Immutable.Record({
   canGoForward: false,
   canRefresh: false,
   zoomLevel: 0,
+  searchVisible: false,
   code: undefined,
   description: undefined,
   certificate: new SSLCertificate(),

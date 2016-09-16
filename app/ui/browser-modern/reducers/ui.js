@@ -22,17 +22,12 @@ export default function(state = new UIState(), action) {
     case ActionTypes.SET_STATUS_TEXT:
       return setStatusText(state, action.statusText);
 
-    case ActionTypes.SET_PAGE_SEARCH_VISIBILITY:
-      return setPageSearchVisibility(state, action.visibility);
-
     case ActionTypes.SET_OVERVIEW_VISIBILITY:
       return setOverviewVisibility(state, action.visibility);
 
     case ActionTypes.CREATE_PAGE:
     case ActionTypes.SET_SELECTED_PAGE:
-      state = setPageSearchVisibility(state, false);
-      state = setOverviewVisibility(state, false);
-      return state;
+      return setOverviewVisibility(state, false);
 
     case ActionTypes.SET_LOCATION_AUTOCOMPLETIONS:
       return setLocationAutocompletions(state, action.pageId, action.autocompletions);
@@ -51,10 +46,6 @@ export default function(state = new UIState(), action) {
 
 function setStatusText(state, statusText) {
   return state.set('statusText', statusText);
-}
-
-function setPageSearchVisibility(state, visibility) {
-  return state.set('pageSearchVisible', visibility);
 }
 
 function setOverviewVisibility(state, visibility) {

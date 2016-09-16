@@ -93,3 +93,31 @@ export function setPageState(pageId, pageState) {
     pageState,
   };
 }
+
+export function showPageSearch(pageId) {
+  return {
+    type: ActionTypes.SET_PAGE_SEARCH_VISIBILITY,
+    visibility: true,
+    pageId,
+  };
+}
+
+export function hidePageSearch(pageId) {
+  return {
+    type: ActionTypes.SET_PAGE_SEARCH_VISIBILITY,
+    visibility: false,
+    pageId,
+  };
+}
+
+export function showCurrentPageSearch() {
+  return (dispatch, getState) => {
+    dispatch(showPageSearch(PagesSelectors.getSelectedPageId(getState())));
+  };
+}
+
+export function hideCurrentPageSearch() {
+  return (dispatch, getState) => {
+    dispatch(hidePageSearch(PagesSelectors.getSelectedPageId(getState())));
+  };
+}
