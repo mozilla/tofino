@@ -195,6 +195,20 @@ export function captureCurrentPage() {
   };
 }
 
+export function parsePageMetaData(pageId, doc = document) {
+  return {
+    type: EffectTypes.PARSE_PAGE_META_DATA,
+    webview: getWebViewForPageId(doc, pageId),
+    pageId,
+  };
+}
+
+export function parseCurrentPageMetaData() {
+  return (dispatch, getState) => {
+    dispatch(parsePageMetaData(PagesSelectors.getSelectedPageId(getState())));
+  };
+}
+
 export function getCertificateError(pageId, url) {
   return {
     type: EffectTypes.GET_CERTIFICATE_ERROR,

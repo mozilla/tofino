@@ -91,12 +91,6 @@ class Page extends Component {
       this.props.dispatch(ProfileEffects.addRemoteHistory(this.props.pageId));
     });
 
-    this.webview.addEventListener('did-finish-load', () => {
-      // Event fired when the navigation is done and onload event is dispatched.
-      // May be emitted multiple times for every single frame.
-      // Might not always be emitted after a `did-start-loading`.
-    });
-
     this.webview.addEventListener('did-stop-loading', () => {
       // Event fired when a page finishes loading.
       // May be emitted multiple times for every single frame.
@@ -153,6 +147,20 @@ class Page extends Component {
       this.props.dispatch(UIEffects.setURLBarValue(this.props.pageId, validatedURL));
     });
 
+    this.webview.addEventListener('did-finish-load', () => {
+      // Event fired when the navigation is done and onload event is dispatched.
+      // May be emitted multiple times for every single frame.
+      // Might not always be emitted after a `did-start-loading`.
+      this.props.dispatch(PageEffects.parsePageMetaData(this.props.pageId));
+    });
+
+    this.webview.addEventListener('did-frame-finish-load', () => {
+      // Like `did-finish-load`, but fired only when an in-page load happens.
+      // Parse the page metadata everytime something stops loading, to properly
+      // handle in-page content changing and in-page navigations.
+      this.props.dispatch(PageEffects.parsePageMetaData(this.props.pageId));
+    });
+
     this.webview.addEventListener('page-title-set', e => {
       // Not emitted when pages don't have a title.
       this.props.dispatch(PageActions.setPageDetails(this.props.pageId, { title: e.title }));
@@ -184,9 +192,6 @@ class Page extends Component {
 
     this.webview.addEventListener('ipc-message', e => {
       switch (e.channel) {
-        case 'metadata':
-          this.props.dispatch(PageActions.setPageMeta(this.props.pageId, e.args[0]));
-          break;
         default:
           logger.warn(`@TODO: Unknown ipc-message:${e.channel}`);
           break;
