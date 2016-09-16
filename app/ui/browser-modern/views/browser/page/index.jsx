@@ -44,11 +44,9 @@ class Page extends Component {
 
   componentDidMount() {
     this.addWebviewListeners();
-    this.props.dispatch((_, getState) => {
-      const pageId = this.props.pageId;
-      const pageLocation = PagesSelectors.getPageById(getState(), pageId).location;
-      this.props.onMount(pageId, pageLocation);
-    });
+    const pageId = this.props.pageId;
+    const pageLocation = this.props.pageLocation;
+    this.props.onMount(pageId, pageLocation);
   }
 
   addWebviewListeners() {
@@ -85,15 +83,12 @@ class Page extends Component {
       // Like `did-navigate`, but fired only when an in-page navigation happens,
       // meaning that the page URL changes but does not cause navigation outside
       // of the page (e.g. when the hashchange event is triggered).
-      this.props.dispatch((dispatch, getState) => {
-        const location = PagesSelectors.getPageById(getState(), this.props.pageId);
-        if (!e.isMainFrame || e.url === location) {
-          return;
-        }
-        dispatch(PageActions.setPageDetails(this.props.pageId, { location: e.url }));
-        dispatch(UIEffects.setURLBarValue(this.props.pageId, e.url));
-        dispatch(ProfileEffects.addRemoteHistory(this.props.pageId));
-      });
+      if (!e.isMainFrame || e.url === this.props.pageLocation) {
+        return;
+      }
+      this.props.dispatch(PageActions.setPageDetails(this.props.pageId, { location: e.url }));
+      this.props.dispatch(UIEffects.setURLBarValue(this.props.pageId, e.url));
+      this.props.dispatch(ProfileEffects.addRemoteHistory(this.props.pageId));
     });
 
     this.webview.addEventListener('did-finish-load', () => {
