@@ -80,6 +80,10 @@ export function getPageState(state, id) {
   return getPageById(state, id).state;
 }
 
+export function getPageSearchVisible(state, id) {
+  return getPageState(state, id).searchVisible;
+}
+
 export function getPageZoomLevel(state, id) {
   return getPageState(state, id).zoomLevel;
 }

@@ -14,10 +14,6 @@ export function getStatusText(state) {
   return state.ui.statusText;
 }
 
-export function getPageSearchVisible(state) {
-  return state.ui.pageSearchVisible;
-}
-
 export function getOverviewVisible(state) {
   return state.ui.overviewVisible;
 }

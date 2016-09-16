@@ -36,6 +36,10 @@ class Search extends Component {
     this.input.value = textContent;
   }
 
+  get value() {
+    return this.input.value;
+  }
+
   focus() {
     this.input.focus();
   }

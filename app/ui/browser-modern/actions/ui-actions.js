@@ -19,20 +19,6 @@ export function setStatusText(statusText) {
   };
 }
 
-export function showPageSearch() {
-  return {
-    type: ActionTypes.SET_PAGE_SEARCH_VISIBILITY,
-    visibility: true,
-  };
-}
-
-export function hidePageSearch() {
-  return {
-    type: ActionTypes.SET_PAGE_SEARCH_VISIBILITY,
-    visibility: false,
-  };
-}
-
 export function showOverview() {
   return {
     type: ActionTypes.SET_OVERVIEW_VISIBILITY,

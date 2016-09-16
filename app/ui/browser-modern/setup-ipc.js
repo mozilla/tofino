@@ -17,7 +17,6 @@ import * as PageActions from './actions/page-actions';
 import * as PageEffects from './actions/page-effects';
 import * as PagesSelectors from './selectors/pages';
 import * as UISelectors from './selectors/ui';
-import * as UIActions from './actions/ui-actions';
 import * as UIEffects from './actions/ui-effects';
 import * as Gestures from '../shared/util/gestures';
 
@@ -102,13 +101,13 @@ export default function({ store, userAgentClient }) {
 
   ipcRenderer.on('show-page-search', () => {
     if (!UISelectors.getOverviewVisible(store.getState())) {
-      store.dispatch(UIActions.showPageSearch());
+      store.dispatch(PageActions.showCurrentPageSearch());
     }
   });
 
   ipcRenderer.on('hide-page-search', () => {
     if (!UISelectors.getOverviewVisible(store.getState())) {
-      store.dispatch(UIActions.hidePageSearch());
+      store.dispatch(PageActions.hideCurrentPageSearch());
     }
   });
 

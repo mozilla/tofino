@@ -17,7 +17,6 @@ import Style from '../../../shared/style';
 import WindowControls from './decorations/window-controls';
 import StatusBar from './decorations/statusbar';
 import DeveloperBar from './decorations/developerbar';
-import SearchBar from './decorations/searchbar';
 import TabBar from './tabbar';
 
 const CHROME_AREA_STYLE = Style.registerStyle({
@@ -41,7 +40,6 @@ class ChromeArea extends Component {
         </WindowControls>
         <StatusBar />
         <DeveloperBar />
-        <SearchBar />
       </div>
     );
   }

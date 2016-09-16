@@ -17,6 +17,7 @@ import { connect } from 'react-redux';
 import Style from '../../../shared/style';
 import NavBar from './navbar';
 import Page from './page';
+import SearchBar from './decorations/searchbar';
 
 import * as SharedPropTypes from '../../model/shared-prop-types';
 import * as UIConstants from '../../constants/ui';
@@ -67,6 +68,7 @@ class ContentArea extends Component {
               onNavigateTo={this.props.onNavigateTo} />
             <Page pageId={pageId}
               onMount={this.props.onPageMount} />
+            <SearchBar pageId={pageId} />
           </div>
         ))}
       </div>
