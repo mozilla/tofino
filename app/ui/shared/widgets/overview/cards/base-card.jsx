@@ -50,7 +50,7 @@ const BADGE_STYLE = Style.registerStyle({
 });
 
 const BACKGROUND_STYLE = Style.registerStyle({
-  WebkitFilter: 'blur(30px) saturate(2)',
+  WebkitFilter: 'blur(35px) saturate(2)',
   backgroundSize: '100% auto',
   position: 'absolute',
   top: 0,

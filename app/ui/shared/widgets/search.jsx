@@ -17,15 +17,16 @@ import omit from 'lodash/omit';
 
 import Style from '../style';
 
-const SEARCH_STYLE = Style.registerStyle({
-  minHeight: '25px',
-});
-
 const INPUT_STYLE = Style.registerStyle({
   flex: 1,
-  padding: '2px 4px',
-  border: '1px solid var(--theme-content-border-color)',
-  borderRadius: 'var(--theme-default-roundness)',
+  margin: 0,
+  padding: 0,
+  border: 'none',
+  backgroundColor: 'var(--theme-content-background)',
+  color: 'var(--theme-content-color)',
+  font: 'inherit',
+  textRendering: 'inherit',
+  textShadow: 'inherit',
 });
 
 class Search extends Component {
@@ -69,7 +70,7 @@ class Search extends Component {
   render() {
     return (
       <div {...omit(this.props, Object.keys(OmittedContainerProps))}
-        className={`widget-search ${SEARCH_STYLE} ${this.props.className || ''}`}>
+        className={`widget-search ${this.props.className || ''}`}>
         <input ref={e => this.input = e}
           className={INPUT_STYLE}
           type="text"

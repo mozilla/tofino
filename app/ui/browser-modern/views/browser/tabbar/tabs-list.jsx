@@ -10,35 +10,24 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
 
 import Style from '../../../../shared/style';
+import Tab from './tab';
 
 import * as UIConstants from '../../../constants/ui';
-import * as UISelectors from '../../../selectors/ui';
+import * as SharedPropTypes from '../../../model/shared-prop-types';
+import * as PagesSelectors from '../../../selectors/pages';
 
-const STATUS_STYLE = Style.registerStyle({
-  display: 'block',
+const TABS_LIST_STYLE = Style.registerStyle({
   overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
-  position: 'fixed',
-  bottom: 0,
-  left: 0,
-  maxWidth: '75%',
-  zIndex: UIConstants.STATUS_BAR_ZINDEX,
-  padding: '2px 8px',
-  border: '1px solid var(--theme-statusbar-border-color)',
-  borderTopRightRadius: 'var(--theme-default-roundness)',
-  borderLeftWidth: 0,
-  borderBottomWidth: 0,
-  background: 'var(--theme-statusbar-background)',
-  color: 'var(--theme-content-color)',
+  alignSelf: 'stretch',
+  padding: `0 ${UIConstants.TAB_OVERLAP}px`,
 });
 
-class StatusBar extends Component {
+class TabsList extends Component {
   constructor(props) {
     super(props);
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
@@ -46,24 +35,27 @@ class StatusBar extends Component {
 
   render() {
     return (
-      <div className={`browser-statusbar ${STATUS_STYLE}`}
-        hidden={!this.props.statusText}>
-        {this.props.statusText}
+      <div id="browser-tabs"
+        className={TABS_LIST_STYLE}>
+        {this.props.pageIds.map(pageId => (
+          <Tab key={`tab-${pageId}`}
+            pageId={pageId} />
+        ))}
       </div>
     );
   }
 }
 
-StatusBar.displayName = 'StatusBar';
+TabsList.displayName = 'TabsList';
 
-StatusBar.propTypes = {
-  statusText: PropTypes.string,
+TabsList.propTypes = {
+  pageIds: SharedPropTypes.PageIds.isRequired,
 };
 
 function mapStateToProps(state) {
   return {
-    statusText: UISelectors.getStatusText(state),
+    pageIds: PagesSelectors.getOrderedPageIds(state),
   };
 }
 
-export default connect(mapStateToProps)(StatusBar);
+export default connect(mapStateToProps)(TabsList);

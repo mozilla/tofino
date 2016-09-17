@@ -16,9 +16,9 @@ import { connect } from 'react-redux';
 
 import Style from '../../../../shared/style';
 import Btn from '../../../../shared/widgets/btn';
-import FittedImage from '../../../../shared/widgets/fitted-image';
+import TabVisuals from './tab-visuals';
+import TabContents from './tab-contents';
 
-import PageState from '../../../model/page-state';
 import * as UIConstants from '../../../constants/ui';
 import * as UISelectors from '../../../selectors/ui';
 import * as PagesSelectors from '../../../selectors/pages';
@@ -28,39 +28,38 @@ import * as PageEffects from '../../../actions/page-effects';
 const TAB_STYLE = Style.registerStyle({
   WebkitUserSelect: 'none',
   WebkitAppRegion: 'no-drag',
+  position: 'relative',
+  alignItems: 'center',
   overflow: 'hidden',
-  padding: '0 10px',
+  boxSizing: 'border-box',
+  width: `${UIConstants.TAB_DEFAULT_WIDTH}px`,
+  minWidth: `${UIConstants.TAB_MIN_WIDTH}px`,
+  margin: `0 -${UIConstants.TAB_OVERLAP}px`,
+  padding: '0 24px',
+  backgroundImage: 'var(--theme-window-background)',
   backgroundColor: 'var(--theme-tab-inactive-background)',
   color: 'var(--theme-tab-inactive-color)',
+  textShadow: '0 1px var(--theme-tab-inactive-text-shadow)',
   opacity: 'var(--theme-tab-inactive-opacity)',
   '&[data-active-tab=true]': {
     backgroundColor: 'var(--theme-tab-active-background)',
     color: 'var(--theme-tab-active-color)',
+    textShadow: '0 1px var(--theme-tab-active-text-shadow)',
     opacity: 'var(--theme-tab-active-opacity)',
+    zIndex: 1,
   },
 });
 
-const TAB_CONTENTS_STYLE = Style.registerStyle({
-  flexShrink: 'initial',
-  width: `${UIConstants.TAB_DEFAULT_WIDTH}vw`,
+const TAB_POINTER_AREA_STYLE = Style.registerStyle({
+  position: 'absolute',
+  left: '15px',
+  right: '15px',
+  top: 0,
+  bottom: 0,
 });
 
-const FAVICON_STYLE = Style.registerStyle({
-});
-
-const LOADING_INDICATOR_STYLE = Style.registerStyle({
-  fontSize: '16px',
-});
-
-const TAB_TITLE_STYLE = Style.registerStyle({
-  flex: 1,
-  display: 'block',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  textAlign: 'center',
-  whiteSpace: 'nowrap',
-  margin: '0 5px',
-  cursor: 'default',
+const TAB_CLOSE_BUTTON_STYLE = Style.registerStyle({
+  zIndex: 1,
 });
 
 class Tab extends Component {
@@ -69,7 +68,21 @@ class Tab extends Component {
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
 
-  handleTabClick = e => {
+  componentDidMount() {
+    this.scrollIntoViewIfNeeded();
+  }
+
+  componentDidUpdate() {
+    this.scrollIntoViewIfNeeded();
+  }
+
+  scrollIntoViewIfNeeded() {
+    if (this.props.isActive) {
+      this.root.scrollIntoViewIfNeeded();
+    }
+  }
+
+  handleTabPick = e => {
     if (e.button === 1) {
       this.handleTabClose(e);
     } else {
@@ -85,49 +98,25 @@ class Tab extends Component {
   render() {
     return (
       <div className={`browser-tab ${TAB_STYLE}`}
-        data-active-tab={this.props.isActive && !this.props.isOverviewVisible}>
-        <Btn className={`tab-contents ${TAB_CONTENTS_STYLE}`}
+        ref={e => this.root = e}
+        data-active-tab={this.props.isActive && !this.props.isOverviewVisible}
+        data-before-active-tab={this.props.isBeforeActive && !this.props.isOverviewVisible}
+        data-after-active-tab={this.props.isAfterActive && !this.props.isOverviewVisible}>
+        <div className={`tab-pointer-area ${TAB_POINTER_AREA_STYLE}`}
           title={this.props.pageTitle || this.props.pageLocation}
-          onClick={this.handleTabClick}>
-          {this.props.pageLoadState === PageState.STATES.PRE_LOADING
-          ? (
-            <i className={`fa fa-spinner fa-pulse ${LOADING_INDICATOR_STYLE}`} />
-          ) : (
-            null
-          )}
-          {this.props.pageLoadState === PageState.STATES.LOADING
-          ? (
-            <i className={`fa fa-circle-o-notch fa-spin ${LOADING_INDICATOR_STYLE}`} />
-          ) : (
-            null
-          )}
-          {this.props.pageLoadState === PageState.STATES.FAILED
-          ? (
-            <i className={`fa fa-exclamation-triangle ${LOADING_INDICATOR_STYLE}`} />
-          ) : (
-            null
-          )}
-          {this.props.pageLoadState === PageState.STATES.LOADED && this.props.pageFavicon
-          ? (
-            <FittedImage className={`tab-favicon ${FAVICON_STYLE}`}
-              src={this.props.pageFavicon}
-              width="16px"
-              height="16px"
-              mode="contain" />
-          ) : (
-            null
-          )}
-          <div className={`tab-title ${TAB_TITLE_STYLE}`}>
-            {this.props.pageTitle || this.props.pageLocation || 'Loading...'}
-          </div>
-        </Btn>
-        <Btn className="tab-close-button"
+          onMouseDown={this.handleTabPick} />
+        <TabVisuals />
+        <TabContents pageId={this.props.pageId} />
+        <Btn className={`tab-close-button ${TAB_CLOSE_BUTTON_STYLE}`}
           title="Close tab"
-          image="glyph-addnew.svg"
-          imgWidth="14px"
-          imgHeight="14px"
-          imgPosition="center"
-          style={{ transform: 'rotate(45deg)' }}
+          width="14px"
+          height="14px"
+          image="close.png"
+          imgWidth="64px"
+          imgHeight="16px"
+          imgPosition="-1px -1px"
+          imgPositionHover="-17px -1px"
+          imgPositionActive="-33px -1px"
           onClick={this.handleTabClose} />
       </div>
     );
@@ -141,20 +130,25 @@ Tab.propTypes = {
   pageId: PropTypes.string.isRequired,
   pageTitle: PropTypes.string.isRequired,
   pageLocation: PropTypes.string.isRequired,
-  pageFavicon: PropTypes.string,
-  pageLoadState: PropTypes.string,
   isActive: PropTypes.bool.isRequired,
+  isBeforeActive: PropTypes.bool.isRequired,
+  isAfterActive: PropTypes.bool.isRequired,
   isOverviewVisible: PropTypes.bool.isRequired,
 };
 
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
+  const pageIndex = PagesSelectors.getPageIndexById(state, ownProps.pageId);
+
+  const selectedPageId = PagesSelectors.getSelectedPageId(state);
+  const selectedPageIndex = PagesSelectors.getPageIndexById(state, selectedPageId);
+
   return {
     pageTitle: page ? page.title : '',
     pageLocation: page ? page.location : '',
-    pageFavicon: page ? page.favicon_url : '',
-    pageLoadState: page ? page.state.load : '',
-    isActive: PagesSelectors.getSelectedPageId(state) === ownProps.pageId,
+    isActive: selectedPageId === ownProps.pageId,
+    isBeforeActive: selectedPageIndex === pageIndex + 1,
+    isAfterActive: selectedPageIndex === pageIndex - 1,
     isOverviewVisible: UISelectors.getOverviewVisible(state),
   };
 }

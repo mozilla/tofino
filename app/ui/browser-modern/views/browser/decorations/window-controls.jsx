@@ -13,20 +13,25 @@ specific language governing permissions and limitations under the License.
 import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
+import BUILD_CONFIG from '../../../../../build-config';
 
 import Style from '../../../../shared/style';
 import Btn from '../../../../shared/widgets/btn';
 
-import * as UIConstants from '../../../constants/ui';
 import * as ExternalEffects from '../../../actions/external-effects';
 
 const WINDOW_CONTROLS_STYLE = Style.registerStyle({
-  flex: 1,
-  height: `${UIConstants.TABBAR_HEIGHT}px`,
+  order: BUILD_CONFIG.platform === 'darwin' ? 0 : 1,
+  alignItems: 'center',
+  padding: '0 6px',
+  borderBottom: '1px solid var(--theme-tabbar-border-bottom-color)',
 });
 
 const WINDOW_CONTROL_BUTTONS_STYLE = Style.registerStyle({
-  padding: '0 10px',
+  padding: '2px',
+  '&:not(:first-child)': {
+    marginLeft: BUILD_CONFIG.platform === 'darwin' ? '4px' : '10px',
+  },
 });
 
 class WindowControls extends Component {
@@ -48,33 +53,68 @@ class WindowControls extends Component {
   }
 
   render() {
-    return (
+    return BUILD_CONFIG.platform === 'darwin'
+    ? (
       <div id="browser-window-decorations"
         className={WINDOW_CONTROLS_STYLE}>
-        {this.props.children}
+        <Btn id="browser-close-button"
+          className={WINDOW_CONTROL_BUTTONS_STYLE}
+          title="Close"
+          width="12px"
+          height="12px"
+          image="osx-controls.png"
+          imgWidth="36px"
+          imgHeight="24px"
+          imgPosition="0px 0px"
+          imgPositionHover="0px -12px"
+          onClick={this.handleCloseWindow} />
+        <Btn id="browser-minimize-button"
+          className={WINDOW_CONTROL_BUTTONS_STYLE}
+          title="Minimize"
+          width="12px"
+          height="12px"
+          image="osx-controls.png"
+          imgWidth="36px"
+          imgHeight="24px"
+          imgPosition="-12px 0px"
+          imgPositionHover="-12px -12px"
+          onClick={this.handleMinimizeWindow} />
+        <Btn id="browser-maximize-button"
+          className={WINDOW_CONTROL_BUTTONS_STYLE}
+          title="Maximize"
+          width="12px"
+          height="12px"
+          image="osx-controls.png"
+          imgWidth="36px"
+          imgHeight="24px"
+          imgPosition="-24px 0px"
+          imgPositionHover="-24px -12px"
+          onClick={this.handleMaximizeWindow} />
+      </div>
+    ) : (
+      <div id="browser-window-decorations"
+        className={WINDOW_CONTROLS_STYLE}>
         <Btn id="browser-minimize-button"
           className={WINDOW_CONTROL_BUTTONS_STYLE}
           title="Minimize"
           image="glyph-window-minimize.svg"
-          imgWidth="18px"
-          imgHeight="18px"
-          imgPosition="center 4px"
+          imgWidth="16px"
+          imgHeight="16px"
+          imgPosition="center calc(50% + 4px)"
           onClick={this.handleMinimizeWindow} />
         <Btn id="browser-maximize-button"
           className={WINDOW_CONTROL_BUTTONS_STYLE}
           title="Maximize"
           image="glyph-window-maximize.svg"
-          imgWidth="18px"
-          imgHeight="18px"
-          imgPosition="center bottom"
+          imgWidth="16px"
+          imgHeight="16px"
           onClick={this.handleMaximizeWindow} />
         <Btn id="browser-close-button"
           className={WINDOW_CONTROL_BUTTONS_STYLE}
           title="Close"
           image="glyph-window-close.svg"
-          imgWidth="18px"
-          imgHeight="18px"
-          imgPosition="center bottom"
+          imgWidth="16px"
+          imgHeight="16px"
           onClick={this.handleCloseWindow} />
       </div>
     );
@@ -85,10 +125,6 @@ WindowControls.displayName = 'WindowControls';
 
 WindowControls.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node,
-  ]),
 };
 
 export default connect()(WindowControls);

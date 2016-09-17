@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 export function getWebViewForPageId(doc, pageId) {
   return doc.querySelector(
-    `#browser-page-${pageId} > webview`);
+    `#browser-page-${pageId} webview`);
 }
 
 export function getURLBarForPageId(doc, pageId) {

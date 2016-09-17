@@ -21,10 +21,18 @@ import * as UIConstants from '../../../constants/ui';
 import * as UISelectors from '../../../selectors/ui';
 
 const OVERVIEW_STYLE = Style.registerStyle({
-  flex: 1,
+  position: 'absolute',
+  top: `${UIConstants.TABBAR_HEIGHT}px`,
+  bottom: 0,
+  left: 0,
+  right: 0,
   alignItems: 'flex-start',
   zIndex: UIConstants.BROWSER_OVERVIEW_BASE_ZINDEX,
-  backgroundColor: 'var(--theme-window-background)',
+  backgroundColor: 'var(--theme-overview-background)',
+  backgroundImage: 'url(assets/checkboard-background.png)',
+  backgroundSize: '25px',
+  backgroundAttachment: 'fixed',
+  backgroundBlendMode: 'soft-light',
 });
 
 class Overview extends Component {

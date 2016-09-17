@@ -81,12 +81,10 @@ describe('Btn', () => {
     expect(spy).toNotHaveBeenCalled();
   });
   it('sets `image` if given', () => {
-    const wrapper = shallow(
-      <Btn image="some-file.svg"
-        onClick={noop}
-        title="my title" />
-    );
-    expect(wrapper.find('button').prop('style')).toContain({
+    const props = {
+      image: 'some-file.svg',
+    };
+    expect(Btn.createCssRules(props)).toContain({
       backgroundImage: 'url(assets/some-file.svg)',
       backgroundRepeat: Const.BKG_REPEAT_DEFAULT,
       backgroundPosition: Const.BKG_POSIITON_DEFAULT,
@@ -94,12 +92,10 @@ describe('Btn', () => {
     });
   });
   it('sets a default `image` if given a falsy prop', () => {
-    const wrapper = shallow(
-      <Btn image=""
-        onClick={noop}
-        title="my title" />
-    );
-    expect(wrapper.find('button').prop('style')).toContain({
+    const props = {
+      image: '',
+    };
+    expect(Btn.createCssRules(props)).toContain({
       backgroundImage: `url(${Const.BKG_IMAGE_DEFAULT})`,
       backgroundRepeat: Const.BKG_REPEAT_DEFAULT,
       backgroundPosition: Const.BKG_POSIITON_DEFAULT,
@@ -107,88 +103,52 @@ describe('Btn', () => {
     });
   });
   it('sets `imgWidth`, `imgHeight` and `imgPosition` if given', () => {
-    const wrapper = shallow(
-      <Btn image=""
-        imgWidth="100px"
-        imgHeight="200px"
-        imgPosition="center"
-        onClick={noop}
-        title="my title" />
-    );
-    expect(wrapper.find('button').prop('style')).toContain({
+    const props = {
+      image: '',
+      imgWidth: '100px',
+      imgHeight: '200px',
+      imgPosition: '1px 2px',
+    };
+    expect(Btn.createCssRules(props)).toContain({
       backgroundImage: `url(${Const.BKG_IMAGE_DEFAULT})`,
       backgroundRepeat: Const.BKG_REPEAT_DEFAULT,
-      backgroundPosition: 'center',
+      backgroundPosition: '1px 2px',
       backgroundSize: '100px 200px',
     });
   });
-  it('sets the correct min size based off of `imgWidth` and `imgHeight` if given', () => {
-    const wrapper = shallow(
-      <Btn image=""
-        imgWidth="100px"
-        imgHeight="200px"
-        onClick={noop}
-        title="my title" />
-    );
-    expect(wrapper.find('button').prop('style')).toContain({
-      minWidth: '100px',
-      minHeight: '200px',
+  it('sets the correct size based off of `imgWidth` and `imgHeight` if given', () => {
+    const props = {
+      image: '',
+      imgWidth: '100px',
+      imgHeight: '200px',
+    };
+    expect(Btn.createCssRules(props)).toContain({
+      width: '100px',
+      height: '200px',
     });
   });
-  it('sets the correct min size based off of `minWidth` and `minHeight` if given', () => {
-    const wrapper = shallow(
-      <Btn image=""
-        minWidth="300px"
-        minHeight="400px"
-        onClick={noop}
-        title="my title" />
-    );
-    expect(wrapper.find('button').prop('style')).toContain({
-      minWidth: '300px',
-      minHeight: '400px',
+  it('sets the correct size based off of `width` and `height` if given', () => {
+    const props = {
+      image: '',
+      width: '300px',
+      height: '400px',
+    };
+    expect(Btn.createCssRules(props)).toContain({
+      width: '300px',
+      height: '400px',
     });
   });
-  it('sets the correct min size if given conflicting props', () => {
-    const wrapper = shallow(
-      <Btn image=""
-        imgWidth="100px"
-        imgHeight="200px"
-        minWidth="300px"
-        minHeight="400px"
-        onClick={noop}
-        title="my title" />
-    );
-    expect(wrapper.find('button').prop('style')).toContain({
-      minWidth: '300px',
-      minHeight: '400px',
-    });
-  });
-  it('sets the correct padding when given an image but no children', () => {
-    const wrapper = shallow(
-      <Btn image=""
-        imgWidth="100px"
-        imgHeight="200px"
-        onClick={noop}
-        title="my title" />
-    );
-    expect(wrapper.find('button').prop('style')).toExclude([
-      'paddingLeft',
-      'paddingRigth',
-    ]);
-  });
-  it('sets the correct padding when given an image with children', () => {
-    const wrapper = shallow(
-      <Btn image=""
-        imgWidth="100px"
-        imgHeight="200px"
-        onClick={noop}
-        title="my title">
-        Test
-      </Btn>
-    );
-    expect(wrapper.find('button').prop('style')).toContain({
-      paddingLeft: '105px',
-      paddingRight: '0px',
+  it('sets the correct size if given conflicting props', () => {
+    const props = {
+      image: '',
+      width: '100px',
+      height: '200px',
+      imgWidth: '10px',
+      imgHeight: '20px',
+    };
+    expect(Btn.createCssRules(props)).toContain({
+      width: '100px',
+      height: '200px',
     });
   });
 });

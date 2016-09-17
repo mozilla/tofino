@@ -4,10 +4,10 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
   <style>
-    rect {
-      fill: #fff;
+    path {
+      fill: #444;
     }
   </style>
 
-  <rect id="icon-window-minimize" x="3" y="7" width="10" height="2"/>
+  <path id="glyph-window-close" d="M3,4.469L4.437,3,13,11.531,11.5,13ZM4.469,13L3,11.563,11.532,3,13,4.375Z"/>
 </svg>

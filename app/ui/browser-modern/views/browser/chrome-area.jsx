@@ -10,19 +10,25 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import { connect } from 'react-redux';
 
 import Style from '../../../shared/style';
 import WindowControls from './decorations/window-controls';
 import StatusBar from './decorations/statusbar';
 import DeveloperBar from './decorations/developerbar';
 import TabBar from './tabbar';
+import SearchBar from './decorations/searchbar';
+
+import * as SharedPropTypes from '../../model/shared-prop-types';
+import * as UIConstants from '../../constants/ui';
+import * as PagesSelectors from '../../selectors/pages';
 
 const CHROME_AREA_STYLE = Style.registerStyle({
   WebkitAppRegion: 'drag',
-  flexDirection: 'column',
-  backgroundColor: 'var(--theme-window-background)',
+  position: 'relative',
+  zIndex: UIConstants.BROWSER_CHROME_BASE_ZINDEX,
 });
 
 class ChromeArea extends Component {
@@ -35,11 +41,17 @@ class ChromeArea extends Component {
     return (
       <div id="browser-chrome"
         className={CHROME_AREA_STYLE}>
-        <WindowControls>
-          <TabBar />
-        </WindowControls>
-        <StatusBar />
+        <WindowControls />
+        <TabBar />
         <DeveloperBar />
+        {this.props.pageIds.map(pageId => (
+          <div key={`browser-page-chrome-area-${pageId}`}
+            className="browser-page-chrome-area"
+            hidden={pageId !== this.props.selectedPageId}>
+            <StatusBar />
+            <SearchBar pageId={pageId} />
+          </div>
+        ))}
       </div>
     );
   }
@@ -47,4 +59,16 @@ class ChromeArea extends Component {
 
 ChromeArea.displayName = 'ChromeArea';
 
-export default ChromeArea;
+ChromeArea.propTypes = {
+  pageIds: SharedPropTypes.PageIds.isRequired,
+  selectedPageId: PropTypes.string.isRequired,
+};
+
+function mapStateToProps(state) {
+  return {
+    pageIds: PagesSelectors.getOrderedPageIds(state),
+    selectedPageId: PagesSelectors.getSelectedPageId(state),
+  };
+}
+
+export default connect(mapStateToProps)(ChromeArea);

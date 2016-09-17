@@ -15,22 +15,26 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
 
 import Style from '../../../../shared/style';
-import Tab from './tab';
+import TabsList from './tabs-list';
 import Btn from '../../../../shared/widgets/btn';
 
-import * as SharedPropTypes from '../../../model/shared-prop-types';
 import * as UIConstants from '../../../constants/ui';
 import * as PageEffects from '../../../actions/page-effects';
-import * as PagesSelectors from '../../../selectors/pages';
 
 const TABBAR_STYLE = Style.registerStyle({
   flex: 1,
+  alignItems: 'center',
   overflow: 'hidden',
-  height: `${UIConstants.NAVBAR_HEIGHT}px`,
-  backgroundColor: 'var(--theme-tabbar-background)',
+  boxSizing: 'border-box',
+  height: `${UIConstants.TABBAR_HEIGHT}px`,
+  paddingTop: '10px',
+  paddingRight: '38px',
+  boxShadow: 'inset 0 -1px 0px 0px var(--theme-tabbar-border-bottom-color)',
+  background: 'var(--theme-tabbar-background)',
 });
 
 const NEW_TAB_BUTTON_STYLE = Style.registerStyle({
+  marginLeft: '-6px',
 });
 
 class TabBar extends Component {
@@ -47,19 +51,18 @@ class TabBar extends Component {
     return (
       <div id="browser-tabbar"
         className={TABBAR_STYLE}>
-        {this.props.pageIds.map(pageId => (
-          <Tab key={`tab-${pageId}`}
-            pageId={pageId} />
-        ))}
+        <TabsList />
         <Btn id="new-tab-button"
           className={NEW_TAB_BUTTON_STYLE}
           title="New tab"
-          image="glyph-addnew.svg"
-          imgWidth="14px"
-          imgHeight="14px"
-          imgPosition="center"
-          minWidth={`${UIConstants.TABBAR_HEIGHT}px`}
-          minHeight={`${UIConstants.TABBAR_HEIGHT}px`}
+          width="18px"
+          height="20px"
+          image="newtab.png"
+          imgWidth="54px"
+          imgHeight="20px"
+          imgPosition="0px 0px"
+          imgPositionHover="-18px 0px"
+          imgPositionActive="-36px 0px"
           onClick={this.handleNewTabClick} />
       </div>
     );
@@ -70,13 +73,6 @@ TabBar.displayName = 'TabBar';
 
 TabBar.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  pageIds: SharedPropTypes.PageIds.isRequired,
 };
 
-function mapStateToProps(state) {
-  return {
-    pageIds: PagesSelectors.getOrderedPageIds(state),
-  };
-}
-
-export default connect(mapStateToProps)(TabBar);
+export default connect()(TabBar);
