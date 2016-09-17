@@ -19,11 +19,6 @@ import PageStateModel from '../../../model/page-state';
 import Btn from '../../../../shared/widgets/btn';
 
 class SecurityBadge extends Component {
-  defaultProps: {
-    url: '',
-    hidden: false,
-  }
-
   constructor(props) {
     super(props);
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
@@ -73,6 +68,11 @@ SecurityBadge.propTypes = {
   ...omit(Btn.propTypes, Object.keys(OmittedContainerProps)),
   url: OmittedContainerProps.url,
   pageState: OmittedContainerProps.pageState,
+};
+
+SecurityBadge.defaultProps = {
+  url: '',
+  hidden: false,
 };
 
 export default SecurityBadge;

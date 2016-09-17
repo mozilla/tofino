@@ -17,16 +17,9 @@ import Style from '../../../../shared/style';
 
 import * as SharedPropTypes from '../../../model/shared-prop-types';
 
-const AUTOCOMPLETIONS_LIST_ITEM_STYLE = Style.registerStyle({
+const HISTORY_LIST_ITEM_STYLE = Style.registerStyle({
   overflow: 'hidden',
   padding: '10px',
-});
-
-const TITLE_STYLE = Style.registerStyle({
-  display: 'block',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
 });
 
 const LOCATION_STYLE = Style.registerStyle({
@@ -37,11 +30,11 @@ const LOCATION_STYLE = Style.registerStyle({
   color: 'var(--theme-content-link-color)',
 });
 
-const SEPARATOR_STYLE = Style.registerStyle({
-  padding: '0 4px',
+const CHECKMARK_STYLE = Style.registerStyle({
+  marginRight: '6px',
 });
 
-class AutocompletionsListItem extends Component {
+class HistoryListItem extends Component {
   constructor(props) {
     super(props);
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
@@ -49,21 +42,10 @@ class AutocompletionsListItem extends Component {
 
   render() {
     return (
-      <div className={AUTOCOMPLETIONS_LIST_ITEM_STYLE}>
-        {this.props.data.title
-        ? (
-          <div>
-            <div className={TITLE_STYLE}>
-              {this.props.data.title}
-            </div>
-            <div className={SEPARATOR_STYLE}>
-              {'–'}
-            </div>
-          </div>
-        ) : (
-          null
-        )}
+      <div className={HISTORY_LIST_ITEM_STYLE}>
         <div className={LOCATION_STYLE}>
+          <i className={`fa fa-check ${CHECKMARK_STYLE}`}
+            hidden={!this.props.data.active} />
           {this.props.data.uri}
         </div>
       </div>
@@ -71,10 +53,10 @@ class AutocompletionsListItem extends Component {
   }
 }
 
-AutocompletionsListItem.displayName = 'AutocompletionsListItem';
+HistoryListItem.displayName = 'HistoryListItem';
 
-AutocompletionsListItem.propTypes = {
-  data: SharedPropTypes.LocationAutocompletion.isRequired,
+HistoryListItem.propTypes = {
+  data: SharedPropTypes.PageLocalHistoryItem.isRequired,
 };
 
-export default AutocompletionsListItem;
+export default HistoryListItem;

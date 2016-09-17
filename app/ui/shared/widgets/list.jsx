@@ -39,10 +39,12 @@ class List extends Component {
   }
 
   render() {
+    const childrenArray = React.Children.toArray(this.props.children);
+    const childrenView = this.props.reversed ? childrenArray.reverse() : childrenArray;
     return (
-      <ul {...this.props}
+      <ul {...omit(this.props, Object.keys(OmittedContainerProps))}
         className={`widget-list ${LIST_STYLE} ${this.props.className || ''}`}>
-        {this.props.children}
+        {childrenView}
       </ul>
     );
   }
@@ -50,7 +52,12 @@ class List extends Component {
 
 List.displayName = 'List';
 
+const OmittedContainerProps = {
+  reversed: PropTypes.bool,
+};
+
 List.propTypes = {
+  ...OmittedContainerProps,
   className: PropTypes.string,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),

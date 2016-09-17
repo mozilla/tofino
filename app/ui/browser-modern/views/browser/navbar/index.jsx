@@ -17,7 +17,10 @@ import { connect } from 'react-redux';
 import Style from '../../../../shared/style';
 import Btn from '../../../../shared/widgets/btn';
 import Location from '../location';
+import DropdownMenuBtn from '../../../../shared/widgets/dropdown-menu-btn';
+import HistoryListItem from './history-list-item';
 
+import * as SharedPropTypes from '../../../model/shared-prop-types';
 import * as UIConstants from '../../../constants/ui';
 import * as UIActions from '../../../actions/ui-actions';
 import * as UISelectors from '../../../selectors/ui';
@@ -60,6 +63,10 @@ class NavBar extends Component {
     this.props.onNavigateTo(this.props.pageId, location);
   }
 
+  handleHistoryPick = ({ index }) => {
+    this.props.onNavigateInHistory(this.props.pageId, index);
+  }
+
   handleOverviewButtonClick = () => {
     this.props.dispatch((dispatch, getState) => {
       const isOverviewVisible = UISelectors.getOverviewVisible(getState());
@@ -79,27 +86,35 @@ class NavBar extends Component {
     return (
       <div id={`browser-navbar-${this.props.pageId}`}
         className={`browser-navbar ${NAVBAR_STYLE}`}>
-        <Btn className={`browser-navbar-back ${NAVIGATION_BUTTONS_STYLE}`}
+        <DropdownMenuBtn className={`browser-navbar-back ${NAVIGATION_BUTTONS_STYLE}`}
           title="Back"
           image="glyph-arrow-nav-back.svg"
           imgWidth="18px"
           imgHeight="18px"
+          disabled={!this.props.pageCanGoBack}
           onClick={this.handleNavigateBackClick}
-          disabled={!this.props.pageCanGoBack} />
-        <Btn className={`browser-navbar-forward ${NAVIGATION_BUTTONS_STYLE}`}
+          onMenuItemPick={this.handleHistoryPick}
+          dataSrc={this.props.pageHistory}
+          childComponent={HistoryListItem}
+          reverseDropdownMenu />
+        <DropdownMenuBtn className={`browser-navbar-forward ${NAVIGATION_BUTTONS_STYLE}`}
           title="Forward"
           image="glyph-arrow-nav-forward.svg"
           imgWidth="18px"
           imgHeight="18px"
+          disabled={!this.props.pageCanGoForward}
           onClick={this.handleNavigateForwardClick}
-          disabled={!this.props.pageCanGoForward} />
+          onMenuItemPick={this.handleHistoryPick}
+          dataSrc={this.props.pageHistory}
+          childComponent={HistoryListItem}
+          reverseDropdownMenu />
         <Btn className={`browser-navbar-refresh ${NAVIGATION_BUTTONS_STYLE}`}
           title="Refresh"
           imgWidth="18px"
           imgHeight="18px"
           image="glyph-arrow-reload.svg"
-          onClick={this.handleNavigateRefreshClick}
-          disabled={!this.props.pageCanRefresh} />
+          disabled={!this.props.pageCanRefresh}
+          onClick={this.handleNavigateRefreshClick} />
         <Location pageId={this.props.pageId}
           onNavigate={this.handleNavigateTo} />
         <Btn className={`overview-button ${TOOLBAR_BUTTONS_STYLE}`}
@@ -127,10 +142,12 @@ NavBar.propTypes = {
   pageCanGoBack: PropTypes.bool.isRequired,
   pageCanGoForward: PropTypes.bool.isRequired,
   pageCanRefresh: PropTypes.bool.isRequired,
+  pageHistory: SharedPropTypes.PageLocalHistoryItems.isRequired,
   onNavigateBack: PropTypes.func.isRequired,
   onNavigateForward: PropTypes.func.isRequired,
   onNavigateRefresh: PropTypes.func.isRequired,
   onNavigateTo: PropTypes.func.isRequired,
+  onNavigateInHistory: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state, ownProps) {
@@ -139,6 +156,7 @@ function mapStateToProps(state, ownProps) {
     pageCanGoBack: page ? page.state.canGoBack : false,
     pageCanGoForward: page ? page.state.canGoForward : false,
     pageCanRefresh: page ? page.state.canRefresh : false,
+    pageHistory: page ? page.history : null,
   };
 }
 

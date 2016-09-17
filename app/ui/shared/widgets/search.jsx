@@ -11,6 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { Component, PropTypes } from 'react';
+import shallowEqual from 'fbjs/lib/shallowEqual';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 
@@ -29,7 +30,15 @@ const INPUT_STYLE = Style.registerStyle({
 
 class Search extends Component {
   shouldComponentUpdate(nextProps) {
-    return !isEqual(this.props, nextProps);
+    // Since this component uses plain js objects as props, we need to perform
+    // deep quality checks on them to make sure we don't unnecessarily rerender.
+    // However, there is no need to re-render this parent component when the
+    // children change, which would happen when doing naive deep equality.
+    // Furthermore, children in this component may contain immutable.js props,
+    // which are throwing warnings when accessing some of their properties
+    // while doing deep equality checks using lodash's `deepEqual`.
+    return !shallowEqual(this.props.children, nextProps.children) ||
+      !isEqual(omit(this.props, ['children']), omit(nextProps, ['children']));
   }
 
   set value(textContent) {
@@ -54,10 +63,7 @@ class Search extends Component {
 
   handleClick = () => {
     this.select();
-
-    if (this.props.onClick) {
-      this.props.onClick();
-    }
+    this.props.onClick();
   }
 
   render() {
@@ -74,6 +80,7 @@ class Search extends Component {
           onKeyDown={this.props.onKeyDown}
           onKeyUp={this.props.onKeyUp}
           onKeyPress={this.props.onKeyPress} />
+        {this.props.children}
       </div>
     );
   }
@@ -95,6 +102,15 @@ Search.propTypes = {
   ...OmittedContainerProps,
   style: PropTypes.object, // eslint-disable-line
   className: PropTypes.string,
+  hidden: PropTypes.bool,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]),
+};
+
+Search.defaultProps = {
+  onClick: () => {},
 };
 
 export default Search;

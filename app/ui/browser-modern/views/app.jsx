@@ -74,6 +74,10 @@ class App extends Component {
     this.webViewController.on('navigate-refresh', pageId => {
       this.props.dispatch(PageEffects.navigatePageRefresh(pageId));
     });
+
+    this.webViewController.on('navigate-in-history', (pageId, historyIndex) => {
+      this.props.dispatch(PageEffects.navigatePageInHistory(pageId, historyIndex));
+    });
   }
 
   handlePageMount = (pageId, location) => {
@@ -97,6 +101,10 @@ class App extends Component {
     this.webViewController.navigateTo(pageId, location);
   }
 
+  handeNavigateInHistory = (pageId, historyIndex) => {
+    this.webViewController.navigateInHistory(pageId, historyIndex);
+  }
+
   render() {
     const Element = Style.Element;
     return (
@@ -105,7 +113,8 @@ class App extends Component {
           onNavigateBack={this.handleNavigateBack}
           onNavigateForward={this.handleNavigateForward}
           onNavigateRefresh={this.handleNavigateRefresh}
-          onNavigateTo={this.handleNavigateTo} />
+          onNavigateTo={this.handleNavigateTo}
+          onNavigateInHistory={this.handeNavigateInHistory} />
         {/* Set a random prop on the Style.Element component, since we do
             want this to rerender when styles change even though there aren't
             any props passed in, to silence why-did-you-update warnings. */}

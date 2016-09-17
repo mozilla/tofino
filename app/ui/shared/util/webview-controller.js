@@ -63,6 +63,17 @@ export default class WebViewController extends EventEmitter {
     this.emit(`navigate-to:${pageId}`, pageId, location);
   }
 
+  navigateInHistory(pageId, historyIndex) {
+    const pages = this.getPages();
+    const index = getPageIndexById(pages, pageId);
+    assert(index >= 0, `Page ${pageId} not found in current state.`);
+    assert(isUUID(pageId), `Invalid page id: ${pageId}`);
+    assert(typeof historyIndex === 'number', '`historyIndex` must be a number.');
+
+    this.emit('navigate-in-history', pageId, historyIndex);
+    this.emit(`navigate-in-history:${pageId}`, pageId, historyIndex);
+  }
+
   navigateRefresh(pageId) {
     const pages = this.getPages();
     const index = getPageIndexById(pages, pageId);

@@ -17,12 +17,18 @@ import omit from 'lodash/omit';
 
 import Style from '../style';
 import Search from './search';
-import AutocompletionList from './autocompletion-list';
+import SelectionList from './selection-list';
 
 const AUTOCOMPLETED_SEARCH_STYLE = Style.registerStyle({
   position: 'relative',
-  flex: 1,
-  flexDirection: 'column',
+});
+
+const SELECTION_LIST_STYLE = Style.registerStyle({
+  position: 'absolute',
+  top: '100%',
+  left: 0,
+  right: 0,
+  boxShadow: 'var(--theme-default-shadow)',
 });
 
 class AutocompletedSearch extends Component {
@@ -31,30 +37,30 @@ class AutocompletedSearch extends Component {
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
     this.state = {
-      showAutocompletions: false,
+      showSelectionList: false,
       selectedIndex: 0,
     };
   }
 
   handleInputChange = e => {
-    this.setState({ showAutocompletions: !!e.target.value });
+    this.setState({ showSelectionList: !!e.target.value });
     this.setState({ selectedIndex: 0 });
 
-    if (this.props.onChange) {
-      this.props.onChange(e);
-    }
+    this.props.onChange(e);
   }
 
   handleInputKeyDown = e => {
-    const { showAutocompletions, selectedIndex } = this.state;
-    const { autocompletionResults } = this.props;
-    const hasAutocompletionResults = autocompletionResults && autocompletionResults.size;
+    const { showSelectionList, selectedIndex } = this.state;
+    const { dataSrc } = this.props;
+    const hasListItems = dataSrc && dataSrc.size;
 
     switch (e.key) {
       case 'Enter': {
-        if (showAutocompletions && hasAutocompletionResults) {
-          const data = this.props.autocompletionResults.get(this.state.selectedIndex);
-          this.props.onAutocompletionSelect(data);
+        if (showSelectionList && hasListItems) {
+          const index = this.state.selectedIndex;
+          const data = this.props.dataSrc.get(index);
+          this.props.onAutocompletionPick({ index, data });
+          this.setState({ showSelectionList: false });
           // Don't call any `onKeyDown` event handler on a parent component.
           // If this were the DOM, act as if a `stopPropagation` was invoked.
           return;
@@ -62,17 +68,17 @@ class AutocompletedSearch extends Component {
         break;
       }
       case 'Escape':
-        if (showAutocompletions) {
-          this.setState({ showAutocompletions: false });
+        if (showSelectionList) {
+          this.setState({ showSelectionList: false });
         } else {
           this.inputbar.value = this.props.defaultValue || '';
           this.inputbar.select();
         }
         break;
       case 'ArrowUp':
-        if (showAutocompletions && hasAutocompletionResults) {
+        if (showSelectionList && hasListItems) {
           if (selectedIndex === 0) {
-            this.setState({ selectedIndex: autocompletionResults.size - 1 });
+            this.setState({ selectedIndex: dataSrc.size - 1 });
           } else {
             this.setState({ selectedIndex: selectedIndex - 1 });
           }
@@ -82,8 +88,8 @@ class AutocompletedSearch extends Component {
         break;
       case 'Tab':
       case 'ArrowDown':
-        if (showAutocompletions && hasAutocompletionResults) {
-          if (selectedIndex === autocompletionResults.size - 1) {
+        if (showSelectionList && hasListItems) {
+          if (selectedIndex === dataSrc.size - 1) {
             this.setState({ selectedIndex: 0 });
           } else {
             this.setState({ selectedIndex: selectedIndex + 1 });
@@ -96,9 +102,7 @@ class AutocompletedSearch extends Component {
         break;
     }
 
-    if (this.props.onKeyDown) {
-      this.props.onKeyDown(e);
-    }
+    this.props.onKeyDown(e);
   }
 
   handleMouseOverChildComponent = component => {
@@ -108,51 +112,58 @@ class AutocompletedSearch extends Component {
 
   handleClickOnChildComponent = component => {
     const index = component.props['data-index'];
-    const data = this.props.autocompletionResults.get(index);
-    this.props.onAutocompletionSelect(data);
+    const data = this.props.dataSrc.get(index);
+    this.props.onAutocompletionPick({ index, data });
+    this.setState({ showSelectionList: false });
   }
 
-  createAutocompletionListItem = (data, i) => {
-    const AutocompletionListItem = this.props.autocompletionListItemComponent;
+  createChild = (data, i) => {
+    const Child = this.props.childComponent;
     return (
-      <AutocompletionListItem key={`autocompletion-list-item-${i}`}
+      <Child key={`autocompleted-search-child-item-${i}`}
         data={data}
         selected={this.state.selectedIndex === i} />
     );
   }
 
   render() {
-    const results = this.props.autocompletionResults;
     return (
-      <div className={`widget-autocompleted-search ${AUTOCOMPLETED_SEARCH_STYLE}`}>
-        <Search {...omit(this.props, Object.keys(AutocompletionProps))}
-          ref={e => this.inputbar = e}
-          onChange={this.handleInputChange}
-          onKeyDown={this.handleInputKeyDown} />
-        <AutocompletionList hidden={!this.state.showAutocompletions}
+      <Search {...omit(this.props, Object.keys(SelectionListProps))}
+        className={`${AUTOCOMPLETED_SEARCH_STYLE} ${this.props.className || ''}`}
+        ref={e => this.inputbar = e}
+        onChange={this.handleInputChange}
+        onKeyDown={this.handleInputKeyDown}>
+        <SelectionList className={SELECTION_LIST_STYLE}
+          hidden={!this.state.showSelectionList}
           selectedIndex={this.state.selectedIndex}
           onMouseOverChildComponent={this.handleMouseOverChildComponent}
           onClickOnChildComponent={this.handleClickOnChildComponent}>
-          {results && results.map(this.createAutocompletionListItem).toArray()}
-        </AutocompletionList>
-      </div>
+          {this.props.dataSrc && this.props.dataSrc.map(this.createChild).toArray()}
+        </SelectionList>
+      </Search>
     );
   }
 }
 
 AutocompletedSearch.displayName = 'AutocompletedSearch';
 
-const AutocompletionProps = {
-  autocompletionResults: ImmutablePropTypes.list,
-  autocompletionListItemComponent: PropTypes.func.isRequired,
-  onAutocompletionSelect: PropTypes.func.isRequired,
+const SelectionListProps = {
+  dataSrc: ImmutablePropTypes.list,
+  childComponent: PropTypes.func.isRequired,
+  onAutocompletionPick: PropTypes.func.isRequired,
 };
 
 AutocompletedSearch.propTypes = {
-  ...AutocompletionProps,
+  ...SelectionListProps,
+  className: PropTypes.string,
   defaultValue: PropTypes.string,
   onChange: PropTypes.func,
   onKeyDown: PropTypes.func,
+};
+
+AutocompletedSearch.defaultProps = {
+  onChange: () => {},
+  onKeyDown: () => {},
 };
 
 export default AutocompletedSearch;

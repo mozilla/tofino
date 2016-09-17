@@ -18,25 +18,19 @@ import Style from '../style';
 import List from './list';
 import ListItem from './list-item';
 
-const AUTOCOMPLETION_LIST_STYLE = Style.registerStyle({
-  position: 'absolute',
-  top: '100%',
-  left: 0,
-  right: 0,
-  boxShadow: 'var(--theme-default-shadow)',
-});
-
-const AUTOCOMPLETION_ITEM_STYLE = Style.registerStyle({
+const SELECTION_LIST_ITEM_STYLE = Style.registerStyle({
   cursor: 'default',
   backgroundColor: 'var(--theme-content-background)',
   color: 'var(--theme-content-color)',
   '&[data-selected=true]': {
     backgroundColor: 'var(--theme-content-selection-background)',
+  },
+  '&[data-selected=true] *': {
     color: 'var(--theme-content-selection-color)',
   },
 });
 
-class AutocompletionList extends Component {
+class SelectionList extends Component {
   constructor(props) {
     super(props);
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
@@ -45,13 +39,15 @@ class AutocompletionList extends Component {
   render() {
     return (
       <List {...omit(this.props, Object.keys(OmittedContainerProps))}
-        className={`${AUTOCOMPLETION_LIST_STYLE} ${this.props.className || ''}`}>
+        className={`${this.props.className || ''}`}>
         {this.props.children && this.props.children.map((child, i) => (
-          <ListItem key={`autocompletion-list-item-wrapper-${i}`}
-            className={AUTOCOMPLETION_ITEM_STYLE}
+          <ListItem key={`selection-list-item-wrapper-${i}`}
+            className={SELECTION_LIST_ITEM_STYLE}
             data-index={i}
             data-selected={this.props.selectedIndex === i}
             onMouseOverComponent={this.props.onMouseOverChildComponent}
+            onMouseDownOnComponent={this.props.onMouseDownOnChildComponent}
+            onMouseUpOnComponent={this.props.onMouseUpOnChildComponent}
             onClickOnComponent={this.props.onClickOnChildComponent}>
             {child}
           </ListItem>
@@ -61,15 +57,17 @@ class AutocompletionList extends Component {
   }
 }
 
-AutocompletionList.displayName = 'AutocompletionList';
+SelectionList.displayName = 'SelectionList';
 
 const OmittedContainerProps = {
   selectedIndex: PropTypes.number.isRequired,
   onMouseOverChildComponent: PropTypes.func,
+  onMouseDownOnChildComponent: PropTypes.func,
+  onMouseUpOnChildComponent: PropTypes.func,
   onClickOnChildComponent: PropTypes.func,
 };
 
-AutocompletionList.propTypes = {
+SelectionList.propTypes = {
   ...OmittedContainerProps,
   className: PropTypes.string,
   style: PropTypes.object, // eslint-disable-line
@@ -79,4 +77,4 @@ AutocompletionList.propTypes = {
   ]),
 };
 
-export default AutocompletionList;
+export default SelectionList;

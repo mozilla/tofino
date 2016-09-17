@@ -17,6 +17,7 @@ import WebViewControllerModel from '../../shared/util/webview-controller';
 import ProfileModel from './profile';
 import PageModel from './page';
 import PageMetaModel from './page-meta';
+import PageLocalHistoryItemModel from './page-local-history-item';
 import LocationAutocompletionModel from './location-autocompletion';
 import PageStateModel from './page-state';
 import SSLCertificateModel from './ssl-certificate';
@@ -35,6 +36,9 @@ export const PageMeta = PropTypes.instanceOf(PageMetaModel);
 export const PageState = PropTypes.instanceOf(PageStateModel);
 export const PageMetas = ImmutablePropTypes.listOf(PageMeta.isRequired);
 export const SSLCertificate = PropTypes.instanceOf(SSLCertificateModel);
+
+export const PageLocalHistoryItem = PropTypes.instanceOf(PageLocalHistoryItemModel);
+export const PageLocalHistoryItems = ImmutablePropTypes.listOf(PageLocalHistoryItem);
 
 export const LocationAutocompletion = PropTypes.instanceOf(LocationAutocompletionModel);
 export const LocationAutocompletions = ImmutablePropTypes.listOf(LocationAutocompletion);

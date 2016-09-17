@@ -11,6 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { Component, PropTypes } from 'react';
+import shallowEqual from 'fbjs/lib/shallowEqual';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 
@@ -48,7 +49,15 @@ const BUTTON_STYLE = Style.registerStyle({
 
 class Btn extends Component {
   shouldComponentUpdate(nextProps) {
-    return !isEqual(this.props, nextProps);
+    // Since this component uses plain js objects as props, we need to perform
+    // deep quality checks on them to make sure we don't unnecessarily rerender.
+    // However, there is no need to re-render this parent component when the
+    // children change, which would happen when doing naive deep equality.
+    // Furthermore, children in this component may contain immutable.js props,
+    // which are throwing warnings when accessing some of their properties
+    // while doing deep equality checks using lodash's `deepEqual`.
+    return !shallowEqual(this.props.children, nextProps.children) ||
+      !isEqual(omit(this.props, ['children']), omit(nextProps, ['children']));
   }
 
   render() {
@@ -86,7 +95,8 @@ class Btn extends Component {
         }}
         data-title={this.props.title}
         data-disabled={this.props.disabled}>
-        <button type="button"
+        <button ref={e => this.node = e}
+          type="button"
           className={BUTTON_STYLE}
           style={custom}
           title={this.props.title}

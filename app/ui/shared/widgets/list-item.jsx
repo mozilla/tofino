@@ -16,7 +16,6 @@ import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 
 import Style from '../style';
-import Btn from './btn';
 
 const LIST_ITEM_STYLE = Style.registerStyle({
   // Nothing here yet.
@@ -35,34 +34,38 @@ class ListItem extends Component {
       !isEqual(omit(this.props, ['children']), omit(nextProps, ['children']));
   }
 
+  handleMouseDown = e => {
+    this.props.onMouseDown(e);
+    this.props.onMouseDownOnComponent(this);
+  }
+
+  handleMouseUp = e => {
+    this.props.onMouseUp(e);
+    this.props.onMouseUpOnComponent(this);
+  }
+
   handleMouseClick = e => {
-    if (this.props.onClick) {
-      this.props.onClick(e);
-    }
-    if (this.props.onClickOnComponent) {
-      this.props.onClickOnComponent(this);
-    }
+    this.props.onClick(e);
+    this.props.onClickOnComponent(this);
   }
 
   handleMouseOver = e => {
-    if (this.props.onMouseOver) {
-      this.props.onMouseOver(e);
-    }
-    if (this.props.onMouseOverComponent) {
-      this.props.onMouseOverComponent(this);
-    }
+    this.props.onMouseOver(e);
+    this.props.onMouseOverComponent(this);
   }
 
   render() {
     return (
+      /* eslint-disable jsx-a11y/no-static-element-interactions */
       <li {...omit(this.props, Object.keys(OmittedContainerProps))}
-        className={`widget-list-item ${LIST_ITEM_STYLE} ${this.props.className || ''}`}>
-        <Btn title=""
-          onClick={this.handleMouseClick}
-          onMouseOver={this.handleMouseOver}>
-          {this.props.children}
-        </Btn>
+        className={`widget-list-item ${LIST_ITEM_STYLE} ${this.props.className || ''}`}
+        onMouseDown={this.handleMouseDown}
+        onMouseUp={this.handleMouseUp}
+        onClick={this.handleMouseClick}
+        onMouseOver={this.handleMouseOver}>
+        {this.props.children}
       </li>
+      /* eslint-enable jsx-a11y/no-static-element-interactions */
     );
   }
 }
@@ -70,6 +73,10 @@ class ListItem extends Component {
 ListItem.displayName = 'ListItem';
 
 const OmittedContainerProps = {
+  onMouseDown: PropTypes.func,
+  onMouseDownOnComponent: PropTypes.func,
+  onMouseUp: PropTypes.func,
+  onMouseUpOnComponent: PropTypes.func,
   onClick: PropTypes.func,
   onClickOnComponent: PropTypes.func,
   onMouseOver: PropTypes.func,
@@ -84,6 +91,17 @@ ListItem.propTypes = {
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,
   ]),
+};
+
+ListItem.defaultProps = {
+  onMouseDown: () => {},
+  onMouseDownOnComponent: () => {},
+  onMouseUp: () => {},
+  onMouseUpOnComponent: () => {},
+  onClick: () => {},
+  onClickOnComponent: () => {},
+  onMouseOver: () => {},
+  onMouseOverComponent: () => {},
 };
 
 export default ListItem;
