@@ -153,9 +153,9 @@ NavBar.propTypes = {
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
   return {
-    pageCanGoBack: page ? page.state.canGoBack : false,
-    pageCanGoForward: page ? page.state.canGoForward : false,
-    pageCanRefresh: page ? page.state.canRefresh : false,
+    pageCanGoBack: page ? PagesSelectors.getPageCanGoBack(state, ownProps.pageId) : false,
+    pageCanGoForward: page ? PagesSelectors.getPageCanGoForward(state, ownProps.pageId) : false,
+    pageCanRefresh: page ? PagesSelectors.getPageCanRefresh(state, ownProps.pageId) : false,
     pageHistory: page ? page.history : null,
   };
 }

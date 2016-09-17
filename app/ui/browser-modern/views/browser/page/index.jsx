@@ -185,12 +185,6 @@ class Page extends Component {
     });
 
     this.webview.addEventListener('dom-ready', () => {
-      this.props.dispatch(PageActions.setPageState(this.props.pageId, {
-        canGoBack: this.webview.canGoBack(),
-        canGoForward: this.webview.canGoForward(),
-        canRefresh: true,
-      }));
-
       // Make sure we record this page navigation in the remote history
       // only after we have a title available. However, we can't do it in
       // the `page-title-set` because that event isn't fired when no title
