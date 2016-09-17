@@ -63,10 +63,7 @@ class Search extends Component {
 
   handleClick = () => {
     this.select();
-
-    if (this.props.onClick) {
-      this.props.onClick();
-    }
+    this.props.onClick();
   }
 
   render() {
@@ -110,6 +107,10 @@ Search.propTypes = {
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,
   ]),
+};
+
+Search.defaultProps = {
+  onClick: () => {},
 };
 
 export default Search;

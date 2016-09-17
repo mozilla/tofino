@@ -35,39 +35,23 @@ class ListItem extends Component {
   }
 
   handleMouseDown = e => {
-    if (this.props.onMouseDown) {
-      this.props.onMouseDown(e);
-    }
-    if (this.props.onMouseDownOnComponent) {
-      this.props.onMouseDownOnComponent(this);
-    }
+    this.props.onMouseDown(e);
+    this.props.onMouseDownOnComponent(this);
   }
 
   handleMouseUp = e => {
-    if (this.props.onMouseUp) {
-      this.props.onMouseUp(e);
-    }
-    if (this.props.onMouseUpOnComponent) {
-      this.props.onMouseUpOnComponent(this);
-    }
+    this.props.onMouseUp(e);
+    this.props.onMouseUpOnComponent(this);
   }
 
   handleMouseClick = e => {
-    if (this.props.onClick) {
-      this.props.onClick(e);
-    }
-    if (this.props.onClickOnComponent) {
-      this.props.onClickOnComponent(this);
-    }
+    this.props.onClick(e);
+    this.props.onClickOnComponent(this);
   }
 
   handleMouseOver = e => {
-    if (this.props.onMouseOver) {
-      this.props.onMouseOver(e);
-    }
-    if (this.props.onMouseOverComponent) {
-      this.props.onMouseOverComponent(this);
-    }
+    this.props.onMouseOver(e);
+    this.props.onMouseOverComponent(this);
   }
 
   render() {
@@ -107,6 +91,17 @@ ListItem.propTypes = {
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,
   ]),
+};
+
+ListItem.defaultProps = {
+  onMouseDown: () => {},
+  onMouseDownOnComponent: () => {},
+  onMouseUp: () => {},
+  onMouseUpOnComponent: () => {},
+  onClick: () => {},
+  onClickOnComponent: () => {},
+  onMouseOver: () => {},
+  onMouseOverComponent: () => {},
 };
 
 export default ListItem;

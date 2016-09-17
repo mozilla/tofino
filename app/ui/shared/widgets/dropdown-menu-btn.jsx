@@ -67,18 +67,12 @@ class DropdownMenuBtn extends Component {
 
   handeButtonMouseDown = e => {
     this.timeoutId = setTimeout(this.handleButtonLongPress, BUTTON_PRESS_DURATION);
-
-    if (this.props.onMouseDown) {
-      this.props.onMouseDown(e);
-    }
+    this.props.onMouseDown(e);
   }
 
   handeButtonMouseUp = e => {
     clearTimeout(this.timeoutId);
-
-    if (this.props.onMouseUp) {
-      this.props.onMouseUp(e);
-    }
+    this.props.onMouseUp(e);
   }
 
   handleButtonClick = e => {
@@ -148,6 +142,12 @@ DropdownMenuBtn.propTypes = {
   onMouseDown: PropTypes.func,
   onMouseUp: PropTypes.func,
   onClick: PropTypes.func,
+};
+
+DropdownMenuBtn.defaultProps = {
+  onMouseDown: () => {},
+  onMouseUp: () => {},
+  onClick: () => {},
 };
 
 export default DropdownMenuBtn;

@@ -46,9 +46,7 @@ class AutocompletedSearch extends Component {
     this.setState({ showSelectionList: !!e.target.value });
     this.setState({ selectedIndex: 0 });
 
-    if (this.props.onChange) {
-      this.props.onChange(e);
-    }
+    this.props.onChange(e);
   }
 
   handleInputKeyDown = e => {
@@ -104,9 +102,7 @@ class AutocompletedSearch extends Component {
         break;
     }
 
-    if (this.props.onKeyDown) {
-      this.props.onKeyDown(e);
-    }
+    this.props.onKeyDown(e);
   }
 
   handleMouseOverChildComponent = component => {
@@ -163,6 +159,11 @@ AutocompletedSearch.propTypes = {
   defaultValue: PropTypes.string,
   onChange: PropTypes.func,
   onKeyDown: PropTypes.func,
+};
+
+AutocompletedSearch.defaultProps = {
+  onChange: () => {},
+  onKeyDown: () => {},
 };
 
 export default AutocompletedSearch;
