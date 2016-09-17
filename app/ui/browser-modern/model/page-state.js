@@ -29,7 +29,7 @@ const PageState = Immutable.Record({
 }, 'PageState');
 
 PageState.STATES = {
-  PRE_LOADING: 'pre-loading',
+  CONNECTING: 'connecting',
   LOADING: 'loading',
   LOADED: 'loaded',
   FAILED: 'failed',

@@ -39,7 +39,7 @@ class SecurityBadge extends Component {
     // just hide the icon
     let hidden = this.props.hidden;
     if (!this.props.url ||
-        this.props.pageState.load === PageStateModel.STATES.PRE_LOADING ||
+        this.props.pageState.load === PageStateModel.STATES.CONNECTING ||
         this.props.pageState.load === PageStateModel.STATES.LOADING ||
         /^tofino:/.test(this.props.url)) {
       hidden = true;

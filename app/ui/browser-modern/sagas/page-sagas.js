@@ -86,7 +86,7 @@ function* destroyPageSession({ page, currentPageCount }) {
 function* naviatePageTo({ pageId, webview, location }) {
   yield put(PageActions.resetPageData(pageId));
   yield put(PageActions.setPageState(pageId, {
-    load: PageState.STATES.PRE_LOADING,
+    load: PageState.STATES.CONNECTING,
     navigationType: PageState.NAVIGATION_TYPES.NAVIGATED_TO_LOCATION,
   }));
   // Optimistically set page location and update the urlbar before the actual
@@ -100,7 +100,7 @@ function* naviatePageTo({ pageId, webview, location }) {
 function* navigatePageBack({ pageId, webview }) {
   yield put(PageActions.resetPageData(pageId));
   yield put(PageActions.setPageState(pageId, {
-    load: PageState.STATES.PRE_LOADING,
+    load: PageState.STATES.CONNECTING,
     navigationType: PageState.NAVIGATION_TYPES.NAVIGATED_BACK,
   }));
   webview.goBack();
@@ -109,7 +109,7 @@ function* navigatePageBack({ pageId, webview }) {
 function* navigatePageForward({ pageId, webview }) {
   yield put(PageActions.resetPageData(pageId));
   yield put(PageActions.setPageState(pageId, {
-    load: PageState.STATES.PRE_LOADING,
+    load: PageState.STATES.CONNECTING,
     navigationType: PageState.NAVIGATION_TYPES.NAVIGATED_FORWARD,
   }));
   webview.goForward();
@@ -118,7 +118,7 @@ function* navigatePageForward({ pageId, webview }) {
 function* navigatePageRefresh({ pageId, webview }) {
   yield put(PageActions.resetPageData(pageId));
   yield put(PageActions.setPageState(pageId, {
-    load: PageState.STATES.PRE_LOADING,
+    load: PageState.STATES.CONNECTING,
     navigationType: PageState.NAVIGATION_TYPES.REFRESHED,
   }));
   webview.reload();
@@ -127,7 +127,7 @@ function* navigatePageRefresh({ pageId, webview }) {
 function* navigatePageInHistory({ pageId, webview, historyIndex }) {
   yield put(PageActions.resetPageData(pageId));
   yield put(PageActions.setPageState(pageId, {
-    load: PageState.STATES.PRE_LOADING,
+    load: PageState.STATES.CONNECTING,
     navigationType: PageState.NAVIGATION_TYPES.NAVIGATED_IN_HISTORY,
   }));
   webview.goToIndex(historyIndex);
