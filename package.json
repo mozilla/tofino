@@ -115,7 +115,7 @@
     "sha1": "1.1.1",
     "spectron": "3.3.0",
     "thenify-all": "1.6.0",
-    "tmp": "0.0.28",
+    "tmp": "0.0.29",
     "uglify-js": "github:mishoo/UglifyJS2#harmony",
     "webpack": "1.13.2",
     "yargs": "5.0.0",
