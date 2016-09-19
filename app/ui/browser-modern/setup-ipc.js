@@ -48,24 +48,24 @@ export default function({ store, userAgentClient }) {
 
   ipcRenderer.on('go-back', () => {
     const pageId = PagesSelectors.getSelectedPageId(store.getState());
-    const pageState = PagesSelectors.getPageState(store.getState(), pageId);
-    if (pageState.canGoBack && !UISelectors.getOverviewVisible(store.getState())) {
+    const pageCanGoBack = PagesSelectors.getPageCanGoBack(store.getState(), pageId);
+    if (pageCanGoBack && !UISelectors.getOverviewVisible(store.getState())) {
       store.dispatch(PageEffects.navigateCurrentPageBack());
     }
   });
 
   ipcRenderer.on('go-forward', () => {
     const pageId = PagesSelectors.getSelectedPageId(store.getState());
-    const pageState = PagesSelectors.getPageState(store.getState(), pageId);
-    if (pageState.canGoForward && !UISelectors.getOverviewVisible(store.getState())) {
+    const pageCanGoForward = PagesSelectors.getPageCanGoForward(store.getState(), pageId);
+    if (pageCanGoForward && !UISelectors.getOverviewVisible(store.getState())) {
       store.dispatch(PageEffects.navigateCurrentPageForward());
     }
   });
 
   ipcRenderer.on('page-refresh', () => {
     const pageId = PagesSelectors.getSelectedPageId(store.getState());
-    const pageState = PagesSelectors.getPageState(store.getState(), pageId);
-    if (pageState.canRefresh && !UISelectors.getOverviewVisible(store.getState())) {
+    const pageCanRefresh = PagesSelectors.getPageCanRefresh(store.getState(), pageId);
+    if (pageCanRefresh && !UISelectors.getOverviewVisible(store.getState())) {
       store.dispatch(PageEffects.navigateCurrentPageRefresh());
     }
   });

@@ -80,6 +80,21 @@ export function getPageState(state, id) {
   return getPageById(state, id).state;
 }
 
+export function getPageCanGoBack(state, id) {
+  const { historyIndex } = getPageById(state, id);
+  return historyIndex > 0;
+}
+
+export function getPageCanGoForward(state, id) {
+  const { history, historyIndex } = getPageById(state, id);
+  return historyIndex < history.size - 1;
+}
+
+export function getPageCanRefresh() {
+  // Nothing prevents a page from being able to refresh yet.
+  return true;
+}
+
 export function getPageSearchVisible(state, id) {
   return getPageState(state, id).searchVisible;
 }

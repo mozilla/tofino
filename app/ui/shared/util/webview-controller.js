@@ -33,9 +33,10 @@ export default class WebViewController extends EventEmitter {
   navigateBack(pageId) {
     const pages = this.getPages();
     const index = getPageIndexById(pages, pageId);
+    const canGoBack = pages.get(index).historyIndex > 0;
     assert(index >= 0, `Page ${pageId} not found in current state.`);
     assert(isUUID(pageId), `Invalid page id: ${pageId}`);
-    assert(pages.get(index).state.canGoBack, 'Page cannot go back.');
+    assert(canGoBack, 'Page cannot go back.');
 
     this.emit('navigate-back', pageId);
     this.emit(`navigate-back:${pageId}`, pageId);
@@ -44,9 +45,10 @@ export default class WebViewController extends EventEmitter {
   navigateForward(pageId) {
     const pages = this.getPages();
     const index = getPageIndexById(pages, pageId);
+    const canGoForward = pages.get(index).historyIndex < pages.get(index).history.size - 1;
     assert(index >= 0, `Page ${pageId} not found in current state.`);
     assert(isUUID(pageId), `Invalid page id: ${pageId}`);
-    assert(pages.get(index).state.canGoForward, 'Page cannot go forward.');
+    assert(canGoForward, 'Page cannot go forward.');
 
     this.emit('navigate-forward', pageId);
     this.emit(`navigate-forward:${pageId}`, pageId);
@@ -79,7 +81,6 @@ export default class WebViewController extends EventEmitter {
     const index = getPageIndexById(pages, pageId);
     assert(index >= 0, `Page ${pageId} not found in current state.`);
     assert(isUUID(pageId), `Invalid page id: ${pageId}`);
-    assert(pages.get(index).state.canRefresh, 'Page cannot refresh.');
 
     this.emit('navigate-refresh', pageId);
     this.emit(`navigate-refresh:${pageId}`, pageId);

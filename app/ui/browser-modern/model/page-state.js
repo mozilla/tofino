@@ -17,9 +17,6 @@ import SSLCertificate from './ssl-certificate';
 const PageState = Immutable.Record({
   load: undefined,
   navigationType: undefined,
-  canGoBack: false,
-  canGoForward: false,
-  canRefresh: false,
   zoomLevel: 0,
   searchVisible: false,
   code: undefined,
