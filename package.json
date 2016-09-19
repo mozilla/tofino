@@ -62,7 +62,7 @@
     "redux-saga": "0.11.1",
     "source-map-support": "ncalexan/node-source-map-support#fileUrls-plus",
     "true-html-escape": "0.0.2",
-    "uuid": "2.0.2",
+    "uuid": "2.0.3",
     "why-did-you-update": "github:victorporof/why-did-you-update#immutable",
     "ws": "1.1.1"
   },
