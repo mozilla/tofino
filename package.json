@@ -84,7 +84,7 @@
     "babel-runtime": "6.11.6",
     "check-dependencies": "1.0.1",
     "copy-webpack-plugin": "3.0.0",
-    "coveralls": "2.11.13",
+    "coveralls": "2.11.14",
     "cross-env": "2.0.1",
     "dirsum": "0.1.1",
     "electron-builder": "5.34.1",
