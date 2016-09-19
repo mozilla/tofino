@@ -17,37 +17,69 @@ import omit from 'lodash/omit';
 
 import Style from '../style';
 
-export const MIN_WIDTH = '16px';
-export const MIN_HEIGHT = '16px';
 export const ENABLED_OPACITY = 1;
 export const DISABLED_OPACITY = 0.5;
 export const BKG_REPEAT_DEFAULT = 'no-repeat';
-export const BKG_POSIITON_DEFAULT = 'left center';
+export const BKG_POSIITON_DEFAULT = 'center';
 export const BKG_SIZE_DEFAULT = 'contain';
-export const BKG_VS_CHILDREN_DISTANCE = 5; // px
-
-const BUTTON_WRAPPER_STYLE = Style.registerStyle({
-  overflow: 'hidden',
-  flexShrink: 0,
-  alignItems: 'center',
-  WebkitUserSelect: 'none',
-  WebkitAppRegion: 'no-drag',
-});
 
 const BUTTON_STYLE = Style.registerStyle({
+  WebkitUserSelect: 'none',
+  WebkitAppRegion: 'no-drag',
   display: 'flex',
-  flex: 1,
+  flexShrink: 0,
   alignItems: 'center',
-  margin: '0',
-  padding: '0',
-  border: '0',
-  background: 'transparent',
+  justifyContent: 'center',
+  boxSizing: 'content-box',
+  backgroundClip: 'content-box',
+  backgroundOrigin: 'content-box',
+  margin: 0,
+  padding: 0,
+  border: 'none',
+  background: 'none',
   color: 'inherit',
   font: 'inherit',
   textRendering: 'inherit',
+  textShadow: 'inherit',
 });
 
 class Btn extends Component {
+  static createCssRules(props) {
+    const { disabled, width, height } = props;
+    const { image, imgWidth, imgHeight, imgRepeat, imgPosition } = props;
+    const { imageHover, imageActive, imgPositionHover, imgPositionActive } = props;
+
+    const rules = {
+      opacity: disabled ? DISABLED_OPACITY : ENABLED_OPACITY,
+      width: width || imgWidth,
+      height: height || imgHeight,
+    };
+
+    // Check for null or undefined here, so that we can use a default background
+    // when an asset is intended, but not supplied yet. Simply checking for a
+    // falsy value would render BKG_IMAGE_DEFAULT useless.
+    if (image != null) {
+      rules.backgroundImage = image ? `url(assets/${image})` : `url(${BKG_IMAGE_DEFAULT})`;
+      rules.backgroundSize = imgWidth && imgHeight ? `${imgWidth} ${imgHeight}` : BKG_SIZE_DEFAULT;
+      rules.backgroundRepeat = imgRepeat || BKG_REPEAT_DEFAULT;
+      rules.backgroundPosition = imgPosition || BKG_POSIITON_DEFAULT;
+      rules['&:hover'] = {
+        backgroundImage: imageHover ? `url(assets/${imageHover})` : 'auto',
+        backgroundPosition: imgPositionHover || imgPosition || BKG_POSIITON_DEFAULT,
+      };
+      rules['&:active'] = {
+        backgroundImage: imageActive ? `url(assets/${imageActive})` : 'auto',
+        backgroundPosition: imgPositionActive || imgPosition || BKG_POSIITON_DEFAULT,
+      };
+    }
+
+    return rules;
+  }
+
+  componentWillMount() {
+    this.style = Style.registerStyle(Btn.createCssRules(this.props));
+  }
+
   shouldComponentUpdate(nextProps) {
     // Since this component uses plain js objects as props, we need to perform
     // deep quality checks on them to make sure we don't unnecessarily rerender.
@@ -60,51 +92,19 @@ class Btn extends Component {
       !isEqual(omit(this.props, ['children']), omit(nextProps, ['children']));
   }
 
+  componentWillUpdate(nextProps) {
+    Style.remove(this.style);
+    this.style = Style.registerStyle(Btn.createCssRules(nextProps));
+  }
+
   render() {
-    const { minWidth, minHeight } = this.props;
-    const { image, imgWidth, imgHeight, imgRepeat, imgPosition } = this.props;
-
-    const custom = {
-      minWidth: minWidth || imgWidth || MIN_WIDTH,
-      minHeight: minHeight || imgHeight || MIN_HEIGHT,
-    };
-
-    // Check for null or undefined here, so that we can use a default background
-    // when an asset is intended, but not supplied yet. Simply checking for a
-    // falsy value would render BKG_IMAGE_DEFAULT useless.
-    if (image != null) {
-      custom.backgroundImage = image ? `url(assets/${image})` : `url(${BKG_IMAGE_DEFAULT})`;
-      custom.backgroundRepeat = imgRepeat || BKG_REPEAT_DEFAULT;
-      custom.backgroundPosition = imgPosition || BKG_POSIITON_DEFAULT;
-      custom.backgroundSize = imgWidth || imgHeight ? `${imgWidth} ${imgHeight}` : BKG_SIZE_DEFAULT;
-
-      // Make sure the text doesn't overlap the image.
-      if (this.props.children) {
-        const bkgWidth = imgWidth || MIN_WIDTH;
-        custom.paddingLeft = `${parseInt(bkgWidth, 10) + BKG_VS_CHILDREN_DISTANCE}px`;
-        custom.paddingRight = '0px';
-      }
-    }
-
     return (
-      <div {...omit(this.props, Object.keys(OmittedContainerProps))}
-        className={`widget-btn ${BUTTON_WRAPPER_STYLE} ${this.props.className || ''}`}
-        style={{
-          opacity: this.props.disabled ? DISABLED_OPACITY : ENABLED_OPACITY,
-          ...this.props.style,
-        }}
-        data-title={this.props.title}
-        data-disabled={this.props.disabled}>
-        <button ref={e => this.node = e}
-          type="button"
-          className={BUTTON_STYLE}
-          style={custom}
-          title={this.props.title}
-          disabled={this.props.disabled}
-          onClick={this.props.disabled ? null : this.props.onClick}>
-          {this.props.children}
-        </button>
-      </div>
+      <button {...omit(this.props, Object.keys(OmittedContainerProps))}
+        ref={e => this.node = e}
+        className={`widget-btn ${BUTTON_STYLE} ${this.style} ${this.props.className || ''}`}
+        onClick={this.props.disabled ? null : this.props.onClick}>
+        {this.props.children}
+      </button>
     );
   }
 }
@@ -112,20 +112,24 @@ class Btn extends Component {
 Btn.displayName = 'Btn';
 
 const OmittedContainerProps = {
-  title: PropTypes.string.isRequired,
-  disabled: PropTypes.bool,
   image: PropTypes.string,
+  imageHover: PropTypes.string,
+  imageActive: PropTypes.string,
   imgWidth: PropTypes.string,
   imgHeight: PropTypes.string,
   imgRepeat: PropTypes.string,
   imgPosition: PropTypes.string,
-  minWidth: PropTypes.string,
-  minHeight: PropTypes.string,
+  imgPositionHover: PropTypes.string,
+  imgPositionActive: PropTypes.string,
+  width: PropTypes.string,
+  height: PropTypes.string,
   onClick: PropTypes.func.isRequired,
 };
 
 Btn.propTypes = {
   ...OmittedContainerProps,
+  title: PropTypes.string.isRequired,
+  disabled: PropTypes.bool,
   className: PropTypes.string,
   style: PropTypes.object, // eslint-disable-line
   children: React.PropTypes.oneOfType([

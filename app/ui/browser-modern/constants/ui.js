@@ -16,8 +16,10 @@ import * as ContentURLs from '../../../shared/constants/content-pages-locations'
 export const HOME_PAGE = ContentURLs.HISTORY_PAGE;
 
 // Tabbar dimensions.
-export const TABBAR_HEIGHT = 40; // px
-export const TAB_DEFAULT_WIDTH = 15; // vw;
+export const TABBAR_HEIGHT = 39; // px
+export const TAB_DEFAULT_WIDTH = 240; // px
+export const TAB_MIN_WIDTH = 60; // px
+export const TAB_OVERLAP = 15; // px
 
 // Navbar dimensions.
 export const NAVBAR_HEIGHT = 40; // px
@@ -25,7 +27,8 @@ export const NAVBAR_HEIGHT = 40; // px
 // Content z-indices.
 export const BROWSER_CONTENT_BASE_ZINDEX = 0;
 
-// Overview z-indices.
+// Chrome z-indices.
+export const BROWSER_CHROME_BASE_ZINDEX = 1;
 export const BROWSER_OVERVIEW_BASE_ZINDEX = 0;
 
 // Overview dimensions.

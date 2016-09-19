@@ -14,32 +14,42 @@ import React, { Component, PropTypes } from 'react';
 import isEqual from 'lodash/isEqual';
 
 import Style from '../style';
+import FittedImage from './fitted-image';
 
-const VERTICAL_SEPARATOR_STYLE = Style.registerStyle({
-  alignSelf: 'stretch',
-  flexShrink: 0,
-  width: '1px',
-  margin: '3px 0',
-  backgroundColor: 'var(--theme-separator-color)',
+const SPIN_KEYFRAMES = Style.registerKeyframes({
+  from: {
+    transform: 'rotate(0deg)',
+  },
+  to: {
+    transform: 'rotate(360deg)',
+  },
 });
 
-class VerticalSeparator extends Component {
+const SPINNER_STYLE = Style.registerStyle({
+  animation: `${SPIN_KEYFRAMES} 1s linear infinite`,
+});
+
+class SpinnerBlue extends Component {
   shouldComponentUpdate(nextProps) {
     return !isEqual(this.props, nextProps);
   }
 
   render() {
     return (
-      <div {...this.props}
-        className={`widget-vseparator ${VERTICAL_SEPARATOR_STYLE} ${this.props.className || ''}`} />
+      <FittedImage {...this.props}
+        className={`widget-spinner ${SPINNER_STYLE} ${this.props.className || ''}`}
+        src="assets/loading.png"
+        width="16px"
+        height="16px"
+        mode="contain" />
     );
   }
 }
 
-VerticalSeparator.displayName = 'VerticalSeparator';
+SpinnerBlue.displayName = 'SpinnerBlue';
 
-VerticalSeparator.propTypes = {
+SpinnerBlue.propTypes = {
   className: PropTypes.string,
 };
 
-export default VerticalSeparator;
+export default SpinnerBlue;

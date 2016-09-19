@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 
 import Style from '../../../../shared/style';
 import Btn from '../../../../shared/widgets/btn';
+import VerticalSeparator from '../../../../shared/widgets/vertical-separator';
 import SecurityBadge from './security-badge';
 import AutocompletedSearch from '../../../../shared/widgets/autocompleted-search';
 import AutocompletionListItem from './autocompletion-list-item';
@@ -29,35 +30,38 @@ import * as ProfileEffects from '../../../actions/profile-effects';
 
 const LOCATION_BAR_STYLE = Style.registerStyle({
   flex: 1,
+  alignSelf: 'stretch',
+  alignItems: 'center',
+  margin: '8px 0px',
+  padding: '0 5px',
+  borderRadius: 'var(--theme-default-roundness)',
+  boxShadow: 'var(--theme-locationbar-box-shadow)',
   backgroundColor: 'var(--theme-content-background)',
 });
 
 const LOCATION_BAR_INPUT_STYLE = Style.registerStyle({
   flex: 1,
+  alignSelf: 'stretch',
+  padding: '0 1px',
+  fontSize: '110%',
 });
 
-const LOCATION_BAR_BUTTONS_STYLE = Style.registerStyle({
-  margin: '0 10px',
+const LOCATION_BAR_SECURITY_BADGE_STYLE = Style.registerStyle({
+  paddingLeft: '2px',
+});
+
+const LOCATION_BAR_REFRESH_BUTTON_STYLE = Style.registerStyle({
+  padding: '2px',
+});
+
+const SEPARATOR_STYLE = Style.registerStyle({
+  margin: '4px',
 });
 
 class Location extends Component {
   constructor(props) {
     super(props);
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-  }
-
-  getInfoButtonIcon() {
-    // The only state we have currently for this is the search icon --
-    // fall back to default, but in the future we can have SSL/favicon
-    // icons, etc.
-    return '';
-  }
-
-  getBookmarkIcon() {
-    if (this.props.pageIsBookmarked) {
-      return 'glyph-bookmark-filled-black.svg';
-    }
-    return 'glyph-bookmark-hollow-black.svg';
   }
 
   handleInputChange = e => {
@@ -73,7 +77,7 @@ class Location extends Component {
   }
 
   handleAutocompletionPick = ({ data }) => {
-    this.props.onNavigate(LocationUtil.fixURL(data.uri));
+    this.props.onNavigateTo(this.props.pageId, LocationUtil.fixURL(data.uri));
   }
 
   handleInfoButtonClick = () => {
@@ -90,21 +94,27 @@ class Location extends Component {
     this.props.dispatch(ProfileEffects.setRemoteBookmarkState(pageId, !bookmarked));
   }
 
+  handleRefreshButtonClick = () => {
+    this.props.onNavigateRefresh(this.props.pageId);
+  }
+
   render() {
     return (
       <div className={`browser-location ${LOCATION_BAR_STYLE}`}>
         <Btn title="Info"
-          className={LOCATION_BAR_BUTTONS_STYLE}
-          image={this.getInfoButtonIcon()}
+          image="identity-icon.svg#normal"
+          imageHover="identity-icon.svg#hover"
           imgWidth="16px"
           imgHeight="16px"
           onClick={this.handleInfoButtonClick} />
         <SecurityBadge title="Connection"
-          url={this.props.pageLocation}
-          pageState={this.props.pageState}
+          className={LOCATION_BAR_SECURITY_BADGE_STYLE}
           imgWidth="16px"
           imgHeight="16px"
+          url={this.props.pageLocation}
+          pageState={this.props.pageState}
           onClick={this.handleConnectionButtonClick} />
+        <VerticalSeparator className={SEPARATOR_STYLE} />
         <AutocompletedSearch ref={e => this.awesomebar = e}
           className={LOCATION_BAR_INPUT_STYLE}
           defaultValue={this.props.pageLocation}
@@ -114,11 +124,26 @@ class Location extends Component {
           dataSrc={this.props.locationAutocompletions}
           childComponent={AutocompletionListItem} />
         <Btn title="Bookmark"
-          className={LOCATION_BAR_BUTTONS_STYLE}
-          image={this.getBookmarkIcon()}
-          imgWidth="16px"
-          imgHeight="16px"
+          width="18px"
+          height="18px"
+          image="toolbar.png"
+          imgWidth="792px"
+          imgHeight="72px"
+          imgPosition={`${this.props.pageIsBookmarked ? '-144px' : '-126px'} 0px`}
+          imgPositionHover={`${this.props.pageIsBookmarked ? '-144px' : '-126px'} -18px`}
           onClick={this.handleBookmarkButtonClick} />
+        <VerticalSeparator className={SEPARATOR_STYLE} />
+        <Btn title="Refresh"
+          className={LOCATION_BAR_REFRESH_BUTTON_STYLE}
+          width="14px"
+          height="14px"
+          image="reload-stop-go.png"
+          imgWidth="42px"
+          imgHeight="28px"
+          imgPosition="0px 0px"
+          imgPositionActive="0px -14px"
+          disabled={!this.props.pageCanRefresh}
+          onClick={this.handleRefreshButtonClick} />
       </div>
     );
   }
@@ -130,10 +155,12 @@ Location.propTypes = {
   dispatch: PropTypes.func.isRequired,
   pageId: PropTypes.string.isRequired,
   pageLocation: PropTypes.string.isRequired,
+  pageCanRefresh: PropTypes.bool.isRequired,
   pageIsBookmarked: PropTypes.bool.isRequired,
   pageState: SharedPropTypes.PageState,
   locationAutocompletions: SharedPropTypes.LocationAutocompletions,
-  onNavigate: PropTypes.func.isRequired,
+  onNavigateTo: PropTypes.func.isRequired,
+  onNavigateRefresh: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state, ownProps) {
@@ -141,6 +168,7 @@ function mapStateToProps(state, ownProps) {
   return {
     pageLocation: page ? page.location : '',
     pageState: PagesSelectors.getPageState(state, ownProps.pageId),
+    pageCanRefresh: page ? PagesSelectors.getPageCanRefresh(state, ownProps.pageId) : false,
     pageIsBookmarked: page ? ProfileSelectors.isBookmarked(state, page.location) : false,
     locationAutocompletions: page ? UISelectors.getLocationAutocompletions(state, page.id) : null,
   };

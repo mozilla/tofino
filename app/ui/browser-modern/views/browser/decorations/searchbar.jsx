@@ -27,8 +27,10 @@ const SEARCH_STYLE = Style.registerStyle({
   bottom: 0,
   left: 0,
   right: 0,
+  height: '25px',
+  padding: '0 4px',
   zIndex: UIConstants.SEARCH_BAR_INDEX,
-  borderTop: '1px solid var(--theme-window-background)',
+  borderTop: '1px solid var(--theme-content-border-color)',
   color: 'var(--theme-content-color)',
 });
 
@@ -71,8 +73,7 @@ class SearchBar extends Component {
   render() {
     return (
       <Search ref={e => this.searchbar = e}
-        id="browser-page-searchbar"
-        className={SEARCH_STYLE}
+        className={`browser-page-searchbar ${SEARCH_STYLE}`}
         hidden={!this.props.isVisible}
         onChange={this.handleInputChange}
         onKeyDown={this.handleInputKeyDown}

@@ -62,6 +62,9 @@ const DOMGetters = {
   Search: e => e.find('.widget-search'),
   Thumbnail: e => e.find('.widget-thumbnail'),
   VerticalSeparator: e => e.find('.widget-vseparator'),
+  SpinnerBlue: e => e.find('.widget-spinner'),
+  SpinnerGray: e => e.find('.widget-spinner'),
+  WarningIcon: e => e.find('.widget-warning-icon'),
 };
 
 describe('widgets', () => {

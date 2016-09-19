@@ -33,6 +33,7 @@ const PAGE_STYLE = Style.registerStyle({
 const WEB_VIEW_STYLE = Style.registerStyle({
   display: 'flex',
   flex: 1,
+  background: '#fff',
 });
 
 class Page extends Component {

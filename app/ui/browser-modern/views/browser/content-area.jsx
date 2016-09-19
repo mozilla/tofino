@@ -17,11 +17,9 @@ import { connect } from 'react-redux';
 import Style from '../../../shared/style';
 import NavBar from './navbar';
 import Page from './page';
-import SearchBar from './decorations/searchbar';
 
 import * as SharedPropTypes from '../../model/shared-prop-types';
 import * as UIConstants from '../../constants/ui';
-import * as UISelectors from '../../selectors/ui';
 import * as PagesSelectors from '../../selectors/pages';
 
 const CONTENT_AREA_STYLE = Style.registerStyle({
@@ -55,11 +53,10 @@ class ContentArea extends Component {
   render() {
     return (
       <div id="browser-content"
-        className={CONTENT_AREA_STYLE}
-        hidden={this.props.isOverviewVisible}>
+        className={CONTENT_AREA_STYLE}>
         {this.props.pageIds.map(pageId => (
-          <div key={`browser-page-container-${pageId}`}
-            className={`browser-page-container ${PAGE_CONTAINER_STYLE}`}
+          <div key={`browser-page-content-area-${pageId}`}
+            className={`browser-page-content-area ${PAGE_CONTAINER_STYLE}`}
             data-is-active={pageId === this.props.selectedPageId}>
             <NavBar pageId={pageId}
               onNavigateBack={this.props.onNavigateBack}
@@ -69,7 +66,6 @@ class ContentArea extends Component {
               onNavigateInHistory={this.props.onNavigateInHistory} />
             <Page pageId={pageId}
               onMount={this.props.onPageMount} />
-            <SearchBar pageId={pageId} />
           </div>
         ))}
       </div>
@@ -88,14 +84,12 @@ ContentArea.propTypes = {
   onNavigateInHistory: PropTypes.func.isRequired,
   pageIds: SharedPropTypes.PageIds.isRequired,
   selectedPageId: PropTypes.string.isRequired,
-  isOverviewVisible: PropTypes.bool.isRequired,
 };
 
 function mapStateToProps(state) {
   return {
     pageIds: PagesSelectors.getOrderedPageIds(state),
     selectedPageId: PagesSelectors.getSelectedPageId(state),
-    isOverviewVisible: UISelectors.getOverviewVisible(state),
   };
 }
 

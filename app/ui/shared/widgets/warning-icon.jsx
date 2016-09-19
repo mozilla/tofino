@@ -13,33 +13,29 @@ specific language governing permissions and limitations under the License.
 import React, { Component, PropTypes } from 'react';
 import isEqual from 'lodash/isEqual';
 
-import Style from '../style';
+import FittedImage from './fitted-image';
 
-const VERTICAL_SEPARATOR_STYLE = Style.registerStyle({
-  alignSelf: 'stretch',
-  flexShrink: 0,
-  width: '1px',
-  margin: '3px 0',
-  backgroundColor: 'var(--theme-separator-color)',
-});
-
-class VerticalSeparator extends Component {
+class WarningIcon extends Component {
   shouldComponentUpdate(nextProps) {
     return !isEqual(this.props, nextProps);
   }
 
   render() {
     return (
-      <div {...this.props}
-        className={`widget-vseparator ${VERTICAL_SEPARATOR_STYLE} ${this.props.className || ''}`} />
+      <FittedImage {...this.props}
+        className={`widget-warning-icon ${this.props.className || ''}`}
+        src="assets/warning.svg"
+        width="16px"
+        height="16px"
+        mode="contain" />
     );
   }
 }
 
-VerticalSeparator.displayName = 'VerticalSeparator';
+WarningIcon.displayName = 'WarningIcon';
 
-VerticalSeparator.propTypes = {
+WarningIcon.propTypes = {
   className: PropTypes.string,
 };
 
-export default VerticalSeparator;
+export default WarningIcon;

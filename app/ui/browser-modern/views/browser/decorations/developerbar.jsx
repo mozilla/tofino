@@ -26,12 +26,13 @@ const DEVELOPER_BAR_STYLE = Style.registerStyle({
   bottom: 0,
   right: 0,
   zIndex: UIConstants.DEVELOPER_BAR_ZINDEX,
-  backgroundColor: 'var(--theme-window-background)',
-  color: 'var(--theme-content-color)',
-});
-
-const BUTTONS_STYLE = Style.registerStyle({
   padding: '2px 8px',
+  border: '1px solid var(--theme-statusbar-border-color)',
+  borderTopLeftRadius: 'var(--theme-default-roundness)',
+  borderRightWidth: 0,
+  borderBottomWidth: 0,
+  background: 'var(--theme-statusbar-background)',
+  color: 'var(--theme-content-color)',
 });
 
 class DeveloperBar extends Component {
@@ -64,9 +65,10 @@ class DeveloperBar extends Component {
     return (
       <div className={`browser-developerbar ${DEVELOPER_BAR_STYLE}`}>
         <Btn id="record-button"
-          className={BUTTONS_STYLE}
           title={isRecording ? 'Stop Recording' : 'Start Recording'}
           image={isRecording ? 'tool-profiler-active.svg' : 'tool-profiler.svg'}
+          imgWidth="14px"
+          imgHeight="14px"
           onClick={this.handleRecordingClick} />
       </div>
     );

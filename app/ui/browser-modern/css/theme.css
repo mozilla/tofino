@@ -1,38 +1,58 @@
 :root {
   /* Window */
 
-  --theme-window-background: #bbb;
-
-  /* Navbar */
-
-  --theme-navbar-background: #999;
+  --theme-window-background: linear-gradient(180deg, #fafafa, #ececec 1px, #d3d3d3 40px) fixed;
 
   /* Tabbar */
 
-  --theme-tabbar-background: #999;
+  --theme-tabbar-background: transparent;
+  --theme-tabbar-border-bottom-color: #9e9e9e;
 
-  --theme-tab-active-background: #ccc;
-  --theme-tab-active-color: #000;
+  --theme-tab-inactive-background: transparent;
+  --theme-tab-inactive-color: var(--theme-content-color);
+  --theme-tab-inactive-text-shadow: rgba(255,255,255,0.5);
+  --theme-tab-inactive-opacity: 0.9;
+
+  --theme-tab-active-background: transparent;
+  --theme-tab-active-color: #333;
+  --theme-tab-active-text-shadow: transparent;
   --theme-tab-active-opacity: 1;
 
-  --theme-tab-inactive-background: #aaa;
-  --theme-tab-inactive-color: #222;
-  --theme-tab-inactive-opacity: 0.9;
+  /* Navbar */
+
+  --theme-navbar-background: linear-gradient(180deg, #ececec, #d4d4d4 calc(100% - 1px), #dadada);
+  --theme-navbar-border-bottom-color: #b3b3b3;
+
+  --theme-navbar-back-button-background: #fbfbfb;
+  --theme-navbar-back-button-border-color: #aeaeae;
+
+  --theme-navbar-forward-button-background: #fff;
+  --theme-navbar-forward-button-border-color: #aeaeae;
+
+  /* Locationbar */
+
+  --theme-locationbar-box-shadow: 0 1px 1px -1px rgba(0,0,0,0.5);
+
+  /* Statusbar */
+
+  --theme-statusbar-background: linear-gradient(180deg, #fff, #ddd);
+  --theme-statusbar-border-color: #ccc;
 
   /* Content */
 
   --theme-content-background: #fff;
-  --theme-content-color: #000;
+  --theme-content-color: #222;
   --theme-content-link-color: #00f;
 
   --theme-content-selection-background: #f00;
   --theme-content-selection-color: #fff;
 
-  --theme-content-border-color: rgba(255,255,255,0.25);
+  --theme-content-border-color: rgba(128,128,128,0.5);
   --theme-content-selected-border-color: #f00;
 
   /* Overview */
 
+  --theme-overview-background: #d3d3d3;
   --theme-overview-summary-background: linear-gradient(to bottom, rgba(255,255,255,0) 0px, rgba(255,255,255,1) 20px);
   --theme-overview-summary-title-color: #000;
   --theme-overview-summary-subtitle-color: #222;
@@ -42,9 +62,13 @@
   --theme-default-shadow: 0px 2px 4px 0px rgba(0,0,0,0.5);
   --theme-default-selected-shadow: 0px 0px 6px 0px #f00;
 
+  --theme-separator-color: rgba(128,128,128,0.3);
+
+  --theme-default-roundness: 3px;
+
   /* Error Pages */
 
   --theme-error-page-background-color: #FBFBFB;
   --theme-error-page-color: rgb(66, 78, 90);
-  --theme-error-page-cert-background-color: '#ddd';
+  --theme-error-page-cert-background-color: #ddd;
 }
