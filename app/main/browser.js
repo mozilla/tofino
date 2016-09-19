@@ -83,6 +83,15 @@ app.on('activate', async function() {
   }
 });
 
+// OSX only due to apps being single instance, fired when receiving a URL to open,
+// for example when it's set as a default browser and it receives an incoming request
+// to open a url
+// http://electron.atom.io/docs/all/#event-open-url-macos
+app.on('open-url', (e, url) => {
+  BW.openURL(url);
+  e.preventDefault();
+});
+
 ipc.on('new-browser-window', async function() {
   await BW.createBrowserWindow(userAgentClient, () => menu.buildAppMenu(menuData));
 });
@@ -109,6 +118,8 @@ ipc.on('instrument-event', (event, args) => {
   // Until we transpile app/, we can't destructure in the argument list or inline here.
   instrument.event(args.name, args.method, args.label, args.value);
 });
+
+ipc.on('set-default-browser', () => protocols.setDefaultBrowser());
 
 const menuData = {};
 

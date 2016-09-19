@@ -10,13 +10,14 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { protocol } from 'electron';
+import { protocol, app } from 'electron';
 import * as endpoints from '../shared/constants/endpoints';
 
 const tofinoColonSlash = new RegExp(`^${endpoints.TOFINO_PROTOCOL}:/`);
+const DEFAULT_PROTOCOLS = ['http', 'https', endpoints.TOFINO_PROTOCOL];
 
 export function registerStandardSchemes() {
-  protocol.registerStandardSchemes([endpoints.TOFINO_PROTOCOL, 'http', 'https']);
+  protocol.registerStandardSchemes(DEFAULT_PROTOCOLS);
 }
 
 /**
@@ -37,4 +38,17 @@ export function registerHttpProtocols() {
       url: redirectPath,
     });
   }, e => { if (e) { throw e; } });
+}
+
+export function setDefaultBrowser() {
+  const success = [];
+  for (const p of DEFAULT_PROTOCOLS) {
+    success.push(app.setAsDefaultProtocolClient(p));
+  }
+
+  return success.every(s => s);
+}
+
+export function isDefaultBrowser() {
+  return DEFAULT_PROTOCOLS.every(p => app.isDefaultProtocolClient(p));
 }

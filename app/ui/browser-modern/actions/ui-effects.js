@@ -52,3 +52,9 @@ export function showDownloadNotification({ url, filename, status }) {
     status,
   };
 }
+
+export function confirmDefaultBrowser() {
+  return {
+    type: EffectTypes.CONFIRM_DEFAULT_BROWSER,
+  };
+}

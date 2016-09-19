@@ -16,6 +16,7 @@ import { BrowserWindow } from 'electron';
 
 import * as hotkeys from './hotkeys';
 import * as downloads from './downloads';
+import * as protocols from './protocols';
 
 import { fileUrl } from '../shared/paths-util';
 import BUILD_CONFIG from '../build-config';
@@ -31,6 +32,19 @@ const BROWSER_CHROME_URL = fileUrl(path.join(UI_DIR, 'browser-modern', 'browser.
  */
 
 const browserWindows = [];
+
+/**
+ * A queue of URLs to open in the next browser window
+ */
+const URL_QUEUE = [];
+
+/**
+ * When we want to send a command to just one window, use the primary browser window,
+ * which is determined now just as the oldest created BW.
+ */
+export function getPrimaryBrowserWindow() {
+  return browserWindows[0];
+}
 
 /**
  * Takes a UserAgentClient to create scopes and also takes an onload callback --
@@ -71,15 +85,39 @@ export async function createBrowserWindow(userAgentClient, onload) {
     browser.webContents.send('user-agent-service-info', { port, host, version });
   });
 
+  // Only check and send the set default browser message if this is the first
+  // window opened, we're in a packaged build, on OSX (for now), and this isn't
+  // already the default browser.
+  const shouldAskToSetDefaultBrowser = browserWindows.length === 0 &&
+                                       process.env.NODE_ENV === 'production' &&
+                                       process.platform === 'darwin' &&
+                                       !protocols.isDefaultBrowser();
+
   // 'window-ready' is called if an error occurred loading the client, or once
   // the client has connected to the User Agent Service correctly.
   browser.once('window-ready', error => {
+    browser.IS_READY = true;
+
+    if (browser.isDestroyed()) {
+      return;
+    }
+
     // Show this BW (and a devtools window on error).
-    if (!browser.isDestroyed()) {
-      browser.show();
-      if (BUILD_CONFIG.development && error) {
-        browser.openDevTools({ detach: true });
+    browser.show();
+    if (BUILD_CONFIG.development && error) {
+      browser.openDevTools({ detach: true });
+    }
+    // If Tofino is not the default browser
+    if (shouldAskToSetDefaultBrowser) {
+      browser.webContents.send('should-set-default-browser');
+    }
+
+    // Drain the URL_QUEUE if anything is in there
+    if (URL_QUEUE.length) {
+      for (const url of URL_QUEUE) {
+        browser.webContents.send('new-tab', url);
       }
+      URL_QUEUE.length = 0;
     }
   });
 
@@ -116,6 +154,40 @@ export async function closeBrowserWindow(bw) {
   browserWindows.splice(index, 1);
 
   bw.close();
+}
+
+/**
+ * Takes a BrowserWindow and returns a promise that
+ * resolves when the BrowserWindow's frontend is set up and
+ * able to receive and handle ipc commands
+ */
+export async function waitUntilReady(bw) {
+  if (bw.IS_READY) {
+    return bw;
+  }
+  return new Promise(resolve => {
+    bw.once('window-ready', () => resolve(bw));
+  });
+}
+
+/**
+ * Takes a URL to open in the corresponding browser window (or
+ * the primary one, if none provided). Used when opening links
+ * when Tofino is the default browser, for example.
+ */
+export async function openURL(url, browserWindow) {
+  const bw = browserWindow || getPrimaryBrowserWindow();
+
+  // If we don't have a browser window, we probably received a command
+  // to open a URL on startup, in which case, no browser windows exist yet.
+  // Add it to the queue to open when the next BW opens.
+  if (!bw) {
+    URL_QUEUE.push(url);
+    return;
+  }
+
+  await waitUntilReady(bw);
+  bw.webContents.send('new-tab', url);
 }
 
 /**

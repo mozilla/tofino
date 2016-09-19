@@ -36,8 +36,8 @@ export default function({ store, userAgentClient }) {
   });
 
   // Add other various main process event listeners.
-  ipcRenderer.on('new-tab', () => {
-    store.dispatch(PageEffects.createPageSession());
+  ipcRenderer.on('new-tab', (_, location) => {
+    store.dispatch(PageEffects.createPageSession(location));
   });
 
   ipcRenderer.on('close-tab', () => {
@@ -157,5 +157,10 @@ export default function({ store, userAgentClient }) {
 
   ipcRenderer.on('download-error', (_, { url, filename }) => {
     store.dispatch(UIEffects.showDownloadNotification({ url, filename, status: 'error' }));
+  });
+
+  // Fired on the first browser window when default browser is not Tofino.
+  ipcRenderer.on('should-set-default-browser', () => {
+    store.dispatch(UIEffects.confirmDefaultBrowser());
   });
 }
