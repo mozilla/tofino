@@ -77,7 +77,7 @@ contribute.
 The code uses examples from many different places, but the foundation was
 started from a set of posts from Paul Frazee:
 
-* http://pfraze.github.io/2015/09/08/building-electron-browser-pt1.html
+* https://github.com/pfrazee/pfrazee.github.io/blob/moreaboutp2p/_posts/2015-09-08-building-electron-browser-pt1.md
 * https://github.com/pfraze/electron-browser
 
 
