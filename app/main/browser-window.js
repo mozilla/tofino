@@ -44,7 +44,7 @@ export async function createBrowserWindow(userAgentClient, onload) {
 
   // Get the UA service address information from the user agent client
   // after it has negotiated a connection so we can send it to the client.
-  const { port, host, version } = userAgentClient;
+  const { port, host, version } = userAgentClient.connectionDetails();
 
   if (!port || !host || !version) {
     throw new Error('The host, port, and version must be defined after connecting.');
