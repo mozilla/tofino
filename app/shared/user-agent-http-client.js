@@ -11,7 +11,7 @@
  */
 
 /* global fetch */
-
+import 'isomorphic-fetch';
 import * as endpoints from './constants/endpoints';
 
 export class UserAgentHttpClient {
@@ -25,6 +25,7 @@ export class UserAgentHttpClient {
     this.port = port;
     // No trailing slash -- all service URLs should include leading slash.
     this.url = `http://${this.host}:${this.port}/${this.version}`;
+    this.wsUrl = `ws://${this.host}:${this.port}/${this.version}/ws`;
 
     /**
      * A mapping from a page id to a promise that
@@ -90,9 +91,11 @@ export class UserAgentHttpClient {
       },
     });
 
-    // Set the map from the page to a promise resolving to the session ID
-    // immediately for future requests.
-    this.PAGE_TO_SESSION.set(pageId, requestPromise.then(res => res.session));
+    if (pageId) {
+      // Set the map from the page to a promise resolving to the session ID
+      // immediately for future requests.
+      this.PAGE_TO_SESSION.set(pageId, requestPromise.then(res => res.session));
+    }
 
     return requestPromise;
   }
