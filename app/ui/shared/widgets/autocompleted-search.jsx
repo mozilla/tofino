@@ -37,11 +37,32 @@ class AutocompletedSearch extends Component {
     this.shouldComponentUpdate = ComponentUtil.shouldMixedPropsComponentUpdate.bind(this, {
       immutables: ['dataSrc'],
     });
+    this.handleWindowClick = this.handleWindowClick.bind(this);
 
     this.state = {
       showSelectionList: false,
       selectedIndex: 0,
     };
+  }
+
+  componentWillMount() {
+    if (typeof window === 'object') {
+      window.addEventListener('click', this.handleWindowClick);
+    }
+  }
+
+  componentWillUnmount() {
+    if (typeof window === 'object') {
+      window.removeEventListener('click', this.handleWindowClick);
+    }
+  }
+
+  handleWindowClick() {
+    // This component's button won't be available if hasn't rendered yet.
+    // We also can't call `setState` on components which haven't rendered yet.
+    if (this.state.showSelectionList && this.inputbar) {
+      this.setState({ showSelectionList: false });
+    }
   }
 
   handleInputChange = e => {

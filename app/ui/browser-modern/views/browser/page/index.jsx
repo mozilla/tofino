@@ -204,6 +204,26 @@ class Page extends Component {
           break;
       }
     });
+
+    // We cannot bind click events on the actual webview node, but mousedown
+    // works, so convert that to a propogated click.
+    this.webview.addEventListener('mousedown', e => {
+      this.handleWebviewClick(e);
+    });
+  }
+
+  /**
+   * Intercept and propogate clicks from the webview so we can react (like close popups)
+   * on events from webview.
+   */
+  handleWebviewClick() {
+    const ev = new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      view: window,
+      relatedTarget: this.webview,
+    });
+    this.webview.dispatchEvent(ev);
   }
 
   render() {
