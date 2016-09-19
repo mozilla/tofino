@@ -77,11 +77,10 @@ export default async function() {
       },
       build: {
         appId: 'tofino',
-        'app-category-type': 'web',
+        category: 'web',
         asar: false,
         electronVersion,
         download: downloadOptions,
-        prune: true,
         npmRebuild: false,
         linux: {
           target: [],
