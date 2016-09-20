@@ -188,14 +188,14 @@ export class UserAgentHttpClient {
     });
   }
 
-  async recentStars({ limit }) {
+  async stars({ limit }) {
     const args = [];
     if (limit) {
       limit = `${limit}`;
       args.push(`limit=${encodeURIComponent(limit)}`);
     }
 
-    return this.uaRequest(`/recentStars${args.length ? '?' : ''}${args.join('&')}`, {
+    return this.uaRequest(`/stars${args.length ? '?' : ''}${args.join('&')}`, {
       method: 'GET',
     });
   }
