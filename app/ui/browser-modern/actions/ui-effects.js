@@ -28,17 +28,19 @@ export function focusCurrentURLBar(options) {
   };
 }
 
-export function setURLBarValue(pageId, value, doc = document) {
+export function setURLBarValue(pageId, value, options, doc = document) {
   return {
     type: EffectTypes.SET_URL_BAR_VALUE,
     urlbar: getURLBarForPageId(doc, pageId),
     value,
+    options,
+    doc,
   };
 }
 
-export function setCurrentURLBarValue(value) {
+export function setCurrentURLBarValue(value, options) {
   return (dispatch, getState) => {
-    dispatch(setURLBarValue(PagesSelectors.getSelectedPageId(getState()), value));
+    dispatch(setURLBarValue(PagesSelectors.getSelectedPageId(getState()), value, options));
   };
 }
 

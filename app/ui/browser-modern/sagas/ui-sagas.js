@@ -32,13 +32,24 @@ export default function() {
 
 function* focusURLBar({ urlbar, options = {} }) {
   urlbar.focus();
+
   if (options.select) {
     urlbar.select();
   }
 }
 
-function* setURLBarValue({ urlbar, value }) {
+function* setURLBarValue({ urlbar, value, doc, options = { keepSelection: true } }) {
+  const { selectionStart, selectionEnd } = urlbar;
+  const allTextSelected = selectionStart === 0 && selectionEnd === urlbar.value.length;
+  const isActiveElement = doc.activeElement === urlbar;
+
   urlbar.value = value;
+
+  // Changing the displayed text would clear selection, which we may not want
+  // if the entire contents of the input element were previously selected.
+  if (options.keepSelection && isActiveElement && allTextSelected) {
+    urlbar.select();
+  }
 }
 
 function* showDownloadNotification({ filename, status }) {
