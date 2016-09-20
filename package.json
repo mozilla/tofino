@@ -113,7 +113,7 @@
     "rimraf": "2.5.4",
     "semver": "5.2.0",
     "sha1": "1.1.1",
-    "spectron": "3.3.0",
+    "spectron": "3.4.0",
     "thenify-all": "1.6.0",
     "tmp": "0.0.29",
     "uglify-js": "github:mishoo/UglifyJS2#harmony",
