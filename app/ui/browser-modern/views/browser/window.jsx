@@ -20,6 +20,7 @@ import Overview from './overview';
 
 const BROWSER_WINDOW_STYLE = Style.registerStyle({
   flexDirection: 'column',
+  overflow: 'hidden',
   width: '100%',
   height: '100%',
   background: 'var(--theme-window-background)',
