@@ -12,33 +12,23 @@
 
 import EventEmitter from 'events';
 import WebSocket from 'ws';
-import request from 'request';
 import backoff from 'backoff';
 import { logger } from './logging';
-
-function uaRequest(url, service, options) {
-  return new Promise((resolve, reject) => {
-    request[options.method.toLowerCase()]({
-      url: `${url}${service}`,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    }, (err, response, body) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-
-      resolve(JSON.parse(body));
-    });
-  });
-}
+import { UserAgentHttpClient } from './user-agent-http-client';
 
 class UserAgentClient extends EventEmitter {
   constructor() {
     super();
     this._connected = false;
+    this.userAgentHttpClient = null;
+  }
+
+  connectionDetails() {
+    return {
+      version: this.userAgentHttpClient.version,
+      host: this.userAgentHttpClient.host,
+      port: this.userAgentHttpClient.port,
+    };
   }
 
   async startSession() {
@@ -49,10 +39,7 @@ class UserAgentClient extends EventEmitter {
       await new Promise(resolve => this.once('connected', resolve));
     }
 
-    const url = `http://${this.host}:${this.port}/${this.version}`;
-    return uaRequest(url, '/session/start', {
-      method: 'POST',
-    });
+    return this.userAgentHttpClient.createSession(null, { scope: 0 });
   }
 
   /**
@@ -72,21 +59,18 @@ class UserAgentClient extends EventEmitter {
     // If we already connected to this version, host and port,
     // return the same promise.
     if (this._connect &&
-        this.version === version &&
-        this.host === host &&
-        this.port === port) {
+        this.userAgentHttpClient &&
+        this.userAgentHttpClient.version === version &&
+        this.userAgentHttpClient.host === host &&
+        this.userAgentHttpClient.port === port) {
       return this._connect;
     }
 
     this._connected = false;
-    this.version = version;
-    this.host = host;
-    this.port = port;
-
-    const url = `ws://${this.host}:${this.port}/${this.version}/ws`;
+    this.userAgentHttpClient = new UserAgentHttpClient({ version, host, port });
 
     this._connect = new Promise(resolve => {
-      const call = backoff.call(this._connectAttempt, url, (err, ws) => {
+      const call = backoff.call(this._connectAttempt, this.userAgentHttpClient.wsUrl, (err, ws) => {
         if (err) {
           logger.error(`UserAgentClient: ${err}`);
         } else if (ws) {

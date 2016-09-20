@@ -118,13 +118,13 @@ function configure(app, router, storage, contentServiceOrigin) {
 
   router.get('/visits', autoCaughtRouteError({
     validator(req) {
-      req.checkQuery('limit').isInt().notEmpty();
+      req.checkQuery('limit').optional().isInt();
     },
     async method(req, res) {
       // TODO: this should return full-fledged page objects.
-      const limit = parseInt(req.query.limit, 10) || Number.MAX_SAFE_INTEGER;
-      const pages = await storage.visited(0, limit);
-      res.json({ pages });
+      const limit = (req.query.limit && parseInt(req.query.limit, 10)) || Number.MAX_SAFE_INTEGER;
+      const results = await storage.visited(0, limit);
+      res.json({ results });
     },
   }));
 
@@ -136,36 +136,37 @@ function configure(app, router, storage, contentServiceOrigin) {
       req.checkQuery('snippetSize').optional();
     },
     async method(req, res) {
+      const limit = (req.query.limit && parseInt(req.query.limit, 10)) || Number.MAX_SAFE_INTEGER;
       const snippetSize = SnippetSize[req.query.snippetSize] || SnippetSize.medium;
       const { q } = req.query;
-      const results = await storage.query(q, req.query.since, req.query.limit, snippetSize);
+      const results = await storage.query(q, req.query.since, limit, snippetSize);
       res.json({ results });
     },
   }));
 
-  router.put('/stars/:url', autoCaughtRouteError({
+  router.post('/stars/star', autoCaughtRouteError({
     validator(req) {
-      req.checkParams('url').notEmpty();
+      req.checkBody('url').notEmpty();
       req.checkBody('title').optional();
       req.checkBody('session').isInt().notEmpty();
     },
     async method(req, res) {
-      const { session, _title } = req.body;
-      await storage.starPage(req.params.url, session, StarOp.star);
+      const { session, url, _title } = req.body;
+      await storage.starPage(url, session, StarOp.star);
       res.json({});
 
       dispatchBookmarkDiffs(); // Spawn, but don't await.
     },
   }));
 
-  router.delete('/stars/:url', autoCaughtRouteError({
+  router.post('/stars/unstar', autoCaughtRouteError({
     validator(req) {
-      req.checkParams('url').notEmpty();
+      req.checkBody('url').notEmpty();
       req.checkBody('session').isInt().notEmpty();
     },
     async method(req, res) {
-      const { session, _title } = req.body;
-      await storage.starPage(req.params.url, session, StarOp.unstar);
+      const { session, url } = req.body;
+      await storage.starPage(url, session, StarOp.unstar);
       res.json({});
 
       dispatchBookmarkDiffs(); // Spawn, but don't await.
@@ -173,32 +174,25 @@ function configure(app, router, storage, contentServiceOrigin) {
   }));
 
   router.get('/stars', autoCaughtRouteError({
+    validator(req) {
+      req.checkQuery('limit').optional().isInt();
+    },
     async method(req, res) {
-      const stars = await storage.starredURLs();
-      res.json({ stars });
+      const limit = (req.query.limit && parseInt(req.query.limit, 10)) || Number.MAX_SAFE_INTEGER;
+      const results = await storage.recentlyStarred(limit);
+      res.json({ results });
     },
   }));
 
-  router.get('/recentStars', autoCaughtRouteError({
+  router.post('/pages', autoCaughtRouteError({
     validator(req) {
-      req.checkQuery('limit').isInt().notEmpty();
-    },
-    async method(req, res) {
-      const limit = parseInt(req.query.limit, 10) || Number.MAX_SAFE_INTEGER;
-      const stars = await storage.recentlyStarred(limit);
-      res.json({ stars });
-    },
-  }));
-
-  router.post('/pages/:url', autoCaughtRouteError({
-    validator(req) {
-      req.checkParams('url').notEmpty();
+      req.checkBody('url').notEmpty();
       req.checkBody(['page', 'textContent']).notEmpty();
       req.checkBody('session').isInt().notEmpty();
     },
     async method(req, res) {
-      const { page, session } = req.body;
-      page.uri = req.params.url;
+      const { url, page, session } = req.body;
+      page.url = url;
       await storage.savePage(page, session);
       res.json({});
     },
@@ -210,7 +204,7 @@ export async function start({ storage, options }) {
   const port = options.port;
   const contentServiceOrigin = options.contentServiceOrigin;
 
-  const { setup } = makeServer(version, port);
+  const { setup, stop } = makeServer(version, port);
 
   await setup((app, router) => {
     logger.info(`Enabling CORS for the Content service on ${options.contentServiceOrigin}`);
@@ -220,4 +214,6 @@ export async function start({ storage, options }) {
       storage.db.db.on('trace', logger.trace);
     }
   });
+
+  return stop;
 }

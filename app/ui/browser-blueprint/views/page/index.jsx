@@ -23,7 +23,7 @@ import { PageState } from '../../model';
 import { fixURL } from '../../../shared/util/location-util';
 import { menuWebViewContext, inPageSearch } from '../../actions/external';
 import * as actions from '../../actions/main-actions';
-import * as userAgent from '../../../shared/util/user-agent';
+import userAgentHttpClient from '../../../../shared/user-agent-http-client';
 
 const PAGE_STYLE = Style.registerStyle({
   // Mark this as the relative anchor for floating children (e.g. search bar).
@@ -85,7 +85,7 @@ class Page extends Component {
           return;
         }
 
-        userAgent.createPage(this.props.page, {
+        userAgentHttpClient.createPage(this.props.page, {
           url: readerResult.uri,
           readerResult,
         });
@@ -225,7 +225,7 @@ function addListenersToWebView(webview, propsAccessor, dispatch) {
       text: null,
     }));
 
-    userAgent.createHistory(propsAccessor().page, { url, title });
+    userAgentHttpClient.createHistory(propsAccessor().page, { url, title });
   });
 
   webview.addEventListener('did-finish-loading', () => {

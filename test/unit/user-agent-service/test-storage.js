@@ -150,13 +150,13 @@ describe('ProfileStorage data access', () => {
         await storageB.visit('http://example.com/baz', session, 'Baz');
 
         const urlsA = await storageB.visited(0, 1);
-        expect(urlsA.map(r => r.uri)).toEqual(['http://example.com/baz']);
+        expect(urlsA.map(r => r.url)).toEqual(['http://example.com/baz']);
         const urlsB = await storageB.visited(0, 3);
-        expect(urlsB.map(r => r.uri)).toEqual(['http://example.com/baz', 'http://example.com/bar']);
+        expect(urlsB.map(r => r.url)).toEqual(['http://example.com/baz', 'http://example.com/bar']);
 
         // Check that we get the same results for from-scratch materialization.
         await storageB.rematerialize();
-        expect((await storageB.visited(0, 3)).map(r => r.uri))
+        expect((await storageB.visited(0, 3)).map(r => r.url))
           .toEqual(['http://example.com/baz', 'http://example.com/bar']);
 
         await storageB.close();
@@ -286,7 +286,7 @@ describe('ProfileStorage data access', () => {
         expect(Immutable.Set([baz])).toEqual(starred);
 
         let recent = await storage.recentlyStarred(2);
-        expect(recent.map(record => record.location)).toEqual([baz]);
+        expect(recent.map(record => record.url)).toEqual([baz]);
 
         await storage.starPage('http://example.com/foo/bar', session, 1);
 
@@ -294,10 +294,10 @@ describe('ProfileStorage data access', () => {
         expect(both.equals(starred)).toBeTruthy();
 
         recent = await storage.recentlyStarred(2);
-        expect(recent.map(record => record.location)).toEqual([bar, baz]);
+        expect(recent.map(record => record.url)).toEqual([bar, baz]);
 
         recent = await storage.recentlyStarred(1);
-        expect(recent.map(record => record.location)).toEqual([bar]);
+        expect(recent.map(record => record.url)).toEqual([bar]);
 
         // Check that we get the same results for from-scratch materialization.
         await storage.rematerialize();

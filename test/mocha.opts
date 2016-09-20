@@ -2,6 +2,7 @@
 --reporter spec
 --recursive
 --check-leaks
+--globals i
 --full-trace
 --timeout 5000
 --compilers js:babel-core/register
