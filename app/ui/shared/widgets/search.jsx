@@ -12,9 +12,17 @@ specific language governing permissions and limitations under the License.
 
 import React, { Component, PropTypes } from 'react';
 import omit from 'lodash/omit';
+import debounce from 'lodash/debounce';
 import * as ComponentUtil from '../util/component-util';
 
 import Style from '../style';
+
+export const USER_FINISHED_TYPING_DELAY = 500; // ms
+
+export const INTERACTION_TYPES = {
+  IDLE: 'idle',
+  USER_IS_TYPING: 'user-is-typing',
+};
 
 const INPUT_STYLE = Style.registerStyle({
   flex: 1,
@@ -32,6 +40,10 @@ class Search extends Component {
   constructor(props) {
     super(props);
     this.shouldComponentUpdate = ComponentUtil.shouldPlainJsPropsComponentUpdate.bind(this);
+
+    this.state = {
+      interaction: INTERACTION_TYPES.IDLE,
+    };
   }
 
   set value(textContent) {
@@ -54,10 +66,24 @@ class Search extends Component {
     this.input.select();
   }
 
-  handleClick = () => {
+  handleClick = e => {
     this.select();
-    this.props.onClick();
+    this.props.onClick(e);
   }
+
+  handleKeyDown = e => {
+    this.setState({ interaction: INTERACTION_TYPES.USER_IS_TYPING });
+    this.props.onKeyDown(e);
+  }
+
+  handleKeyUp = e => {
+    this.handleKeyUpDebounced(e);
+    this.props.onKeyUp(e);
+  }
+
+  handleKeyUpDebounced = debounce(() => {
+    this.setState({ interaction: INTERACTION_TYPES.IDLE });
+  }, USER_FINISHED_TYPING_DELAY)
 
   render() {
     return (
@@ -66,12 +92,13 @@ class Search extends Component {
         <input ref={e => this.input = e}
           className={INPUT_STYLE}
           type="text"
+          data-interaction={this.state.interaction}
           placeholder={this.props.placeholder}
           defaultValue={this.props.defaultValue}
           onClick={this.handleClick}
           onChange={this.props.onChange}
-          onKeyDown={this.props.onKeyDown}
-          onKeyUp={this.props.onKeyUp}
+          onKeyDown={this.handleKeyDown}
+          onKeyUp={this.handleKeyUp}
           onKeyPress={this.props.onKeyPress} />
         {this.props.children}
       </div>
@@ -103,6 +130,8 @@ Search.propTypes = {
 
 Search.defaultProps = {
   onClick: () => {},
+  onKeyDown: () => {},
+  onKeyUp: () => {},
 };
 
 export default Search;
