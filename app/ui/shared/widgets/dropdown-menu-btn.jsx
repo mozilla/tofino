@@ -27,10 +27,10 @@ const DROPDOWN_MENU_BUTTON_STYLE = Style.registerStyle({
 });
 
 const SELECTION_LIST_STYLE = Style.registerStyle({
+  zIndex: 1,
   position: 'absolute',
   top: '100%',
   left: 0,
-  maxWidth: '50vw',
   boxShadow: 'var(--theme-default-shadow)',
 });
 
@@ -125,10 +125,10 @@ class DropdownMenuBtn extends Component {
         onMouseDown={this.handeButtonMouseDown}
         onMouseUp={this.handeButtonMouseUp}
         onClick={this.handleButtonClick}>
-        <SelectionList className={SELECTION_LIST_STYLE}
+        <SelectionList className={`${SELECTION_LIST_STYLE} ${this.props.dropdownListClassName || ''}`}
           hidden={!this.state.showSelectionList}
           selectedIndex={this.state.selectedIndex}
-          reversed={this.props.reverseDropdownMenu}
+          reversed={this.props.dropdownListReversed}
           onMouseOverChildComponent={this.handleMouseOverChildComponent}
           onMouseUpOnChildComponent={this.handleMouseUpOnChildComponent}>
           {this.props.dataSrc && this.props.dataSrc.map(this.createChild).toArray()}
@@ -141,7 +141,8 @@ class DropdownMenuBtn extends Component {
 DropdownMenuBtn.displayName = 'DropdownMenuBtn';
 
 const SelectionListProps = {
-  reverseDropdownMenu: PropTypes.bool,
+  dropdownListReversed: PropTypes.bool,
+  dropdownListClassName: PropTypes.string,
   dataSrc: ImmutablePropTypes.list,
   childComponent: PropTypes.func.isRequired,
   onMenuItemPick: PropTypes.func.isRequired,

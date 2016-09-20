@@ -24,6 +24,7 @@ const AUTOCOMPLETED_SEARCH_STYLE = Style.registerStyle({
 });
 
 const SELECTION_LIST_STYLE = Style.registerStyle({
+  zIndex: 1,
   position: 'absolute',
   top: '100%',
   left: 0,
@@ -154,7 +155,7 @@ class AutocompletedSearch extends Component {
         ref={e => this.inputbar = e}
         onChange={this.handleInputChange}
         onKeyDown={this.handleInputKeyDown}>
-        <SelectionList className={SELECTION_LIST_STYLE}
+        <SelectionList className={`${SELECTION_LIST_STYLE} ${this.props.dropdownListClassName || ''}`}
           hidden={!this.state.showSelectionList}
           selectedIndex={this.state.selectedIndex}
           onMouseOverChildComponent={this.handleMouseOverChildComponent}
@@ -169,6 +170,7 @@ class AutocompletedSearch extends Component {
 AutocompletedSearch.displayName = 'AutocompletedSearch';
 
 const SelectionListProps = {
+  dropdownListClassName: PropTypes.string,
   dataSrc: ImmutablePropTypes.list,
   childComponent: PropTypes.func.isRequired,
   onAutocompletionPick: PropTypes.func.isRequired,

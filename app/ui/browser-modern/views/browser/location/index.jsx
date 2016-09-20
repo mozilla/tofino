@@ -21,6 +21,7 @@ import SecurityBadge from './security-badge';
 import AutocompletedSearch from '../../../../shared/widgets/autocompleted-search';
 import AutocompletionListItem from './autocompletion-list-item';
 
+import { NAVBAR_HEIGHT, TABBAR_HEIGHT } from '../../../constants/ui';
 import * as SharedPropTypes from '../../../model/shared-prop-types';
 import * as LocationUtil from '../../../../shared/util/location-util';
 import * as UISelectors from '../../../selectors/ui';
@@ -44,6 +45,10 @@ const LOCATION_BAR_INPUT_STYLE = Style.registerStyle({
   alignSelf: 'stretch',
   padding: '0 1px',
   fontSize: '110%',
+});
+
+const DROPDOWN_LIST_STYLE = Style.registerStyle({
+  maxHeight: `calc(100vh - ${NAVBAR_HEIGHT}px - ${TABBAR_HEIGHT}px)`,
 });
 
 const LOCATION_BAR_SECURITY_BADGE_STYLE = Style.registerStyle({
@@ -122,7 +127,8 @@ class Location extends Component {
           onKeyDown={this.handleInputKeyDown}
           onAutocompletionPick={this.handleAutocompletionPick}
           dataSrc={this.props.locationAutocompletions}
-          childComponent={AutocompletionListItem} />
+          childComponent={AutocompletionListItem}
+          dropdownListClassName={DROPDOWN_LIST_STYLE} />
         <Btn title="Bookmark"
           width="18px"
           height="18px"

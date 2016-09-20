@@ -18,6 +18,7 @@ import Style from '../../../../shared/style';
 import DropdownMenuBtn from '../../../../shared/widgets/dropdown-menu-btn';
 import HistoryListItem from './history-list-item';
 
+import { NAVBAR_HEIGHT, TABBAR_HEIGHT } from '../../../constants/ui';
 import * as SharedPropTypes from '../../../model/shared-prop-types';
 import * as PagesSelectors from '../../../selectors/pages';
 
@@ -37,6 +38,11 @@ const BACK_BUTTON_STYLE = Style.registerStyle({
 const FORWARD_BUTTON_STYLE = Style.registerStyle({
   marginLeft: '4px',
   marginRight: '2px',
+});
+
+const DROPDOWN_LIST_STYLE = Style.registerStyle({
+  maxWidth: '50vw',
+  maxHeight: `calc(100vh - ${NAVBAR_HEIGHT}px - ${TABBAR_HEIGHT}px)`,
 });
 
 class NavigationButtons extends Component {
@@ -74,7 +80,8 @@ class NavigationButtons extends Component {
           onMenuItemPick={this.handleHistoryPick}
           dataSrc={this.props.pageHistory}
           childComponent={HistoryListItem}
-          reverseDropdownMenu />
+          dropdownListReversed
+          dropdownListClassName={DROPDOWN_LIST_STYLE} />
         <DropdownMenuBtn className={`browser-navbar-forward ${FORWARD_BUTTON_STYLE}`}
           title="Forward"
           width="18px"
@@ -89,7 +96,8 @@ class NavigationButtons extends Component {
           onMenuItemPick={this.handleHistoryPick}
           dataSrc={this.props.pageHistory}
           childComponent={HistoryListItem}
-          reverseDropdownMenu />
+          dropdownListReversed
+          dropdownListClassName={DROPDOWN_LIST_STYLE} />
       </div>
     );
   }

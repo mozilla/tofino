@@ -19,6 +19,8 @@ import List from './list';
 import ListItem from './list-item';
 
 const SELECTION_LIST_STYLE = Style.registerStyle({
+  overflowX: 'hidden',
+  overflowY: 'scroll',
   backgroundColor: 'var(--theme-content-background)',
   color: 'var(--theme-content-color)',
 });
