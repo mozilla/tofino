@@ -123,8 +123,8 @@ function configure(app, router, storage, contentServiceOrigin) {
     async method(req, res) {
       // TODO: this should return full-fledged page objects.
       const limit = (req.query.limit && parseInt(req.query.limit, 10)) || Number.MAX_SAFE_INTEGER;
-      const pages = await storage.visited(0, limit);
-      res.json({ pages });
+      const results = await storage.visited(0, limit);
+      res.json({ results });
     },
   }));
 
@@ -179,8 +179,8 @@ function configure(app, router, storage, contentServiceOrigin) {
     },
     async method(req, res) {
       const limit = (req.query.limit && parseInt(req.query.limit, 10)) || Number.MAX_SAFE_INTEGER;
-      const stars = await storage.recentlyStarred(limit);
-      res.json({ stars });
+      const results = await storage.recentlyStarred(limit);
+      res.json({ results });
     },
   }));
 

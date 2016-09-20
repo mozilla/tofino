@@ -17,14 +17,14 @@ export function showHistory({ query, limit }) {
   return async function(dispatch) {
     const visitedPages = query
       ? (await userAgentHttpClient.query({ query, limit, snippetSize: 'large' })).results
-      : (await userAgentHttpClient.visited({ limit })).pages;
+      : (await userAgentHttpClient.visited({ limit })).results;
     dispatch({ type: types.SHOW_HISTORY, visitedPages });
   };
 }
 
 export function showStars({ limit }) {
   return async function(dispatch) {
-    const starredItems = (await userAgentHttpClient.stars({ limit })).stars;
+    const starredItems = (await userAgentHttpClient.stars({ limit })).results;
     dispatch({ type: types.SHOW_STARS, starredItems });
   };
 }
