@@ -19,6 +19,7 @@ import * as SharedPropTypes from '../../../model/shared-prop-types';
 
 import Style from '../../../../shared/style';
 import PageState from '../../../model/page-state';
+import * as Endpoints from '../../../../../shared/constants/endpoints';
 import * as UIActions from '../../../actions/ui-actions';
 import * as UIEffects from '../../../actions/ui-effects';
 import * as ProfileEffects from '../../../actions/profile-effects';
@@ -73,12 +74,14 @@ class Page extends Component {
       // Event fired when a page loads, after `did-start-loading`.
       // Only emitted once.
       const pageId = this.props.pageId;
+      const isTofino = e.url.startsWith(Endpoints.TOFINO_PROTOCOL);
       const webContents = this.webview.getWebContents();
       const history = webContents.history;
       const historyIndex = webContents.getActiveIndex();
       this.props.dispatch(PageActions.setPageDetails(pageId, { location: e.url }));
       this.props.dispatch(PageActions.setLocalPageHistory(pageId, history, historyIndex));
       this.props.dispatch(UIEffects.setURLBarValue(pageId, e.url));
+      this.props.dispatch(UIEffects.focusURLBar(pageId, { select: isTofino }));
     });
 
     this.webview.addEventListener('did-navigate-in-page', e => {

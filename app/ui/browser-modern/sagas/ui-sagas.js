@@ -13,7 +13,9 @@ specific language governing permissions and limitations under the License.
 import { takeLatest } from 'redux-saga';
 
 import { wrapped } from './helpers';
+import { logger } from '../../../shared/logging';
 import * as EffectTypes from '../constants/effect-types';
+import { INTERACTION_TYPES } from '../../shared/widgets/search';
 
 export default function() {
   return [
@@ -32,13 +34,35 @@ export default function() {
 
 function* focusURLBar({ urlbar, options = {} }) {
   urlbar.focus();
+
   if (options.select) {
     urlbar.select();
   }
 }
 
-function* setURLBarValue({ urlbar, value }) {
+function* setURLBarValue({ urlbar, value, doc, options = { keepSelection: true } }) {
+  // When the user is interacting with the url bar, don't just change all the
+  // displayed text directly, only the default value, to prevent replacing
+  // user entered text, but allowing the intended text to be displayed when
+  // cancelling input (e.g. by pressing 'Escape').
+  const interaction = urlbar.dataset.interaction;
+  if (interaction === INTERACTION_TYPES.USER_IS_TYPING) {
+    logger.warn(`Skipped setting \`value\` on the urlbar because: ${interaction}.`);
+    urlbar.defaultValue = value;
+    return;
+  }
+
+  const { selectionStart, selectionEnd } = urlbar;
+  const allTextSelected = selectionStart === 0 && selectionEnd === urlbar.value.length;
+  const isActiveElement = doc.activeElement === urlbar;
+
   urlbar.value = value;
+
+  // Changing the displayed text would clear selection, which we may not want
+  // if the entire contents of the input element were previously selected.
+  if (options.keepSelection && isActiveElement && allTextSelected) {
+    urlbar.select();
+  }
 }
 
 function* showDownloadNotification({ filename, status }) {
