@@ -38,6 +38,6 @@ function showHistory(state, visitedPages) {
 }
 
 function showStars(state, starredItems) {
-  const records = starredItems.map(p => new StarredItem(p));
+  const records = starredItems.map(p => new StarredItem({ location: p.url, ...p }));
   return state.setIn(['uiState', 'starredItems'], Immutable.List.of(...records));
 }

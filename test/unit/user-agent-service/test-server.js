@@ -174,7 +174,6 @@ describe('User Agent Service', () => {
         }))
           .toEqual({});
 
-        // TODO: location should be uniform url.
         const results1 = (await userAgentHttpClient.stars({ limit: 2 })).results;
         expect(results1.length).toEqual(2);
         const [r1, r2] = results1;
@@ -184,8 +183,8 @@ describe('User Agent Service', () => {
         delete r2.lastVisited;
         expect([r1, r2]).toEqual(
           [
-            { title: null, location: 'https://test.com/10' },
-            { title: 'test9', location: 'https://test.com/9' },
+            { title: null, url: 'https://test.com/10' },
+            { title: 'test9', url: 'https://test.com/9' },
           ]);
 
         expect(await userAgentHttpClient.destroyStar(page, {
@@ -205,7 +204,7 @@ describe('User Agent Service', () => {
         delete r3.lastVisited;
         expect([r3]).toEqual(
           [
-            { title: 'test9', location: 'https://test.com/9' },
+            { title: 'test9', url: 'https://test.com/9' },
           ]);
 
         done();
