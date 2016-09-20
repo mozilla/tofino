@@ -46,17 +46,16 @@ describe('Action - bookmark', () => {
     const pageId = getPages().get(0).id;
 
     const URL = `^${endpoints.UA_SERVICE_HTTP}`; // Observe leading caret ^ (caret)!
-    const expectedURL = `${endpoints.UA_SERVICE_HTTP}/stars/${encodeURIComponent('http://moz1.com')}`;
+    const expectedURL = `${endpoints.UA_SERVICE_HTTP}/stars/star`;
 
     fetchMock.mock(URL, 200);
 
     dispatch(actions.bookmark(pageId, 'http://moz1.com', 'moz1'));
-
-    await utils.waitUntil(() => fetchMock.lastUrl(URL) === expectedURL);
+    await utils.waitUntil(() => fetchMock.lastUrl(URL));
 
     expect(fetchMock.lastUrl(URL)).toEqual(expectedURL);
-    expect(fetchMock.lastOptions(URL).method).toEqual('PUT');
+    expect(fetchMock.lastOptions(URL).method).toEqual('POST');
     expect(fetchMock.lastOptions(URL).json)
-      .toEqual({ session, title: 'moz1' });
+      .toEqual({ session, url: 'http://moz1.com', title: 'moz1' });
   });
 });

@@ -113,10 +113,11 @@ export class UserAgentHttpClient {
 
   async createPage(page, { url, readerResult }) {
     const session = await this.waitForSession(page);
-    return this.uaRequest(`/pages/${encodeURIComponent(url)}`, {
+    return this.uaRequest('/pages', {
       method: 'POST',
       json: {
         session,
+        url,
         page: readerResult,
       },
     });
@@ -124,17 +125,17 @@ export class UserAgentHttpClient {
 
   async createStar(page, { url, title }) {
     const session = await this.waitForSession(page);
-    return this.uaRequest(`/stars/${encodeURIComponent(url)}`, {
-      method: 'PUT',
-      json: { title, session },
+    return this.uaRequest('/stars/star', {
+      method: 'POST',
+      json: { url, title, session },
     });
   }
 
   async destroyStar(page, { url }) {
     const session = await this.waitForSession(page);
-    return this.uaRequest(`/stars/${encodeURIComponent(url)}`, {
-      method: 'DELETE',
-      json: { session },
+    return this.uaRequest('/stars/unstar', {
+      method: 'POST',
+      json: { url, session },
     });
   }
 
