@@ -45,6 +45,7 @@ for (const event of SQUIRREL_VERSION_EVENTS) {
   });
 }
 
+argParser.array('test');
 argParser.boolean(SQUIRREL_FIRSTRUN_EVENT);
 
 // Check if a squirrel event flag was passed. Any additional command line

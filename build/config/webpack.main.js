@@ -35,6 +35,8 @@ export default {
   ],
   externals: [
     ...defaultConfig.externals,
+    'mocha',
+    'babel-register',
     nodeExternals,
   ],
 };
