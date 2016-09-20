@@ -47,9 +47,18 @@ class DropdownMenuBtn extends Component {
     };
   }
 
-  componentDidMount() {
-    window.addEventListener('click', this.handleWindowClick);
-    window.addEventListener('keyup', this.handleWindowKeyUp);
+  componentWillMount() {
+    if (typeof window === 'object') {
+      window.addEventListener('click', this.handleWindowClick);
+      window.addEventListener('keyup', this.handleWindowKeyUp);
+    }
+  }
+
+  componentWillUnmount() {
+    if (typeof window === 'object') {
+      window.removeEventListener('click', this.handleWindowClick);
+      window.removeEventListener('keyup', this.handleWindowKeyUp);
+    }
   }
 
   handleWindowClick = e => {
