@@ -210,13 +210,13 @@ curl -v \
 ### Response
 
 Successful requests will produce a "200 OK" response with a JSON body
-containing a pages array.  Each page will contain keys `url` (string),
+containing a `results` array.  Each page will contain keys `url` (string),
 `lastVisited` (integer timestamp), optional `title` (string), and
 optional `snippet` (string).
 
 ```json
 {
-  "pages": [
+  "results": [
     {
       "url": "https://www.mozilla.org/en-US/firefox/new/",
       "title": "Download Firefox - Free Web Browser",
@@ -394,12 +394,12 @@ curl -v \
 
 ### Response
 
-Successful requests will produce a "200 OK" response with an array
-`stars` in the JSON body:
+Successful requests will produce a "200 OK" response with a `results`
+array in the JSON body:
 
 ```json
 {
-  "stars": [
+  "results": [
     {
       "url": "https://reddit.com/",
       "title": "reddit - the front page of the internet",
