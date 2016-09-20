@@ -33,7 +33,7 @@ export default function(state = initialState, action) {
 }
 
 function showHistory(state, visitedPages) {
-  const records = visitedPages.map(p => new VisitedPage(p));
+  const records = visitedPages.map(p => new VisitedPage({ uri: p.url, ...p }));
   return state.setIn(['uiState', 'visitedPages'], Immutable.List.of(...records));
 }
 
