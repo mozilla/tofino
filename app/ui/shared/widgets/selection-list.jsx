@@ -18,10 +18,15 @@ import Style from '../style';
 import List from './list';
 import ListItem from './list-item';
 
-const SELECTION_LIST_ITEM_STYLE = Style.registerStyle({
-  cursor: 'default',
+const SELECTION_LIST_STYLE = Style.registerStyle({
   backgroundColor: 'var(--theme-content-background)',
   color: 'var(--theme-content-color)',
+});
+
+const SELECTION_LIST_ITEM_STYLE = Style.registerStyle({
+  cursor: 'default',
+  margin: '4px',
+  borderRadius: 'var(--theme-default-roundness)',
   '&[data-selected=true]': {
     backgroundColor: 'var(--theme-content-selection-background)',
   },
@@ -39,7 +44,7 @@ class SelectionList extends Component {
   render() {
     return (
       <List {...omit(this.props, Object.keys(OmittedContainerProps))}
-        className={`${this.props.className || ''}`}>
+        className={`${SELECTION_LIST_STYLE} ${this.props.className || ''}`}>
         {this.props.children && this.props.children.map((child, i) => (
           <ListItem key={`selection-list-item-wrapper-${i}`}
             className={SELECTION_LIST_ITEM_STYLE}

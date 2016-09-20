@@ -44,11 +44,11 @@
   --theme-content-color: #222;
   --theme-content-link-color: #00f;
 
-  --theme-content-selection-background: #f00;
+  --theme-content-selection-background: #2a86e3;
   --theme-content-selection-color: #fff;
 
   --theme-content-border-color: rgba(128,128,128,0.5);
-  --theme-content-selected-border-color: #f00;
+  --theme-content-selected-border-color: #2a86e3;
 
   /* Overview */
 
@@ -60,7 +60,7 @@
   /* Misc */
 
   --theme-default-shadow: 0px 2px 4px 0px rgba(0,0,0,0.5);
-  --theme-default-selected-shadow: 0px 0px 6px 0px #f00;
+  --theme-default-selected-shadow: 0px 0px 6px 0px #2a86e3;
 
   --theme-separator-color: rgba(128,128,128,0.3);
 

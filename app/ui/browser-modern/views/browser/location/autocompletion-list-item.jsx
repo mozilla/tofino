@@ -19,7 +19,7 @@ import * as SharedPropTypes from '../../../model/shared-prop-types';
 
 const AUTOCOMPLETIONS_LIST_ITEM_STYLE = Style.registerStyle({
   overflow: 'hidden',
-  padding: '10px',
+  padding: '7px',
 });
 
 const TITLE_STYLE = Style.registerStyle({
