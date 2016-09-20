@@ -11,9 +11,9 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { Component, PropTypes } from 'react';
-import isEqual from 'lodash/isEqual';
-
 import omit from 'lodash/omit';
+import * as ComponentUtil from '../util/component-util';
+
 import Style from '../style';
 import FittedImage from './fitted-image';
 
@@ -33,8 +33,9 @@ const IMAGE_STYLE = Style.registerStyle({
  * under the same parent.
  */
 class Thumbnail extends Component {
-  shouldComponentUpdate(nextProps) {
-    return !isEqual(this.props, nextProps);
+  constructor(props) {
+    super(props);
+    this.shouldComponentUpdate = ComponentUtil.shouldPlainJsPropsComponentUpdate.bind(this);
   }
 
   render() {
@@ -68,7 +69,6 @@ const OmittedContainerProps = {
 Thumbnail.propTypes = {
   ...OmittedContainerProps,
   className: PropTypes.string,
-  style: PropTypes.object, // eslint-disable-line
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,

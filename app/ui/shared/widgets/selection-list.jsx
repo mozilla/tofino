@@ -11,8 +11,8 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { Component, PropTypes } from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import omit from 'lodash/omit';
+import * as ComponentUtil from '../util/component-util';
 
 import Style from '../style';
 import List from './list';
@@ -33,7 +33,7 @@ const SELECTION_LIST_ITEM_STYLE = Style.registerStyle({
 class SelectionList extends Component {
   constructor(props) {
     super(props);
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+    this.shouldComponentUpdate = ComponentUtil.shouldPlainJsPropsComponentUpdate.bind(this);
   }
 
   render() {
@@ -70,7 +70,6 @@ const OmittedContainerProps = {
 SelectionList.propTypes = {
   ...OmittedContainerProps,
   className: PropTypes.string,
-  style: PropTypes.object, // eslint-disable-line
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,
