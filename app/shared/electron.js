@@ -18,11 +18,13 @@ try {
   electron = require('electron');
 } catch (e) {
   const { ipcMain, ipcRenderer } = require('electron-ipc-mock')();
-
   electron = {
     ipcMain,
     ipcRenderer,
     remote: {
+      systemPreferences: {
+        isSwipeTrackingFromScrollEventsEnabled: false,
+      },
       Menu() {},
       MenuItem() {},
     },
@@ -33,5 +35,5 @@ try {
   };
 }
 
-const { ipcMain, ipcRenderer, remote, clipboard } = electron;
-export { ipcMain, ipcRenderer, remote, clipboard };
+const { ipcMain, ipcRenderer, remote, clipboard, systemPreferences } = electron;
+export { ipcMain, ipcRenderer, remote, clipboard, systemPreferences };

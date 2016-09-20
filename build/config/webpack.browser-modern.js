@@ -51,8 +51,25 @@ export default {
       flatten: true,
     }]),
   ],
-  target: 'electron-renderer',
+  target: 'web',
+  bail: true,
+
+  resolve: {
+    alias: {
+      request: 'browser-request',
+    },
+    extensions: ['', '.js', '.jsx', '.json'],
+  },
+
   externals: [
+    {
+      ws: 'WebSocket',
+      stream: '{ Writable: function() {} }',
+    },
     'dtrace-provider',
+    'mv',
+    'fs',
+    'safe-json-stringify',
+    'source-map-support',
   ],
 };
