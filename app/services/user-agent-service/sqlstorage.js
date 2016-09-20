@@ -296,6 +296,16 @@ export class ProfileStorage {
     return out;
   }
 
+  _escape(s) {
+    if (!s) {
+      return s;
+    }
+
+    return escaper.escape(s)
+      .replace(/╞/g, '<b>')
+      .replace(/╡/g, '</b>');
+  }
+
   /**
    * Search for places that match title, URL, or saved content
    * since the specified timestamp.
@@ -311,7 +321,7 @@ export class ProfileStorage {
   async query(string, since = 0, limit = 10, snippetSize = SnippetSize.medium) {
     const contentMatches = `
     SELECT p.id AS place,
-           p.url AS uri,
+           p.url AS url,
            pages.title AS title,
            snippet(pages, '╞', '╡', '…', -1, ?) AS snippet,
            pages.ts AS lastVisited
@@ -321,7 +331,7 @@ export class ProfileStorage {
 
     const visitMatches = `
     SELECT place,
-           url AS uri,
+           url,
            lastTitle AS title,
            NULL AS snippet,
            lastVisited
@@ -332,7 +342,7 @@ export class ProfileStorage {
 
     const query = `
     SELECT place,
-           uri,
+           url,
            MAX(title) AS title,
            MAX(snippet) AS snippet,
            MAX(lastVisited) AS lastVisited
@@ -348,21 +358,11 @@ export class ProfileStorage {
     // 1. We can't rely on the retrieved content correctly including the entirety of an escaped
     //    character like '&amp;'.
     // 2. We'd like to be able to match on the unescaped text.
-    function escape(s) {
-      if (!s) {
-        return s;
-      }
-
-      return escaper.escape(s)
-                    .replace(/╞/g, '<b>')
-                    .replace(/╡/g, '</b>');
-    }
-
     return rows.map(row =>
       ({
-        uri: row.uri,
+        url: row.url,
         title: row.title,
-        snippet: escape(row.snippet),
+        snippet: this._escape(row.snippet),
         lastVisited: row.lastVisited,
       })
     );
@@ -389,7 +389,7 @@ export class ProfileStorage {
     // Fetch all places visited, with the latest timestamp for each.
     const query = `
       SELECT h.place AS place,
-             h.url AS uri,
+             h.url AS url,
              h.lastTitle AS title,
              pages.excerpt AS snippet,
              h.lastVisited AS lastVisited
@@ -400,7 +400,15 @@ export class ProfileStorage {
       LIMIT ?
     `;
 
-    return await this.db.all(query, [since, limit]);
+    const rows = await this.db.all(query, [since, limit]);
+    return rows.map(row =>
+      ({
+        url: row.url,
+        title: row.title,
+        snippet: this._escape(row.snippet),
+        lastVisited: row.lastVisited,
+      })
+    );
   }
 
   async getStarredWithOrderByAndLimit(newestFirst, limit) {

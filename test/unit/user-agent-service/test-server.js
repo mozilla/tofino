@@ -110,9 +110,6 @@ describe('User Agent Service', () => {
         }))
           .toEqual({});
 
-        // TODO: allow to drop limit.
-        // TODO: uri should be uniform url.
-        // TODO: drop place; drop snippet and title if null.
         const results1 = (await userAgentHttpClient.visited({ limit: 2 })).results;
         expect(results1.length).toEqual(2);
         const [r1, r2] = results1;
@@ -122,14 +119,12 @@ describe('User Agent Service', () => {
         delete r2.lastVisited;
         expect([r1, r2]).toEqual(
           [
-            { place: 2,
-              snippet: null,
+            { snippet: null,
               title: null,
-              uri: 'https://www.mozilla.org/en-US/firefox/new/' },
-            { place: 1,
-              snippet: null,
+              url: 'https://www.mozilla.org/en-US/firefox/new/' },
+            { snippet: null,
               title: 'reddit - the front page of the internet',
-              uri: 'https://reddit.com/' },
+              url: 'https://reddit.com/' },
           ]);
 
         const results3 = (await userAgentHttpClient.visited({ limit: 1 })).results;
@@ -139,10 +134,9 @@ describe('User Agent Service', () => {
         delete r3.lastVisited;
         expect([r3]).toEqual(
           [
-            { place: 2,
-              snippet: null,
+            { snippet: null,
               title: null,
-              uri: 'https://www.mozilla.org/en-US/firefox/new/' },
+              url: 'https://www.mozilla.org/en-US/firefox/new/' },
           ]);
 
         done();
@@ -180,9 +174,7 @@ describe('User Agent Service', () => {
         }))
           .toEqual({});
 
-        // TODO: allow to drop limit.
         // TODO: location should be uniform url.
-        // TODO: drop place; drop snippet and title if null.
         const results1 = (await userAgentHttpClient.stars({ limit: 2 })).results;
         expect(results1.length).toEqual(2);
         const [r1, r2] = results1;
@@ -246,8 +238,6 @@ describe('User Agent Service', () => {
         }))
           .toEqual({});
 
-        // TODO: allow to drop limit.
-        // TODO: uri should be uniform url.
         const q = { text: 'Long text', limit: 2, snippetSize: 'tiny' };
         const results1 = (await userAgentHttpClient.query(q)).results;
         expect(results1.length).toEqual(1);
@@ -257,7 +247,7 @@ describe('User Agent Service', () => {
         expect([r1]).toEqual(
           [
             { title: 'test.com',
-              uri: 'https://test.com/',
+              url: 'https://test.com/',
               snippet: '<b>Long</b> <b>text</b> content containing excerpt…',
             },
           ]);
