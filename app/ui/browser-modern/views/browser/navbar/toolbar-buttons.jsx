@@ -70,6 +70,10 @@ class ToolbarButtons extends Component {
     this.props.onNavigateTo(this.props.pageId, ContentURLs.STARS_PAGE);
   }
 
+  handleHistoryButtonClick = () => {
+    this.props.onNavigateTo(this.props.pageId, ContentURLs.HISTORY_PAGE);
+  }
+
   handleHomeButtonClick = () => {
     this.props.onNavigateTo(this.props.pageId, UIConstants.HOME_PAGE);
   }
@@ -92,6 +96,16 @@ class ToolbarButtons extends Component {
             imgPosition="-612px 0px"
             imgPositionHover="-612px -18px"
             onClick={this.handleBookmarksButtonClick} />
+          <Btn className={`browser-history-button ${TOOLBAR_BUTTONS_STYLE}`}
+            title="History"
+            width="18px"
+            height="18px"
+            image="toolbar.png"
+            imgWidth="792px"
+            imgHeight="72px"
+            imgPosition="-162px 0px"
+            imgPositionHover="-162px -18px"
+            onClick={this.handleHistoryButtonClick} />
           <Btn className={`browser-overview-button ${TOOLBAR_BUTTONS_STYLE}`}
             title="Overview"
             width="18px"
