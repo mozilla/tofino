@@ -67,6 +67,17 @@ response with HTTP status code in the "4XX" range and content-type of
 server will produce a response with HTTP status code in the "5XX"
 range and content-type of "application/json".
 
+### Page Object Format
+
+Many requests will produce a JSON object representing a page, or a
+JSON array of such page objects.  Each such page object will contain
+keys
+
+* url - (string) URL of the page
+* lastVisited - (integer) timestamp of the last visit to the page
+* title - (optional string) last recorded title of the page
+* snippet - (optional string) last summary snippet extracted from the page
+
 ---
 
 TODO: diffs WebSocket API documentation
@@ -210,9 +221,7 @@ curl -v \
 ### Response
 
 Successful requests will produce a "200 OK" response with a JSON body
-containing a `results` array.  Each page will contain keys `url` (string),
-`lastVisited` (integer timestamp), optional `title` (string), and
-optional `snippet` (string).
+containing a `results` array of [page objects](#page-object-format):
 
 ```json
 {
@@ -294,8 +303,8 @@ curl -v \
 
 ### Response
 
-Successful requests will produce a "200 OK" response with a `results`
-array in the JSON body:
+Successful requests will produce a "200 OK" response with a JSON body
+containing a `results` array of [page objects](#page-object-format):
 
 ```json
 {
@@ -394,8 +403,8 @@ curl -v \
 
 ### Response
 
-Successful requests will produce a "200 OK" response with a `results`
-array in the JSON body:
+Successful requests will produce a "200 OK" response with a JSON body
+containing a `results` array of [page objects](#page-object-format):
 
 ```json
 {
@@ -406,7 +415,7 @@ array in the JSON body:
       "lastVisited": 15000000
     },
     {
-      "location": "https://www.mozilla.org/en-US/firefox/new/",
+      "url": "https://www.mozilla.org/en-US/firefox/new/",
       "title": "Download Firefox - Free Web Browser",
       "lastVisited": 14000000
     }
