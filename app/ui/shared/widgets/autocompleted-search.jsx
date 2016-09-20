@@ -11,9 +11,9 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { Component, PropTypes } from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import omit from 'lodash/omit';
+import * as ComponentUtil from '../util/component-util';
 
 import Style from '../style';
 import Search from './search';
@@ -34,7 +34,9 @@ const SELECTION_LIST_STYLE = Style.registerStyle({
 class AutocompletedSearch extends Component {
   constructor(props) {
     super(props);
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+    this.shouldComponentUpdate = ComponentUtil.shouldMixedPropsComponentUpdate.bind(this, {
+      immutables: ['dataSrc'],
+    });
 
     this.state = {
       showSelectionList: false,

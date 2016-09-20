@@ -11,9 +11,9 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { Component, PropTypes } from 'react';
-import isEqual from 'lodash/isEqual';
-
 import omit from 'lodash/omit';
+import * as ComponentUtil from '../util/component-util';
+
 import Style from '../style';
 
 const BKG_REPEAT_DEFAULT = 'no-repeat';
@@ -31,8 +31,9 @@ const FITTED_IMAGE_STYLE = Style.registerStyle({
  * - '100% auto'
  */
 class FittedImage extends Component {
-  shouldComponentUpdate(nextProps) {
-    return !isEqual(this.props, nextProps);
+  constructor(props) {
+    super(props);
+    this.shouldComponentUpdate = ComponentUtil.shouldPlainJsPropsComponentUpdate.bind(this);
   }
 
   render() {

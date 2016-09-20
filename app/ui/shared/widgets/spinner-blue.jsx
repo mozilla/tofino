@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import React, { Component, PropTypes } from 'react';
-import isEqual from 'lodash/isEqual';
+import * as ComponentUtil from '../util/component-util';
 
 import Style from '../style';
 import FittedImage from './fitted-image';
@@ -30,8 +30,9 @@ const SPINNER_STYLE = Style.registerStyle({
 });
 
 class SpinnerBlue extends Component {
-  shouldComponentUpdate(nextProps) {
-    return !isEqual(this.props, nextProps);
+  constructor(props) {
+    super(props);
+    this.shouldComponentUpdate = ComponentUtil.shouldPlainJsPropsComponentUpdate.bind(this);
   }
 
   render() {
