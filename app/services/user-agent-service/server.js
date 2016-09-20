@@ -118,11 +118,11 @@ function configure(app, router, storage, contentServiceOrigin) {
 
   router.get('/visits', autoCaughtRouteError({
     validator(req) {
-      req.checkQuery('limit').isInt().notEmpty();
+      req.checkQuery('limit').optional().isInt();
     },
     async method(req, res) {
       // TODO: this should return full-fledged page objects.
-      const limit = parseInt(req.query.limit, 10) || Number.MAX_SAFE_INTEGER;
+      const limit = (req.query.limit && parseInt(req.query.limit, 10)) || Number.MAX_SAFE_INTEGER;
       const pages = await storage.visited(0, limit);
       res.json({ pages });
     },
@@ -136,9 +136,10 @@ function configure(app, router, storage, contentServiceOrigin) {
       req.checkQuery('snippetSize').optional();
     },
     async method(req, res) {
+      const limit = (req.query.limit && parseInt(req.query.limit, 10)) || Number.MAX_SAFE_INTEGER;
       const snippetSize = SnippetSize[req.query.snippetSize] || SnippetSize.medium;
       const { q } = req.query;
-      const results = await storage.query(q, req.query.since, req.query.limit, snippetSize);
+      const results = await storage.query(q, req.query.since, limit, snippetSize);
       res.json({ results });
     },
   }));
@@ -173,18 +174,11 @@ function configure(app, router, storage, contentServiceOrigin) {
   }));
 
   router.get('/stars', autoCaughtRouteError({
-    async method(req, res) {
-      const stars = await storage.starredURLs();
-      res.json({ stars });
-    },
-  }));
-
-  router.get('/recentStars', autoCaughtRouteError({
     validator(req) {
-      req.checkQuery('limit').isInt().notEmpty();
+      req.checkQuery('limit').optional().isInt();
     },
     async method(req, res) {
-      const limit = parseInt(req.query.limit, 10) || Number.MAX_SAFE_INTEGER;
+      const limit = (req.query.limit && parseInt(req.query.limit, 10)) || Number.MAX_SAFE_INTEGER;
       const stars = await storage.recentlyStarred(limit);
       res.json({ stars });
     },

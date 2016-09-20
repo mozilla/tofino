@@ -24,7 +24,7 @@ export function showHistory({ query, limit }) {
 
 export function showStars({ limit }) {
   return async function(dispatch) {
-    const starredItems = (await userAgentHttpClient.recentStars({ limit })).stars;
+    const starredItems = (await userAgentHttpClient.stars({ limit })).stars;
     dispatch({ type: types.SHOW_STARS, starredItems });
   };
 }

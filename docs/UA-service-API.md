@@ -91,7 +91,6 @@ TODO: diffs WebSocket API documentation
     * [POST /v1/stars/star](#post-v1starsstar)
     * [POST /v1/stars/unstar](#post-v1starsunstar)
     * [GET /v1/stars](#get-v1stars)
-    * [GET /v1/recentStars](#get-v1recentstars)
 
 ## POST /v1/session/start
 
@@ -195,7 +194,7 @@ returned.  See also [GET /v1/query](#get-v1query).
 
 ___Query parameters___
 
-* limit - integer maximum number of visits to return.
+* limit - (optional) integer maximum number of visits to return; default: no limit.
 
 ### Request
 
@@ -272,12 +271,13 @@ Successful requests will produce a "200 OK" response with an empty JSON body:
 
 ## GET /v1/query
 
-Search for URLs, titles, and text content matching a query string.
+Search for URLs, titles, and text content matching a query string,
+optionally limiting the number of visits to return.
 
 ___Query parameters___
 
 * q - string query to search for.
-* limit - (optional) integer maximum number of results to return.
+* limit - (optional) integer maximum number of visits to return; default: no limit.
 * since - (optional) integer timestamp; if present, only return
   results more recently visited than this.
 * snippetSize - (optional) string, one of "tiny", "medium", "large",
@@ -376,38 +376,12 @@ Successful requests will produce a "200 OK" response with an empty JSON body:
 
 ## GET /v1/stars
 
-Get the currently starred URLs.
-
-### Request
-
-```sh
-curl -v \
--X GET \
--H "Content-Type: application/json" \
-"http://localhost:9090/v1/stars
-```
-
-### Response
-
-Successful requests will produce a "200 OK" response with an array
-`stars` in the JSON body:
-
-```json
-{
-  "stars": [
-    "https://www.mozilla.org/en-US/firefox/new/",
-    "https://reddit.com/"
-  ]
-}
-```
-
-## GET /v1/recentStars
-
-Get recently starred URLs, ordered from most to least recent.
+Get currently starred URLs, ordered from most to least recently
+starred, optionally limiting the number of starred URLs returned.
 
 ___Query parameters___
 
-* limit - integer maximum number of starred URLs to return.
+* limit - (optional) integer maximum number of starred URLs to return; default: no limit.
 
 ### Request
 
@@ -415,7 +389,7 @@ ___Query parameters___
 curl -v \
 -X GET \
 -H "Content-Type: application/json" \
-"http://localhost:9090/v1/recentStars?limit=10"
+"http://localhost:9090/v1/stars?limit=10"
 ```
 
 ### Response

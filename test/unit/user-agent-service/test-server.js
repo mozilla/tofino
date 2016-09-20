@@ -183,7 +183,7 @@ describe('User Agent Service', () => {
         // TODO: allow to drop limit.
         // TODO: location should be uniform url.
         // TODO: drop place; drop snippet and title if null.
-        const results1 = (await userAgentHttpClient.recentStars({ limit: 2 })).stars;
+        const results1 = (await userAgentHttpClient.stars({ limit: 2 })).stars;
         expect(results1.length).toEqual(2);
         const [r1, r2] = results1;
         // TODO: expect(r1.lastVisited).toBeLessThan(Date.now()); // Ensure we're in milliseconds.
@@ -206,7 +206,7 @@ describe('User Agent Service', () => {
         }))
           .toEqual({});
 
-        const results3 = (await userAgentHttpClient.recentStars({ limit: 1 })).stars;
+        const results3 = (await userAgentHttpClient.stars({ limit: 1 })).stars;
         expect(results3.length).toEqual(1);
         const [r3] = results3;
         // TODO: expect(r3.lastVisited).toBeLessThan(Date.now()); // Ensure we're in milliseconds.
