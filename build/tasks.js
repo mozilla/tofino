@@ -112,12 +112,12 @@ const Tasks = {
 
   async testCI(args = []) {
     // These tests run on the CI server.
-    logger.info('Making a production build...');
-    await this.build();
-    await Lazy.test(args);
-
     logger.info('Making a development build...');
     await this.build({ development: true });
+    await Lazy.test(args);
+
+    logger.info('Making a production build...');
+    await this.build();
     await Lazy.test(args);
   },
 
