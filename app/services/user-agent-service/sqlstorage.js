@@ -22,7 +22,6 @@ import path from 'path';
 import escaper from 'true-html-escape';
 import { DB, verbose } from 'promise-sqlite';
 
-import { Bookmark } from '../../shared/model';
 import { ProfileStorageSchemaV5 } from './profile-schema';
 import { SessionEndReason, SessionStartReason, SnippetSize, StarOp, VisitType } from './storage';
 import { logger } from '../../shared/logging';
@@ -441,9 +440,12 @@ export class ProfileStorage {
   async recentlyStarred(limit = 5) {
     const rows = await this.getStarredWithOrderByAndLimit(true, limit);
     return rows.map(row =>
-      new Bookmark({
-        title: row.title, location: row.url, lastVisited: row.ts,
-      }));
+      ({
+        url: row.url,
+        title: row.title,
+        lastVisited: row.ts,
+      })
+    );
   }
 
   async savePage(page, session, now = microtime.now()) {
