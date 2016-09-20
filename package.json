@@ -82,6 +82,7 @@
     "babel-preset-react-optimize": "1.0.1",
     "babel-register": "6.14.0",
     "babel-runtime": "6.11.6",
+    "browser-request": "^0.3.3",
     "check-dependencies": "1.0.1",
     "copy-webpack-plugin": "3.0.0",
     "coveralls": "2.11.14",

@@ -57,8 +57,8 @@ export function pipeToStream(target, level = undefined) {
 export function pipeToConsole() {
   /* eslint no-console: 0 */
   return {
-    stream: new stream.Writable({
-      write(chunk, encoding, next) {
+    stream: {
+      write: (chunk) => {
         const message = JSON.parse(chunk);
         if (message.level >= bunyan.ERROR) {
           console.error(message.msg);
@@ -69,10 +69,8 @@ export function pipeToConsole() {
         } else {
           console.log(message.msg);
         }
-
-        next();
       },
-    }),
+    },
     level: 'debug',
   };
 }
