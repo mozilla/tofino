@@ -26,7 +26,7 @@ Scopes are currently allocated as new sessions in Tofino.
 Alternatively, use any fixed integer scope (such as scope 0).
 
 Full-text indexing is currently opt-in: see
-[POST /v1/pages/:url](#post-v1pagesurl).  The data store will return
+[POST /v1/pages](#post-v1pages).  The data store will return
 snippets, which for now are HTML escaped string with bold tags
 wrapping highlighted words.  It's safe to use `innerHTML` and
 friends to render snippets in privileged UI.
@@ -84,12 +84,12 @@ TODO: diffs WebSocket API documentation
     * [GET /v1/visits](#get-v1visits)
 
 * Page details
-    * [POST /v1/pages/:url](#post-v1pagesurl)
+    * [POST /v1/pages](#post-v1pages)
     * [GET /v1/query](#get-v1query)
 
 * Stars
-    * [PUT /v1/stars/:url](#put-v1starsurl)
-    * [DELETE /v1/stars/:url](#delete-v1starsurl)
+    * [POST /v1/stars/star](#post-v1starsstar)
+    * [POST /v1/stars/unstar](#post-v1starsunstar)
     * [GET /v1/stars](#get-v1stars)
     * [GET /v1/recentStars](#get-v1recentstars)
 
@@ -233,16 +233,13 @@ optional `snippet` (string).
 }
 ```
 
-## POST /v1/pages/:url
+## POST /v1/pages
 
 Add captured text content for a URL.
 
-___URL parameters___
-
-* url - string URL to associate text content with.
-
 ___Body parameters___
 
+* url - string URL to associate text content with.
 * session - integer session ID to associate captured text content with.
 * page - page content (see example below).
 
@@ -252,10 +249,11 @@ ___Body parameters___
 curl -v \
 -X POST \
 -H "Content-Type: application/json" \
-"http://localhost:9090/v1/pages/https%3A%2F%2Freddit.com%2F%26test%3D%202 \
+"http://localhost:9090/v1/pages \
 -d '{
   "session": 101,
   "page": {
+    "url": "https://reddit.com/",
     "title": "reddit - the front page of the internet",
     "excerpt": <string excerpt, for example as extracted by Readability.js>,
     "textContent": <string full text content, for example as extracted by Readability.js>
@@ -312,16 +310,13 @@ array in the JSON body:
 }
 ```
 
-## PUT /v1/stars/:url
+## POST /v1/stars/star
 
 Mark the given URL as starred.
 
-___URL parameters___
-
-* url - string URL to star.
-
 ___Body parameters___
 
+* url - string URL to star.
 * session - integer session ID to associate star action with.
 * title (optional) - string title of starred URL.
 
@@ -329,11 +324,12 @@ ___Body parameters___
 
 ```sh
 curl -v \
--X PUT \
+-X POST \
 -H "Content-Type: application/json" \
-"http://localhost:9090/v1/stars/https%3A%2F%2Freddit.com%2F%26test%3D%202 \
+"http://localhost:9090/v1/stars/star \
 -d '{
   "session": 101,
+  "url": "https://reddit.com/",
   "title": "reddit - the front page of the internet"
 }'
 ```
@@ -347,27 +343,25 @@ Successful requests will produce a "200 OK" response with an empty JSON body:
 }
 ```
 
-## DELETE /v1/stars/:url
+## POST /v1/stars/unstar
 
 Mark the given URL as not starred.
 
-___URL parameters___
-
-* url - string URL to unstar.
-
 ___Body parameters___
 
+* url - string URL to unstar.
 * session - integer session ID to associate unstar action with.
 
 ### Request
 
 ```sh
 curl -v \
--X DELETE \
+-X POST \
 -H "Content-Type: application/json" \
-"http://localhost:9090/v1/stars/https%3A%2F%2Freddit.com%2F%26test%3D%202 \
+"http://localhost:9090/v1/stars/unstar \
 -d '{
-  "session": 101
+  "session": 101,
+  "url": "https://reddit.com/"
 }'
 ```
 

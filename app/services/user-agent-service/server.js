@@ -143,29 +143,29 @@ function configure(app, router, storage, contentServiceOrigin) {
     },
   }));
 
-  router.put('/stars/:url', autoCaughtRouteError({
+  router.post('/stars/star', autoCaughtRouteError({
     validator(req) {
-      req.checkParams('url').notEmpty();
+      req.checkBody('url').notEmpty();
       req.checkBody('title').optional();
       req.checkBody('session').isInt().notEmpty();
     },
     async method(req, res) {
-      const { session, _title } = req.body;
-      await storage.starPage(req.params.url, session, StarOp.star);
+      const { session, url, _title } = req.body;
+      await storage.starPage(url, session, StarOp.star);
       res.json({});
 
       dispatchBookmarkDiffs(); // Spawn, but don't await.
     },
   }));
 
-  router.delete('/stars/:url', autoCaughtRouteError({
+  router.post('/stars/unstar', autoCaughtRouteError({
     validator(req) {
-      req.checkParams('url').notEmpty();
+      req.checkBody('url').notEmpty();
       req.checkBody('session').isInt().notEmpty();
     },
     async method(req, res) {
-      const { session, _title } = req.body;
-      await storage.starPage(req.params.url, session, StarOp.unstar);
+      const { session, url } = req.body;
+      await storage.starPage(url, session, StarOp.unstar);
       res.json({});
 
       dispatchBookmarkDiffs(); // Spawn, but don't await.
@@ -190,15 +190,15 @@ function configure(app, router, storage, contentServiceOrigin) {
     },
   }));
 
-  router.post('/pages/:url', autoCaughtRouteError({
+  router.post('/pages', autoCaughtRouteError({
     validator(req) {
-      req.checkParams('url').notEmpty();
+      req.checkBody('url').notEmpty();
       req.checkBody(['page', 'textContent']).notEmpty();
       req.checkBody('session').isInt().notEmpty();
     },
     async method(req, res) {
-      const { page, session } = req.body;
-      page.uri = req.params.url;
+      const { url, page, session } = req.body;
+      page.uri = url;
       await storage.savePage(page, session);
       res.json({});
     },

@@ -50,18 +50,21 @@ describe('Action - unbookmark', () => {
     const pageId = getPages().get(0).id;
 
     const URL = `^${endpoints.UA_SERVICE_HTTP}`; // Observe leading caret ^ (caret)!
-    const expectedURL = `${endpoints.UA_SERVICE_HTTP}/stars/${encodeURIComponent('http://moz1.com')}`;
+    const expectedURL = `${endpoints.UA_SERVICE_HTTP}/stars/unstar`;
 
     fetchMock.mock(URL, 200);
 
     dispatch(actions.bookmark(pageId, 'http://moz1.com', 'moz1'));
-    dispatch(actions.unbookmark(pageId, 'http://moz1.com'));
+    await utils.waitUntil(() => fetchMock.lastUrl(URL));
 
-    await utils.waitUntil(() => fetchMock.lastUrl(URL) === expectedURL);
+    fetchMock.reset();
+
+    dispatch(actions.unbookmark(pageId, 'http://moz1.com'));
+    await utils.waitUntil(() => fetchMock.lastUrl(URL));
 
     expect(fetchMock.lastUrl(URL)).toEqual(expectedURL);
-    expect(fetchMock.lastOptions(URL).method).toEqual('DELETE');
+    expect(fetchMock.lastOptions(URL).method).toEqual('POST');
     expect(fetchMock.lastOptions(URL).json)
-      .toEqual({ session });
+      .toEqual({ session, url: 'http://moz1.com' });
   });
 });
