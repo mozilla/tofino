@@ -449,7 +449,7 @@ export class ProfileStorage {
   }
 
   async savePage(page, session, now = microtime.now()) {
-    const place = await this.savePlace(page.uri, now);
+    const place = await this.savePlace(page.url, now);
     const query = `
     INSERT INTO pages (place, session, ts, title, excerpt, content)
     VALUES (?, ?, ?, ?, ?, ?)

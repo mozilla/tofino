@@ -192,7 +192,7 @@ function configure(app, router, storage, contentServiceOrigin) {
     },
     async method(req, res) {
       const { url, page, session } = req.body;
-      page.uri = url;
+      page.url = url;
       await storage.savePage(page, session);
       res.json({});
     },
