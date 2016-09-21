@@ -31,7 +31,12 @@ snippets, which for now are HTML escaped string with bold tags
 wrapping highlighted words.  It's safe to use `innerHTML` and
 friends to render snippets in privileged UI.
 
-Throughout, timestamps are integer milliseconds since the Unix epoch.
+Throughout, timestamps are integer microseconds since the Unix epoch.
+Note that this is *not* the output of JavaScript's `Date.now()`!  Use
+a higher-resolution timing library, or (in a pinch) approximate
+microseconds using `1000 * Date.now()`.  The decision to use
+microseconds maintains compatibility with Firefox's Places database,
+which uses microseconds internally.
 
 ## URL Structure
 
@@ -260,8 +265,8 @@ curl -v \
 "http://localhost:9090/v1/pages \
 -d '{
   "session": 101,
+  "url": "https://reddit.com/",
   "page": {
-    "url": "https://reddit.com/",
     "title": "reddit - the front page of the internet",
     "excerpt": <string excerpt, for example as extracted by Readability.js>,
     "textContent": <string full text content, for example as extracted by Readability.js>
