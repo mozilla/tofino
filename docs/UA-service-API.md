@@ -26,7 +26,7 @@ Scopes are currently allocated as new sessions in Tofino.
 Alternatively, use any fixed integer scope (such as scope 0).
 
 Full-text indexing is currently opt-in: see
-[POST /v1/pages](#post-v1pages).  The data store will return
+[POST /v1/pages/page](#post-v1pagespage).  The data store will return
 snippets, which for now are HTML escaped string with bold tags
 wrapping highlighted words.  It's safe to use `innerHTML` and
 friends to render snippets in privileged UI.
@@ -100,8 +100,8 @@ TODO: diffs WebSocket API documentation
     * [GET /v1/visits](#get-v1visits)
 
 * Page details
-    * [POST /v1/pages](#post-v1pages)
-    * [GET /v1/query](#get-v1query)
+    * [POST /v1/pages/page](#post-v1pagespage)
+    * [GET /v1/pages](#get-v1pages)
 
 * Stars
     * [POST /v1/stars/star](#post-v1starsstar)
@@ -246,7 +246,7 @@ containing a `results` array of [page objects](#page-object-format):
 }
 ```
 
-## POST /v1/pages
+## POST /v1/pages/page
 
 Add captured text content for a URL.
 
@@ -262,7 +262,7 @@ ___Body parameters___
 curl -v \
 -X POST \
 -H "Content-Type: application/json" \
-"http://localhost:9090/v1/pages \
+"http://localhost:9090/v1/pages/page \
 -d '{
   "session": 101,
   "url": "https://reddit.com/",

@@ -184,7 +184,7 @@ function configure(app, router, storage, contentServiceOrigin) {
     },
   }));
 
-  router.post('/pages', autoCaughtRouteError({
+  router.post('/pages/page', autoCaughtRouteError({
     validator(req) {
       req.checkBody('url').notEmpty();
       req.checkBody(['page', 'textContent']).notEmpty();

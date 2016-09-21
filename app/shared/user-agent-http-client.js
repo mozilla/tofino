@@ -113,7 +113,7 @@ export class UserAgentHttpClient {
 
   async createPage(page, { url, readerResult }) {
     const session = await this.waitForSession(page);
-    return this.uaRequest('/pages', {
+    return this.uaRequest('/pages/page', {
       method: 'POST',
       json: {
         session,
