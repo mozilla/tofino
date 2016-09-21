@@ -128,7 +128,7 @@ function configure(app, router, storage, contentServiceOrigin) {
     },
   }));
 
-  router.get('/query', autoCaughtRouteError({
+  router.get('/pages', autoCaughtRouteError({
     validator(req) {
       req.checkQuery('q').notEmpty();
       req.checkQuery('limit').optional().isInt();

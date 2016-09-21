@@ -206,7 +206,7 @@ Successful requests will produce a "200 OK" response with an empty JSON body:
 ## GET /v1/visits
 
 Return visits to all URLs, optionally limiting the number of visits
-returned.  See also [GET /v1/query](#get-v1query).
+returned.  See also [GET /v1/pages](#get-v1pages).
 
 ___Query parameters___
 
@@ -283,10 +283,10 @@ Successful requests will produce a "200 OK" response with an empty JSON body:
 }
 ```
 
-## GET /v1/query
+## GET /v1/pages
 
-Search for URLs, titles, and text content matching a query string,
-optionally limiting the number of visits to return.
+Search for pages (URLs, titles, and text content) matching a query
+string, optionally limiting the number of pages to return.
 
 ___Query parameters___
 
@@ -303,7 +303,7 @@ ___Query parameters___
 curl -v \
 -X GET \
 -H "Content-Type: application/json" \
-"http://localhost:9090/v1/query?q=reddit&limit=10&since=13000000&snippetSize=-15
+"http://localhost:9090/v1/pages?q=reddit&limit=10&since=13000000&snippetSize=-15
 ```
 
 ### Response

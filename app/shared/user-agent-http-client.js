@@ -171,7 +171,7 @@ export class UserAgentHttpClient {
       args.push(`snippetSize=${encodeURIComponent(snippetSize)}`);
     }
 
-    return this.uaRequest(`/query?${args.join('&')}`, {
+    return this.uaRequest(`/pages?${args.join('&')}`, {
       method: 'GET',
     });
   }
