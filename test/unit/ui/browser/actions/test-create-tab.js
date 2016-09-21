@@ -115,7 +115,7 @@ describe('Action - CREATE_TAB', () => {
 
     dispatch(actions.createTab('https://github.com/', 1234));
 
-    expect(fetchMock.lastUrl(URL)).toEqual(`${endpoints.UA_SERVICE_HTTP}/session/start`);
+    expect(fetchMock.lastUrl(URL)).toEqual(`${endpoints.UA_SERVICE_HTTP}/sessions/start`);
     expect(fetchMock.lastOptions(URL).method).toEqual('POST');
     expect(fetchMock.lastOptions(URL).json)
       .toEqual({ ancestor: 1234, reason: undefined, scope: 0 });

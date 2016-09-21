@@ -82,7 +82,7 @@ export class UserAgentHttpClient {
   }
 
   createSession(pageId, { scope = 0, ancestor, reason }) {
-    const requestPromise = this.uaRequest('/session/start', {
+    const requestPromise = this.uaRequest('/sessions/start', {
       method: 'POST',
       json: {
         scope,
@@ -102,7 +102,7 @@ export class UserAgentHttpClient {
 
   async destroySession(page, { reason }) {
     const session = await this.waitForSession(page);
-    return this.uaRequest('/session/end', {
+    return this.uaRequest('/sessions/end', {
       method: 'POST',
       json: {
         session,
