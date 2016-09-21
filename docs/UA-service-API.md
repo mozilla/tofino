@@ -92,8 +92,8 @@ TODO: diffs WebSocket API documentation
 # API Endpoints
 
 * Sessions
-    * [POST /v1/session/start](#post-v1sessionstart)
-    * [POST /v1/session/end](#post-v1sessionend)
+    * [POST /v1/sessions/start](#post-v1sessionsstart)
+    * [POST /v1/sessions/end](#post-v1sessionsend)
 
 * History visits
     * [POST /v1/visits](#post-v1visits)
@@ -108,7 +108,7 @@ TODO: diffs WebSocket API documentation
     * [POST /v1/stars/unstar](#post-v1starsunstar)
     * [GET /v1/stars](#get-v1stars)
 
-## POST /v1/session/start
+## POST /v1/sessions/start
 
 Start a new browsing session.  A session roughly corresponds to a tab.
 
@@ -141,7 +141,7 @@ allocated session ID in the JSON body:
 }
 ```
 
-## POST /v1/session/end
+## POST /v1/sessions/end
 
 End an existing browsing session.  A session roughly corresponds to a tab.
 
@@ -155,7 +155,7 @@ ___Body parameters___
 curl -v \
 -X POST \
 -H "Content-Type: application/json" \
-"http://localhost:9090/v1/session/end \
+"http://localhost:9090/v1/sessions/end \
 -d '{
   "session: 100
 }'
@@ -186,7 +186,7 @@ ___Body parameters___
 curl -v \
 -X POST \
 -H "Content-Type: application/json" \
-"http://localhost:9090/v1/session/end \
+"http://localhost:9090/v1/visits \
 -d '{
   "session: 100,
   "url": "https://www.mozilla.org/en-US/firefox/new/",

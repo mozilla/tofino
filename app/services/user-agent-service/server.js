@@ -79,7 +79,7 @@ function configure(app, router, storage, contentServiceOrigin) {
     sendDiff(profileDiffs.recentBookmarks(await storage.recentlyStarred()));
   }
 
-  router.post('/session/start', autoCaughtRouteError({
+  router.post('/sessions/start', autoCaughtRouteError({
     validator(req) {
       req.checkBody('scope').optional().isInt();
       req.checkBody('ancestor').optional().isInt();
@@ -91,7 +91,7 @@ function configure(app, router, storage, contentServiceOrigin) {
     },
   }));
 
-  router.post('/session/end', autoCaughtRouteError({
+  router.post('/sessions/end', autoCaughtRouteError({
     validator(req) {
       req.checkBody('session').isInt().notEmpty();
     },
