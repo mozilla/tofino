@@ -96,7 +96,7 @@ TODO: diffs WebSocket API documentation
     * [POST /v1/sessions/end](#post-v1sessionsend)
 
 * History visits
-    * [POST /v1/visits](#post-v1visits)
+    * [POST /v1/visits/visit](#post-v1visitsvisit)
     * [GET /v1/visits](#get-v1visits)
 
 * Page details
@@ -170,7 +170,7 @@ Successful requests will produce a "200 OK" response with an empty JSON body:
 }
 ```
 
-## POST /v1/visits
+## POST /v1/visits/visit
 
 Record a visit to a URL, optionally adding a title event to that URL.
 
@@ -186,7 +186,7 @@ ___Body parameters___
 curl -v \
 -X POST \
 -H "Content-Type: application/json" \
-"http://localhost:9090/v1/visits \
+"http://localhost:9090/v1/visits/visit \
 -d '{
   "session: 100,
   "url": "https://www.mozilla.org/en-US/firefox/new/",

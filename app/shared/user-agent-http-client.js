@@ -141,7 +141,7 @@ export class UserAgentHttpClient {
 
   async createHistory(page, { url, title }) {
     const session = await this.waitForSession(page);
-    return this.uaRequest('/visits', {
+    return this.uaRequest('/visits/visit', {
       method: 'POST',
       json: {
         url,
