@@ -102,7 +102,7 @@ function configure(app, router, storage, contentServiceOrigin) {
     },
   }));
 
-  router.post('/visits', autoCaughtRouteError({
+  router.post('/visits/visit', autoCaughtRouteError({
     validator(req) {
       req.checkBody('url').notEmpty();
       req.checkBody('title').optional();
