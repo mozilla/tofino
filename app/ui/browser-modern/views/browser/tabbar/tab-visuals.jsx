@@ -17,11 +17,13 @@ import Style from '../../../../shared/style';
 
 /**
  * This component is simply responsible for rendering the curvy tabs background
- * in a purely presentational fashion.
+ * in a purely visual non-interactive non-layout-affecting fashion.
  */
 
 const TAB_VISUALS_STYLE = Style.registerStyle({
+  // Interaction with this component is not intended.
   pointerEvents: 'none',
+  // Make sure this is underneath other sibling interactive or visual elements.
   zIndex: -1,
 });
 
@@ -38,12 +40,15 @@ const TAB_SIDES_BACKGROUND_STYLE = Style.registerStyle({
     right 0px bottom -1px,
     left 0px bottom -1px,
     right 0px bottom -1px`,
-  '[data-active-tab=false]:hover &': {
+  [`.browser-tab[data-active-tab=false] > .tab-pointer-area:hover ~ .tab-visuals > &,
+    .browser-tab[data-active-tab=false] > .tab-close-button:hover ~ .tab-visuals > &,
+    .browser-new-tab-button:hover ~ .tab-visuals > &`
+  ]: {
     backgroundImage: `
       url('assets/tab-background-start.png'),
       url('assets/tab-background-end.png')`,
   },
-  '[data-active-tab=true] &': {
+  '.browser-tab[data-active-tab=true] > .tab-visuals > &': {
     backgroundImage: `
       url('assets/tab-stroke-start.png'),
       url('assets/tab-stroke-end.png'),
@@ -61,11 +66,14 @@ const TAB_CENTER_BACKGROUND_STYLE = Style.registerStyle({
   backgroundSize: '6px 31px',
   backgroundRepeat: 'repeat-x',
   backgroundPosition: 'left 0px bottom -1px',
-  '[data-active-tab=false]:hover &': {
+  [`.browser-tab[data-active-tab=false] > .tab-pointer-area:hover ~ .tab-visuals > &,
+    .browser-tab[data-active-tab=false] > .tab-close-button:hover ~ .tab-visuals > &,
+    .browser-new-tab-button:hover ~ .tab-visuals > &`
+  ]: {
     backgroundImage: `
       url('assets/tab-background-middle.png')`,
   },
-  '[data-active-tab=true] &': {
+  '.browser-tab[data-active-tab=true] > .tab-visuals > &': {
     backgroundImage: `
       url('assets/tab-selected-middle.png'),
       linear-gradient(transparent 2px, hsl(0,0%,99%) 2px, hsl(0,0%,93%))`,

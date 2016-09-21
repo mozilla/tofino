@@ -16,25 +16,20 @@ import { connect } from 'react-redux';
 
 import Style from '../../../../shared/style';
 import TabsList from './tabs-list';
-import Btn from '../../../../shared/widgets/btn';
+import NewTabBtn from './new-tab-btn';
 
 import * as UIConstants from '../../../constants/ui';
 import * as PageEffects from '../../../actions/page-effects';
 
 const TABBAR_STYLE = Style.registerStyle({
   flex: 1,
-  alignItems: 'center',
+  alignItems: 'flex-end',
   overflow: 'hidden',
   boxSizing: 'border-box',
   height: `${UIConstants.TABBAR_HEIGHT}px`,
-  paddingTop: '10px',
-  paddingRight: '38px',
+  paddingRight: '15px',
   boxShadow: 'inset 0 -1px 0px 0px var(--theme-tabbar-border-bottom-color)',
   background: 'var(--theme-tabbar-background)',
-});
-
-const NEW_TAB_BUTTON_STYLE = Style.registerStyle({
-  marginLeft: '-6px',
 });
 
 class TabBar extends Component {
@@ -52,18 +47,7 @@ class TabBar extends Component {
       <div id="browser-tabbar"
         className={TABBAR_STYLE}>
         <TabsList />
-        <Btn id="new-tab-button"
-          className={NEW_TAB_BUTTON_STYLE}
-          title="New tab"
-          width="18px"
-          height="20px"
-          image="newtab.png"
-          imgWidth="54px"
-          imgHeight="20px"
-          imgPosition="0px 0px"
-          imgPositionHover="-18px 0px"
-          imgPositionActive="-36px 0px"
-          onClick={this.handleNewTabClick} />
+        <NewTabBtn />
       </div>
     );
   }

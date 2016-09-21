@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 
 import Style from '../../../../shared/style';
 import Btn from '../../../../shared/widgets/btn';
+import TabPointerArea from './tab-pointer-area';
 import TabVisuals from './tab-visuals';
 import TabContents from './tab-contents';
 
@@ -26,14 +27,17 @@ import * as PageActions from '../../../actions/page-actions';
 import * as PageEffects from '../../../actions/page-effects';
 
 const TAB_STYLE = Style.registerStyle({
-  WebkitUserSelect: 'none',
-  WebkitAppRegion: 'no-drag',
+  // Due to its visual elements, this component's bounds are much larger than
+  // the area we want to be clickable. Since it can overlap other interactive
+  // components, restrict the pointer events only to relevant children.
+  pointerEvents: 'none',
   position: 'relative',
   alignItems: 'center',
   overflow: 'hidden',
   boxSizing: 'border-box',
   width: `${UIConstants.TAB_DEFAULT_WIDTH}px`,
   minWidth: `${UIConstants.TAB_MIN_WIDTH}px`,
+  height: `${UIConstants.TAB_HEIGHT}px`,
   margin: `0 -${UIConstants.TAB_OVERLAP}px`,
   padding: '0 24px',
   backgroundImage: 'var(--theme-window-background)',
@@ -46,20 +50,9 @@ const TAB_STYLE = Style.registerStyle({
     color: 'var(--theme-tab-active-color)',
     textShadow: '0 1px var(--theme-tab-active-text-shadow)',
     opacity: 'var(--theme-tab-active-opacity)',
+    // Make sure this is displayed above other sibling tabs.
     zIndex: 1,
   },
-});
-
-const TAB_POINTER_AREA_STYLE = Style.registerStyle({
-  position: 'absolute',
-  left: '15px',
-  right: '15px',
-  top: 0,
-  bottom: 0,
-});
-
-const TAB_CLOSE_BUTTON_STYLE = Style.registerStyle({
-  zIndex: 1,
 });
 
 class Tab extends Component {
@@ -102,12 +95,8 @@ class Tab extends Component {
         data-active-tab={this.props.isActive && !this.props.isOverviewVisible}
         data-before-active-tab={this.props.isBeforeActive && !this.props.isOverviewVisible}
         data-after-active-tab={this.props.isAfterActive && !this.props.isOverviewVisible}>
-        <div className={`tab-pointer-area ${TAB_POINTER_AREA_STYLE}`}
-          title={this.props.pageTitle || this.props.pageLocation}
-          onMouseDown={this.handleTabPick} />
-        <TabVisuals />
         <TabContents pageId={this.props.pageId} />
-        <Btn className={`tab-close-button ${TAB_CLOSE_BUTTON_STYLE}`}
+        <Btn className="tab-close-button"
           title="Close tab"
           width="14px"
           height="14px"
@@ -118,6 +107,9 @@ class Tab extends Component {
           imgPositionHover="-17px -1px"
           imgPositionActive="-33px -1px"
           onClick={this.handleTabClose} />
+        <TabPointerArea tooltipText={this.props.pageTitle || this.props.pageLocation}
+          onMouseDown={this.handleTabPick} />
+        <TabVisuals />
       </div>
     );
   }
