@@ -123,7 +123,7 @@ ___Body parameters___
 curl -v \
 -X POST \
 -H "Content-Type: application/json" \
-"http://localhost:9090/v1/session/start" \
+"http://localhost:9090/v1/sessions/start" \
 -d '{
   "scope": 0,
   "session: 100
