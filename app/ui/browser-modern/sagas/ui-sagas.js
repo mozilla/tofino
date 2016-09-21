@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import { takeLatest } from 'redux-saga';
 
+import { ipcRenderer } from '../../../shared/electron';
 import { wrapped } from './helpers';
 import { logger } from '../../../shared/logging';
 import * as EffectTypes from '../constants/effect-types';
@@ -28,6 +29,9 @@ export default function() {
     function*() {
       yield* takeLatest(...wrapped(EffectTypes.SHOW_DOWNLOAD_NOTIFICATION,
             showDownloadNotification));
+    },
+    function*() {
+      yield* takeLatest(...wrapped(EffectTypes.CONFIRM_DEFAULT_BROWSER, confirmDefaultBrowser));
     },
   ];
 }
@@ -78,4 +82,12 @@ function* showDownloadNotification({ filename, status }) {
   // Spawn a Web Notification
   // https://developer.mozilla.org/en-US/docs/Web/API/notification
   new Notification(title, { body: message }); //eslint-disable-line
+}
+
+function* confirmDefaultBrowser() {
+  /* eslint-disable no-alert */
+  if (confirm('Would you like to be Tofino your default browser?')) {
+    ipcRenderer.send('set-default-browser');
+  }
+  /* eslint-enable no-alert */
 }
