@@ -17,6 +17,7 @@ export default {
     filename: 'index.js',
     sourceMapFilename: 'index.map',
   },
+  devtool: 'cheap-module-source-map',
   plugins: [
     ...defaultConfig.plugins,
     new webpack.DefinePlugin({

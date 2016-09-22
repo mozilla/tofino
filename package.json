@@ -48,7 +48,7 @@
     "lodash": "4.16.0",
     "microtime-fast": "1.0.2",
     "morgan": "1.7.0",
-    "page-metadata-parser": "0.4.1",
+    "page-metadata-parser": "0.3.0",
     "react": "15.3.2",
     "react-addons-perf": "15.3.1",
     "react-addons-pure-render-mixin": "15.3.2",
