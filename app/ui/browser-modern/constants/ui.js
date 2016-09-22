@@ -19,7 +19,9 @@ export const HOME_PAGE = ContentURLs.HISTORY_PAGE;
 export const TABBAR_HEIGHT = 39; // px
 export const TAB_DEFAULT_WIDTH = 240; // px
 export const TAB_MIN_WIDTH = 60; // px
+export const TAB_HEIGHT = 29; // px
 export const TAB_OVERLAP = 15; // px
+export const NEW_TAB_BUTTON_WIDTH = 66; // px
 
 // Navbar dimensions.
 export const NAVBAR_HEIGHT = 40; // px

@@ -22,8 +22,9 @@ import * as SharedPropTypes from '../../../model/shared-prop-types';
 import * as PagesSelectors from '../../../selectors/pages';
 
 const TABS_LIST_STYLE = Style.registerStyle({
+  WebkitUserSelect: 'none',
+  WebkitAppRegion: 'no-drag',
   overflow: 'hidden',
-  alignSelf: 'stretch',
   padding: `0 ${UIConstants.TAB_OVERLAP}px`,
 });
 
