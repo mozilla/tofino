@@ -14,7 +14,8 @@ import { protocol, app } from 'electron';
 import * as endpoints from '../shared/constants/endpoints';
 
 const tofinoColonSlash = new RegExp(`^${endpoints.TOFINO_PROTOCOL}:/`);
-const DEFAULT_PROTOCOLS = ['http', 'https', endpoints.TOFINO_PROTOCOL];
+
+export const DEFAULT_PROTOCOLS = ['http', 'https', endpoints.TOFINO_PROTOCOL];
 
 export function registerStandardSchemes() {
   protocol.registerStandardSchemes(DEFAULT_PROTOCOLS);
