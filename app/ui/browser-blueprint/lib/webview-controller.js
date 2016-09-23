@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 import assert from 'assert';
 import { EventEmitter } from 'events';
 
-import { isUUID } from './uuid-util';
+import { isUUID } from '../../shared/util/uuid-util';
 
 const getPageIndexById = (pages, id) => pages.findIndex(p => p.id === id);
 

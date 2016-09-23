@@ -38,15 +38,9 @@ class NavBar extends Component {
     return (
       <div id={`browser-navbar-${this.props.pageId}`}
         className={`browser-navbar ${NAVBAR_STYLE}`}>
-        <NavigationButtons pageId={this.props.pageId}
-          onNavigateBack={this.props.onNavigateBack}
-          onNavigateForward={this.props.onNavigateForward}
-          onNavigateInHistory={this.props.onNavigateInHistory} />
-        <Location pageId={this.props.pageId}
-          onNavigateTo={this.props.onNavigateTo}
-          onNavigateRefresh={this.props.onNavigateRefresh} />
-        <ToolbarButtons pageId={this.props.pageId}
-          onNavigateTo={this.props.onNavigateTo} />
+        <NavigationButtons pageId={this.props.pageId} />
+        <Location pageId={this.props.pageId} />
+        <ToolbarButtons pageId={this.props.pageId} />
       </div>
     );
   }
@@ -56,11 +50,6 @@ NavBar.displayName = 'NavBar';
 
 NavBar.propTypes = {
   pageId: PropTypes.string.isRequired,
-  onNavigateBack: PropTypes.func.isRequired,
-  onNavigateForward: PropTypes.func.isRequired,
-  onNavigateRefresh: PropTypes.func.isRequired,
-  onNavigateTo: PropTypes.func.isRequired,
-  onNavigateInHistory: PropTypes.func.isRequired,
 };
 
 export default NavBar;

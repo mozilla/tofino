@@ -28,6 +28,7 @@ import * as UISelectors from '../../../selectors/ui';
 import * as PagesSelectors from '../../../selectors/pages';
 import * as ProfileSelectors from '../../../selectors/profile';
 import * as ProfileEffects from '../../../actions/profile-effects';
+import * as PageEffects from '../../../actions/page-effects';
 
 const LOCATION_BAR_STYLE = Style.registerStyle({
   flex: 1,
@@ -82,7 +83,8 @@ class Location extends Component {
   }
 
   handleAutocompletionPick = ({ data }) => {
-    this.props.onNavigateTo(this.props.pageId, LocationUtil.fixURL(data.uri));
+    const location = LocationUtil.fixURL(data.uri);
+    this.props.dispatch(PageEffects.navigatePageTo(this.props.pageId, location));
   }
 
   handleInfoButtonClick = () => {
@@ -100,7 +102,7 @@ class Location extends Component {
   }
 
   handleRefreshButtonClick = () => {
-    this.props.onNavigateRefresh(this.props.pageId);
+    this.props.dispatch(PageEffects.navigatePageRefresh(this.props.pageId));
   }
 
   render() {
@@ -165,8 +167,6 @@ Location.propTypes = {
   pageIsBookmarked: PropTypes.bool.isRequired,
   pageState: SharedPropTypes.PageState,
   locationAutocompletions: SharedPropTypes.LocationAutocompletions,
-  onNavigateTo: PropTypes.func.isRequired,
-  onNavigateRefresh: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state, ownProps) {

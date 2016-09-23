@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Style from '../../../shared/style';
@@ -37,12 +37,7 @@ class BrowserWindow extends Component {
       <div id="browser-window"
         className={BROWSER_WINDOW_STYLE}>
         <ChromeArea />
-        <ContentArea onPageMount={this.props.onPageMount}
-          onNavigateBack={this.props.onNavigateBack}
-          onNavigateForward={this.props.onNavigateForward}
-          onNavigateRefresh={this.props.onNavigateRefresh}
-          onNavigateTo={this.props.onNavigateTo}
-          onNavigateInHistory={this.props.onNavigateInHistory} />
+        <ContentArea />
         <Overview />
       </div>
     );
@@ -50,14 +45,5 @@ class BrowserWindow extends Component {
 }
 
 BrowserWindow.displayName = 'BrowserWindow';
-
-BrowserWindow.propTypes = {
-  onPageMount: PropTypes.func.isRequired,
-  onNavigateBack: PropTypes.func.isRequired,
-  onNavigateForward: PropTypes.func.isRequired,
-  onNavigateRefresh: PropTypes.func.isRequired,
-  onNavigateTo: PropTypes.func.isRequired,
-  onNavigateInHistory: PropTypes.func.isRequired,
-};
 
 export default BrowserWindow;
