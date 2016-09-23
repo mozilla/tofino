@@ -40,8 +40,8 @@ describe('dependencies', () => {
     ];
 
     const temporary = [
-      // These aren't yet referenced by the main app, but we plan to do so.
-      'datascript-mori',
+      // These aren't yet referenced by the main app, but we plan to reference them eventually.
+      'datomish-user-agent-service', // Referenced by bin/user-agent-service script.
     ];
 
     const appManifest = await fs.readJson(path.join('app', 'package.json'));

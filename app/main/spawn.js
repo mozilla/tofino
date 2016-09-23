@@ -66,7 +66,10 @@ export function startUserAgentService(userAgentClient, options = {}) {
   const profile = options.profiledir || parseArgs().profile;
 
   const NODE = path.join(lib, NODE_CMD);
-  const UA_SERVICE_BIN = path.join(lib, 'services', 'user-agent-service', 'user-agent-service');
+  const UA_SERVICE_BIN = path.join(lib,
+                                   'node_modules',
+                                   'datomish-user-agent-service',
+                                   'bin', 'user-agent-service');
 
   const child = spawnProcess('UA Service', NODE, [UA_SERVICE_BIN,
     '--port', port,

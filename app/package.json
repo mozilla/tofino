@@ -11,6 +11,7 @@
   "main": "main/index.js",
   "license": "Apache-2.0",
   "dependencies": {
+    "datomish-user-agent-service": "0.0.2",
     "request": "2.65.0",
     "yargs": "5.0.0"
   }
