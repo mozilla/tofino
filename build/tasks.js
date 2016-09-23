@@ -20,7 +20,6 @@ const Lazy = {
   saveConfig: options => require('./task-config-builder').saveConfigAsPrev(options),
   buildModules: () => require('./task-build-modules').default(),
   buildContentService: options => require('./task-build-service-content').default(options),
-  buildUserAgentService: options => require('./task-build-service-ua').default(options),
   buildMainProcess: options => require('./task-build-main-process').default(options),
   buildPreload: options => require('./task-build-preload').default(options),
   buildBrowser: options => require('./task-build-browser').default(options),
@@ -49,7 +48,6 @@ const Tasks = {
     try {
       builders.push(await Lazy.buildModules());
       builders.push(await Lazy.buildContentService(options));
-      builders.push(await Lazy.buildUserAgentService(options));
       builders.push(await Lazy.buildMainProcess(options));
       builders.push(await Lazy.buildBrowser(options));
       builders.push(await Lazy.buildPreload(options));
@@ -79,7 +77,6 @@ const Tasks = {
     const builders = [
       await Lazy.buildModules(),
       await Lazy.buildContentService(),
-      await Lazy.buildUserAgentService(),
     ];
     await Promise.all(builders.map(w => w.close()));
 
@@ -123,8 +120,8 @@ const Tasks = {
 
   async package() {
     // XXX: All builds (including packaged) currently start their own
-    // UA and Contents services. In the future, we should consider
-    // hosting these somewhere else other than the user's own machine.
+    // Content service. In the future, we should consider hosting
+    // these somewhere else other than the user's own machine.
     await this.build();
     await Lazy.clean();
     await Lazy.package();
