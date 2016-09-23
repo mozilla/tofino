@@ -47,7 +47,7 @@ class Page extends Component {
     this.addWebviewListeners();
     const pageId = this.props.pageId;
     const pageLocation = this.props.pageLocation;
-    this.props.onMount(pageId, pageLocation);
+    this.props.dispatch(PageEffects.navigatePageTo(pageId, pageLocation));
   }
 
   addWebviewListeners() {
@@ -250,7 +250,6 @@ Page.displayName = 'Page';
 
 Page.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  onMount: PropTypes.func.isRequired,
   pageId: PropTypes.string.isRequired,
   pageLocation: PropTypes.string.isRequired,
   pageState: SharedPropTypes.PageState.isRequired,

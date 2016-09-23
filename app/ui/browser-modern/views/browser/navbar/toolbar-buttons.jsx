@@ -23,6 +23,7 @@ import * as UIConstants from '../../../constants/ui';
 import * as UIActions from '../../../actions/ui-actions';
 import * as UISelectors from '../../../selectors/ui';
 import * as ExternalEffects from '../../../actions/external-effects';
+import * as PageEffects from '../../../actions/page-effects';
 
 const TOOLBAR_BUTTONS_CONTAINER_STYLE = Style.registerStyle({
   alignSelf: 'stretch',
@@ -67,15 +68,15 @@ class ToolbarButtons extends Component {
   }
 
   handleBookmarksButtonClick = () => {
-    this.props.onNavigateTo(this.props.pageId, ContentURLs.STARS_PAGE);
+    this.props.dispatch(PageEffects.navigatePageTo(this.props.pageId, ContentURLs.STARS_PAGE));
   }
 
   handleHistoryButtonClick = () => {
-    this.props.onNavigateTo(this.props.pageId, ContentURLs.HISTORY_PAGE);
+    this.props.dispatch(PageEffects.navigatePageTo(this.props.pageId, ContentURLs.HISTORY_PAGE));
   }
 
   handleHomeButtonClick = () => {
-    this.props.onNavigateTo(this.props.pageId, UIConstants.HOME_PAGE);
+    this.props.dispatch(PageEffects.navigatePageTo(this.props.pageId, UIConstants.HOME_PAGE));
   }
 
   handleAppMenuClick = () => {
@@ -150,7 +151,6 @@ ToolbarButtons.displayName = 'ToolbarButtons';
 ToolbarButtons.propTypes = {
   dispatch: PropTypes.func.isRequired,
   pageId: PropTypes.string.isRequired,
-  onNavigateTo: PropTypes.func.isRequired,
 };
 
 export default connect()(ToolbarButtons);

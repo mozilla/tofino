@@ -20,7 +20,7 @@ import * as SharedPropTypes from '../../model/shared-prop-types';
 import BrowserChrome from './browser-chrome';
 import BrowserContent from './browser-content';
 import DeveloperBar from './developerbar';
-import WebViewController from '../../../shared/util/webview-controller';
+import WebViewController from '../../lib/webview-controller';
 
 import * as actions from '../../actions/main-actions';
 import * as external from '../../actions/external';
