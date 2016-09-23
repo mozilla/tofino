@@ -17,7 +17,7 @@ import { connect } from 'react-redux';
 import Style from '../../../../shared/style';
 import Btn from '../../../../shared/widgets/btn';
 import VerticalSeparator from '../../../../shared/widgets/vertical-separator';
-import SecurityBadge from './security-badge';
+import LocationInfo from './location-info';
 import AutocompletedSearch from '../../../../shared/widgets/autocompleted-search';
 import AutocompletionListItem from './autocompletion-list-item';
 
@@ -52,10 +52,6 @@ const DROPDOWN_LIST_STYLE = Style.registerStyle({
   maxHeight: `calc(100vh - ${NAVBAR_HEIGHT}px - ${TABBAR_HEIGHT}px)`,
 });
 
-const LOCATION_BAR_SECURITY_BADGE_STYLE = Style.registerStyle({
-  paddingLeft: '2px',
-});
-
 const LOCATION_BAR_REFRESH_BUTTON_STYLE = Style.registerStyle({
   padding: '2px',
 });
@@ -87,14 +83,6 @@ class Location extends Component {
     this.props.dispatch(PageEffects.navigatePageTo(this.props.pageId, location));
   }
 
-  handleInfoButtonClick = () => {
-    // TODO
-  }
-
-  handleConnectionButtonClick= () => {
-    // TODO
-  }
-
   handleBookmarkButtonClick = () => {
     const pageId = this.props.pageId;
     const bookmarked = this.props.pageIsBookmarked;
@@ -108,19 +96,7 @@ class Location extends Component {
   render() {
     return (
       <div className={`browser-location ${LOCATION_BAR_STYLE}`}>
-        <Btn title="Info"
-          image="identity-icon.svg#normal"
-          imageHover="identity-icon.svg#hover"
-          imgWidth="16px"
-          imgHeight="16px"
-          onClick={this.handleInfoButtonClick} />
-        <SecurityBadge title="Connection"
-          className={LOCATION_BAR_SECURITY_BADGE_STYLE}
-          imgWidth="16px"
-          imgHeight="16px"
-          url={this.props.pageLocation}
-          pageState={this.props.pageState}
-          onClick={this.handleConnectionButtonClick} />
+        <LocationInfo pageId={this.props.pageId} />
         <VerticalSeparator className={SEPARATOR_STYLE} />
         <AutocompletedSearch ref={e => this.awesomebar = e}
           className={LOCATION_BAR_INPUT_STYLE}
@@ -165,7 +141,6 @@ Location.propTypes = {
   pageLocation: PropTypes.string.isRequired,
   pageCanRefresh: PropTypes.bool.isRequired,
   pageIsBookmarked: PropTypes.bool.isRequired,
-  pageState: SharedPropTypes.PageState,
   locationAutocompletions: SharedPropTypes.LocationAutocompletions,
 };
 
@@ -173,7 +148,6 @@ function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
   return {
     pageLocation: page ? page.location : '',
-    pageState: PagesSelectors.getPageState(state, ownProps.pageId),
     pageCanRefresh: page ? PagesSelectors.getPageCanRefresh(state, ownProps.pageId) : false,
     pageIsBookmarked: page ? ProfileSelectors.isBookmarked(state, page.location) : false,
     locationAutocompletions: page ? UISelectors.getLocationAutocompletions(state, page.id) : null,
