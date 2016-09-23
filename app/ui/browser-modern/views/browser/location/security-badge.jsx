@@ -12,11 +12,13 @@ specific language governing permissions and limitations under the License.
 
 import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import omit from 'lodash/omit';
+import { connect } from 'react-redux';
 
-import * as SharedPropTypes from '../../../model/shared-prop-types';
 import PageStateModel from '../../../model/page-state';
 import Btn from '../../../../shared/widgets/btn';
+
+import { TOFINO_PROTOCOL } from '../../../../../shared/constants/endpoints';
+import * as PagesSelectors from '../../../selectors/pages';
 
 class SecurityBadge extends Component {
   constructor(props) {
@@ -29,7 +31,7 @@ class SecurityBadge extends Component {
     // it is considered secure. Otherwise, all HTTP pages are insecure. Also, since
     // we block all mixed content, this is even easier.
     let image = 'ssl-insecure.svg';
-    if (/^https:/.test(this.props.url) && !this.props.pageState.error) {
+    if (/^https:/.test(this.props.url) && !this.props.errorState) {
       image = 'ssl-secure.svg';
     }
 
@@ -37,42 +39,41 @@ class SecurityBadge extends Component {
     // some page loads in our state), or if the page is still loading (many sites
     // use http -> https redirects, we shouldn't penalize them for a quick interstitial),
     // just hide the icon
-    let hidden = this.props.hidden;
+    let hidden = false;
     if (!this.props.url ||
-        this.props.pageState.load === PageStateModel.STATES.CONNECTING ||
-        this.props.pageState.load === PageStateModel.STATES.LOADING ||
-        /^tofino:/.test(this.props.url)) {
+        this.props.url.startsWith(TOFINO_PROTOCOL) ||
+        this.props.loadState === PageStateModel.STATES.CONNECTING ||
+        this.props.loadState === PageStateModel.STATES.LOADING) {
       hidden = true;
     }
 
     return (
-      <Btn {...omit(this.props, Object.keys(OmittedContainerProps))}
+      <Btn title="Connection"
+        hidden={hidden}
         image={image}
-        hidden={hidden}>
-        {React.Children.toArray(this.props.children)}
-      </Btn>
+        imgWidth="16px"
+        imgHeight="16px"
+        onClick={this.props.onClick} />
     );
   }
 }
 
 SecurityBadge.displayName = 'SecurityBadge';
 
-const OmittedContainerProps = {
-  url: PropTypes.string.isRequired,
-  image: PropTypes.string,
-  hidden: PropTypes.bool,
-  pageState: SharedPropTypes.PageState.isRequired,
-};
-
 SecurityBadge.propTypes = {
-  ...omit(Btn.propTypes, Object.keys(OmittedContainerProps)),
-  url: OmittedContainerProps.url,
-  pageState: OmittedContainerProps.pageState,
+  url: PropTypes.string.isRequired,
+  loadState: PropTypes.string,
+  errorState: PropTypes.string,
+  onClick: PropTypes.func.isRequired,
 };
 
-SecurityBadge.defaultProps = {
-  url: '',
-  hidden: false,
-};
+function mapStateToProps(state, ownProps) {
+  const page = PagesSelectors.getPageById(state, ownProps.pageId);
+  return {
+    url: page ? page.location : '',
+    loadState: page ? PagesSelectors.getPageState(state, ownProps.pageId).load : '',
+    errorState: page ? PagesSelectors.getPageState(state, ownProps.pageId).error : '',
+  };
+}
 
-export default SecurityBadge;
+export default connect(mapStateToProps)(SecurityBadge);
