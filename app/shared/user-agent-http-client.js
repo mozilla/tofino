@@ -127,7 +127,11 @@ export class UserAgentHttpClient {
     const session = await this.waitForSession(page);
     return this.uaRequest('/stars/star', {
       method: 'POST',
-      json: { url, title, session },
+      json: {
+        session,
+        url,
+        title,
+      },
     });
   }
 
@@ -135,7 +139,10 @@ export class UserAgentHttpClient {
     const session = await this.waitForSession(page);
     return this.uaRequest('/stars/unstar', {
       method: 'POST',
-      json: { url, session },
+      json: {
+        session,
+        url,
+      },
     });
   }
 

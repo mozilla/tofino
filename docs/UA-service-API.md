@@ -126,7 +126,7 @@ curl -v \
 "http://localhost:9090/v1/sessions/start" \
 -d '{
   "scope": 0,
-  "session: 100
+  "ancestor": 100
 }'
 ```
 
@@ -303,7 +303,7 @@ ___Query parameters___
 curl -v \
 -X GET \
 -H "Content-Type: application/json" \
-"http://localhost:9090/v1/pages?q=reddit&limit=10&since=13000000&snippetSize=-15
+"http://localhost:9090/v1/pages?q=reddit&limit=10&since=13000000&snippetSize=large"
 ```
 
 ### Response

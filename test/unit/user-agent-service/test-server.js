@@ -24,7 +24,7 @@ describe('User Agent Service', () => {
         port += 1; // Advance first, so that we don't stick on a blocked port.
         stop = await UserAgentService( // eslint-disable-line
           {
-            port: ++port,
+            port,
             db: tempDir,
             version: 'v1',
             contentServiceOrigin: `${endpoints.TOFINO_PROTOCOL}://`,

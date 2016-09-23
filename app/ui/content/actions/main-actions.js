@@ -16,7 +16,7 @@ import * as types from '../constants/action-types';
 export function showHistory({ query, limit }) {
   return async function(dispatch) {
     const visitedPages = query
-      ? (await userAgentHttpClient.query({ query, limit, snippetSize: 'large' })).results
+      ? (await userAgentHttpClient.query({ text: query, limit, snippetSize: 'large' })).results
       : (await userAgentHttpClient.visited({ limit })).results;
     dispatch({ type: types.SHOW_HISTORY, visitedPages });
   };
