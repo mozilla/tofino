@@ -54,7 +54,9 @@ describe('User Agent Service', () => {
             await stop();
           } catch (f) {
             // Ignore this error -- any earlier error is almost always more interesting.
-            console.log(`Ignoring error stopping test User Agent service: ${f}`); // eslint-disable-line
+            if (f.code !== 'ENOENT') {
+              console.log(`Ignoring error stopping test User Agent service: ${f}`); // eslint-disable-line
+            }
           }
         }
 
@@ -68,7 +70,10 @@ describe('User Agent Service', () => {
           // we often see "Error: EBUSY: resource busy or locked, unlink" (like
           // https://ci.appveyor.com/project/Mozilla/tofino-u1hv8/build/1.0.931-asyctcfp).  Ignore
           // such errors.
-          console.log(`Ignoring error deleting test User Agent service files: ${g}`); // eslint-disable-line
+          // Ignore this error -- any earlier error is almost always more interesting.
+          if (g.code !== 'ENOENT') {
+            console.log(`Ignoring error deleting test User Agent service files: ${g}`); // eslint-disable-line
+          }
         }
 
         done();
@@ -83,9 +88,9 @@ describe('User Agent Service', () => {
       try {
         // TODO: add a /sessions endpoint to allow to truly verify these API calls.
         expect(await userAgentHttpClient.createSession(11, { scope: 0 }))
-          .toEqual({ session: 1 });
+          .toEqual({ session: 65552 });
         expect(await userAgentHttpClient.createSession(12, { scope: 0, ancestor: 1 }))
-          .toEqual({ session: 2 });
+          .toEqual({ session: 65553 });
         expect(await userAgentHttpClient.destroySession({ sessionId: 2 }, { reason: 'None' }))
           .toEqual({});
 
@@ -100,7 +105,7 @@ describe('User Agent Service', () => {
     (async function () {
       try {
         expect(await userAgentHttpClient.createSession(11, { scope: 0 }))
-          .toEqual({ session: 1 });
+          .toEqual({ session: 65552 });
         const page = { sessionId: 1 }; // TODO: don't 500 when sessionId is not recognized.
 
         expect(await userAgentHttpClient.createHistory(page, {
@@ -124,10 +129,10 @@ describe('User Agent Service', () => {
         delete r2.lastVisited;
         expect([r1, r2]).toEqual(
           [
-            { snippet: null,
-              title: null,
+            { snippet: '',
+              title: '',
               url: 'https://www.mozilla.org/en-US/firefox/new/' },
-            { snippet: null,
+            { snippet: '',
               title: 'reddit - the front page of the internet',
               url: 'https://reddit.com/' },
           ]);
@@ -139,8 +144,8 @@ describe('User Agent Service', () => {
         delete r3.lastVisited;
         expect([r3]).toEqual(
           [
-            { snippet: null,
-              title: null,
+            { snippet: '',
+              title: '',
               url: 'https://www.mozilla.org/en-US/firefox/new/' },
           ]);
 
@@ -155,7 +160,7 @@ describe('User Agent Service', () => {
     (async function () {
       try {
         expect(await userAgentHttpClient.createSession(11, { scope: 0 }))
-          .toEqual({ session: 1 });
+          .toEqual({ session: 65552 });
         const page = { sessionId: 1 }; // TODO: don't 500 when sessionId is not recognized.
 
         // TODO: make createStar({ title }) actually write the title to the DB.
@@ -186,9 +191,11 @@ describe('User Agent Service', () => {
         // TODO: expect(r2.lastVisited).toBeLessThan(Date.now()); // Ensure we're in milliseconds.
         delete r1.lastVisited;
         delete r2.lastVisited;
+        delete r1.starredOn;
+        delete r2.starredOn;
         expect([r1, r2]).toEqual(
           [
-            { title: null, url: 'https://test.com/10' },
+            { title: '', url: 'https://test.com/10' },
             { title: 'test9', url: 'https://test.com/9' },
           ]);
 
@@ -207,6 +214,7 @@ describe('User Agent Service', () => {
         const [r3] = results3;
         // TODO: expect(r3.lastVisited).toBeLessThan(Date.now()); // Ensure we're in milliseconds.
         delete r3.lastVisited;
+        delete r3.starredOn;
         expect([r3]).toEqual(
           [
             { title: 'test9', url: 'https://test.com/9' },
@@ -223,7 +231,7 @@ describe('User Agent Service', () => {
     (async function () {
       try {
         expect(await userAgentHttpClient.createSession(11, { scope: 0 }))
-          .toEqual({ session: 1 });
+          .toEqual({ session: 65552 });
         const page = { sessionId: 1 }; // TODO: don't 500 when sessionId is not recognized.
 
         expect(await userAgentHttpClient.createHistory(page, {
@@ -252,7 +260,8 @@ describe('User Agent Service', () => {
           [
             { title: 'test.com',
               url: 'https://test.com/',
-              snippet: '<b>Long</b> <b>text</b> content containing excerpt…',
+              snippet: '',
+              excerpt: 'excerpt from test.com',
             },
           ]);
 
