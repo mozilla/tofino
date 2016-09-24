@@ -96,9 +96,9 @@ class Tab extends Component {
     return (
       <div className={`browser-tab ${TAB_STYLE}`}
         ref={e => this.root = e}
-        data-active-tab={this.props.isActive && !this.props.isOverviewVisible}
-        data-before-active-tab={this.props.isBeforeActive && !this.props.isOverviewVisible}
-        data-after-active-tab={this.props.isAfterActive && !this.props.isOverviewVisible}>
+        data-active-tab={this.props.isActive}
+        data-before-active-tab={this.props.isBeforeActive}
+        data-after-active-tab={this.props.isAfterActive}>
         <TabContents pageId={this.props.pageId} />
         <Btn className={`tab-close-button ${TAB_CLOSE_BUTTON_STYLE}`}
           title="Close tab"
@@ -127,7 +127,6 @@ Tab.propTypes = {
   isActive: PropTypes.bool.isRequired,
   isBeforeActive: PropTypes.bool.isRequired,
   isAfterActive: PropTypes.bool.isRequired,
-  isOverviewVisible: PropTypes.bool.isRequired,
 };
 
 function mapStateToProps(state, ownProps) {
@@ -137,12 +136,13 @@ function mapStateToProps(state, ownProps) {
   const selectedPageId = PagesSelectors.getSelectedPageId(state);
   const selectedPageIndex = PagesSelectors.getPageIndexById(state, selectedPageId);
 
+  const isOverviewVisible = UISelectors.getOverviewVisible(state);
+
   return {
     tooltipText: page ? page.title || page.meta.title || page.location : '',
-    isActive: selectedPageId === ownProps.pageId,
-    isBeforeActive: selectedPageIndex === pageIndex + 1,
-    isAfterActive: selectedPageIndex === pageIndex - 1,
-    isOverviewVisible: UISelectors.getOverviewVisible(state),
+    isActive: !isOverviewVisible && selectedPageId === ownProps.pageId,
+    isBeforeActive: !isOverviewVisible && selectedPageIndex === pageIndex + 1,
+    isAfterActive: !isOverviewVisible && selectedPageIndex === pageIndex - 1,
   };
 }
 
