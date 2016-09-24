@@ -54,6 +54,14 @@ class Search extends Component {
     return this.input.value;
   }
 
+  set defaultValue(textContent) {
+    this.input.defaultValue = textContent;
+  }
+
+  get defaultValue() {
+    return this.input.defaultValue;
+  }
+
   focus() {
     this.input.focus();
   }
@@ -94,7 +102,6 @@ class Search extends Component {
           type="text"
           data-interaction={this.state.interaction}
           placeholder={this.props.placeholder}
-          defaultValue={this.props.defaultValue}
           onClick={this.handleClick}
           onChange={this.props.onChange}
           onKeyDown={this.handleKeyDown}
@@ -115,7 +122,6 @@ const OmittedContainerProps = {
   onKeyUp: PropTypes.func,
   onKeyPress: PropTypes.func,
   placeholder: PropTypes.string,
-  defaultValue: PropTypes.string,
 };
 
 Search.propTypes = {

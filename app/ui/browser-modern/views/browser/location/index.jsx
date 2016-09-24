@@ -84,7 +84,6 @@ class Location extends Component {
         <VerticalSeparator className={SEPARATOR_STYLE} />
         <AutocompletedSearch ref={e => this.awesomebar = e}
           className={LOCATION_BAR_INPUT_STYLE}
-          defaultValue={this.props.pageLocation}
           onChange={this.handleInputChange}
           onKeyDown={this.handleInputKeyDown}
           onAutocompletionPick={this.handleAutocompletionPick}
@@ -102,14 +101,12 @@ Location.displayName = 'Location';
 Location.propTypes = {
   dispatch: PropTypes.func.isRequired,
   pageId: PropTypes.string.isRequired,
-  pageLocation: PropTypes.string.isRequired,
   locationAutocompletions: SharedPropTypes.LocationAutocompletions,
 };
 
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
   return {
-    pageLocation: page ? page.location : '',
     locationAutocompletions: page ? UISelectors.getLocationAutocompletions(state, page.id) : null,
   };
 }
