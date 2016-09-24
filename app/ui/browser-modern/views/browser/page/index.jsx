@@ -45,9 +45,7 @@ class Page extends Component {
 
   componentDidMount() {
     this.addWebviewListeners();
-    const pageId = this.props.pageId;
-    const pageLocation = this.props.pageLocation;
-    this.props.dispatch(PageEffects.navigatePageTo(pageId, pageLocation));
+    this.props.dispatch(PageEffects.navigatePageToInitial(this.props.pageId));
   }
 
   addWebviewListeners() {
@@ -114,13 +112,12 @@ class Page extends Component {
       this.props.dispatch(PageActions.setPageDetails(this.props.pageId, { title, location }));
       this.props.dispatch(UIEffects.setURLBarValue(this.props.pageId, location));
 
-      // If the page state is still LOADING, and we haven't hit a
-      // failure state, mark this page as LOADED.
-      if (this.props.pageState.load === PageState.STATES.LOADING) {
-        this.props.dispatch(PageActions.setPageState(this.props.pageId, {
-          load: PageState.STATES.LOADED,
-        }));
-      }
+      // If the page state is still LOADING, and we haven't hit a failure state,
+      // mark this page as LOADED. The logic for setting the proper load state
+      // is in the reducer.
+      this.props.dispatch(PageActions.setPageState(this.props.pageId, {
+        load: PageState.STATES.LOADED,
+      }));
     });
 
     this.webview.addEventListener('did-fail-load', e => {
