@@ -12,11 +12,14 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes, Component } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import * as SharedPropTypes from '../../../model/shared-prop-types';
+import { connect } from 'react-redux';
 
+import Style from '../../../../shared/style';
 import NetErrorPage from './net-error';
 import CertErrorPage from './cert-error';
-import Style from '../../../../shared/style';
+
+import * as SharedPropTypes from '../../../model/shared-prop-types';
+import * as PagesSelectors from '../../../selectors/pages';
 
 const ERROR_PAGE_STYLE = Style.registerStyle({
   width: '100%',
@@ -39,19 +42,21 @@ class ErrorPage extends Component {
       return null;
     }
 
-    const code = Math.abs(this.props.pageState.get('code'));
-    const isCertError = code === 501 || // ERR_CERT_AUTHORITY_INVALID
-                        code === 129 || // ERR_SSL_WEAK_SERVER_EPHEMERAL_DH_KEY
-                        /CERT/.test(this.props.pageState.get('description')); // Catch all
+    const code = Math.abs(this.props.pageState.code);
+    const isCertError = (
+      code === 501 || // ERR_CERT_AUTHORITY_INVALID
+      code === 129 || // ERR_SSL_WEAK_SERVER_EPHEMERAL_DH_KEY
+      /CERT/.test(this.props.pageState.description) // Catch all
+    );
 
     return (
-      <div className={`error-page ${ERROR_PAGE_STYLE}`}>
+      <div className={`error-page-${this.props.pageId} ${ERROR_PAGE_STYLE}`}>
         {isCertError
-          ? <CertErrorPage url={this.props.url}
+          ? <CertErrorPage url={this.props.pageLocation}
             code={this.props.pageState.code}
             description={this.props.pageState.description}
             certificate={this.props.pageState.certificate} />
-          : <NetErrorPage url={this.props.url}
+          : <NetErrorPage url={this.props.pageLocation}
             code={this.props.pageState.code}
             description={this.props.pageState.description} />
         }
@@ -63,9 +68,18 @@ class ErrorPage extends Component {
 ErrorPage.displayName = 'ErrorPage';
 
 ErrorPage.propTypes = {
-  hidden: PropTypes.bool,
-  url: PropTypes.string.isRequired,
+  hidden: PropTypes.bool.isRequired,
+  pageId: PropTypes.string.isRequired,
+  pageLocation: PropTypes.string.isRequired,
   pageState: SharedPropTypes.PageState.isRequired,
 };
 
-export default ErrorPage;
+function mapStateToProps(state, ownProps) {
+  const page = PagesSelectors.getPageById(state, ownProps.pageId);
+  return {
+    pageLocation: page ? page.location : '',
+    pageState: page ? page.state : {},
+  };
+}
+
+export default connect(mapStateToProps)(ErrorPage);

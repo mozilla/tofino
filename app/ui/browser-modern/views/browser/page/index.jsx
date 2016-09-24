@@ -14,10 +14,10 @@ import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
 import { logger } from '../../../../../shared/logging';
-import ErrorPage from './error-page';
-import * as SharedPropTypes from '../../../model/shared-prop-types';
 
 import Style from '../../../../shared/style';
+import ErrorPage from './error-page';
+
 import PageState from '../../../model/page-state';
 import * as Endpoints from '../../../../../shared/constants/endpoints';
 import * as UIActions from '../../../actions/ui-actions';
@@ -230,10 +230,8 @@ class Page extends Component {
     return (
       <div id={`browser-page-${this.props.pageId}`}
         className={`browser-page ${PAGE_STYLE}`}>
-        <ErrorPage
-          hidden={this.props.pageState.load !== PageState.STATES.FAILED}
-          url={this.props.pageLocation}
-          pageState={this.props.pageState} />
+        <ErrorPage pageId={this.props.pageId}
+          hidden={!this.props.showErrorPage} />
         <webview is="webview"
           ref={e => this.webview = e}
           class={WEB_VIEW_STYLE}
@@ -248,15 +246,13 @@ Page.displayName = 'Page';
 Page.propTypes = {
   dispatch: PropTypes.func.isRequired,
   pageId: PropTypes.string.isRequired,
-  pageLocation: PropTypes.string.isRequired,
-  pageState: SharedPropTypes.PageState.isRequired,
+  showErrorPage: PropTypes.bool.isRequired,
 };
 
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
   return {
-    pageLocation: page ? page.location : '',
-    pageState: PagesSelectors.getPageState(state, ownProps.pageId),
+    showErrorPage: page ? page.state.load === PageState.STATES.FAILED : false,
   };
 }
 
