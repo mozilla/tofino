@@ -35,18 +35,26 @@ class ErrorPage extends Component {
   }
 
   render() {
+    if (this.props.hidden) {
+      return null;
+    }
+
     const code = Math.abs(this.props.pageState.get('code'));
     const isCertError = code === 501 || // ERR_CERT_AUTHORITY_INVALID
                         code === 129 || // ERR_SSL_WEAK_SERVER_EPHEMERAL_DH_KEY
                         /CERT/.test(this.props.pageState.get('description')); // Catch all
-    const page = isCertError
-      ? <CertErrorPage {...this.props} />
-      : <NetErrorPage {...this.props} />;
 
     return (
-      <div className={`error-page ${ERROR_PAGE_STYLE}`}
-        hidden={this.props.hidden}>
-        {page}
+      <div className={`error-page ${ERROR_PAGE_STYLE}`}>
+        {isCertError
+          ? <CertErrorPage url={this.props.url}
+            code={this.props.pageState.code}
+            description={this.props.pageState.description}
+            certificate={this.props.pageState.certificate} />
+          : <NetErrorPage url={this.props.url}
+            code={this.props.pageState.code}
+            description={this.props.pageState.description} />
+        }
       </div>
     );
   }
@@ -56,6 +64,7 @@ ErrorPage.displayName = 'ErrorPage';
 
 ErrorPage.propTypes = {
   hidden: PropTypes.bool,
+  url: PropTypes.string.isRequired,
   pageState: SharedPropTypes.PageState.isRequired,
 };
 

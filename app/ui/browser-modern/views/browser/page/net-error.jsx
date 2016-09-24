@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes, Component } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import * as SharedPropTypes from '../../../model/shared-prop-types';
 
 import Style from '../../../../shared/style';
 
@@ -43,7 +42,7 @@ class NetErrorPage extends Component {
             If your computer or network is protected by a firewall or proxy,
             make sure that Tofino is permitted to access the Web.
           </li>
-          <li>{this.props.pageState.get('description')} ({this.props.pageState.get('code')})</li>
+          <li>{this.props.description} ({this.props.code})</li>
         </ul>
       </div>
     );
@@ -54,7 +53,8 @@ NetErrorPage.displayName = 'NetErrorPage';
 
 NetErrorPage.propTypes = {
   url: PropTypes.string.isRequired,
-  pageState: SharedPropTypes.PageState.isRequired,
+  code: PropTypes.number.isRequired,
+  description: PropTypes.string.isRequired,
 };
 
 export default NetErrorPage;

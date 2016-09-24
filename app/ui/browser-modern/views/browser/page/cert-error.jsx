@@ -12,9 +12,9 @@ specific language governing permissions and limitations under the License.
 
 import React, { PropTypes, Component } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import * as SharedPropTypes from '../../../model/shared-prop-types';
 
 import Style from '../../../../shared/style';
+import * as SharedPropTypes from '../../../model/shared-prop-types';
 
 const CONTAINER_STYLE = Style.registerStyle({
   width: '40%',
@@ -36,9 +36,9 @@ class CertErrorPage extends Component {
   }
 
   render() {
+    const cert = this.props.certificate;
+    const certData = cert && cert.data ? cert.data.toString('ascii') : null;
     const certElements = [];
-    const cert = this.props.pageState.get('certificate');
-    const certData = cert && cert.get('data') ? cert.get('data').toString('ascii') : null;
 
     // See all properties `certificate` may have here
     // http://electron.atom.io/docs/api/app/#event-certificate-error
@@ -70,7 +70,7 @@ class CertErrorPage extends Component {
           Tofino has not connected to this website.
         </p>
         <ul>
-          <li>{this.props.pageState.get('description')} ({this.props.pageState.get('code')})</li>
+          <li>{this.props.description} ({this.props.code})</li>
         </ul>
         <ul className="certificate">
           {certElements}
@@ -89,7 +89,9 @@ CertErrorPage.displayName = 'CertErrorPage';
 
 CertErrorPage.propTypes = {
   url: PropTypes.string.isRequired,
-  pageState: SharedPropTypes.PageState.isRequired,
+  code: PropTypes.number.isRequired,
+  description: PropTypes.string.isRequired,
+  certificate: SharedPropTypes.SSLCertificate.isRequired,
 };
 
 export default CertErrorPage;
