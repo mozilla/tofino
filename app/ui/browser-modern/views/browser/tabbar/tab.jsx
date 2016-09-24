@@ -111,7 +111,7 @@ class Tab extends Component {
           imgPositionHover="-17px -1px"
           imgPositionActive="-33px -1px"
           onClick={this.handleTabClose} />
-        <TabPointerArea tooltipText={this.props.pageTitle || this.props.pageLocation}
+        <TabPointerArea pageId={this.props.pageId}
           onMouseDown={this.handleTabPick} />
         <TabVisuals />
       </div>
@@ -124,8 +124,6 @@ Tab.displayName = 'Tab';
 Tab.propTypes = {
   dispatch: PropTypes.func.isRequired,
   pageId: PropTypes.string.isRequired,
-  pageTitle: PropTypes.string.isRequired,
-  pageLocation: PropTypes.string.isRequired,
   isActive: PropTypes.bool.isRequired,
   isBeforeActive: PropTypes.bool.isRequired,
   isAfterActive: PropTypes.bool.isRequired,
@@ -140,8 +138,7 @@ function mapStateToProps(state, ownProps) {
   const selectedPageIndex = PagesSelectors.getPageIndexById(state, selectedPageId);
 
   return {
-    pageTitle: page ? page.title : '',
-    pageLocation: page ? page.location : '',
+    tooltipText: page ? page.title || page.meta.title || page.location : '',
     isActive: selectedPageId === ownProps.pageId,
     isBeforeActive: selectedPageIndex === pageIndex + 1,
     isAfterActive: selectedPageIndex === pageIndex - 1,
