@@ -93,7 +93,7 @@ class AutocompletedSearch extends Component {
         if (showSelectionList) {
           this.setState({ showSelectionList: false });
         } else {
-          this.inputbar.value = this.props.defaultValue || '';
+          this.inputbar.value = this.inputbar.defaultValue || '';
           this.inputbar.select();
         }
         break;
@@ -179,7 +179,6 @@ const SelectionListProps = {
 AutocompletedSearch.propTypes = {
   ...SelectionListProps,
   className: PropTypes.string,
-  defaultValue: PropTypes.string,
   onChange: PropTypes.func,
   onKeyDown: PropTypes.func,
 };
