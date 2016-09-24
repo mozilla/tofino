@@ -12,8 +12,11 @@ specific language governing permissions and limitations under the License.
 
 import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import { connect } from 'react-redux';
 
 import Style from '../../../../shared/style';
+
+import * as PagesSelectors from '../../../selectors/pages';
 
 /**
  * Tab components are visually laid out in such a way that resuts in complex
@@ -57,4 +60,12 @@ TabPointerArea.propTypes = {
   onMouseUp: PropTypes.func,
 };
 
-export default TabPointerArea;
+function mapStateToProps(state, ownProps) {
+  const page = PagesSelectors.getPageById(state, ownProps.pageId);
+
+  return {
+    tooltipText: page ? page.title || page.meta.title || page.location : '',
+  };
+}
+
+export default connect(mapStateToProps)(TabPointerArea);
