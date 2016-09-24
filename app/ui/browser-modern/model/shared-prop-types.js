@@ -32,6 +32,7 @@ export const Pages = ImmutablePropTypes.listOf(Page.isRequired);
 export const PageMeta = PropTypes.instanceOf(PageMetaModel);
 export const PageState = PropTypes.instanceOf(PageStateModel);
 export const PageMetas = ImmutablePropTypes.listOf(PageMeta.isRequired);
+
 export const SSLCertificate = PropTypes.instanceOf(SSLCertificateModel);
 
 export const PageLocalHistoryItem = PropTypes.instanceOf(PageLocalHistoryItemModel);
