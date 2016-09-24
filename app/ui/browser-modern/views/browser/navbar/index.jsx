@@ -12,18 +12,13 @@ specific language governing permissions and limitations under the License.
 
 import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import { connect } from 'react-redux';
 
 import Style from '../../../../shared/style';
 import Location from '../location';
 import NavigationButtons from './navigation-buttons';
 import ToolbarButtons from './toolbar-buttons';
 
-import * as ContentURLs from '../../../../../shared/constants/content-pages-locations';
 import * as UIConstants from '../../../constants/ui';
-import * as UIActions from '../../../actions/ui-actions';
-import * as UISelectors from '../../../selectors/ui';
-import * as ExternalEffects from '../../../actions/external-effects';
 
 const NAVBAR_STYLE = Style.registerStyle({
   alignItems: 'center',
@@ -37,29 +32,6 @@ class NavBar extends Component {
   constructor(props) {
     super(props);
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-  }
-
-  handleOverviewButtonClick = () => {
-    this.props.dispatch((dispatch, getState) => {
-      const isOverviewVisible = UISelectors.getOverviewVisible(getState());
-      if (isOverviewVisible) {
-        dispatch(UIActions.hideOverview());
-      } else {
-        dispatch(UIActions.showOverview());
-      }
-    });
-  }
-
-  handleBookmarksButtonClick = () => {
-    this.props.onNavigateTo(this.props.pageId, ContentURLs.STARS_PAGE);
-  }
-
-  handleHomeButtonClick = () => {
-    this.props.onNavigateTo(this.props.pageId, UIConstants.HOME_PAGE);
-  }
-
-  handleAppMenuClick = () => {
-    this.props.dispatch(ExternalEffects.openAppMenu());
   }
 
   render() {
@@ -83,7 +55,6 @@ class NavBar extends Component {
 NavBar.displayName = 'NavBar';
 
 NavBar.propTypes = {
-  dispatch: PropTypes.func.isRequired,
   pageId: PropTypes.string.isRequired,
   onNavigateBack: PropTypes.func.isRequired,
   onNavigateForward: PropTypes.func.isRequired,
@@ -92,4 +63,4 @@ NavBar.propTypes = {
   onNavigateInHistory: PropTypes.func.isRequired,
 };
 
-export default connect()(NavBar);
+export default NavBar;
