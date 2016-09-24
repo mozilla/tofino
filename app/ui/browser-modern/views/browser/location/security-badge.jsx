@@ -27,30 +27,10 @@ class SecurityBadge extends Component {
   }
 
   render() {
-    // Since we have unconfigurable security settings, if we access an HTTPS page and it loads,
-    // it is considered secure. Otherwise, all HTTP pages are insecure. Also, since
-    // we block all mixed content, this is even easier.
-    let image = 'ssl-insecure.svg';
-    if (/^https:/.test(this.props.url) && !this.props.errorState) {
-      image = 'ssl-secure.svg';
-    }
-
-    // If we have a tofino:// page, if the URL is empty (occurs during
-    // some page loads in our state), or if the page is still loading (many sites
-    // use http -> https redirects, we shouldn't penalize them for a quick interstitial),
-    // just hide the icon
-    let hidden = false;
-    if (!this.props.url ||
-        this.props.url.startsWith(TOFINO_PROTOCOL) ||
-        this.props.loadState === PageStateModel.STATES.CONNECTING ||
-        this.props.loadState === PageStateModel.STATES.LOADING) {
-      hidden = true;
-    }
-
     return (
       <Btn title="Connection"
-        hidden={hidden}
-        image={image}
+        hidden={this.props.hidden}
+        image={this.props.image}
         imgWidth="16px"
         imgHeight="16px"
         onClick={this.props.onClick} />
@@ -61,18 +41,40 @@ class SecurityBadge extends Component {
 SecurityBadge.displayName = 'SecurityBadge';
 
 SecurityBadge.propTypes = {
-  url: PropTypes.string.isRequired,
-  loadState: PropTypes.string,
-  errorState: PropTypes.string,
+  hidden: PropTypes.bool.isRequired,
+  image: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
+  const pageLocation = page ? page.location : '';
+  const pageLoadState = page ? PagesSelectors.getPageState(state, ownProps.pageId).load : '';
+  const pageErrorState = page ? PagesSelectors.getPageState(state, ownProps.pageId).error : '';
+
+  // If we have a tofino:// page, if the URL is empty (occurs during
+  // some page loads in our state), or if the page is still loading (many sites
+  // use http -> https redirects, we shouldn't penalize them for a quick interstitial),
+  // just hide the icon
+  let hidden = false;
+  if (!pageLocation ||
+      pageLocation.startsWith(TOFINO_PROTOCOL) ||
+      pageLoadState === PageStateModel.STATES.CONNECTING ||
+      pageLoadState === PageStateModel.STATES.LOADING) {
+    hidden = true;
+  }
+
+  // Since we have unconfigurable security settings, if we access an HTTPS page and it loads,
+  // it is considered secure. Otherwise, all HTTP pages are insecure. Also, since
+  // we block all mixed content, this is even easier.
+  let image = 'ssl-insecure.svg';
+  if (/^https:/.test(pageLocation) && !pageErrorState) {
+    image = 'ssl-secure.svg';
+  }
+
   return {
-    url: page ? page.location : '',
-    loadState: page ? PagesSelectors.getPageState(state, ownProps.pageId).load : '',
-    errorState: page ? PagesSelectors.getPageState(state, ownProps.pageId).error : '',
+    hidden,
+    image,
   };
 }
 
