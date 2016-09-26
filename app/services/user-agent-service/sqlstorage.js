@@ -22,7 +22,6 @@ import path from 'path';
 import escaper from 'true-html-escape';
 import { DB, verbose } from 'promise-sqlite';
 
-import { Bookmark } from '../../shared/model';
 import { ProfileStorageSchemaV5 } from './profile-schema';
 import { SessionEndReason, SessionStartReason, SnippetSize, StarOp, VisitType } from './storage';
 import { logger } from '../../shared/logging';
@@ -296,6 +295,16 @@ export class ProfileStorage {
     return out;
   }
 
+  _escape(s) {
+    if (!s) {
+      return s;
+    }
+
+    return escaper.escape(s)
+      .replace(/╞/g, '<b>')
+      .replace(/╡/g, '</b>');
+  }
+
   /**
    * Search for places that match title, URL, or saved content
    * since the specified timestamp.
@@ -311,7 +320,7 @@ export class ProfileStorage {
   async query(string, since = 0, limit = 10, snippetSize = SnippetSize.medium) {
     const contentMatches = `
     SELECT p.id AS place,
-           p.url AS uri,
+           p.url AS url,
            pages.title AS title,
            snippet(pages, '╞', '╡', '…', -1, ?) AS snippet,
            pages.ts AS lastVisited
@@ -321,7 +330,7 @@ export class ProfileStorage {
 
     const visitMatches = `
     SELECT place,
-           url AS uri,
+           url,
            lastTitle AS title,
            NULL AS snippet,
            lastVisited
@@ -332,7 +341,7 @@ export class ProfileStorage {
 
     const query = `
     SELECT place,
-           uri,
+           url,
            MAX(title) AS title,
            MAX(snippet) AS snippet,
            MAX(lastVisited) AS lastVisited
@@ -348,20 +357,14 @@ export class ProfileStorage {
     // 1. We can't rely on the retrieved content correctly including the entirety of an escaped
     //    character like '&amp;'.
     // 2. We'd like to be able to match on the unescaped text.
-    function escape(s) {
-      if (!s) {
-        return s;
-      }
-
-      return escaper.escape(s)
-                    .replace(/╞/g, '<b>')
-                    .replace(/╡/g, '</b>');
-    }
-
-    rows.forEach(row => {
-      row.snippet = escape(row.snippet);
-    });
-    return rows;
+    return rows.map(row =>
+      ({
+        url: row.url,
+        title: row.title,
+        snippet: this._escape(row.snippet),
+        lastVisited: row.lastVisited,
+      })
+    );
   }
 
   async visitedMatches(substring, since = 0, limit = 10) {
@@ -385,7 +388,7 @@ export class ProfileStorage {
     // Fetch all places visited, with the latest timestamp for each.
     const query = `
       SELECT h.place AS place,
-             h.url AS uri,
+             h.url AS url,
              h.lastTitle AS title,
              pages.excerpt AS snippet,
              h.lastVisited AS lastVisited
@@ -396,7 +399,15 @@ export class ProfileStorage {
       LIMIT ?
     `;
 
-    return await this.db.all(query, [since, limit]);
+    const rows = await this.db.all(query, [since, limit]);
+    return rows.map(row =>
+      ({
+        url: row.url,
+        title: row.title,
+        snippet: this._escape(row.snippet),
+        lastVisited: row.lastVisited,
+      })
+    );
   }
 
   async getStarredWithOrderByAndLimit(newestFirst, limit) {
@@ -429,13 +440,16 @@ export class ProfileStorage {
   async recentlyStarred(limit = 5) {
     const rows = await this.getStarredWithOrderByAndLimit(true, limit);
     return rows.map(row =>
-      new Bookmark({
-        title: row.title, location: row.url, visitedAt: row.ts,
-      }));
+      ({
+        url: row.url,
+        title: row.title,
+        lastVisited: row.ts,
+      })
+    );
   }
 
   async savePage(page, session, now = microtime.now()) {
-    const place = await this.savePlace(page.uri, now);
+    const place = await this.savePlace(page.url, now);
     const query = `
     INSERT INTO pages (place, session, ts, title, excerpt, content)
     VALUES (?, ?, ?, ?, ?, ?)

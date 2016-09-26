@@ -77,9 +77,6 @@ describe('dependencies', () => {
       'coveralls',
       'nyc',
 
-      // Required dynamically in mocha.opts
-      'isomorphic-fetch',
-
       // Webpack loaders.
       'babel-loader',
       'json-loader',

@@ -30,6 +30,7 @@ describe('Action - CLOSE_TAB', () => {
   });
 
   afterEach(fetchMock.reset);
+  after(fetchMock.restore);
 
   it('Should maintain tab selection when destroying a tab before the selected tab', function() {
     const { getCurrentPageIndex, getPages, dispatch } = this;
@@ -152,7 +153,7 @@ describe('Action - CLOSE_TAB', () => {
     dispatch(actions.didStartSession(getPages().get(1).id, 22, 11));
 
     const URL = `^${endpoints.UA_SERVICE_HTTP}`; // Observe leading caret ^ (caret)!
-    const expectedURL = `${endpoints.UA_SERVICE_HTTP}/session/end`;
+    const expectedURL = `${endpoints.UA_SERVICE_HTTP}/sessions/end`;
 
     fetchMock.mock(URL, 200);
 
@@ -160,7 +161,7 @@ describe('Action - CLOSE_TAB', () => {
 
     await utils.waitUntil(() => fetchMock.lastUrl(URL) === expectedURL);
 
-    expect(fetchMock.lastUrl(URL)).toEqual(`${endpoints.UA_SERVICE_HTTP}/session/end`);
+    expect(fetchMock.lastUrl(URL)).toEqual(`${endpoints.UA_SERVICE_HTTP}/sessions/end`);
     expect(fetchMock.lastOptions(URL).method).toEqual('POST');
     expect(fetchMock.lastOptions(URL).json)
       .toEqual({ session: 22, reason: undefined });

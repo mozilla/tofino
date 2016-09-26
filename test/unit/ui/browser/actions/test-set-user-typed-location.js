@@ -37,6 +37,9 @@ describe('Action - SET_USER_TYPED_LOCATION', () => {
     dispatch(actions.setCurrentTab(this.getPages().get(0).id));
   });
 
+  afterEach(fetchMock.reset);
+  after(fetchMock.restore);
+
   it('Should update page values', function() {
     const { dispatch, getPages, getUserTypedLocation } = this;
 
@@ -57,7 +60,7 @@ describe('Action - SET_USER_TYPED_LOCATION', () => {
     }));
 
     expect(fetchMock.lastUrl(URL))
-      .toEqual(`${endpoints.UA_SERVICE_HTTP}/query?q=${encodeURIComponent('Bar')}`);
+      .toEqual(`${endpoints.UA_SERVICE_HTTP}/pages?q=${encodeURIComponent('Bar')}`);
     expect(fetchMock.lastOptions(URL).method).toEqual('GET');
   });
 });

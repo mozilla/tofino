@@ -102,6 +102,7 @@ export function makeServer(version, port) {
     return new Promise((resolve, reject) => {
       if (!server) {
         reject(new Error('The server was not started yet.'));
+        return;
       }
       server.close(err => {
         if (err) {

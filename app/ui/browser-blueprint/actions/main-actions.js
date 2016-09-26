@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import * as uuid from 'uuid';
-import * as userAgent from '../../shared/util/user-agent';
+import userAgentHttpClient from '../../../shared/user-agent-http-client';
 
 import * as types from '../constants/action-types';
 import * as actions from '../actions/main-actions';
@@ -39,7 +39,7 @@ export function createTab(location = undefined, ancestorId = undefined,
     }
 
     // TODO: properly track window scope.
-    userAgent.createSession(id, { ancestor: ancestorId, reason }).then(({ session }) =>
+    userAgentHttpClient.createSession(id, { ancestor: ancestorId, reason }).then(({ session }) =>
       dispatch(didStartSession(id, session, ancestorId)));
   };
 }
@@ -67,7 +67,7 @@ export function closeTab(pageId) {
     // Notify User Agent with sessionId before closing the tab (and losing the sessionId).
     const page = getPageById(getState(), pageId);
     if (page) {
-      userAgent.destroySession(page, { reason });
+      userAgentHttpClient.destroySession(page, { reason });
     }
 
     dispatch({ type: types.CLOSE_TAB, pageId, instrument: true });
@@ -146,7 +146,7 @@ export function setUserTypedLocation(pageId, payload) {
     // Empty input could happen if a page finishes loading and the userTyped
     // state is going to be reset.
     if (payload.text) {
-      userAgent.query({ text: payload.text }).then(({ results }) =>
+      userAgentHttpClient.query({ text: payload.text }).then(({ results }) =>
         dispatch(actions.completions(payload.text, results)));
     }
   };
@@ -158,7 +158,7 @@ export function bookmark(pageId, url, title = undefined) {
     dispatch({ type: types.SET_BOOKMARK_STATE, url, isBookmarked: true, title });
 
     const page = getPageById(getState(), pageId);
-    userAgent.createStar(page, { url, title });
+    userAgentHttpClient.createStar(page, { url, title });
   };
 }
 
@@ -168,7 +168,7 @@ export function unbookmark(pageId, url) {
     dispatch({ type: types.SET_BOOKMARK_STATE, url, isBookmarked: false });
 
     const page = getPageById(getState(), pageId);
-    userAgent.destroyStar(page, { url });
+    userAgentHttpClient.destroyStar(page, { url });
   };
 }
 

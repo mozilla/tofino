@@ -33,11 +33,11 @@ export default function(state = initialState, action) {
 }
 
 function showHistory(state, visitedPages) {
-  const records = visitedPages.map(p => new VisitedPage(p));
+  const records = visitedPages.map(p => new VisitedPage({ uri: p.url, ...p }));
   return state.setIn(['uiState', 'visitedPages'], Immutable.List.of(...records));
 }
 
 function showStars(state, starredItems) {
-  const records = starredItems.map(p => new StarredItem(p));
+  const records = starredItems.map(p => new StarredItem({ location: p.url, ...p }));
   return state.setIn(['uiState', 'starredItems'], Immutable.List.of(...records));
 }
