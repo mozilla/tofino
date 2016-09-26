@@ -44,11 +44,11 @@ class ChromeArea extends Component {
         <WindowControls />
         <TabBar />
         <DeveloperBar />
+        <StatusBar />
         {this.props.pageIds.map(pageId => (
           <div key={`browser-page-chrome-area-${pageId}`}
             className="browser-page-chrome-area"
             hidden={pageId !== this.props.selectedPageId}>
-            <StatusBar />
             <SearchBar pageId={pageId} />
           </div>
         ))}
