@@ -45,7 +45,7 @@
     "fathom-web": "1.1.2",
     "fs-extra": "0.30.0",
     "immutable": "3.7.6",
-    "lodash": "4.16.0",
+    "lodash": "4.16.2",
     "microtime-fast": "1.0.2",
     "morgan": "1.7.0",
     "page-metadata-parser": "0.3.0",
