@@ -35,6 +35,10 @@ const NEW_TAB_BUTTON_CONTAINER_STYLE = Style.registerStyle({
   marginLeft: `-${UIConstants.TAB_OVERLAP * 2}px`,
 });
 
+const NEW_TAB_BUTTON_ELEMENT_STYLE = Style.registerStyle({
+  pointerEvents: 'all',
+});
+
 class NewTabBtn extends Component {
   constructor(props) {
     super(props);
@@ -48,7 +52,7 @@ class NewTabBtn extends Component {
   render() {
     return (
       <div className={NEW_TAB_BUTTON_CONTAINER_STYLE}>
-        <Btn className="browser-new-tab-button"
+        <Btn className={`browser-new-tab-button ${NEW_TAB_BUTTON_ELEMENT_STYLE}`}
           title="New tab"
           width="18px"
           height="20px"

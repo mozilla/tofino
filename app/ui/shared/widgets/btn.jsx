@@ -25,7 +25,6 @@ export const BKG_SIZE_DEFAULT = 'contain';
 const BUTTON_STYLE = Style.registerStyle({
   WebkitUserSelect: 'none',
   WebkitAppRegion: 'no-drag',
-  pointerEvents: 'all',
   display: 'flex',
   flexShrink: 0,
   alignItems: 'center',

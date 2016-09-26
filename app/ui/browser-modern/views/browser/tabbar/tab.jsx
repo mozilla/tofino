@@ -55,6 +55,10 @@ const TAB_STYLE = Style.registerStyle({
   },
 });
 
+const TAB_CLOSE_BUTTON_STYLE = Style.registerStyle({
+  pointerEvents: 'all',
+});
+
 class Tab extends Component {
   constructor(props) {
     super(props);
@@ -96,7 +100,7 @@ class Tab extends Component {
         data-before-active-tab={this.props.isBeforeActive && !this.props.isOverviewVisible}
         data-after-active-tab={this.props.isAfterActive && !this.props.isOverviewVisible}>
         <TabContents pageId={this.props.pageId} />
-        <Btn className="tab-close-button"
+        <Btn className={`tab-close-button ${TAB_CLOSE_BUTTON_STYLE}`}
           title="Close tab"
           width="14px"
           height="14px"

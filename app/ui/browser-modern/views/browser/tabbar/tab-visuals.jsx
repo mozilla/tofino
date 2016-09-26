@@ -17,12 +17,10 @@ import Style from '../../../../shared/style';
 
 /**
  * This component is simply responsible for rendering the curvy tabs background
- * in a purely visual non-interactive non-layout-affecting fashion.
+ * in a purely visual non-layout-affecting fashion.
  */
 
 const TAB_VISUALS_STYLE = Style.registerStyle({
-  // Interaction with this component is not intended.
-  pointerEvents: 'none',
   // Make sure this is underneath other sibling interactive or visual elements.
   zIndex: -1,
 });
