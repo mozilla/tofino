@@ -7,7 +7,7 @@ import os from 'os';
 import builder from 'electron-builder';
 import zipdir from 'zip-dir';
 import { thenify } from 'thenify-all';
-import { getManifest, getAppManifest } from './utils';
+import { getAppManifest } from './utils';
 
 import * as Const from './utils/const';
 import { getElectronVersion, getDownloadOptions } from './utils/electron';
@@ -20,6 +20,9 @@ const archIfNotx64 = ARCH === 'x64' ? '' : `-${ARCH}`;
 
 const EXENAME = getAppManifest().productName;
 const APPNAME = getAppManifest().name;
+const VERSION = getAppManifest().version;
+
+const PACKAGENAME = `tofino-${PLATFORM}-${ARCH}`;
 
 // electron-builder outputs its targets using different naming schemes depending
 // on architecture and platform. We want them to be fairly consistent so this
@@ -28,36 +31,34 @@ const fileChanges = {
   win32: {
     copies: [
       [path.join(Const.PACKAGED_DIST_DIR, `win${archIfNotx64}`,
-                 `${EXENAME} Setup ${getAppManifest().version}${archIfNotx64}.exe`),
-       path.join(Const.PACKAGED_DIST_DIR, `tofino-win32-${ARCH}.exe`)],
+                 `${EXENAME} Setup ${VERSION}${archIfNotx64}.exe`),
+       path.join(Const.PACKAGED_DIST_DIR, `${PACKAGENAME}.exe`)],
 
       [path.join(Const.PACKAGED_DIST_DIR, `win${archIfNotx64}`,
-                 `${APPNAME}-${getAppManifest().version}-full.nupkg`),
-       path.join(Const.PACKAGED_DIST_DIR, `tofino-${getManifest().version}-full.nupkg`)],
+                 `${APPNAME}-${VERSION}-full.nupkg`),
+       path.join(Const.PACKAGED_DIST_DIR, `${APPNAME}-${VERSION}-full.nupkg`)],
 
       [path.join(Const.PACKAGED_DIST_DIR, `win${archIfNotx64}`, 'RELEASES'),
        path.join(Const.PACKAGED_DIST_DIR, 'RELEASES')],
     ],
     zips: [
       [path.join(Const.PACKAGED_DIST_DIR, `win${archIfNotx64}-unpacked`),
-       path.join(Const.PACKAGED_DIST_DIR, `tofino-${PLATFORM}-${ARCH}.zip`)],
+       path.join(Const.PACKAGED_DIST_DIR, `${PACKAGENAME}.zip`)],
     ],
   },
   darwin: {
     copies: [
-      [path.join(Const.PACKAGED_DIST_DIR, 'mac',
-                 `${EXENAME}-${getAppManifest().version}-mac.zip`),
-       path.join(Const.PACKAGED_DIST_DIR, `tofino-${PLATFORM}-${ARCH}.zip`)],
+      [path.join(Const.PACKAGED_DIST_DIR, 'mac', `${EXENAME}-${VERSION}-mac.zip`),
+       path.join(Const.PACKAGED_DIST_DIR, `${PACKAGENAME}.zip`)],
 
-      [path.join(Const.PACKAGED_DIST_DIR, 'mac',
-                 `${EXENAME}-${getAppManifest().version}.dmg`),
-       path.join(Const.PACKAGED_DIST_DIR, `tofino-${PLATFORM}-${ARCH}.dmg`)],
+      [path.join(Const.PACKAGED_DIST_DIR, 'mac',  `${EXENAME}-${VERSION}.dmg`),
+       path.join(Const.PACKAGED_DIST_DIR, `${PACKAGENAME}.dmg`)],
     ],
   },
   linux: {
-    zips: [
-      [path.join(Const.PACKAGED_DIST_DIR, 'linux'),
-       path.join(Const.PACKAGED_DIST_DIR, `tofino-${PLATFORM}-${ARCH}.zip`)],
+    moves: [
+      [path.join(Const.PACKAGED_DIST_DIR, `${APPNAME}-${VERSION}.tar.bz2`),
+       path.join(Const.PACKAGED_DIST_DIR, `${PACKAGENAME}.tar.bz2`)],
     ],
   },
 };
@@ -83,7 +84,7 @@ export default async function() {
         download: downloadOptions,
         npmRebuild: false,
         linux: {
-          target: [],
+          target: ['tar.bz2'],
         },
         mac: {
           icon: path.join(Const.ROOT, 'branding', 'app-icon.icns'),
@@ -119,6 +120,12 @@ export default async function() {
   if ('copies' in mutations) {
     for (const [from, to] of mutations.copies) {
       await fs.copy(from, to);
+    }
+  }
+
+  if ('moves' in mutations) {
+    for (const [from, to] of mutations.moves) {
+      await fs.rename(from, to);
     }
   }
 
