@@ -60,7 +60,7 @@ The most recent master branch builds are available here. Be warned, they will fr
 
 * https://mozilla-releng-tofino.s3.amazonaws.com/mozilla/tofino/builds/master/tofino-win32-ia32.zip
 * https://mozilla-releng-tofino.s3.amazonaws.com/mozilla/tofino/builds/master/tofino-darwin-x64.zip
-* https://mozilla-releng-tofino.s3.amazonaws.com/mozilla/tofino/builds/master/tofino-linux-x64.zip
+* https://mozilla-releng-tofino.s3.amazonaws.com/mozilla/tofino/builds/master/tofino-linux-x64.tar.bz2
 
 ## Contributing
 
