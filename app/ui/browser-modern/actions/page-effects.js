@@ -15,7 +15,7 @@ import uuid from 'uuid';
 import { getWebViewForPageId } from '../util';
 import * as EffectTypes from '../constants/effect-types';
 import * as PagesSelectors from '../selectors/pages';
-import PageState from '../model/page-state';
+import PageUIState from '../model/page-ui-state';
 
 export function createPageSession(location, options) {
   return {
@@ -162,7 +162,7 @@ export function setCurrentPageZoomLevel(zoomLevel) {
 export function performPageZoomIn(pageId) {
   return (dispatch, getState) => {
     let zoomLevel = PagesSelectors.getPageZoomLevel(getState(), pageId);
-    zoomLevel += PageState.ZOOM_LEVEL_10_PERCENT;
+    zoomLevel += PageUIState.ZOOM_LEVEL_10_PERCENT;
     dispatch(setPageZoomLevel(pageId, zoomLevel));
   };
 }
@@ -176,7 +176,7 @@ export function performCurrentPageZoomIn() {
 export function performPageZoomOut(pageId) {
   return (dispatch, getState) => {
     let zoomLevel = PagesSelectors.getPageZoomLevel(getState(), pageId);
-    zoomLevel -= PageState.ZOOM_LEVEL_10_PERCENT;
+    zoomLevel -= PageUIState.ZOOM_LEVEL_10_PERCENT;
     dispatch(setPageZoomLevel(pageId, zoomLevel));
   };
 }
@@ -189,7 +189,7 @@ export function performCurrentPageZoomOut() {
 
 export function performPageZoomReset(pageId) {
   return dispatch => {
-    dispatch(setPageZoomLevel(pageId, PageState.ZOOM_LEVEL_DEFAULT));
+    dispatch(setPageZoomLevel(pageId, PageUIState.ZOOM_LEVEL_DEFAULT));
   };
 }
 

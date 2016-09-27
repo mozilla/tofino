@@ -17,8 +17,6 @@ import SSLCertificate from './ssl-certificate';
 const PageState = Immutable.Record({
   load: undefined,
   navigationType: undefined,
-  zoomLevel: 0,
-  searchVisible: false,
   code: undefined,
   description: undefined,
   certificate: new SSLCertificate(),
@@ -39,9 +37,5 @@ PageState.NAVIGATION_TYPES = {
   REFRESHED: 'refreshed',
   NAVIGATED_IN_HISTORY: 'navigated-in-history',
 };
-
-// See http://electron.atom.io/docs/api/web-view-tag/#webviewsetzoomlevellevel
-PageState.ZOOM_LEVEL_DEFAULT = 0;
-PageState.ZOOM_LEVEL_10_PERCENT = 0.5;
 
 export default PageState;

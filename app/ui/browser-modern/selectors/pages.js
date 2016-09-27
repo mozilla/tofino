@@ -70,7 +70,7 @@ export function getSelectedPage(state) {
   return getPageById(state, getSelectedPageId(state));
 }
 
-// Page data getters.
+// Page meta/state/ui getters.
 
 export function getPageMeta(state, id) {
   return getPageById(state, id).meta;
@@ -79,6 +79,32 @@ export function getPageMeta(state, id) {
 export function getPageState(state, id) {
   return getPageById(state, id).state;
 }
+
+export function getPageUIState(state, id) {
+  return getPageById(state, id).uiState;
+}
+
+// Page internal state getters.
+
+export function getPageNavigationType(state, id) {
+  return getPageState(state, id).navigationType;
+}
+
+export function getPageHistoryIndex(state, id) {
+  return getPageById(state, id).historyIndex;
+}
+
+// Page internal UI state getters
+
+export function getPageSearchVisible(state, id) {
+  return getPageUIState(state, id).searchVisible;
+}
+
+export function getPageZoomLevel(state, id) {
+  return getPageUIState(state, id).zoomLevel;
+}
+
+// Page misc.
 
 export function getPageCanGoBack(state, id) {
   const { historyIndex } = getPageById(state, id);
@@ -93,20 +119,4 @@ export function getPageCanGoForward(state, id) {
 export function getPageCanRefresh() {
   // Nothing prevents a page from being able to refresh yet.
   return true;
-}
-
-export function getPageSearchVisible(state, id) {
-  return getPageState(state, id).searchVisible;
-}
-
-export function getPageHistoryIndex(state, id) {
-  return getPageById(state, id).historyIndex;
-}
-
-export function getPageNavigationType(state, id) {
-  return getPageState(state, id).navigationType;
-}
-
-export function getPageZoomLevel(state, id) {
-  return getPageState(state, id).zoomLevel;
 }
