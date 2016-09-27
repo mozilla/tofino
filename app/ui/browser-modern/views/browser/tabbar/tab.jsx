@@ -15,7 +15,6 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
 
 import Style from '../../../../shared/style';
-import Btn from '../../../../shared/widgets/btn';
 import TabPointerArea from './tab-pointer-area';
 import TabVisuals from './tab-visuals';
 import TabContents from './tab-contents';
@@ -55,10 +54,6 @@ const TAB_STYLE = Style.registerStyle({
   },
 });
 
-const TAB_CLOSE_BUTTON_STYLE = Style.registerStyle({
-  pointerEvents: 'all',
-});
-
 class Tab extends Component {
   constructor(props) {
     super(props);
@@ -81,15 +76,10 @@ class Tab extends Component {
 
   handleTabPick = e => {
     if (e.button === 1) {
-      this.handleTabClose(e);
+      this.props.dispatch(PageEffects.destroyPageSession(this.props.pageId));
     } else {
       this.props.dispatch(PageActions.setSelectedPage(this.props.pageId));
     }
-  }
-
-  handleTabClose = e => {
-    this.props.dispatch(PageEffects.destroyPageSession(this.props.pageId));
-    e.stopPropagation();
   }
 
   render() {
@@ -100,17 +90,6 @@ class Tab extends Component {
         data-before-active-tab={this.props.isBeforeActive}
         data-after-active-tab={this.props.isAfterActive}>
         <TabContents pageId={this.props.pageId} />
-        <Btn className={`tab-close-button ${TAB_CLOSE_BUTTON_STYLE}`}
-          title="Close tab"
-          width="14px"
-          height="14px"
-          image="close.png"
-          imgWidth="64px"
-          imgHeight="16px"
-          imgPosition="-1px -1px"
-          imgPositionHover="-17px -1px"
-          imgPositionActive="-33px -1px"
-          onClick={this.handleTabClose} />
         <TabPointerArea pageId={this.props.pageId}
           onMouseDown={this.handleTabPick} />
         <TabVisuals />

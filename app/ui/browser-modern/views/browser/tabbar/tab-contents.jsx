@@ -20,9 +20,11 @@ import SpinnerGray from '../../../../shared/widgets/spinner-gray';
 import SpinnerBlue from '../../../../shared/widgets/spinner-blue';
 import WarningIcon from '../../../../shared/widgets/icon-warning';
 import GlobeIcon from '../../../../shared/widgets/icon-globe';
+import Btn from '../../../../shared/widgets/btn';
 
 import PageState from '../../../model/page-state';
 import * as PagesSelectors from '../../../selectors/pages';
+import * as PageEffects from '../../../actions/page-effects';
 
 const TAB_CONTENTS_STYLE = Style.registerStyle({
   flex: 1,
@@ -41,10 +43,19 @@ const TAB_TITLE_STYLE = Style.registerStyle({
   cursor: 'default',
 });
 
+const TAB_CLOSE_BUTTON_STYLE = Style.registerStyle({
+  pointerEvents: 'all',
+});
+
 class TabContents extends Component {
   constructor(props) {
     super(props);
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+  }
+
+  handleTabClose = e => {
+    this.props.dispatch(PageEffects.destroyPageSession(this.props.pageId));
+    e.stopPropagation();
   }
 
   render() {
@@ -71,6 +82,17 @@ class TabContents extends Component {
         <div className={`tab-title ${TAB_TITLE_STYLE}`}>
           {this.props.tabTitle}
         </div>
+        <Btn className={`tab-close-button ${TAB_CLOSE_BUTTON_STYLE}`}
+          title="Close tab"
+          width="14px"
+          height="14px"
+          image="close.png"
+          imgWidth="64px"
+          imgHeight="16px"
+          imgPosition="-1px -1px"
+          imgPositionHover="-17px -1px"
+          imgPositionActive="-33px -1px"
+          onClick={this.handleTabClose} />
       </div>
     );
   }
@@ -79,6 +101,8 @@ class TabContents extends Component {
 TabContents.displayName = 'TabContents';
 
 TabContents.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  pageId: PropTypes.string.isRequired,
   tabTitle: PropTypes.string.isRequired,
   pageFavicon: PropTypes.string,
   pageLoadState: PropTypes.string,
