@@ -26,6 +26,8 @@ import * as BW from './browser-window';
 import * as certs from './certificates';
 import * as ProfileDiffTypes from '../shared/constants/profile-diff-types';
 import UserAgentClient from '../shared/user-agent-client';
+import { parseArgs } from '../shared/environment';
+import { runMochaTests } from '../shared/mocha';
 
 const app = electron.app; // control application life.
 const ipc = electron.ipcMain;
@@ -54,8 +56,20 @@ app.on('ready', async function() {
   // Register http content protocols, e.g. for displaying `tofino://` pages.
   protocols.registerHttpProtocols();
 
-  await BW.createBrowserWindow(userAgentClient, () => {
+  const bw = await BW.createBrowserWindow(userAgentClient, () => {
     instrument.event('browser', 'READY', 'ms', Date.now() - browserStartTime);
+  });
+
+  bw.once('window-ready', async function() {
+    const options = parseArgs();
+    if (options['test']) {
+      try {
+        await runMochaTests(options['test'], { BW, userAgentClient });
+        app.quit();
+      } catch (e) {
+        app.exit(1);
+      }
+    }
   });
 });
 

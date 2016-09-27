@@ -14,6 +14,7 @@ const TEST_DIR = path.join(Const.ROOT, 'test');
 const DEFAULT_UNIT_TESTS = path.join(TEST_DIR, 'unit');
 const DEFAULT_RENDERER_TESTS = path.join(TEST_DIR, 'renderer');
 const DEFAULT_WEBDRIVER_TESTS = path.join(TEST_DIR, 'webdriver');
+const DEFAULT_INTEGRATION_TESTS = path.join(TEST_DIR, 'integration');
 const MOCHA = path.join(Const.NODE_MODULES_DIR, '.bin', 'mocha');
 const ELECTRON_MOCHA = path.join(Const.NODE_MODULES_DIR, '.bin', 'electron-mocha');
 const PATH_TO_ELECTRON_MOCHA_OPTS = path.join(TEST_DIR, 'renderer', 'mocha.opts');
@@ -33,6 +34,8 @@ export default async function(args) {
     await runRendererTests(DEFAULT_RENDERER_TESTS).catch(e => errors.push(e));
     logger.info(colors.cyan('Running webdriver tests...'));
     await runMochaTests(DEFAULT_WEBDRIVER_TESTS).catch(e => errors.push(e));
+    logger.info(colors.cyan('Running integration tests...'));
+    await runIntegrationTests(DEFAULT_INTEGRATION_TESTS).catch(e => errors.push(e));
     if (errors.length) {
       throw errors[0];
     }
@@ -105,5 +108,11 @@ async function runRendererTests(pathToTests) {
         resolve();
       }
     });
+  });
+}
+
+async function runIntegrationTests(pathToTests) {
+  return spawn(getElectronPath(), [Const.LIB_DIR, '--test', pathToTests], {
+    stdio: 'inherit',
   });
 }
