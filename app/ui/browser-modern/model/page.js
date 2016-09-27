@@ -21,7 +21,7 @@ export default class Page extends Immutable.Record({
   id: undefined,
   location: '',
   title: '',
-  favicon_url: undefined,
+  faviconUrl: undefined,
   meta: new PageMeta(),
   state: new PageState(),
   history: Immutable.List(),
