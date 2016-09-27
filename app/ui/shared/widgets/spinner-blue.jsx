@@ -39,7 +39,7 @@ class SpinnerBlue extends Component {
     return (
       <FittedImage {...this.props}
         className={`widget-spinner ${SPINNER_STYLE} ${this.props.className || ''}`}
-        src="assets/loading.png"
+        src="assets/spinner-blue.png"
         width="16px"
         height="16px"
         mode="contain" />

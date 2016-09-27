@@ -65,6 +65,7 @@ const DOMGetters = {
   SpinnerBlue: e => e.find('.widget-spinner'),
   SpinnerGray: e => e.find('.widget-spinner'),
   WarningIcon: e => e.find('.widget-warning-icon'),
+  GlobeIcon: e => e.find('.widget-globe-icon'),
 };
 
 describe('widgets', () => {
