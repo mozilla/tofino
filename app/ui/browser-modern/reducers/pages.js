@@ -17,6 +17,7 @@ import Page from '../model/page';
 import Pages from '../model/pages';
 import PageMeta from '../model/page-meta';
 import PageState from '../model/page-state';
+import PageUIState from '../model/page-ui-state';
 import SSLCertificateModel from '../model/ssl-certificate';
 import PageLocalHistoryItem from '../model/page-local-history-item';
 import * as UIConstants from '../constants/ui';
@@ -45,8 +46,8 @@ export default function(state = new Pages(), action) {
     case ActionTypes.SET_PAGE_STATE:
       return setPageState(state, action.pageId, action.pageState);
 
-    case ActionTypes.SET_PAGE_SEARCH_VISIBILITY:
-      return setPageState(state, action.pageId, { searchVisible: action.visibility });
+    case ActionTypes.SET_PAGE_UI_STATE:
+      return setPageUIState(state, action.pageId, action.pageUIState);
 
     case ActionTypes.SET_LOCAL_PAGE_HISTORY:
       return setLocalPageHistory(state, action.pageId, action.history, action.historyIndex);
@@ -56,9 +57,10 @@ export default function(state = new Pages(), action) {
   }
 }
 
-/* eslint-disable */
-function createPage(state, id, location = UIConstants.HOME_PAGE, options = { selected: true, index: null }) {
-/* eslint-enable */
+function createPage(state, id, location = UIConstants.HOME_PAGE, options = {
+  selected: true,
+  index: null,
+}) {
   return state.withMutations(mut => {
     const page = new Page({ id, location });
     const index = options.index != null ? options.index : state.orderedIds.size;
@@ -167,6 +169,18 @@ function setPageState(state, pageId, pageState) {
       }
 
       mut.update('map', m => m.setIn([pageId, 'state', key], nextValue));
+    }
+  });
+}
+
+function setPageUIState(state, pageId, pageUIState) {
+  return state.withMutations(mut => {
+    for (const [key, value] of Object.entries(pageUIState)) {
+      if (!(key in PageUIState.prototype)) {
+        logger.warn(`Skipping setting of \`${key}\` on page state.`);
+        continue;
+      }
+      mut.update('map', m => m.setIn([pageId, 'uiState', key], value));
     }
   });
 }

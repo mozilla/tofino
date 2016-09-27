@@ -16,6 +16,7 @@ import uuid from 'uuid';
 import { logger } from '../../../shared/logging';
 import PageMeta from './page-meta';
 import PageState from './page-state';
+import PageUIState from './page-ui-state';
 
 export default class Page extends Immutable.Record({
   id: undefined,
@@ -24,6 +25,7 @@ export default class Page extends Immutable.Record({
   faviconUrl: undefined,
   meta: new PageMeta(),
   state: new PageState(),
+  uiState: new PageUIState(),
   history: Immutable.List(),
   historyIndex: -1,
 }, 'Page') {

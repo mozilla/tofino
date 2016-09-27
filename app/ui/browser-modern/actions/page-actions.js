@@ -94,19 +94,23 @@ export function setPageState(pageId, pageState) {
   };
 }
 
-export function showPageSearch(pageId) {
+export function setPageUIState(pageId, pageUIState) {
   return {
-    type: ActionTypes.SET_PAGE_SEARCH_VISIBILITY,
-    visibility: true,
+    type: ActionTypes.SET_PAGE_UI_STATE,
     pageId,
+    pageUIState,
+  };
+}
+
+export function showPageSearch(pageId) {
+  return dispatch => {
+    dispatch(setPageUIState(pageId, { searchVisible: true }));
   };
 }
 
 export function hidePageSearch(pageId) {
-  return {
-    type: ActionTypes.SET_PAGE_SEARCH_VISIBILITY,
-    visibility: false,
-    pageId,
+  return dispatch => {
+    dispatch(setPageUIState(pageId, { searchVisible: false }));
   };
 }
 
