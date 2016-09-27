@@ -15,6 +15,7 @@ import Immutable from 'immutable';
 const PageUIState = Immutable.Record({
   zoomLevel: 0,
   searchVisible: false,
+  pinned: false,
 }, 'PageUIState');
 
 // See http://electron.atom.io/docs/api/web-view-tag/#webviewsetzoomlevellevel

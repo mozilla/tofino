@@ -102,6 +102,18 @@ export function setPageUIState(pageId, pageUIState) {
   };
 }
 
+export function setPagePinned(pageId) {
+  return dispatch => {
+    dispatch(setPageUIState(pageId, { pinned: true }));
+  };
+}
+
+export function setPageUnpinned(pageId) {
+  return dispatch => {
+    dispatch(setPageUIState(pageId, { pinned: false }));
+  };
+}
+
 export function showPageSearch(pageId) {
   return dispatch => {
     dispatch(setPageUIState(pageId, { searchVisible: true }));

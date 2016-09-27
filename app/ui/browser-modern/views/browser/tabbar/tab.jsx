@@ -52,6 +52,15 @@ const TAB_STYLE = Style.registerStyle({
     // Make sure this is displayed above other sibling tabs.
     zIndex: 1,
   },
+  '&[data-pinned-tab=true]': {
+    flexShrink: 0,
+    width: `${UIConstants.TAB_PINNED_WIDTH}px`,
+  },
+  [`&[data-pinned-tab=true] .tab-close-button,
+    &[data-pinned-tab=true] .tab-title`
+  ]: {
+    display: 'none',
+  },
 });
 
 class Tab extends Component {
@@ -82,16 +91,26 @@ class Tab extends Component {
     }
   }
 
+  handleTabDoubleClick = () => {
+    if (!this.props.isPinned) {
+      this.props.dispatch(PageActions.setPagePinned(this.props.pageId));
+    } else {
+      this.props.dispatch(PageActions.setPageUnpinned(this.props.pageId));
+    }
+  }
+
   render() {
     return (
       <div className={`browser-tab ${TAB_STYLE}`}
         ref={e => this.root = e}
+        data-pinned-tab={this.props.isPinned}
         data-active-tab={this.props.isActive}
         data-before-active-tab={this.props.isBeforeActive}
         data-after-active-tab={this.props.isAfterActive}>
         <TabContents pageId={this.props.pageId} />
         <TabPointerArea pageId={this.props.pageId}
-          onMouseDown={this.handleTabPick} />
+          onMouseDown={this.handleTabPick}
+          onDoubleClick={this.handleTabDoubleClick} />
         <TabVisuals />
       </div>
     );
@@ -103,6 +122,7 @@ Tab.displayName = 'Tab';
 Tab.propTypes = {
   dispatch: PropTypes.func.isRequired,
   pageId: PropTypes.string.isRequired,
+  isPinned: PropTypes.bool.isRequired,
   isActive: PropTypes.bool.isRequired,
   isBeforeActive: PropTypes.bool.isRequired,
   isAfterActive: PropTypes.bool.isRequired,
@@ -110,7 +130,8 @@ Tab.propTypes = {
 
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
-  const pageIndex = PagesSelectors.getPageIndexById(state, ownProps.pageId);
+  const pageIndex = page ? PagesSelectors.getPageIndexById(state, ownProps.pageId) : -1;
+  const pageIsPinned = page ? PagesSelectors.getPagePinned(state, ownProps.pageId) : false;
 
   const selectedPageId = PagesSelectors.getSelectedPageId(state);
   const selectedPageIndex = PagesSelectors.getPageIndexById(state, selectedPageId);
@@ -119,6 +140,7 @@ function mapStateToProps(state, ownProps) {
 
   return {
     tooltipText: page ? page.title || page.meta.title || page.location : '',
+    isPinned: pageIsPinned,
     isActive: !isOverviewVisible && selectedPageId === ownProps.pageId,
     isBeforeActive: !isOverviewVisible && selectedPageIndex === pageIndex + 1,
     isAfterActive: !isOverviewVisible && selectedPageIndex === pageIndex - 1,
