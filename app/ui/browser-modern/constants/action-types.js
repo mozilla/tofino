@@ -20,6 +20,7 @@ export const CREATE_PAGE = 'CREATE_PAGE';
 export const REMOVE_PAGE = 'REMOVE_PAGE';
 export const SET_SELECTED_PAGE = 'SET_SELECTED_PAGE';
 export const RESET_PAGE_DATA = 'RESET_PAGE_DATA';
+export const SET_PAGE_INDEX = 'SET_PAGE_INDEX';
 export const SET_PAGE_DETAILS = 'SET_PAGE_DETAILS';
 export const SET_PAGE_META = 'SET_PAGE_META';
 export const SET_PAGE_STATE = 'SET_PAGE_STATE';

@@ -70,6 +70,14 @@ export function resetPageData(pageId) {
   };
 }
 
+export function setPageIndex(pageId, pageIndex) {
+  return {
+    type: ActionTypes.SET_PAGE_INDEX,
+    pageId,
+    pageIndex,
+  };
+}
+
 export function setPageDetails(pageId, pageDetails) {
   return {
     type: ActionTypes.SET_PAGE_DETAILS,
@@ -103,13 +111,23 @@ export function setPageUIState(pageId, pageUIState) {
 }
 
 export function setPagePinned(pageId) {
-  return dispatch => {
+  return (dispatch, getState) => {
+    // When there's no pinned pages, the "last pinned page index" will be -1.
+    const lastIndex = PagesSelectors.getLastPinnedPageIndex(getState());
+    dispatch(setPageIndex(pageId, lastIndex + 1));
+    // Set the `pinned` state *last*, so that the above selector
+    // actually does what we want.
     dispatch(setPageUIState(pageId, { pinned: true }));
   };
 }
 
 export function setPageUnpinned(pageId) {
-  return dispatch => {
+  return (dispatch, getState) => {
+    // When there's no pinned pages, the "last pinned page index" will be -1.
+    const lastIndex = PagesSelectors.getLastPinnedPageIndex(getState());
+    dispatch(setPageIndex(pageId, lastIndex));
+    // Set the `pinned` state *last*, so that the above selector
+    // actually does what we want.
     dispatch(setPageUIState(pageId, { pinned: false }));
   };
 }
