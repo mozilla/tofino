@@ -114,7 +114,7 @@ function mapStateToProps(state, ownProps) {
   return {
     tabTitle: page ? page.title || page.meta.title || page.location || 'Loading...' : '',
     pageLocation: page ? page.location : '',
-    pageFavicon: page ? page.favicon_url : '',
+    pageFavicon: page ? page.faviconUrl : '',
     pageLoadState: page ? page.state.load : '',
   };
 }
