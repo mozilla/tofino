@@ -61,6 +61,7 @@ function* setURLBarValue({ urlbar, value, doc, options = { keepSelection: true }
   const isActiveElement = doc.activeElement === urlbar;
 
   urlbar.value = value;
+  urlbar.defaultValue = value;
 
   // Changing the displayed text would clear selection, which we may not want
   // if the entire contents of the input element were previously selected.

@@ -12,11 +12,13 @@ specific language governing permissions and limitations under the License.
 
 import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import omit from 'lodash/omit';
+import { connect } from 'react-redux';
 
-import * as SharedPropTypes from '../../../model/shared-prop-types';
 import PageStateModel from '../../../model/page-state';
 import Btn from '../../../../shared/widgets/btn';
+
+import { TOFINO_PROTOCOL } from '../../../../../shared/constants/endpoints';
+import * as PagesSelectors from '../../../selectors/pages';
 
 class SecurityBadge extends Component {
   constructor(props) {
@@ -25,54 +27,55 @@ class SecurityBadge extends Component {
   }
 
   render() {
-    // Since we have unconfigurable security settings, if we access an HTTPS page and it loads,
-    // it is considered secure. Otherwise, all HTTP pages are insecure. Also, since
-    // we block all mixed content, this is even easier.
-    let image = 'ssl-insecure.svg';
-    if (/^https:/.test(this.props.url) && !this.props.pageState.error) {
-      image = 'ssl-secure.svg';
-    }
-
-    // If we have a tofino:// page, if the URL is empty (occurs during
-    // some page loads in our state), or if the page is still loading (many sites
-    // use http -> https redirects, we shouldn't penalize them for a quick interstitial),
-    // just hide the icon
-    let hidden = this.props.hidden;
-    if (!this.props.url ||
-        this.props.pageState.load === PageStateModel.STATES.CONNECTING ||
-        this.props.pageState.load === PageStateModel.STATES.LOADING ||
-        /^tofino:/.test(this.props.url)) {
-      hidden = true;
-    }
-
     return (
-      <Btn {...omit(this.props, Object.keys(OmittedContainerProps))}
-        image={image}
-        hidden={hidden}>
-        {React.Children.toArray(this.props.children)}
-      </Btn>
+      <Btn title="Connection"
+        hidden={this.props.hidden}
+        image={this.props.image}
+        imgWidth="16px"
+        imgHeight="16px"
+        onClick={this.props.onClick} />
     );
   }
 }
 
 SecurityBadge.displayName = 'SecurityBadge';
 
-const OmittedContainerProps = {
-  url: PropTypes.string.isRequired,
-  image: PropTypes.string,
-  hidden: PropTypes.bool,
-  pageState: SharedPropTypes.PageState.isRequired,
-};
-
 SecurityBadge.propTypes = {
-  ...omit(Btn.propTypes, Object.keys(OmittedContainerProps)),
-  url: OmittedContainerProps.url,
-  pageState: OmittedContainerProps.pageState,
+  hidden: PropTypes.bool.isRequired,
+  image: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
 };
 
-SecurityBadge.defaultProps = {
-  url: '',
-  hidden: false,
-};
+function mapStateToProps(state, ownProps) {
+  const page = PagesSelectors.getPageById(state, ownProps.pageId);
+  const pageLocation = page ? page.location : '';
+  const pageLoadState = page ? PagesSelectors.getPageState(state, ownProps.pageId).load : '';
+  const pageErrorState = page ? PagesSelectors.getPageState(state, ownProps.pageId).error : '';
 
-export default SecurityBadge;
+  // If we have a tofino:// page, if the URL is empty (occurs during
+  // some page loads in our state), or if the page is still loading (many sites
+  // use http -> https redirects, we shouldn't penalize them for a quick interstitial),
+  // just hide the icon
+  let hidden = false;
+  if (!pageLocation ||
+      pageLocation.startsWith(TOFINO_PROTOCOL) ||
+      pageLoadState === PageStateModel.STATES.CONNECTING ||
+      pageLoadState === PageStateModel.STATES.LOADING) {
+    hidden = true;
+  }
+
+  // Since we have unconfigurable security settings, if we access an HTTPS page and it loads,
+  // it is considered secure. Otherwise, all HTTP pages are insecure. Also, since
+  // we block all mixed content, this is even easier.
+  let image = 'ssl-insecure.svg';
+  if (/^https:/.test(pageLocation) && !pageErrorState) {
+    image = 'ssl-secure.svg';
+  }
+
+  return {
+    hidden,
+    image,
+  };
+}
+
+export default connect(mapStateToProps)(SecurityBadge);

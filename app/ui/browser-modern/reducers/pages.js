@@ -150,13 +150,23 @@ function setPageState(state, pageId, pageState) {
         continue;
       }
 
-      let setValue = value;
+      const prevValue = state.getIn(['map', pageId, 'state', key]);
+      let nextValue = value;
 
-      if (key === 'certificate') {
-        setValue = new SSLCertificateModel(value);
+      // Don't update the page load state to "LOADED" if it's not "LOADING".
+      // We're dong this to avoid overwriting failed load states.
+      if (key === 'load' &&
+          value === PageState.STATES.LOADED &&
+          prevValue !== PageState.STATES.LOADING) {
+        logger.warn('Skipping setting a `LOADED` page state.');
+        continue;
       }
 
-      mut.update('map', m => m.setIn([pageId, 'state', key], setValue));
+      if (key === 'certificate') {
+        nextValue = new SSLCertificateModel(value);
+      }
+
+      mut.update('map', m => m.setIn([pageId, 'state', key], nextValue));
     }
   });
 }

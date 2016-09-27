@@ -58,14 +58,8 @@ class ContentArea extends Component {
           <div key={`browser-page-content-area-${pageId}`}
             className={`browser-page-content-area ${PAGE_CONTAINER_STYLE}`}
             data-is-active={pageId === this.props.selectedPageId}>
-            <NavBar pageId={pageId}
-              onNavigateBack={this.props.onNavigateBack}
-              onNavigateForward={this.props.onNavigateForward}
-              onNavigateRefresh={this.props.onNavigateRefresh}
-              onNavigateTo={this.props.onNavigateTo}
-              onNavigateInHistory={this.props.onNavigateInHistory} />
-            <Page pageId={pageId}
-              onMount={this.props.onPageMount} />
+            <NavBar pageId={pageId} />
+            <Page pageId={pageId} />
           </div>
         ))}
       </div>
@@ -76,12 +70,6 @@ class ContentArea extends Component {
 ContentArea.displayName = 'ContentArea';
 
 ContentArea.propTypes = {
-  onPageMount: PropTypes.func.isRequired,
-  onNavigateBack: PropTypes.func.isRequired,
-  onNavigateForward: PropTypes.func.isRequired,
-  onNavigateRefresh: PropTypes.func.isRequired,
-  onNavigateTo: PropTypes.func.isRequired,
-  onNavigateInHistory: PropTypes.func.isRequired,
   pageIds: SharedPropTypes.PageIds.isRequired,
   selectedPageId: PropTypes.string.isRequired,
 };

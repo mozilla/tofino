@@ -96,9 +96,9 @@ class Tab extends Component {
     return (
       <div className={`browser-tab ${TAB_STYLE}`}
         ref={e => this.root = e}
-        data-active-tab={this.props.isActive && !this.props.isOverviewVisible}
-        data-before-active-tab={this.props.isBeforeActive && !this.props.isOverviewVisible}
-        data-after-active-tab={this.props.isAfterActive && !this.props.isOverviewVisible}>
+        data-active-tab={this.props.isActive}
+        data-before-active-tab={this.props.isBeforeActive}
+        data-after-active-tab={this.props.isAfterActive}>
         <TabContents pageId={this.props.pageId} />
         <Btn className={`tab-close-button ${TAB_CLOSE_BUTTON_STYLE}`}
           title="Close tab"
@@ -111,7 +111,7 @@ class Tab extends Component {
           imgPositionHover="-17px -1px"
           imgPositionActive="-33px -1px"
           onClick={this.handleTabClose} />
-        <TabPointerArea tooltipText={this.props.pageTitle || this.props.pageLocation}
+        <TabPointerArea pageId={this.props.pageId}
           onMouseDown={this.handleTabPick} />
         <TabVisuals />
       </div>
@@ -124,12 +124,9 @@ Tab.displayName = 'Tab';
 Tab.propTypes = {
   dispatch: PropTypes.func.isRequired,
   pageId: PropTypes.string.isRequired,
-  pageTitle: PropTypes.string.isRequired,
-  pageLocation: PropTypes.string.isRequired,
   isActive: PropTypes.bool.isRequired,
   isBeforeActive: PropTypes.bool.isRequired,
   isAfterActive: PropTypes.bool.isRequired,
-  isOverviewVisible: PropTypes.bool.isRequired,
 };
 
 function mapStateToProps(state, ownProps) {
@@ -139,13 +136,13 @@ function mapStateToProps(state, ownProps) {
   const selectedPageId = PagesSelectors.getSelectedPageId(state);
   const selectedPageIndex = PagesSelectors.getPageIndexById(state, selectedPageId);
 
+  const isOverviewVisible = UISelectors.getOverviewVisible(state);
+
   return {
-    pageTitle: page ? page.title : '',
-    pageLocation: page ? page.location : '',
-    isActive: selectedPageId === ownProps.pageId,
-    isBeforeActive: selectedPageIndex === pageIndex + 1,
-    isAfterActive: selectedPageIndex === pageIndex - 1,
-    isOverviewVisible: UISelectors.getOverviewVisible(state),
+    tooltipText: page ? page.title || page.meta.title || page.location : '',
+    isActive: !isOverviewVisible && selectedPageId === ownProps.pageId,
+    isBeforeActive: !isOverviewVisible && selectedPageIndex === pageIndex + 1,
+    isAfterActive: !isOverviewVisible && selectedPageIndex === pageIndex - 1,
   };
 }
 

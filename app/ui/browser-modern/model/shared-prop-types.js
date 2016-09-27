@@ -13,7 +13,6 @@ specific language governing permissions and limitations under the License.
 import { PropTypes } from 'react';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 
-import WebViewControllerModel from '../../shared/util/webview-controller';
 import ProfileModel from './profile';
 import PageModel from './page';
 import PageMetaModel from './page-meta';
@@ -21,8 +20,6 @@ import PageLocalHistoryItemModel from './page-local-history-item';
 import LocationAutocompletionModel from './location-autocompletion';
 import PageStateModel from './page-state';
 import SSLCertificateModel from './ssl-certificate';
-
-export const WebViewController = PropTypes.instanceOf(WebViewControllerModel);
 
 export const Profile = PropTypes.instanceOf(ProfileModel);
 export const Profiles = ImmutablePropTypes.listOf(Profile.isRequired);
@@ -35,6 +32,7 @@ export const Pages = ImmutablePropTypes.listOf(Page.isRequired);
 export const PageMeta = PropTypes.instanceOf(PageMetaModel);
 export const PageState = PropTypes.instanceOf(PageStateModel);
 export const PageMetas = ImmutablePropTypes.listOf(PageMeta.isRequired);
+
 export const SSLCertificate = PropTypes.instanceOf(SSLCertificateModel);
 
 export const PageLocalHistoryItem = PropTypes.instanceOf(PageLocalHistoryItemModel);

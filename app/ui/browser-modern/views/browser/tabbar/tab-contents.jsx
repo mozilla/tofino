@@ -68,7 +68,7 @@ class TabContents extends Component {
         )}
         {/* eslint-enable no-nested-ternary */}
         <div className={`tab-title ${TAB_TITLE_STYLE}`}>
-          {this.props.pageTitle || this.props.pageLocation || 'Loading...'}
+          {this.props.tabTitle}
         </div>
       </div>
     );
@@ -78,16 +78,16 @@ class TabContents extends Component {
 TabContents.displayName = 'TabContents';
 
 TabContents.propTypes = {
-  pageTitle: PropTypes.string.isRequired,
-  pageLocation: PropTypes.string.isRequired,
+  tabTitle: PropTypes.string.isRequired,
   pageFavicon: PropTypes.string,
   pageLoadState: PropTypes.string,
 };
 
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
+
   return {
-    pageTitle: page ? page.title : '',
+    tabTitle: page ? page.title || page.meta.title || page.location || 'Loading...' : '',
     pageLocation: page ? page.location : '',
     pageFavicon: page ? page.favicon_url : '',
     pageLoadState: page ? page.state.load : '',

@@ -21,6 +21,7 @@ import HistoryListItem from './history-list-item';
 import { NAVBAR_HEIGHT, TABBAR_HEIGHT } from '../../../constants/ui';
 import * as SharedPropTypes from '../../../model/shared-prop-types';
 import * as PagesSelectors from '../../../selectors/pages';
+import * as PageEffects from '../../../actions/page-effects';
 
 const NAVIGATION_BUTTONS_CONTAINER_STYLE = Style.registerStyle({
   alignItems: 'center',
@@ -52,15 +53,15 @@ class NavigationButtons extends Component {
   }
 
   handleNavigateBackClick = () => {
-    this.props.onNavigateBack(this.props.pageId);
+    this.props.dispatch(PageEffects.navigatePageBack(this.props.pageId));
   }
 
   handleNavigateForwardClick = () => {
-    this.props.onNavigateForward(this.props.pageId);
+    this.props.dispatch(PageEffects.navigatePageForward(this.props.pageId));
   }
 
   handleHistoryPick = ({ index }) => {
-    this.props.onNavigateInHistory(this.props.pageId, index);
+    this.props.dispatch(PageEffects.navigatePageInHistory(this.props.pageId, index));
   }
 
   render() {
@@ -106,13 +107,11 @@ class NavigationButtons extends Component {
 NavigationButtons.displayName = 'NavigationButtons';
 
 NavigationButtons.propTypes = {
+  dispatch: PropTypes.func.isRequired,
   pageId: PropTypes.string.isRequired,
   pageCanGoBack: PropTypes.bool.isRequired,
   pageCanGoForward: PropTypes.bool.isRequired,
   pageHistory: SharedPropTypes.PageLocalHistoryItems.isRequired,
-  onNavigateBack: PropTypes.func.isRequired,
-  onNavigateForward: PropTypes.func.isRequired,
-  onNavigateInHistory: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state, ownProps) {

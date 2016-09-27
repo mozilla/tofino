@@ -14,42 +14,52 @@ import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Style from '../../../../shared/style';
-import Location from '../location';
-import NavigationButtons from './navigation-buttons';
-import ToolbarButtons from './toolbar-buttons';
+import Btn from '../../../../shared/widgets/btn';
+import SecurityBadge from './security-badge';
 
-import * as UIConstants from '../../../constants/ui';
-
-const NAVBAR_STYLE = Style.registerStyle({
+const LOCATION_BAR_INFO_STYLE = Style.registerStyle({
   alignItems: 'center',
-  boxSizing: 'border-box',
-  height: `${UIConstants.NAVBAR_HEIGHT}px`,
-  boxShadow: 'inset 0 -1px 0px 0px var(--theme-navbar-border-bottom-color)',
-  background: 'var(--theme-navbar-background)',
 });
 
-class NavBar extends Component {
+const LOCATION_BAR_SECURITY_BADGE_STYLE = Style.registerStyle({
+  paddingLeft: '2px',
+});
+
+class LocationInfo extends Component {
   constructor(props) {
     super(props);
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
 
+  handleInfoButtonClick = () => {
+    // TODO
+  }
+
+  handleConnectionButtonClick= () => {
+    // TODO
+  }
+
   render() {
     return (
-      <div id={`browser-navbar-${this.props.pageId}`}
-        className={`browser-navbar ${NAVBAR_STYLE}`}>
-        <NavigationButtons pageId={this.props.pageId} />
-        <Location pageId={this.props.pageId} />
-        <ToolbarButtons pageId={this.props.pageId} />
+      <div className={`browser-location-info ${LOCATION_BAR_INFO_STYLE}`}>
+        <Btn title="Info"
+          image="identity-icon.svg#normal"
+          imageHover="identity-icon.svg#hover"
+          imgWidth="16px"
+          imgHeight="16px"
+          onClick={this.handleInfoButtonClick} />
+        <SecurityBadge className={LOCATION_BAR_SECURITY_BADGE_STYLE}
+          pageId={this.props.pageId}
+          onClick={this.handleConnectionButtonClick} />
       </div>
     );
   }
 }
 
-NavBar.displayName = 'NavBar';
+LocationInfo.displayName = 'LocationInfo';
 
-NavBar.propTypes = {
+LocationInfo.propTypes = {
   pageId: PropTypes.string.isRequired,
 };
 
-export default NavBar;
+export default LocationInfo;

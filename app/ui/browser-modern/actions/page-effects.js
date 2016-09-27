@@ -57,6 +57,23 @@ export function navigateCurrentPageTo(location) {
   };
 }
 
+export function navigatePageToInitial(pageId, doc = document) {
+  return (dispatch, getState) => {
+    dispatch({
+      type: EffectTypes.NAVIGATE_PAGE_TO,
+      webview: getWebViewForPageId(doc, pageId),
+      location: PagesSelectors.getPageById(getState(), pageId).location,
+      pageId,
+    });
+  };
+}
+
+export function navigateCurrentPageToInitial() {
+  return (dispatch, getState) => {
+    dispatch(navigatePageToInitial(PagesSelectors.getSelectedPageId(getState())));
+  };
+}
+
 export function navigatePageBack(pageId, doc = document) {
   return {
     type: EffectTypes.NAVIGATE_PAGE_BACK,
