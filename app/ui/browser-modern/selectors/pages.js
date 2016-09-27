@@ -104,6 +104,10 @@ export function getPageZoomLevel(state, id) {
   return getPageUIState(state, id).zoomLevel;
 }
 
+export function getPagePinned(state, id) {
+  return getPageUIState(state, id).pinned;
+}
+
 // Page misc.
 
 export function getPageCanGoBack(state, id) {
