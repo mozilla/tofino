@@ -6,9 +6,10 @@ import expect from 'expect';
 import fs from 'fs';
 import path from 'path';
 import tmp from 'tmp';
-import { UserAgentService } from '../../../app/services/user-agent-service';
-import { UserAgentHttpClient } from '../../../app/shared/user-agent-http-client';
+import UserAgentClient from '../../../app/shared/user-agent-client';
 import * as endpoints from '../../../app/shared/constants/endpoints';
+import * as spawn from '../../../app/main/spawn';
+import * as Const from '../../../build/utils/const';
 
 describe('User Agent Service', () => {
   let tempDir = null;
@@ -22,17 +23,21 @@ describe('User Agent Service', () => {
     (async function () {
       try {
         port += 1; // Advance first, so that we don't stick on a blocked port.
-        stop = await UserAgentService( // eslint-disable-line
-          {
-            port,
-            db: tempDir,
-            version: 'v1',
-            contentServiceOrigin: `${endpoints.TOFINO_PROTOCOL}://`,
-          });
-        userAgentHttpClient = new UserAgentHttpClient({
+        const userAgentClient = new UserAgentClient();
+
+        const details = spawn.startUserAgentService(userAgentClient, {
+          attached: true, // We want to see stdout and stderr.
+          port,
           version: 'v1',
-          host: endpoints.UA_SERVICE_ADDR,
-          port });
+          contentServiceOrigin: `${endpoints.TOFINO_PROTOCOL}://`,
+          profiledir: tempDir,
+          libdir: Const.LIB_DIR, // LIBDIR is not set by webpack during tests.
+        });
+        stop = details.stop;
+
+        await details.connected;
+
+        userAgentHttpClient = userAgentClient.userAgentHttpClient;
 
         done();
       } catch (e) {
