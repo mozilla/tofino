@@ -69,6 +69,7 @@ function createPage(state, id, location = UIConstants.HOME_PAGE, options = {
     const index = options.index != null ? options.index : state.orderedIds.size;
 
     mut.update('orderedIds', l => l.insert(index, page.id));
+    mut.update('ids', s => s.add(page.id));
     mut.update('map', m => m.set(page.id, page));
 
     if (options.selected) {
@@ -84,6 +85,7 @@ function removePage(state, pageId) {
 
     // Remove page first.
     mut.update('orderedIds', l => l.delete(pageIndex));
+    mut.update('ids', s => s.delete(pageId));
     mut.update('map', m => m.delete(pageId));
 
     // If the last page was removed, there's no other page remaining to select.

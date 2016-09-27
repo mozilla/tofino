@@ -16,6 +16,10 @@ export function getUnorderedPages(state) {
   return state.pages.map;
 }
 
+export function getUnorderedPageIds(state) {
+  return state.pages.ids;
+}
+
 export function getOrderedPageIds(state) {
   return state.pages.orderedIds;
 }

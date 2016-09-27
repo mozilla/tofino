@@ -13,15 +13,22 @@ specific language governing permissions and limitations under the License.
 import Immutable from 'immutable';
 
 export default Immutable.Record({
-  // We're using separate Map and List immutables instead of an OrderedMap,
+  // We're using separate Map, Set and List immutables instead of an OrderedMap,
   // because passing in only ids to certain components will guarantee an
   // easy way of avoiding re-renders. A single sorted data structure containing
   // all pages will trigger unwanted re-renders when a sequence of pages is
   // needed (e.g. rendering a tab bar) but certain properties that don't matter
   // on those pages change (e.g. a page `meta` property that's not relevant).
   // Since we want to avoid deep equality checks and rely on shallow comparison,
-  // mapping wouldn't be an option either since it creates new objects.
+  // mapping or getting keys aren't viable options either since those operations
+  // create new objects, which will always fail fast strict equality checks.
+  // Furthermore, we'll have to separate the `id` set from the `ordered id` list
+  // because changing the items in a list may cause components to unmount/mount
+  // when that list is used as the source for a component's children. Usually
+  // this is fine, but we don't want to destroy/create webviews when just
+  // reordering pages, for example.
   map: Immutable.Map(),
+  ids: Immutable.Set(),
   orderedIds: Immutable.List(),
   selectedId: '',
 }, 'Pages');
