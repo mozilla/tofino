@@ -13,23 +13,9 @@ specific language governing permissions and limitations under the License.
 import React, { Component, PropTypes } from 'react';
 import * as ComponentUtil from '../util/component-util';
 
-import Style from '../style';
 import FittedImage from './fitted-image';
 
-const SPIN_KEYFRAMES = Style.registerKeyframes({
-  from: {
-    transform: 'rotate(0deg)',
-  },
-  to: {
-    transform: 'rotate(360deg)',
-  },
-});
-
-const SPINNER_STYLE = Style.registerStyle({
-  animation: `${SPIN_KEYFRAMES} 1s linear infinite reverse`,
-});
-
-class SpinnerGray extends Component {
+class GlobeIcon extends Component {
   constructor(props) {
     super(props);
     this.shouldComponentUpdate = ComponentUtil.shouldPlainJsPropsComponentUpdate.bind(this);
@@ -38,8 +24,8 @@ class SpinnerGray extends Component {
   render() {
     return (
       <FittedImage {...this.props}
-        className={`widget-spinner ${SPINNER_STYLE} ${this.props.className || ''}`}
-        src="assets/spinner-gray.png"
+        className={`widget-globe-icon ${this.props.className || ''}`}
+        src="assets/globe.svg"
         width="16px"
         height="16px"
         mode="contain" />
@@ -47,10 +33,10 @@ class SpinnerGray extends Component {
   }
 }
 
-SpinnerGray.displayName = 'SpinnerGray';
+GlobeIcon.displayName = 'GlobeIcon';
 
-SpinnerGray.propTypes = {
+GlobeIcon.propTypes = {
   className: PropTypes.string,
 };
 
-export default SpinnerGray;
+export default GlobeIcon;

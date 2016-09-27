@@ -18,7 +18,8 @@ import Style from '../../../../shared/style';
 import FittedImage from '../../../../shared/widgets/fitted-image';
 import SpinnerGray from '../../../../shared/widgets/spinner-gray';
 import SpinnerBlue from '../../../../shared/widgets/spinner-blue';
-import WarningIcon from '../../../../shared/widgets/warning-icon';
+import WarningIcon from '../../../../shared/widgets/icon-warning';
+import GlobeIcon from '../../../../shared/widgets/icon-globe';
 
 import PageState from '../../../model/page-state';
 import * as PagesSelectors from '../../../selectors/pages';
@@ -64,7 +65,7 @@ class TabContents extends Component {
             height="16px"
             mode="contain" />
         ) : (
-          null
+          <GlobeIcon />
         )}
         {/* eslint-enable no-nested-ternary */}
         <div className={`tab-title ${TAB_TITLE_STYLE}`}>
