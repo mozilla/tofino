@@ -109,8 +109,9 @@ function resetPageData(state, pageId) {
   return state.withMutations(mut => {
     const fresh = new Page({ id: pageId }).entries();
     for (const [key, value] of fresh) {
-      // Don't reset the `history` and `historyIndex` properties on the page.
-      if (key !== 'history' && key !== 'historyIndex') {
+      // Don't reset the `uiState`, `history` and `historyIndex` properties
+      // on the page.
+      if (key !== 'uiState' && key !== 'history' && key !== 'historyIndex') {
         mut.update('map', m => m.setIn([pageId, key], value));
       }
     }
