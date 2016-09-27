@@ -70,6 +70,12 @@ export function getSelectedPage(state) {
   return getPageById(state, getSelectedPageId(state));
 }
 
+// Pinned page getters.
+
+export function getLastPinnedPageIndex(state) {
+  return getOrderedPageIds(state).findLastIndex(id => getPagePinned(state, id));
+}
+
 // Page meta/state/ui getters.
 
 export function getPageMeta(state, id) {

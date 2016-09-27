@@ -37,6 +37,9 @@ export default function(state = new Pages(), action) {
     case ActionTypes.RESET_PAGE_DATA:
       return resetPageData(state, action.pageId);
 
+    case ActionTypes.SET_PAGE_INDEX:
+      return setPageIndex(state, action.pageId, action.pageIndex);
+
     case ActionTypes.SET_PAGE_DETAILS:
       return setPageDetails(state, action.pageId, action.pageDetails);
 
@@ -115,6 +118,14 @@ function resetPageData(state, pageId) {
         mut.update('map', m => m.setIn([pageId, key], value));
       }
     }
+  });
+}
+
+function setPageIndex(state, pageId, pageIndex) {
+  return state.withMutations(mut => {
+    const oldIndex = state.orderedIds.findIndex(id => id === pageId);
+    mut.update('orderedIds', l => l.delete(oldIndex));
+    mut.update('orderedIds', l => l.insert(pageIndex, pageId));
   });
 }
 
