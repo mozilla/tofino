@@ -25,6 +25,7 @@ export const Profile = PropTypes.instanceOf(ProfileModel);
 export const Profiles = ImmutablePropTypes.listOf(Profile.isRequired);
 
 export const PageIds = ImmutablePropTypes.listOf(PropTypes.string.isRequired);
+export const UnorderedPageIds = ImmutablePropTypes.setOf(PropTypes.string.isRequired);
 
 export const Page = PropTypes.instanceOf(PageModel);
 export const Pages = ImmutablePropTypes.listOf(Page.isRequired);
