@@ -46,7 +46,7 @@ class HistoryListItem extends Component {
         <div className={LOCATION_STYLE}>
           <i className={`fa fa-check ${CHECKMARK_STYLE}`}
             hidden={!this.props.data.active} />
-          {this.props.data.uri}
+          {this.props.data.url}
         </div>
       </div>
     );
