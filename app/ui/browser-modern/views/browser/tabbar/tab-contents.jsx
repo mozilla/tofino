@@ -110,12 +110,11 @@ TabContents.propTypes = {
 
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
-
   return {
-    tabTitle: page ? page.title || page.meta.title || page.location || 'Loading...' : '',
-    pageLocation: page ? page.location : '',
-    pageFavicon: page ? page.faviconUrl : '',
-    pageLoadState: page ? page.state.load : '',
+    tabTitle: page.title || page.meta.title || page.location || 'Loading...',
+    pageLocation: page.location,
+    pageFavicon: page.faviconUrl,
+    pageLoadState: page.state.load,
   };
 }
 

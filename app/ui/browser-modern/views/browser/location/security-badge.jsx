@@ -48,9 +48,9 @@ SecurityBadge.propTypes = {
 
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
-  const pageLocation = page ? page.location : '';
-  const pageLoadState = page ? PagesSelectors.getPageState(state, ownProps.pageId).load : '';
-  const pageErrorState = page ? PagesSelectors.getPageState(state, ownProps.pageId).error : '';
+  const pageLocation = page.location;
+  const pageLoadState = PagesSelectors.getPageState(state, ownProps.pageId).load;
+  const pageErrorState = PagesSelectors.getPageState(state, ownProps.pageId).error;
 
   // If we have a tofino:// page, if the URL is empty (occurs during
   // some page loads in our state), or if the page is still loading (many sites
