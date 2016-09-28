@@ -64,7 +64,7 @@ class AutocompletionsListItem extends Component {
           null
         )}
         <div className={LOCATION_STYLE}>
-          {this.props.data.uri}
+          {this.props.data.url}
         </div>
       </div>
     );

@@ -37,7 +37,7 @@ export default function() {
 }
 
 function* fetchCompletions({ pageId, text }) {
-  const autocompletions = [{ uri: text }];
+  const autocompletions = [{ url: text }];
   if (text) {
     const { results } = yield call(userAgentHttpClient.query.bind(userAgentHttpClient), { text });
     autocompletions.push(...results);
