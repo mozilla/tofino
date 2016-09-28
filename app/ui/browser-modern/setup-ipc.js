@@ -41,7 +41,9 @@ export default function({ store, userAgentClient }) {
   });
 
   ipcRenderer.on('close-tab', () => {
-    if (!UISelectors.getOverviewVisible(store.getState())) {
+    const selectedPageId = PagesSelectors.getSelectedPageId(store.getState());
+    const pageIsPinned = PagesSelectors.getPagePinned(store.getState(), selectedPageId);
+    if (!pageIsPinned && !UISelectors.getOverviewVisible(store.getState())) {
       store.dispatch(PageEffects.destroyCurrentPageSession());
     }
   });
