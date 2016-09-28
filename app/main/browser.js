@@ -25,13 +25,14 @@ import * as spawn from './spawn';
 import * as BW from './browser-window';
 import * as certs from './certificates';
 import * as ProfileDiffTypes from '../shared/constants/profile-diff-types';
-import UserAgentClient from '../shared/user-agent-client';
 import { startUpdateChecks } from './updater';
+import * as state from './state';
+import './command-line';
 
 const app = electron.app; // control application life.
 const ipc = electron.ipcMain;
 const globalShortcut = electron.globalShortcut;
-const userAgentClient = new UserAgentClient();
+const userAgentClient = state.userAgentClient;
 
 const appStartupTime = Date.now();
 instrument.event('app', 'STARTUP');
@@ -55,10 +56,13 @@ app.on('ready', async function() {
   // Register http content protocols, e.g. for displaying `tofino://` pages.
   protocols.registerHttpProtocols();
 
-  await BW.createBrowserWindow(userAgentClient, () => {
-    instrument.event('browser', 'READY', 'ms', Date.now() - browserStartTime);
-  });
+  await BW.createBrowserWindow();
 
+  // Emit an event to the main process so we can mark the app
+  // as initialized
+  ipc.emit('main:first-window-created');
+
+  instrument.event('browser', 'READY', 'ms', Date.now() - browserStartTime);
   startUpdateChecks();
 });
 
@@ -82,21 +86,14 @@ app.on('activate', async function() {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (electron.BrowserWindow.getAllWindows().length === 0) {
-    await BW.createBrowserWindow(userAgentClient, () => menu.buildAppMenu(menuData));
+    await BW.createBrowserWindow();
+    menu.buildAppMenu(menuData);
   }
 });
 
-// OSX only due to apps being single instance, fired when receiving a URL to open,
-// for example when it's set as a default browser and it receives an incoming request
-// to open a url
-// http://electron.atom.io/docs/all/#event-open-url-macos
-app.on('open-url', (e, url) => {
-  BW.openURL(url);
-  e.preventDefault();
-});
-
 ipc.on('new-browser-window', async function() {
-  await BW.createBrowserWindow(userAgentClient, () => menu.buildAppMenu(menuData));
+  await BW.createBrowserWindow();
+  menu.buildAppMenu(menuData);
 });
 
 ipc.on('close-browser-window', BW.onlyWhenFromBrowserWindow(async function(bw) {

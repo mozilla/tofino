@@ -14,9 +14,11 @@ specific language governing permissions and limitations under the License.
 import path from 'path';
 import { BrowserWindow } from 'electron';
 
+import Deferred from '../shared/deferred';
 import * as hotkeys from './hotkeys';
 import * as downloads from './downloads';
 import * as protocols from './protocols';
+import * as state from './state';
 
 import { fileUrl } from '../shared/paths-util';
 import BUILD_CONFIG from '../build-config';
@@ -34,31 +36,50 @@ const BROWSER_CHROME_URL = fileUrl(path.join(UI_DIR, 'browser-modern', 'browser.
 const browserWindows = [];
 
 /**
- * A queue of URLs to open in the next browser window
+ * Map of BrowserWindow instances to promises indicating their load state -- resolves
+ * when BW is fully loaded.
  */
-const URL_QUEUE = [];
+const browserWindowLoaded = new Map();
 
 /**
- * When we want to send a command to just one window, use the primary browser window,
- * which is determined now just as the oldest created BW.
+ * Takes a URL and attempts to open it in a window and focus it, or create a new window.
+ * Waits until app is finished initializing.
  */
-export function getPrimaryBrowserWindow() {
-  return browserWindows[0];
+export async function focusOrOpenWindow(url) {
+  await state.INITIALIZED;
+
+  let bw = BrowserWindow.getFocusedWindow();
+  if (!bw) {
+    bw = BrowserWindow.getAllWindows()[0];
+    if (bw) {
+      if (bw.isMinimized()) {
+        bw.restore();
+      }
+      bw.focus();
+    }
+  }
+
+  if (!bw) {
+    await createBrowserWindow(url);
+  } else if (url) {
+    await browserWindowLoaded.get(bw);
+    bw.webContents.send('new-tab', url);
+  }
 }
 
 /**
- * Takes a UserAgentClient to create scopes and also takes an onload callback --
- * currently used for the first window created to record load times.
+ * Creates a new browser window for the browser chrome, and returns a promise
+ * that resolves upon initialization. Takes an optional url to load in the window.
  */
-export async function createBrowserWindow(userAgentClient, onload) {
+export async function createBrowserWindow(url) {
   // TODO: don't abuse the storage layer's session ID generation to produce scopes.
   // Await for `startSession()` here since that ensures we have a connection to
   // the UA service at this point.
-  const scope = await userAgentClient.startSession();
+  const scope = await state.userAgentClient.startSession();
 
   // Get the UA service address information from the user agent client
   // after it has negotiated a connection so we can send it to the client.
-  const { port, host, version } = userAgentClient.connectionDetails();
+  const { port, host, version } = state.userAgentClient.connectionDetails();
 
   if (!port || !host || !version) {
     throw new Error('The host, port, and version must be defined after connecting.');
@@ -77,9 +98,6 @@ export async function createBrowserWindow(userAgentClient, onload) {
   browser.scope = scope;
 
   browser.webContents.once('did-finish-load', () => {
-    if (onload) {
-      onload();
-    }
     // The client needs to know where the UA service is in order to connect
     // to it, and subsequently fire its 'window-ready' event.
     browser.webContents.send('user-agent-service-info', { port, host, version });
@@ -93,11 +111,12 @@ export async function createBrowserWindow(userAgentClient, onload) {
                                        BUILD_CONFIG.platform === 'darwin' &&
                                        !protocols.isDefaultBrowser();
 
+  const readyDeferred = new Deferred();
+  browserWindowLoaded.set(browser, readyDeferred.promise);
+
   // 'window-ready' is called if an error occurred loading the client, or once
   // the client has connected to the User Agent Service correctly.
   browser.once('window-ready', error => {
-    browser.IS_READY = true;
-
     if (browser.isDestroyed()) {
       return;
     }
@@ -107,18 +126,17 @@ export async function createBrowserWindow(userAgentClient, onload) {
     if (BUILD_CONFIG.development && error) {
       browser.openDevTools({ detach: true });
     }
+
     // If Tofino is not the default browser
     if (shouldAskToSetDefaultBrowser) {
       browser.webContents.send('should-set-default-browser');
     }
 
-    // Drain the URL_QUEUE if anything is in there
-    if (URL_QUEUE.length) {
-      for (const url of URL_QUEUE) {
-        browser.webContents.send('new-tab', url);
-      }
-      URL_QUEUE.length = 0;
+    if (url) {
+      browser.webContents.send('new-tab', url);
     }
+
+    readyDeferred.resolve(browser);
   });
 
   // Start loading browser chrome.
@@ -143,7 +161,7 @@ export async function createBrowserWindow(userAgentClient, onload) {
     browser.show();
   }
 
-  return browser;
+  return readyDeferred.promise;
 }
 
 export async function closeBrowserWindow(bw) {
@@ -152,42 +170,9 @@ export async function closeBrowserWindow(bw) {
     return;
   }
   browserWindows.splice(index, 1);
+  browserWindowLoaded.delete(bw);
 
   bw.close();
-}
-
-/**
- * Takes a BrowserWindow and returns a promise that
- * resolves when the BrowserWindow's frontend is set up and
- * able to receive and handle ipc commands
- */
-export async function waitUntilReady(bw) {
-  if (bw.IS_READY) {
-    return bw;
-  }
-  return new Promise(resolve => {
-    bw.once('window-ready', () => resolve(bw));
-  });
-}
-
-/**
- * Takes a URL to open in the corresponding browser window (or
- * the primary one, if none provided). Used when opening links
- * when Tofino is the default browser, for example.
- */
-export async function openURL(url, browserWindow) {
-  const bw = browserWindow || getPrimaryBrowserWindow();
-
-  // If we don't have a browser window, we probably received a command
-  // to open a URL on startup, in which case, no browser windows exist yet.
-  // Add it to the queue to open when the next BW opens.
-  if (!bw) {
-    URL_QUEUE.push(url);
-    return;
-  }
-
-  await waitUntilReady(bw);
-  bw.webContents.send('new-tab', url);
 }
 
 /**
