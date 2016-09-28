@@ -59,29 +59,35 @@ class TabContents extends Component {
   }
 
   render() {
-    return (
-      <div className={`tab-contents ${TAB_CONTENTS_STYLE}`}>
-        {/* eslint-disable no-nested-ternary */}
-        {this.props.pageLoadState === PageState.STATES.CONNECTING
-        ? (
-          <SpinnerGray />
-        ) : this.props.pageLoadState === PageState.STATES.LOADING ? (
-          <SpinnerBlue />
-        ) : this.props.pageLoadState === PageState.STATES.FAILED ? (
-          <WarningIcon />
-        ) : this.props.pageLoadState === PageState.STATES.LOADED && this.props.pageFavicon ? (
+    const tabElements = [];
+
+    if (this.props.pageLoadState === PageState.STATES.CONNECTING) {
+      tabElements.push(<SpinnerGray />);
+    } else if (this.props.pageLoadState === PageState.STATES.LOADING) {
+      tabElements.push(<SpinnerBlue />);
+    } else if (this.props.pageLoadState === PageState.STATES.FAILED) {
+      tabElements.push(<WarningIcon />);
+    } else if (this.props.pageLoadState === PageState.STATES.LOADED) {
+      if (!this.props.pageFavicon) {
+        tabElements.push(<GlobeIcon />);
+      } else {
+        tabElements.push(
           <FittedImage className="tab-favicon"
             src={this.props.pageFavicon}
             width="16px"
             height="16px"
             mode="contain" />
-        ) : (
-          <GlobeIcon />
-        )}
-        {/* eslint-enable no-nested-ternary */}
+          );
+      }
+    }
+
+    if (!this.props.isPinned) {
+      tabElements.push(
         <div className={`tab-title ${TAB_TITLE_STYLE}`}>
           {this.props.tabTitle}
         </div>
+      );
+      tabElements.push(
         <Btn className={`tab-close-button ${TAB_CLOSE_BUTTON_STYLE}`}
           title="Close tab"
           width="14px"
@@ -93,6 +99,12 @@ class TabContents extends Component {
           imgPositionHover="-17px -1px"
           imgPositionActive="-33px -1px"
           onClick={this.handleTabClose} />
+      );
+    }
+
+    return (
+      <div className={`tab-contents ${TAB_CONTENTS_STYLE}`}>
+        {tabElements}
       </div>
     );
   }
@@ -103,6 +115,7 @@ TabContents.displayName = 'TabContents';
 TabContents.propTypes = {
   dispatch: PropTypes.func.isRequired,
   pageId: PropTypes.string.isRequired,
+  isPinned: PropTypes.bool.isRequired,
   tabTitle: PropTypes.string.isRequired,
   pageFavicon: PropTypes.string,
   pageLoadState: PropTypes.string,
@@ -110,8 +123,10 @@ TabContents.propTypes = {
 
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
+  const pageIsPinned = PagesSelectors.getPagePinned(state, ownProps.pageId);
   return {
     tabTitle: page.title || page.meta.title || page.location || 'Loading...',
+    isPinned: pageIsPinned,
     pageLocation: page.location,
     pageFavicon: page.faviconUrl,
     pageLoadState: page.state.load,

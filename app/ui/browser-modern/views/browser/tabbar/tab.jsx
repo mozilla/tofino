@@ -56,11 +56,6 @@ const TAB_STYLE = Style.registerStyle({
     flexShrink: 0,
     width: `${UIConstants.TAB_PINNED_WIDTH}px`,
   },
-  [`&[data-pinned-tab=true] .tab-close-button,
-    &[data-pinned-tab=true] .tab-title`
-  ]: {
-    display: 'none',
-  },
 });
 
 class Tab extends Component {
