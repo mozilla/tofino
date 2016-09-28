@@ -55,7 +55,7 @@ TabsList.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    pageIds: PagesSelectors.getOrderedPageIds(state),
+    pageIds: PagesSelectors.getPageIdsInDisplayOrder(state),
   };
 }
 

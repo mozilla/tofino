@@ -31,7 +31,7 @@ export function destroyPageSession(pageId) {
     dispatch({
       type: EffectTypes.DESTROY_PAGE_SESSION,
       page: PagesSelectors.getPageById(getState(), pageId),
-      currentPageCount: PagesSelectors.getOrderedPageIds(getState()).size,
+      currentPageCount: PagesSelectors.getPageIdsInDisplayOrder(getState()).size,
     });
   };
 }

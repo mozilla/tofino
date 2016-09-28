@@ -16,22 +16,22 @@ export function getUnorderedPages(state) {
   return state.pages.map;
 }
 
-export function getUnorderedPageIds(state) {
+export function getPageIdsInCreationOrder(state) {
   return state.pages.ids;
 }
 
-export function getOrderedPageIds(state) {
-  return state.pages.orderedIds;
+export function getPageIdsInDisplayOrder(state) {
+  return state.pages.displayOrder;
 }
 
 export function getPageCount(state) {
-  return getOrderedPageIds(state).size;
+  return getPageIdsInDisplayOrder(state).size;
 }
 
-// You might just want to use `getOrderedPageIds` instead, unless you need
+// You might just want to use `getPageIdsInDisplayOrder` instead, unless you need
 // access to the entire page models themselves (not just a handful of props).
 export function getPages(state) {
-  return getOrderedPageIds(state).map(id => getPageById(state, id));
+  return getPageIdsInDisplayOrder(state).map(id => getPageById(state, id));
 }
 
 // Specific page getters.
@@ -49,15 +49,15 @@ export function hasPageWithId(state, id) {
 }
 
 export function hasPageAtIndex(state, index) {
-  return getOrderedPageIds(state).has(index);
+  return getPageIdsInDisplayOrder(state).has(index);
 }
 
 export function getPageIndexById(state, id) {
-  return getOrderedPageIds(state).indexOf(id);
+  return getPageIdsInDisplayOrder(state).indexOf(id);
 }
 
 export function getPageIdByIndex(state, index) {
-  return getOrderedPageIds(state).get(index);
+  return getPageIdsInDisplayOrder(state).get(index);
 }
 
 // Selected page getters.
@@ -77,7 +77,7 @@ export function getSelectedPage(state) {
 // Pinned page getters.
 
 export function getLastPinnedPageIndex(state) {
-  return getOrderedPageIds(state).findLastIndex(id => getPagePinned(state, id));
+  return getPageIdsInDisplayOrder(state).findLastIndex(id => getPagePinned(state, id));
 }
 
 // Page meta/state/ui getters.

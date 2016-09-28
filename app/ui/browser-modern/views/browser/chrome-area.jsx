@@ -66,7 +66,7 @@ ChromeArea.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    pageIds: PagesSelectors.getOrderedPageIds(state),
+    pageIds: PagesSelectors.getPageIdsInDisplayOrder(state),
     selectedPageId: PagesSelectors.getSelectedPageId(state),
   };
 }

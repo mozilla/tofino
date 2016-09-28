@@ -64,9 +64,9 @@ function createPage(state, id, location = UIConstants.HOME_PAGE, options = {
 }) {
   return state.withMutations(mut => {
     const page = new Page({ id, location });
-    const index = options.index != null ? options.index : state.orderedIds.size;
+    const pageIndex = options.index != null ? options.index : state.displayOrder.size;
 
-    mut.update('orderedIds', l => l.insert(index, page.id));
+    mut.update('displayOrder', l => l.insert(pageIndex, page.id));
     mut.update('ids', s => s.add(page.id));
     mut.update('map', m => m.set(page.id, page));
 
@@ -78,11 +78,11 @@ function createPage(state, id, location = UIConstants.HOME_PAGE, options = {
 
 function removePage(state, pageId) {
   return state.withMutations(mut => {
-    const pageCount = state.orderedIds.size;
-    const pageIndex = state.orderedIds.findIndex(id => id === pageId);
+    const pageCount = state.displayOrder.size;
+    const pageIndex = state.displayOrder.findIndex(id => id === pageId);
 
     // Remove page first.
-    mut.update('orderedIds', l => l.delete(pageIndex));
+    mut.update('displayOrder', l => l.delete(pageIndex));
     mut.update('ids', s => s.delete(pageId));
     mut.update('map', m => m.delete(pageId));
 
@@ -97,9 +97,9 @@ function removePage(state, pageId) {
     // If we had at least two pages before removing, select the previous one
     // this isn't the first page, otherwise the next one.
     if (pageIndex === 0) {
-      mut.set('selectedId', state.orderedIds.get(1));
+      mut.set('selectedId', state.displayOrder.get(1));
     } else {
-      mut.set('selectedId', state.orderedIds.get(pageIndex - 1));
+      mut.set('selectedId', state.displayOrder.get(pageIndex - 1));
     }
   });
 }
@@ -123,9 +123,9 @@ function resetPageData(state, pageId) {
 
 function setPageIndex(state, pageId, pageIndex) {
   return state.withMutations(mut => {
-    const oldIndex = state.orderedIds.findIndex(id => id === pageId);
-    mut.update('orderedIds', l => l.delete(oldIndex));
-    mut.update('orderedIds', l => l.insert(pageIndex, pageId));
+    const oldIndex = state.displayOrder.findIndex(id => id === pageId);
+    mut.update('displayOrder', l => l.delete(oldIndex));
+    mut.update('displayOrder', l => l.insert(pageIndex, pageId));
   });
 }
 
