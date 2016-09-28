@@ -117,9 +117,9 @@ NavigationButtons.propTypes = {
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
   return {
-    pageCanGoBack: page ? PagesSelectors.getPageCanGoBack(state, ownProps.pageId) : false,
-    pageCanGoForward: page ? PagesSelectors.getPageCanGoForward(state, ownProps.pageId) : false,
-    pageHistory: page ? page.history : null,
+    pageCanGoBack: PagesSelectors.getPageCanGoBack(state, ownProps.pageId),
+    pageCanGoForward: PagesSelectors.getPageCanGoForward(state, ownProps.pageId),
+    pageHistory: page.history,
   };
 }
 

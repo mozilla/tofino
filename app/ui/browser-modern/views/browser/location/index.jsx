@@ -107,7 +107,7 @@ Location.propTypes = {
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
   return {
-    locationAutocompletions: page ? UISelectors.getLocationAutocompletions(state, page.id) : null,
+    locationAutocompletions: UISelectors.getLocationAutocompletions(state, page.id),
   };
 }
 

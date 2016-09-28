@@ -252,7 +252,7 @@ Page.propTypes = {
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
   return {
-    showErrorPage: page ? page.state.load === PageState.STATES.FAILED : false,
+    showErrorPage: page.state.load === PageState.STATES.FAILED,
   };
 }
 
