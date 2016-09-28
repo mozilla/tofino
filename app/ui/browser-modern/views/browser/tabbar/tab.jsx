@@ -15,7 +15,6 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
 
 import Style from '../../../../shared/style';
-import Btn from '../../../../shared/widgets/btn';
 import TabPointerArea from './tab-pointer-area';
 import TabVisuals from './tab-visuals';
 import TabContents from './tab-contents';
@@ -53,10 +52,15 @@ const TAB_STYLE = Style.registerStyle({
     // Make sure this is displayed above other sibling tabs.
     zIndex: 1,
   },
-});
-
-const TAB_CLOSE_BUTTON_STYLE = Style.registerStyle({
-  pointerEvents: 'all',
+  '&[data-pinned-tab=true]': {
+    flexShrink: 0,
+    width: `${UIConstants.TAB_PINNED_WIDTH}px`,
+  },
+  [`&[data-pinned-tab=true] .tab-close-button,
+    &[data-pinned-tab=true] .tab-title`
+  ]: {
+    display: 'none',
+  },
 });
 
 class Tab extends Component {
@@ -81,38 +85,32 @@ class Tab extends Component {
 
   handleTabPick = e => {
     if (e.button === 1) {
-      this.handleTabClose(e);
+      this.props.dispatch(PageEffects.destroyPageSession(this.props.pageId));
     } else {
       this.props.dispatch(PageActions.setSelectedPage(this.props.pageId));
     }
   }
 
-  handleTabClose = e => {
-    this.props.dispatch(PageEffects.destroyPageSession(this.props.pageId));
-    e.stopPropagation();
+  handleTabDoubleClick = () => {
+    if (!this.props.isPinned) {
+      this.props.dispatch(PageActions.setPagePinned(this.props.pageId));
+    } else {
+      this.props.dispatch(PageActions.setPageUnpinned(this.props.pageId));
+    }
   }
 
   render() {
     return (
       <div className={`browser-tab ${TAB_STYLE}`}
         ref={e => this.root = e}
+        data-pinned-tab={this.props.isPinned}
         data-active-tab={this.props.isActive}
         data-before-active-tab={this.props.isBeforeActive}
         data-after-active-tab={this.props.isAfterActive}>
         <TabContents pageId={this.props.pageId} />
-        <Btn className={`tab-close-button ${TAB_CLOSE_BUTTON_STYLE}`}
-          title="Close tab"
-          width="14px"
-          height="14px"
-          image="close.png"
-          imgWidth="64px"
-          imgHeight="16px"
-          imgPosition="-1px -1px"
-          imgPositionHover="-17px -1px"
-          imgPositionActive="-33px -1px"
-          onClick={this.handleTabClose} />
         <TabPointerArea pageId={this.props.pageId}
-          onMouseDown={this.handleTabPick} />
+          onMouseDown={this.handleTabPick}
+          onDoubleClick={this.handleTabDoubleClick} />
         <TabVisuals />
       </div>
     );
@@ -124,6 +122,7 @@ Tab.displayName = 'Tab';
 Tab.propTypes = {
   dispatch: PropTypes.func.isRequired,
   pageId: PropTypes.string.isRequired,
+  isPinned: PropTypes.bool.isRequired,
   isActive: PropTypes.bool.isRequired,
   isBeforeActive: PropTypes.bool.isRequired,
   isAfterActive: PropTypes.bool.isRequired,
@@ -132,6 +131,7 @@ Tab.propTypes = {
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
   const pageIndex = PagesSelectors.getPageIndexById(state, ownProps.pageId);
+  const pageIsPinned = PagesSelectors.getPagePinned(state, ownProps.pageId);
 
   const selectedPageId = PagesSelectors.getSelectedPageId(state);
   const selectedPageIndex = PagesSelectors.getPageIndexById(state, selectedPageId);
@@ -139,7 +139,8 @@ function mapStateToProps(state, ownProps) {
   const isOverviewVisible = UISelectors.getOverviewVisible(state);
 
   return {
-    tooltipText: page ? page.title || page.meta.title || page.location : '',
+    tooltipText: page.title || page.meta.title || page.location,
+    isPinned: pageIsPinned,
     isActive: !isOverviewVisible && selectedPageId === ownProps.pageId,
     isBeforeActive: !isOverviewVisible && selectedPageIndex === pageIndex + 1,
     isAfterActive: !isOverviewVisible && selectedPageIndex === pageIndex - 1,

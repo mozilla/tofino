@@ -70,6 +70,14 @@ export function resetPageData(pageId) {
   };
 }
 
+export function setPageIndex(pageId, pageIndex) {
+  return {
+    type: ActionTypes.SET_PAGE_INDEX,
+    pageId,
+    pageIndex,
+  };
+}
+
 export function setPageDetails(pageId, pageDetails) {
   return {
     type: ActionTypes.SET_PAGE_DETAILS,
@@ -94,19 +102,45 @@ export function setPageState(pageId, pageState) {
   };
 }
 
-export function showPageSearch(pageId) {
+export function setPageUIState(pageId, pageUIState) {
   return {
-    type: ActionTypes.SET_PAGE_SEARCH_VISIBILITY,
-    visibility: true,
+    type: ActionTypes.SET_PAGE_UI_STATE,
     pageId,
+    pageUIState,
+  };
+}
+
+export function setPagePinned(pageId) {
+  return (dispatch, getState) => {
+    // When there's no pinned pages, the "last pinned page index" will be -1.
+    const lastIndex = PagesSelectors.getLastPinnedPageIndex(getState());
+    dispatch(setPageIndex(pageId, lastIndex + 1));
+    // Set the `pinned` state *last*, so that the above selector
+    // actually does what we want.
+    dispatch(setPageUIState(pageId, { pinned: true }));
+  };
+}
+
+export function setPageUnpinned(pageId) {
+  return (dispatch, getState) => {
+    // When there's no pinned pages, the "last pinned page index" will be -1.
+    const lastIndex = PagesSelectors.getLastPinnedPageIndex(getState());
+    dispatch(setPageIndex(pageId, lastIndex));
+    // Set the `pinned` state *last*, so that the above selector
+    // actually does what we want.
+    dispatch(setPageUIState(pageId, { pinned: false }));
+  };
+}
+
+export function showPageSearch(pageId) {
+  return dispatch => {
+    dispatch(setPageUIState(pageId, { searchVisible: true }));
   };
 }
 
 export function hidePageSearch(pageId) {
-  return {
-    type: ActionTypes.SET_PAGE_SEARCH_VISIBILITY,
-    visibility: false,
-    pageId,
+  return dispatch => {
+    dispatch(setPageUIState(pageId, { searchVisible: false }));
   };
 }
 

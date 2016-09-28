@@ -16,6 +16,10 @@ export function getUnorderedPages(state) {
   return state.pages.map;
 }
 
+export function getUnorderedPageIds(state) {
+  return state.pages.ids;
+}
+
 export function getOrderedPageIds(state) {
   return state.pages.orderedIds;
 }
@@ -70,7 +74,13 @@ export function getSelectedPage(state) {
   return getPageById(state, getSelectedPageId(state));
 }
 
-// Page data getters.
+// Pinned page getters.
+
+export function getLastPinnedPageIndex(state) {
+  return getOrderedPageIds(state).findLastIndex(id => getPagePinned(state, id));
+}
+
+// Page meta/state/ui getters.
 
 export function getPageMeta(state, id) {
   return getPageById(state, id).meta;
@@ -79,6 +89,36 @@ export function getPageMeta(state, id) {
 export function getPageState(state, id) {
   return getPageById(state, id).state;
 }
+
+export function getPageUIState(state, id) {
+  return getPageById(state, id).uiState;
+}
+
+// Page internal state getters.
+
+export function getPageNavigationType(state, id) {
+  return getPageState(state, id).navigationType;
+}
+
+export function getPageHistoryIndex(state, id) {
+  return getPageById(state, id).historyIndex;
+}
+
+// Page internal UI state getters
+
+export function getPageSearchVisible(state, id) {
+  return getPageUIState(state, id).searchVisible;
+}
+
+export function getPageZoomLevel(state, id) {
+  return getPageUIState(state, id).zoomLevel;
+}
+
+export function getPagePinned(state, id) {
+  return getPageUIState(state, id).pinned;
+}
+
+// Page misc.
 
 export function getPageCanGoBack(state, id) {
   const { historyIndex } = getPageById(state, id);
@@ -93,20 +133,4 @@ export function getPageCanGoForward(state, id) {
 export function getPageCanRefresh() {
   // Nothing prevents a page from being able to refresh yet.
   return true;
-}
-
-export function getPageSearchVisible(state, id) {
-  return getPageState(state, id).searchVisible;
-}
-
-export function getPageHistoryIndex(state, id) {
-  return getPageById(state, id).historyIndex;
-}
-
-export function getPageNavigationType(state, id) {
-  return getPageState(state, id).navigationType;
-}
-
-export function getPageZoomLevel(state, id) {
-  return getPageState(state, id).zoomLevel;
 }

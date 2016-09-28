@@ -15,7 +15,6 @@ import Immutable from 'immutable';
 import { logger } from '../../../shared/logging';
 import Page from '../model/page';
 import Pages from '../model/pages';
-import PageMeta from '../model/page-meta';
 import PageState from '../model/page-state';
 import SSLCertificateModel from '../model/ssl-certificate';
 import PageLocalHistoryItem from '../model/page-local-history-item';
@@ -36,6 +35,9 @@ export default function(state = new Pages(), action) {
     case ActionTypes.RESET_PAGE_DATA:
       return resetPageData(state, action.pageId);
 
+    case ActionTypes.SET_PAGE_INDEX:
+      return setPageIndex(state, action.pageId, action.pageIndex);
+
     case ActionTypes.SET_PAGE_DETAILS:
       return setPageDetails(state, action.pageId, action.pageDetails);
 
@@ -45,8 +47,8 @@ export default function(state = new Pages(), action) {
     case ActionTypes.SET_PAGE_STATE:
       return setPageState(state, action.pageId, action.pageState);
 
-    case ActionTypes.SET_PAGE_SEARCH_VISIBILITY:
-      return setPageState(state, action.pageId, { searchVisible: action.visibility });
+    case ActionTypes.SET_PAGE_UI_STATE:
+      return setPageUIState(state, action.pageId, action.pageUIState);
 
     case ActionTypes.SET_LOCAL_PAGE_HISTORY:
       return setLocalPageHistory(state, action.pageId, action.history, action.historyIndex);
@@ -56,14 +58,16 @@ export default function(state = new Pages(), action) {
   }
 }
 
-/* eslint-disable */
-function createPage(state, id, location = UIConstants.HOME_PAGE, options = { selected: true, index: null }) {
-/* eslint-enable */
+function createPage(state, id, location = UIConstants.HOME_PAGE, options = {
+  selected: true,
+  index: null,
+}) {
   return state.withMutations(mut => {
     const page = new Page({ id, location });
     const index = options.index != null ? options.index : state.orderedIds.size;
 
     mut.update('orderedIds', l => l.insert(index, page.id));
+    mut.update('ids', s => s.add(page.id));
     mut.update('map', m => m.set(page.id, page));
 
     if (options.selected) {
@@ -79,6 +83,7 @@ function removePage(state, pageId) {
 
     // Remove page first.
     mut.update('orderedIds', l => l.delete(pageIndex));
+    mut.update('ids', s => s.delete(pageId));
     mut.update('map', m => m.delete(pageId));
 
     // If the last page was removed, there's no other page remaining to select.
@@ -107,11 +112,20 @@ function resetPageData(state, pageId) {
   return state.withMutations(mut => {
     const fresh = new Page({ id: pageId }).entries();
     for (const [key, value] of fresh) {
-      // Don't reset the `history` and `historyIndex` properties on the page.
-      if (key !== 'history' && key !== 'historyIndex') {
+      // Don't reset the `uiState`, `history` and `historyIndex` properties
+      // on the page.
+      if (key !== 'uiState' && key !== 'history' && key !== 'historyIndex') {
         mut.update('map', m => m.setIn([pageId, key], value));
       }
     }
+  });
+}
+
+function setPageIndex(state, pageId, pageIndex) {
+  return state.withMutations(mut => {
+    const oldIndex = state.orderedIds.findIndex(id => id === pageId);
+    mut.update('orderedIds', l => l.delete(oldIndex));
+    mut.update('orderedIds', l => l.insert(pageIndex, pageId));
   });
 }
 
@@ -133,10 +147,6 @@ function setPageDetails(state, pageId, pageDetails) {
 function setPageMeta(state, pageId, pageMeta) {
   return state.withMutations(mut => {
     for (const [key, value] of Object.entries(pageMeta)) {
-      if (!(key in PageMeta.prototype)) {
-        logger.warn(`Skipping setting of \`${key}\` on page meta.`);
-        continue;
-      }
       mut.update('map', m => m.setIn([pageId, 'meta', key], value));
     }
   });
@@ -145,11 +155,6 @@ function setPageMeta(state, pageId, pageMeta) {
 function setPageState(state, pageId, pageState) {
   return state.withMutations(mut => {
     for (const [key, value] of Object.entries(pageState)) {
-      if (!(key in PageState.prototype)) {
-        logger.warn(`Skipping setting of \`${key}\` on page state.`);
-        continue;
-      }
-
       const prevValue = state.getIn(['map', pageId, 'state', key]);
       let nextValue = value;
 
@@ -167,6 +172,14 @@ function setPageState(state, pageId, pageState) {
       }
 
       mut.update('map', m => m.setIn([pageId, 'state', key], nextValue));
+    }
+  });
+}
+
+function setPageUIState(state, pageId, pageUIState) {
+  return state.withMutations(mut => {
+    for (const [key, value] of Object.entries(pageUIState)) {
+      mut.update('map', m => m.setIn([pageId, 'uiState', key], value));
     }
   });
 }

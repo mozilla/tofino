@@ -92,8 +92,8 @@ Location.propTypes = {
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
   return {
-    pageIsBookmarked: page ? ProfileSelectors.isBookmarked(state, page.location) : false,
-    pageCanRefresh: page ? PagesSelectors.getPageCanRefresh(state, ownProps.pageId) : false,
+    pageIsBookmarked: ProfileSelectors.isBookmarked(state, page.location),
+    pageCanRefresh: PagesSelectors.getPageCanRefresh(state, ownProps.pageId),
   };
 }
 

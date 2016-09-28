@@ -77,8 +77,8 @@ ErrorPage.propTypes = {
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
   return {
-    pageLocation: page ? page.location : '',
-    pageState: page ? page.state : {},
+    pageLocation: page.location,
+    pageState: page.state,
   };
 }
 

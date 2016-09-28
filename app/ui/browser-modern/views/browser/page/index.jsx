@@ -181,7 +181,7 @@ class Page extends Component {
 
     this.webview.addEventListener('page-favicon-updated', e => {
       this.props.dispatch(PageActions.setPageDetails(this.props.pageId, {
-        favicon_url: e.favicons[0],
+        faviconUrl: e.favicons[0],
       }));
     });
 
@@ -252,7 +252,7 @@ Page.propTypes = {
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
   return {
-    showErrorPage: page ? page.state.load === PageState.STATES.FAILED : false,
+    showErrorPage: page.state.load === PageState.STATES.FAILED,
   };
 }
 

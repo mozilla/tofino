@@ -44,10 +44,13 @@ class TabPointerArea extends Component {
 
   render() {
     return (
+      /* eslint-disable jsx-a11y/no-static-element-interactions */
       <div className={`tab-pointer-area ${TAB_POINTER_AREA_STYLE}`}
         title={this.props.tooltipText}
         onMouseDown={this.props.onMouseDown}
-        onMouseUp={this.props.onMouseUp} />
+        onMouseUp={this.props.onMouseUp}
+        onDoubleClick={this.props.onDoubleClick} />
+      /* eslint-enable jsx-a11y/no-static-element-interactions */
     );
   }
 }
@@ -58,13 +61,13 @@ TabPointerArea.propTypes = {
   tooltipText: PropTypes.string.isRequired,
   onMouseDown: PropTypes.func,
   onMouseUp: PropTypes.func,
+  onDoubleClick: PropTypes.func,
 };
 
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
-
   return {
-    tooltipText: page ? page.title || page.meta.title || page.location : '',
+    tooltipText: page.title || page.meta.title || page.location,
   };
 }
 

@@ -151,7 +151,7 @@ function* performPageSearch({ webview, text }) {
 
 function* setPageZoomLevel({ pageId, webview, zoomLevel }) {
   webview.setZoomLevel(zoomLevel);
-  yield put(PageActions.setPageState(pageId, { zoomLevel }));
+  yield put(PageActions.setPageUIState(pageId, { zoomLevel }));
 }
 
 function* capturePage({ pageId, webview }) {
