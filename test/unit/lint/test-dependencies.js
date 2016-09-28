@@ -22,6 +22,7 @@ const native = [
   'path',
   'stream',
   'url',
+  'timers',
 ];
 
 describe('dependencies', () => {
