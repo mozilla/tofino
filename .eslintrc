@@ -46,7 +46,8 @@
         "Immutable.List",
         "Immutable.Map",
         "Immutable.Record",
-        "Immutable.Set"
+        "Immutable.Set",
+        "Immutable.OrderedSet",
       ]
     }],
     "func-names": ["error", "never"],
