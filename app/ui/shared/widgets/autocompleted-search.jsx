@@ -47,20 +47,24 @@ class AutocompletedSearch extends Component {
 
   componentWillMount() {
     if (typeof window === 'object') {
-      window.addEventListener('click', this.handleWindowClick);
+      window.addEventListener('mousedown', this.handleWindowMousedown);
     }
   }
 
   componentWillUnmount() {
     if (typeof window === 'object') {
-      window.removeEventListener('click', this.handleWindowClick);
+      window.removeEventListener('mousedown', this.handleWindowMousedown);
     }
   }
 
-  handleWindowClick = () => {
+  // We need to use mousedown since preventing the event on click won't stop
+  // it from passing through to the webview.  Note that this will only be fired
+  // when the mousedown happened outside the selection list
+  handleWindowMousedown = (e) => {
     // We can't call `setState` on components which haven't rendered yet.
     if (this.state.showSelectionList && this.inputbar) {
       this.setState({ showSelectionList: false });
+      e.preventDefault();
     }
   }
 
@@ -127,6 +131,13 @@ class AutocompletedSearch extends Component {
     this.props.onKeyDown(e);
   }
 
+  // The the list has been moused down, then don't let that bubble up
+  // to the window, because that would cause the list to become closed
+  // before the item gets selected.
+  handleMouseDownOnSelectionList = (e) => {
+    e.stopPropagation();
+  }
+
   handleMouseOverChildComponent = component => {
     const index = component.props['data-index'];
     this.setState({ selectedIndex: index });
@@ -158,6 +169,7 @@ class AutocompletedSearch extends Component {
         <SelectionList className={`${SELECTION_LIST_STYLE} ${this.props.dropdownListClassName || ''}`}
           hidden={!this.state.showSelectionList}
           selectedIndex={this.state.selectedIndex}
+          onMouseDown={this.handleMouseDownOnSelectionList}
           onMouseOverChildComponent={this.handleMouseOverChildComponent}
           onClickOnChildComponent={this.handleClickOnChildComponent}>
           {this.props.dataSrc && this.props.dataSrc.map(this.createChild).toArray()}

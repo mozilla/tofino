@@ -76,6 +76,7 @@ const OmittedContainerProps = {
 
 SelectionList.propTypes = {
   ...OmittedContainerProps,
+  onMouseDown: PropTypes.func,
   className: PropTypes.string,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
