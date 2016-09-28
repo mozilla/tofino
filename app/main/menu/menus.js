@@ -19,6 +19,7 @@ specific language governing permissions and limitations under the License.
 
 import electron from 'electron';
 import items from './submenu-items';
+import BUILD_CONFIG from '../../build-config';
 
 const APP_NAME = electron.app.getName();
 
@@ -77,7 +78,7 @@ const menus = {
   tools: {
     label: 'Tools',
     submenu: [
-      items.reloadApp,
+      BUILD_CONFIG.development ? items.reloadApp : undefined,
       items.toggleBrowserToolbox,
       items.toggleDevTools,
     ],

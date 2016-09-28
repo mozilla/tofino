@@ -27,7 +27,9 @@ function buildTemplate(items, data) {
     }
 
     if ('submenu' in itemTemplate) {
-      itemTemplate.submenu = itemTemplate.submenu.map(buildItem);
+      // Filter out falsy submenu entities, for instance where they're undefined
+      // due to environment settings
+      itemTemplate.submenu = itemTemplate.submenu.filter(x => x).map(buildItem);
     }
 
     return itemTemplate;

@@ -89,8 +89,8 @@ export async function createBrowserWindow(userAgentClient, onload) {
   // window opened, we're in a packaged build, on OSX (for now), and this isn't
   // already the default browser.
   const shouldAskToSetDefaultBrowser = browserWindows.length === 0 &&
-                                       process.env.NODE_ENV === 'production' &&
-                                       process.platform === 'darwin' &&
+                                       !BUILD_CONFIG.development &&
+                                       BUILD_CONFIG.platform === 'darwin' &&
                                        !protocols.isDefaultBrowser();
 
   // 'window-ready' is called if an error occurred loading the client, or once
