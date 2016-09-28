@@ -54,7 +54,7 @@ class ContentArea extends Component {
     return (
       <div id="browser-content"
         className={CONTENT_AREA_STYLE}>
-        {this.props.unorderedPageIds.map(pageId => (
+        {this.props.pageIdsInCreationOrder.map(pageId => (
           <div key={`browser-page-content-area-${pageId}`}
             className={`browser-page-content-area ${PAGE_CONTAINER_STYLE}`}
             data-is-active={pageId === this.props.selectedPageId}>
@@ -70,13 +70,13 @@ class ContentArea extends Component {
 ContentArea.displayName = 'ContentArea';
 
 ContentArea.propTypes = {
-  unorderedPageIds: SharedPropTypes.UnorderedPageIds.isRequired,
+  pageIdsInCreationOrder: SharedPropTypes.PageIdsSet.isRequired,
   selectedPageId: PropTypes.string.isRequired,
 };
 
 function mapStateToProps(state) {
   return {
-    unorderedPageIds: PagesSelectors.getUnorderedPageIds(state),
+    pageIdsInCreationOrder: PagesSelectors.getPageIdsInCreationOrder(state),
     selectedPageId: PagesSelectors.getSelectedPageId(state),
   };
 }

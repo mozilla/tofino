@@ -31,7 +31,7 @@ export default Immutable.Record({
   // necessary to avoid unmounting/mounting unrelated page components when
   // adding/removing pages.
   map: Immutable.Map(),
-  orderedIds: Immutable.List(),
   ids: Immutable.OrderedSet(),
+  displayOrder: Immutable.List(),
   selectedId: '',
 }, 'Pages');
