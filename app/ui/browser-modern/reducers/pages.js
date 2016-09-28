@@ -187,7 +187,7 @@ function setPageUIState(state, pageId, pageUIState) {
 function setLocalPageHistory(state, pageId, history, historyIndex) {
   return state.withMutations(mut => {
     const records = history.map((location, index) => new PageLocalHistoryItem({
-      uri: location,
+      url: location,
       active: index === historyIndex,
     }));
     mut.setIn(['map', pageId, 'history'], Immutable.List(records));
