@@ -48,12 +48,15 @@ function spawnProcess(name, command, args, options) {
     // so this is an error regardless of the exit code.
     logger.error(`${name} exited with exit code ${code}`);
   });
+
+  return child;
 }
 
 export function startUserAgentService(userAgentClient, options = {}) {
-  const port = endpoints.UA_SERVICE_PORT;
-  const host = endpoints.UA_SERVICE_ADDR;
-  const version = endpoints.UA_SERVICE_VERSION;
+  const port = options.port || endpoints.UA_SERVICE_PORT;
+  const host = options.host || endpoints.UA_SERVICE_ADDR;
+  const version = options.version || endpoints.UA_SERVICE_VERSION;
+  const contentServiceOrigin = options.contentServiceOrigin || `${endpoints.TOFINO_PROTOCOL}://`;
 
   // Careful passing in options.attached as true, as this stops the service from
   // outliving the its original parent, which we want to allow in the UAS case.
@@ -65,11 +68,11 @@ export function startUserAgentService(userAgentClient, options = {}) {
   const NODE = path.join(lib, NODE_CMD);
   const UA_SERVICE_BIN = path.join(lib, 'services', 'user-agent-service', 'user-agent-service');
 
-  spawnProcess('UA Service', NODE, [UA_SERVICE_BIN,
+  const child = spawnProcess('UA Service', NODE, [UA_SERVICE_BIN,
     '--port', port,
     '--profile', profile,
     '--version', version,
-    '--content-service-origin', `${endpoints.TOFINO_PROTOCOL}://`,
+    '--content-service-origin', contentServiceOrigin,
   ], {
     detached,
     stdio,
@@ -77,9 +80,16 @@ export function startUserAgentService(userAgentClient, options = {}) {
 
   // Connecting to a client immediately is sometimes not necessary,
   // e.g. when starting this service standalone.
+  let connected = null;
   if (userAgentClient) {
-    userAgentClient.connect({ port, host, version });
+    connected = userAgentClient.connect({ port, host, version });
   }
+
+  const stop = () => {
+    child.kill('SIGTERM');
+  };
+
+  return [connected, stop, child];
 }
 
 export function startContentService(options = {}) {
