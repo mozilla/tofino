@@ -80,6 +80,7 @@ function removePage(state, pageId) {
   return state.withMutations(mut => {
     const pageCount = state.displayOrder.size;
     const pageIndex = state.displayOrder.findIndex(id => id === pageId);
+    const selectedId = state.get('selectedId');
 
     // Remove page first.
     mut.update('displayOrder', l => l.delete(pageIndex));
@@ -94,12 +95,17 @@ function removePage(state, pageId) {
       return;
     }
 
-    // If we had at least two pages before removing, select the previous one
-    // this isn't the first page, otherwise the next one.
-    if (pageIndex === 0) {
-      mut.set('selectedId', state.displayOrder.get(1));
-    } else {
-      mut.set('selectedId', state.displayOrder.get(pageIndex - 1));
+    // If we had at least two pages before removing, select the next one
+    // if we are removing the currently selected page. If there isn't a next tab, select
+    // the previous.
+    let newSelectedId;
+    if (pageId === selectedId) {
+      if (pageIndex === pageCount - 1) {
+        newSelectedId = state.displayOrder.get(pageIndex - 1);
+      } else {
+        newSelectedId = state.displayOrder.get(pageIndex + 1);
+      }
+      mut.set('selectedId', newSelectedId);
     }
   });
 }
