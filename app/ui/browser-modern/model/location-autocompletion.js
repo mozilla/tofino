@@ -13,6 +13,6 @@ specific language governing permissions and limitations under the License.
 import Immutable from 'immutable';
 
 export default Immutable.Record({
-  uri: undefined,
+  url: undefined,
   title: undefined,
 }, 'LocationAutocompletion');

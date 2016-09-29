@@ -68,12 +68,12 @@ class Location extends Component {
 
   handleInputKeyDown = e => {
     if (e.key === 'Enter') {
-      this.handleAutocompletionPick({ uri: e.target.value });
+      this.handleAutocompletionPick({ data: { url: e.target.value } });
     }
   }
 
   handleAutocompletionPick = ({ data }) => {
-    const location = LocationUtil.fixURL(data.uri);
+    const location = LocationUtil.fixURL(data.url);
     this.props.dispatch(PageEffects.navigatePageTo(this.props.pageId, location));
   }
 
