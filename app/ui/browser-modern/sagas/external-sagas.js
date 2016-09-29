@@ -38,10 +38,11 @@ function* minimizeWindow() {
 }
 
 function* maximizeWindow() {
-  if (remote.getCurrentWindow()) {
-    remote.getCurrentWindow().maximize();
+  const win = remote.getCurrentWindow();
+  if (win.isMaximized()) {
+    win.unmaximize();
   } else {
-    remote.unmaximize();
+    win.maximize();
   }
 }
 
