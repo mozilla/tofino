@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 import Immutable from 'immutable';
 
 export default Immutable.Record({
-  // We're using separate Map, Set and List immutables instead of an OrderedMap,
+  // We're using separate immutables data stores instead of a single OrderedMap,
   // because passing in only ids to certain components will guarantee an
   // easy way of avoiding re-renders. A single sorted data structure containing
   // all pages will trigger unwanted re-renders when a sequence of pages is
@@ -26,9 +26,12 @@ export default Immutable.Record({
   // because changing the items in a list may cause components to unmount/mount
   // when that list is used as the source for a component's children. Usually
   // this is fine, but we don't want to destroy/create webviews when just
-  // reordering pages, for example.
+  // reordering pages, for example. An `OrderedSet` instead of a simple `Set`
+  // is used for the same reason: stable and consistent iteration order is
+  // necessary to avoid unmounting/mounting unrelated page components when
+  // adding/removing pages.
   map: Immutable.Map(),
-  ids: Immutable.Set(),
-  orderedIds: Immutable.List(),
+  ids: Immutable.OrderedSet(),
+  displayOrder: Immutable.List(),
   selectedId: '',
 }, 'Pages');
