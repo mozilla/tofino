@@ -62,17 +62,18 @@ class TabContents extends Component {
     const tabElements = [];
 
     if (this.props.pageLoadState === PageState.STATES.CONNECTING) {
-      tabElements.push(<SpinnerGray />);
+      tabElements.push(<SpinnerGray key="icon" />);
     } else if (this.props.pageLoadState === PageState.STATES.LOADING) {
-      tabElements.push(<SpinnerBlue />);
+      tabElements.push(<SpinnerBlue key="icon" />);
     } else if (this.props.pageLoadState === PageState.STATES.FAILED) {
-      tabElements.push(<WarningIcon />);
+      tabElements.push(<WarningIcon key="icon" />);
     } else if (this.props.pageLoadState === PageState.STATES.LOADED) {
       if (!this.props.pageFavicon) {
-        tabElements.push(<GlobeIcon />);
+        tabElements.push(<GlobeIcon key="icon" />);
       } else {
         tabElements.push(
-          <FittedImage className="tab-favicon"
+          <FittedImage key="icon"
+            className="tab-favicon"
             src={this.props.pageFavicon}
             width="16px"
             height="16px"
@@ -83,12 +84,14 @@ class TabContents extends Component {
 
     if (!this.props.isPinned) {
       tabElements.push(
-        <div className={`tab-title ${TAB_TITLE_STYLE}`}>
+        <div key="tab-title"
+          className={`tab-title ${TAB_TITLE_STYLE}`}>
           {this.props.tabTitle}
         </div>
       );
       tabElements.push(
-        <Btn className={`tab-close-button ${TAB_CLOSE_BUTTON_STYLE}`}
+        <Btn key="tab-close-button"
+          className={`tab-close-button ${TAB_CLOSE_BUTTON_STYLE}`}
           title="Close tab"
           width="14px"
           height="14px"
