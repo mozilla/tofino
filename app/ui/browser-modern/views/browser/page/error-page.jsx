@@ -18,8 +18,9 @@ import Style from '../../../../shared/style';
 import NetErrorPage from './net-error';
 import CertErrorPage from './cert-error';
 
-import * as SharedPropTypes from '../../../model/shared-prop-types';
+import PageState from '../../../model/page-state';
 import * as PagesSelectors from '../../../selectors/pages';
+import * as SharedPropTypes from '../../../model/shared-prop-types';
 
 const ERROR_PAGE_STYLE = Style.registerStyle({
   width: '100%',
@@ -77,6 +78,7 @@ ErrorPage.propTypes = {
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
   return {
+    hidden: page.state.load !== PageState.STATES.FAILED,
     pageLocation: page.location,
     pageState: page.state,
   };
