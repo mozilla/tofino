@@ -230,8 +230,7 @@ class Page extends Component {
     return (
       <div id={`browser-page-${this.props.pageId}`}
         className={`browser-page ${PAGE_STYLE}`}>
-        <ErrorPage pageId={this.props.pageId}
-          hidden={!this.props.showErrorPage} />
+        <ErrorPage pageId={this.props.pageId} />
         <webview is="webview"
           ref={e => this.webview = e}
           class={WEB_VIEW_STYLE}
@@ -246,14 +245,6 @@ Page.displayName = 'Page';
 Page.propTypes = {
   dispatch: PropTypes.func.isRequired,
   pageId: PropTypes.string.isRequired,
-  showErrorPage: PropTypes.bool.isRequired,
 };
 
-function mapStateToProps(state, ownProps) {
-  const page = PagesSelectors.getPageById(state, ownProps.pageId);
-  return {
-    showErrorPage: page.state.load === PageState.STATES.FAILED,
-  };
-}
-
-export default connect(mapStateToProps)(Page);
+export default connect()(Page);
