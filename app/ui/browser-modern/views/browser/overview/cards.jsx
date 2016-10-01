@@ -24,9 +24,14 @@ import * as PageEffects from '../../../actions/page-effects';
 import * as PagesSelectors from '../../../selectors/pages';
 
 const OVERVIEW_CARDS_STYLE = Style.registerStyle({
-  flexFlow: 'wrap',
+  flex: 1,
   overflow: 'auto',
-  margin: '45px',
+});
+
+const OVERVIEW_CARDS_SCROLLING_CONTENT = Style.registerStyle({
+  alignSelf: 'flex-start',
+  flexFlow: 'wrap',
+  padding: '45px',
 });
 
 class Cards extends Component {
@@ -47,18 +52,21 @@ class Cards extends Component {
     return (
       <div id="browser-overview-cards"
         className={OVERVIEW_CARDS_STYLE}>
-        {this.props.pages.map((page, pageIndex) => (
-          <OverviewCard key={`page-${page.id}`}
-            page={page}
-            width={UIConstants.CARD_WIDTH}
-            height={UIConstants.CARD_HEIGHT}
-            badgeWidth={UIConstants.CARD_BADGE_WIDTH}
-            badgeHeight={UIConstants.CARD_BADGE_HEIGHT}
-            badgeLargeWidth={UIConstants.CARD_BADGE_LARGE_WIDTH}
-            badgeLargeHeight={UIConstants.CARD_BADGE_LARGE_HEIGHT}
-            isSelected={pageIndex === this.props.selectedPageIndex}
-            onClick={this.handleCardClick} />
-        ))}
+        <div id="browser-overview-cards-scrolling-content"
+          className={OVERVIEW_CARDS_SCROLLING_CONTENT}>
+          {this.props.pages.map((page, pageIndex) => (
+            <OverviewCard key={`page-${page.id}`}
+              page={page}
+              width={UIConstants.CARD_WIDTH}
+              height={UIConstants.CARD_HEIGHT}
+              badgeWidth={UIConstants.CARD_BADGE_WIDTH}
+              badgeHeight={UIConstants.CARD_BADGE_HEIGHT}
+              badgeLargeWidth={UIConstants.CARD_BADGE_LARGE_WIDTH}
+              badgeLargeHeight={UIConstants.CARD_BADGE_LARGE_HEIGHT}
+              isSelected={pageIndex === this.props.selectedPageIndex}
+              onClick={this.handleCardClick} />
+          ))}
+        </div>
       </div>
     );
   }

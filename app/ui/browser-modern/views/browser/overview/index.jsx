@@ -26,7 +26,6 @@ const OVERVIEW_STYLE = Style.registerStyle({
   bottom: 0,
   left: 0,
   right: 0,
-  alignItems: 'flex-start',
   zIndex: UIConstants.BROWSER_OVERVIEW_BASE_ZINDEX,
   backgroundColor: 'var(--theme-overview-background)',
   backgroundImage: 'url(assets/checkboard-background.png)',
