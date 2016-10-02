@@ -65,7 +65,7 @@
     "ws": "1.1.1"
   },
   "devDependencies": {
-    "babel-core": "6.16.0",
+    "babel-core": "6.17.0",
     "babel-eslint": "6.1.2",
     "babel-loader": "6.2.5",
     "babel-plugin-transform-async-to-generator": "6.16.0",
