@@ -11,7 +11,12 @@ import * as endpoints from '../../../app/shared/constants/endpoints';
 import * as spawn from '../../../app/main/spawn';
 import * as Const from '../../../build/utils/const';
 
-describe('User Agent Service', () => {
+describe('User Agent Service', function() {
+  // These tests are slow, especially in automation.  Give each individual test 5s.  Consider 2s
+  // slow locally.
+  this.timeout(5 * 1000);
+  this.slow(2 * 1000);
+
   let tempDir = null;
   let port = 19090; // Start well past our UA and content server defaults.
   let stop = null;
@@ -23,7 +28,12 @@ describe('User Agent Service', () => {
     (async function () {
       try {
         port += 1; // Advance first, so that we don't stick on a blocked port.
-        const userAgentClient = new UserAgentClient();
+        const userAgentClient = new UserAgentClient({
+          // We want to try to connect aggressively, since we're always expecting to have a
+          // good, fast connection.
+          initialConnectDelayMillis: 10,
+          maxConnectDelayMillis: 500,
+        });
 
         const details = spawn.startUserAgentService(userAgentClient, {
           attached: true, // We want to see stdout and stderr.
