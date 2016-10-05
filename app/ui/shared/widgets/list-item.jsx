@@ -29,16 +29,19 @@ class ListItem extends Component {
   handleMouseDown = e => {
     this.props.onMouseDown(e);
     this.props.onMouseDownOnComponent(this);
+    e.stopPropagation();
   }
 
   handleMouseUp = e => {
     this.props.onMouseUp(e);
     this.props.onMouseUpOnComponent(this);
+    e.stopPropagation();
   }
 
   handleMouseClick = e => {
     this.props.onClick(e);
     this.props.onClickOnComponent(this);
+    e.stopPropagation();
   }
 
   handleMouseOver = e => {
