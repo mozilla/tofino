@@ -34,7 +34,7 @@ const TAB_STYLE = Style.registerStyle({
   alignItems: 'center',
   overflow: 'hidden',
   boxSizing: 'border-box',
-  width: `${UIConstants.TAB_DEFAULT_WIDTH}px`,
+  width: `${UIConstants.TAB_MIN_WIDTH}px`,
   minWidth: `${UIConstants.TAB_MIN_WIDTH}px`,
   height: `${UIConstants.TAB_HEIGHT}px`,
   margin: `0 -${UIConstants.TAB_OVERLAP}px`,
@@ -56,16 +56,24 @@ const TAB_STYLE = Style.registerStyle({
     flexShrink: 0,
     width: `${UIConstants.TAB_PINNED_WIDTH}px`,
   },
+  '&[data-mounted=true]': {
+    transition: 'width 0.2s ease-out',
+    width: `${UIConstants.TAB_DEFAULT_WIDTH}px`,
+  },
 });
 
 class Tab extends Component {
   constructor(props) {
     super(props);
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+    this.state = {
+      mounted: false,
+    };
   }
 
   componentDidMount() {
     this.scrollIntoViewIfNeeded();
+    this.setState({ mounted: true }); // eslint-disable-line
   }
 
   componentDidUpdate() {
@@ -98,6 +106,7 @@ class Tab extends Component {
     return (
       <div className={`browser-tab ${TAB_STYLE}`}
         ref={e => this.root = e}
+        data-mounted={this.state.mounted}
         data-pinned-tab={this.props.isPinned}
         data-active-tab={this.props.isActive}
         data-before-active-tab={this.props.isBeforeActive}
