@@ -28,6 +28,7 @@ import * as ProfileDiffTypes from '../shared/constants/profile-diff-types';
 import { startUpdateChecks } from './updater';
 import * as state from './state';
 import './command-line';
+import './pinned-tabs';
 
 const app = electron.app; // control application life.
 const ipc = electron.ipcMain;

@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import { takeLatest, takeEvery } from 'redux-saga';
-import { put, call } from 'redux-saga/effects';
+import { put, call, apply } from 'redux-saga/effects';
 
 import { wrapped } from './helpers';
 import * as Certificate from '../../shared/util/cert';
@@ -23,6 +23,7 @@ import * as PageEffects from '../actions/page-effects';
 import * as ProfileEffects from '../actions/profile-effects';
 import * as UIEffects from '../actions/ui-effects';
 import * as EffectTypes from '../constants/effect-types';
+import { ipcRenderer } from '../../../shared/electron';
 
 export default function() {
   return [
@@ -64,6 +65,12 @@ export default function() {
     },
     function*() {
       yield* takeEvery(...wrapped(EffectTypes.GET_CERTIFICATE_ERROR, getCertificateError));
+    },
+    function*() {
+      yield* takeLatest(...wrapped(EffectTypes.PIN_TAB, pinTab));
+    },
+    function*() {
+      yield* takeLatest(...wrapped(EffectTypes.UNPIN_TAB, unpinTab));
     },
   ];
 }
@@ -169,4 +176,14 @@ function* parsePageMetaData({ pageId, webview }) {
 function* getCertificateError({ pageId, url }) {
   const { error, certificate } = yield call(Certificate.getCertificateError, url);
   yield put(PageActions.setPageState(pageId, { error, certificate }));
+}
+
+function* pinTab({ pageId, webContentsId }) {
+  yield put(PageActions.setPagePinned(pageId));
+  yield apply(ipcRenderer, ipcRenderer.send, ['guest-pinned-state', webContentsId, true]);
+}
+
+function* unpinTab({ pageId, webContentsId }) {
+  yield put(PageActions.setPageUnpinned(pageId));
+  yield apply(ipcRenderer, ipcRenderer.send, ['guest-pinned-state', webContentsId, false]);
 }
