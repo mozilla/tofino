@@ -13,6 +13,8 @@ specific language governing permissions and limitations under the License.
 import { takeLatest, takeEvery } from 'redux-saga';
 import { put, call } from 'redux-saga/effects';
 
+import Deferred from '../../../shared/deferred';
+import { remote, clipboard } from '../../../shared/electron';
 import { wrapped } from './helpers';
 import * as Certificate from '../../shared/util/cert';
 import * as ContentScriptUtils from '../../shared/util/content-script-utils';
@@ -23,6 +25,8 @@ import * as PageEffects from '../actions/page-effects';
 import * as ProfileEffects from '../actions/profile-effects';
 import * as UIEffects from '../actions/ui-effects';
 import * as EffectTypes from '../constants/effect-types';
+
+const { Menu, MenuItem } = remote;
 
 export default function() {
   return [
@@ -64,6 +68,10 @@ export default function() {
     },
     function*() {
       yield* takeEvery(...wrapped(EffectTypes.GET_CERTIFICATE_ERROR, getCertificateError));
+    },
+    function*() {
+      yield* takeLatest(...wrapped(EffectTypes.DISPLAY_WEBVIEW_CONTEXT_MENU,
+        displayWebviewContextMenu));
     },
   ];
 }
@@ -169,4 +177,50 @@ function* parsePageMetaData({ pageId, webview }) {
 function* getCertificateError({ pageId, url }) {
   const { error, certificate } = yield call(Certificate.getCertificateError, url);
   yield put(PageActions.setPageState(pageId, { error, certificate }));
+}
+
+function* displayWebviewContextMenu({ e, webview }) {
+  const menu = new Menu();
+  const chosen = new Deferred();
+
+  if (e.href) {
+    menu.append(new MenuItem({
+      label: 'Open Link in New Tab',
+      click: () => chosen.resolve(function* () {
+        yield put(PageEffects.createPageSession(e.href));
+      }),
+    }));
+
+    menu.append(new MenuItem({
+      label: 'Copy Link Address',
+      click: () => chosen.resolve(() => clipboard.writeText(e.href)),
+    }));
+  }
+
+  if (e.img) {
+    menu.append(new MenuItem({
+      label: 'Copy Image URL',
+      click: () => chosen.resolve(() => clipboard.writeText(e.img)),
+    }));
+
+    menu.append(new MenuItem({
+      label: 'Open Image in New Tab',
+      click: () => chosen.resolve(function* () {
+        yield put(PageEffects.createPageSession(e.img));
+      }),
+    }));
+  }
+
+  if (e.img || e.href) {
+    menu.append(new MenuItem({ type: 'separator' }));
+  }
+
+  menu.append(new MenuItem({
+    label: 'Inspect Element',
+    click: () => chosen.resolve(() => webview.inspectElement(e.x, e.y)),
+  }));
+
+  menu.popup(remote.getCurrentWindow());
+  const choice = yield chosen.promise;
+  yield choice();
 }
