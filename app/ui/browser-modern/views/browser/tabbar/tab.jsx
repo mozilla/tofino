@@ -96,9 +96,9 @@ class Tab extends Component {
 
   handleTabDoubleClick = () => {
     if (!this.props.isPinned) {
-      this.props.dispatch(PageActions.setPagePinned(this.props.pageId));
+      this.props.dispatch(PageEffects.setPagePinned(this.props.pageId));
     } else {
-      this.props.dispatch(PageActions.setPageUnpinned(this.props.pageId));
+      this.props.dispatch(PageEffects.setPageUnpinned(this.props.pageId));
     }
   }
 

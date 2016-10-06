@@ -11,10 +11,10 @@ specific language governing permissions and limitations under the License.
 */
 
 import { takeLatest, takeEvery } from 'redux-saga';
-import { put, call } from 'redux-saga/effects';
+import { put, call, apply } from 'redux-saga/effects';
 
 import Deferred from '../../../shared/deferred';
-import { remote, clipboard } from '../../../shared/electron';
+import { ipcRenderer, remote, clipboard } from '../../../shared/electron';
 import { wrapped } from './helpers';
 import * as Certificate from '../../shared/util/cert';
 import * as ContentScriptUtils from '../../shared/util/content-script-utils';
@@ -72,6 +72,12 @@ export default function() {
     function*() {
       yield* takeLatest(...wrapped(EffectTypes.DISPLAY_WEBVIEW_CONTEXT_MENU,
         displayWebviewContextMenu));
+    },
+    function*() {
+      yield* takeLatest(...wrapped(EffectTypes.PIN_TAB, pinTab));
+    },
+    function*() {
+      yield* takeLatest(...wrapped(EffectTypes.UNPIN_TAB, unpinTab));
     },
   ];
 }
@@ -233,4 +239,14 @@ function* displayWebviewContextMenu({ e, webview }) {
   menu.popup(remote.getCurrentWindow());
   const choice = yield chosen.promise;
   yield choice();
+}
+
+function* pinTab({ pageId, webContentsId }) {
+  yield put(PageActions.setPagePinned(pageId));
+  yield apply(ipcRenderer, ipcRenderer.send, ['guest-pinned-state', webContentsId, true]);
+}
+
+function* unpinTab({ pageId, webContentsId }) {
+  yield put(PageActions.setPageUnpinned(pageId));
+  yield apply(ipcRenderer, ipcRenderer.send, ['guest-pinned-state', webContentsId, false]);
 }

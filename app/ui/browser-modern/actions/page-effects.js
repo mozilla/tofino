@@ -256,3 +256,19 @@ export function displayWebviewContextMenu(webview, e) {
     e,
   };
 }
+
+export function setPagePinned(pageId, doc = document) {
+  return {
+    type: EffectTypes.PIN_TAB,
+    webContentsId: getWebViewForPageId(doc, pageId).getWebContents().id,
+    pageId,
+  };
+}
+
+export function setPageUnpinned(pageId, doc = document) {
+  return {
+    type: EffectTypes.UNPIN_TAB,
+    webContentsId: getWebViewForPageId(doc, pageId).getWebContents().id,
+    pageId,
+  };
+}
