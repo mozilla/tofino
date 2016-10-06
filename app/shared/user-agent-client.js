@@ -17,10 +17,15 @@ import { logger } from './logging';
 import { UserAgentHttpClient } from './user-agent-http-client';
 
 class UserAgentClient extends EventEmitter {
-  constructor() {
+  // You'd think { initialConnectDelayMillis = 50, maxConnectDelayMillis = 10000 } would work.  In
+  // fact, you'd be crying in your beer, just like me: it doesn't when you call simply `new
+  // UserAgentClient()`.
+  constructor(options) {
     super();
     this._connected = false;
     this.userAgentHttpClient = null;
+    this.initialConnectDelayMillis = (options && options.initialConnectDelayMillis) || 50;
+    this.maxConnectDelayMillis = (options && options.maxConnectDelayMillis) || 10000;
   }
 
   connectionDetails() {
@@ -80,8 +85,8 @@ class UserAgentClient extends EventEmitter {
         }
       });
       call.setStrategy(new backoff.ExponentialStrategy({
-        initialDelay: 50,
-        maxDelay: 10000,
+        initialDelay: this.initialConnectDelayMillis,
+        maxDelay: this.maxConnectDelayMillis,
       }));
       call.start();
     });
