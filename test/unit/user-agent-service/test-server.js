@@ -11,7 +11,8 @@ import * as endpoints from '../../../app/shared/constants/endpoints';
 import * as spawn from '../../../app/main/spawn';
 import * as Const from '../../../build/utils/const';
 
-describe('User Agent Service', () => {
+// Disabled for causing issue #1302.
+xdescribe('User Agent Service', () => {
   let tempDir = null;
   let port = 19090; // Start well past our UA and content server defaults.
   let stop = null;
