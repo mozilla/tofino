@@ -102,17 +102,19 @@ export function navigateCurrentPageForward() {
   };
 }
 
-export function navigatePageRefresh(pageId, doc = document) {
+export function navigatePageRefresh(pageId, ignoreCache, doc = document) {
   return {
     type: EffectTypes.NAVIGATE_PAGE_REFRESH,
     webview: getWebViewForPageId(doc, pageId),
     pageId,
+    ignoreCache,
   };
 }
 
-export function navigateCurrentPageRefresh() {
+export function navigateCurrentPageRefresh(options = {}) {
   return (dispatch, getState) => {
-    dispatch(navigatePageRefresh(PagesSelectors.getSelectedPageId(getState())));
+    dispatch(navigatePageRefresh(PagesSelectors.getSelectedPageId(getState()),
+      options.ignoreCache));
   };
 }
 
