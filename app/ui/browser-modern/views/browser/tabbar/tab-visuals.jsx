@@ -39,7 +39,7 @@ const TAB_SIDES_BACKGROUND_STYLE = Style.registerStyle({
     left 0px bottom -1px,
     right 0px bottom -1px`,
   [`.browser-tab[data-active-tab=false] > .tab-pointer-area:hover ~ .tab-visuals > &,
-    .browser-tab[data-active-tab=false] > .tab-close-button:hover ~ .tab-visuals > &,
+    .browser-tab[data-active-tab=false] > .tab-contents:hover ~ .tab-visuals > &,
     .browser-new-tab-button:hover ~ .tab-visuals > &`
   ]: {
     backgroundImage: `
@@ -65,7 +65,7 @@ const TAB_CENTER_BACKGROUND_STYLE = Style.registerStyle({
   backgroundRepeat: 'repeat-x',
   backgroundPosition: 'left 0px bottom -1px',
   [`.browser-tab[data-active-tab=false] > .tab-pointer-area:hover ~ .tab-visuals > &,
-    .browser-tab[data-active-tab=false] > .tab-close-button:hover ~ .tab-visuals > &,
+    .browser-tab[data-active-tab=false] > .tab-contents:hover ~ .tab-visuals > &,
     .browser-new-tab-button:hover ~ .tab-visuals > &`
   ]: {
     backgroundImage: `
