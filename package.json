@@ -105,7 +105,7 @@
     "mocha": "3.1.0",
     "nyc": "8.3.0",
     "react-addons-test-utils": "15.3.2",
-    "require-dir": "0.3.0",
+    "require-dir": "0.3.1",
     "rimraf": "2.5.4",
     "semver": "5.2.0",
     "sha1": "1.1.1",
