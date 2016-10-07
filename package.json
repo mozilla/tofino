@@ -60,6 +60,7 @@
     "redux-logger": "2.7.0",
     "redux-saga": "0.12.0",
     "source-map-support": "ncalexan/node-source-map-support#fileUrls-plus",
+    "tmp": "0.0.29",
     "uuid": "2.0.3",
     "why-did-you-update": "github:victorporof/why-did-you-update#immutable",
     "ws": "1.1.1"
@@ -111,7 +112,6 @@
     "sha1": "1.1.1",
     "spectron": "3.3.0",
     "thenify-all": "1.6.0",
-    "tmp": "0.0.29",
     "uglify-js": "github:mishoo/UglifyJS2#harmony",
     "webpack": "1.13.2",
     "yargs": "6.0.0",
