@@ -248,3 +248,11 @@ export function getCertificateError(pageId, url) {
     url,
   };
 }
+
+export function displayWebviewContextMenu(webview, e) {
+  return {
+    type: EffectTypes.DISPLAY_WEBVIEW_CONTEXT_MENU,
+    webview,
+    e,
+  };
+}

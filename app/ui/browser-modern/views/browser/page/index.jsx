@@ -199,6 +199,9 @@ class Page extends Component {
 
     this.webview.addEventListener('ipc-message', e => {
       switch (e.channel) {
+        case 'contextmenu-data':
+          this.props.dispatch(PageEffects.displayWebviewContextMenu(this.webview, e.args[0]));
+          break;
         default:
           logger.warn(`@TODO: Unknown ipc-message:${e.channel}`);
           break;
@@ -226,6 +229,11 @@ class Page extends Component {
     this.webview.dispatchEvent(ev);
   }
 
+  requestContextData = e => {
+    const { offsetX: x, offsetY: y } = e.nativeEvent;
+    this.webview.send('get-contextmenu-data', { x, y });
+  }
+
   render() {
     return (
       <div id={`browser-page-${this.props.pageId}`}
@@ -234,6 +242,7 @@ class Page extends Component {
         <webview is="webview"
           ref={e => this.webview = e}
           class={WEB_VIEW_STYLE}
+          onContextMenu={this.requestContextData}
           preload="../preload/index.js" />
       </div>
     );
