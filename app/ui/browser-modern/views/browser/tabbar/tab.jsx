@@ -56,7 +56,7 @@ const TAB_STYLE = Style.registerStyle({
     flexShrink: 0,
     width: `${UIConstants.TAB_PINNED_WIDTH}px`,
   },
-  '&[data-mounted=true]': {
+  '&[data-mounted=true][data-pinned-tab=false]': {
     transition: 'width 0.2s ease-out',
     width: `${UIConstants.TAB_DEFAULT_WIDTH}px`,
   },
