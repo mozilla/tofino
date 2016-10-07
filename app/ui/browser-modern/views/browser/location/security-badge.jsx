@@ -29,7 +29,7 @@ class SecurityBadge extends Component {
   render() {
     return (
       <Btn title="Connection"
-        hidden={this.props.hidden}
+        className={this.props.className}
         image={this.props.image}
         imgWidth="16px"
         imgHeight="16px"
@@ -41,9 +41,9 @@ class SecurityBadge extends Component {
 SecurityBadge.displayName = 'SecurityBadge';
 
 SecurityBadge.propTypes = {
-  hidden: PropTypes.bool.isRequired,
   image: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
+  className: PropTypes.string,
 };
 
 function mapStateToProps(state, ownProps) {
@@ -52,28 +52,24 @@ function mapStateToProps(state, ownProps) {
   const pageLoadState = PagesSelectors.getPageState(state, ownProps.pageId).load;
   const pageErrorState = PagesSelectors.getPageState(state, ownProps.pageId).error;
 
-  // If we have a tofino:// page, if the URL is empty (occurs during
-  // some page loads in our state), or if the page is still loading (many sites
-  // use http -> https redirects, we shouldn't penalize them for a quick interstitial),
-  // just hide the icon
-  let hidden = false;
-  if (!pageLocation ||
-      pageLocation.startsWith(TOFINO_PROTOCOL) ||
+  let image = 'ssl-insecure.svg';
+  if (pageLocation.startsWith(TOFINO_PROTOCOL)) {
+    image = 'tofino-page-icon.png';
+  } else if (!pageLocation ||
+  // If the URL is empty (occurs during some page loads when navigating back/forward in our state),
+  // or if the page is still loading (many sites use http -> https redirects,
+  // we shouldn't penalize them for a quick interstitial), ust use the 'globe' icon.
       pageLoadState === PageStateModel.STATES.CONNECTING ||
       pageLoadState === PageStateModel.STATES.LOADING) {
-    hidden = true;
-  }
-
+    image = 'ssl-unknown.svg';
+  } else if (/^https:/.test(pageLocation) && !pageErrorState) {
   // Since we have unconfigurable security settings, if we access an HTTPS page and it loads,
   // it is considered secure. Otherwise, all HTTP pages are insecure. Also, since
   // we block all mixed content, this is even easier.
-  let image = 'ssl-insecure.svg';
-  if (/^https:/.test(pageLocation) && !pageErrorState) {
     image = 'ssl-secure.svg';
   }
 
   return {
-    hidden,
     image,
   };
 }
