@@ -11,6 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import Immutable from 'immutable';
+import { ipcRenderer } from 'electron';
 
 import { logger } from '../../../shared/logging';
 import Page from '../model/page';
@@ -186,6 +187,11 @@ function setPageUIState(state, pageId, pageUIState) {
   return state.withMutations(mut => {
     for (const [key, value] of Object.entries(pageUIState)) {
       mut.update('map', m => m.setIn([pageId, 'uiState', key], value));
+
+      if (key === 'pinned') {
+        const id = state.getIn(['map', pageId, 'uiState', 'webContentsId']);
+        ipcRenderer.send('guest-pinned-state', id, value);
+      }
     }
   });
 }

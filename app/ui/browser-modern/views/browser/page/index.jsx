@@ -51,6 +51,12 @@ class Page extends Component {
   addWebviewListeners() {
     // See http://electron.atom.io/docs/api/web-view-tag/#dom-events
 
+    this.webview.addEventListener('did-attach', () => {
+      this.props.dispatch(PageActions.setPageUIState(this.props.pageId, {
+        webContentsId: this.webview.getWebContents().id,
+      }));
+    });
+
     this.webview.addEventListener('new-window', e => {
       this.props.dispatch((dispatch, getState) => {
         // Increment the index for the new page to be adjacent to this one.
