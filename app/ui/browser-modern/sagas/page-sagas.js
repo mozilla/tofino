@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import { takeLatest, takeEvery } from 'redux-saga';
-import { put, call } from 'redux-saga/effects';
+import { put, call, apply } from 'redux-saga/effects';
 
 import Deferred from '../../../shared/deferred';
 import { remote, clipboard } from '../../../shared/electron';
@@ -77,12 +77,12 @@ export default function() {
 }
 
 function* createPageSession({ id, location, options }) {
-  yield call(userAgentHttpClient.createSession.bind(userAgentHttpClient), id, {});
+  yield apply(userAgentHttpClient, userAgentHttpClient.createSession, [id, {}]);
   yield put(PageActions.createPage(id, location, options));
 }
 
 function* destroyPageSession({ page, currentPageCount }) {
-  yield call(userAgentHttpClient.destroySession.bind(userAgentHttpClient), page, {});
+  yield apply(userAgentHttpClient, userAgentHttpClient.destroySession, [page, {}]);
   yield put(PageActions.removePage(page.id));
 
   // If the last page was removed, dispatch an action to create another one.
