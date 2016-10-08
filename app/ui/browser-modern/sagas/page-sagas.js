@@ -83,12 +83,12 @@ export default function() {
 }
 
 function* createPageSession({ id, location, options }) {
-  yield call(userAgentHttpClient.createSession.bind(userAgentHttpClient), id, {});
+  yield apply(userAgentHttpClient, userAgentHttpClient.createSession, [id, {}]);
   yield put(PageActions.createPage(id, location, options));
 }
 
 function* destroyPageSession({ page, currentPageCount }) {
-  yield call(userAgentHttpClient.destroySession.bind(userAgentHttpClient), page, {});
+  yield apply(userAgentHttpClient, userAgentHttpClient.destroySession, [page, {}]);
   yield put(PageActions.removePage(page.id));
 
   // If the last page was removed, dispatch an action to create another one.
