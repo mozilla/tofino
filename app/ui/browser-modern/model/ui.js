@@ -11,8 +11,10 @@ specific language governing permissions and limitations under the License.
 */
 
 import Immutable from 'immutable';
+import ActiveElement from './active-element';
 
 export default Immutable.Record({
+  activeElement: new ActiveElement(),
   statusText: '',
   overviewVisible: false,
   locationAutocompletions: Immutable.Map(),

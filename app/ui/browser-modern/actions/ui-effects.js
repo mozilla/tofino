@@ -11,8 +11,25 @@ specific language governing permissions and limitations under the License.
 */
 
 import { getURLBarForPageId } from '../util';
+import ActiveElement from '../model/active-element';
 import * as EffectTypes from '../constants/effect-types';
 import * as PagesSelectors from '../selectors/pages';
+
+export function setApplicationActiveElement(owner, details) {
+  return {
+    type: EffectTypes.SET_APPLICATION_ACTIVE_ELEMENT,
+    owner,
+    details,
+  };
+}
+
+export function setChromeActiveElement(details) {
+  return setApplicationActiveElement(ActiveElement.OWNER.CHROME, details);
+}
+
+export function setContentActiveElement(details) {
+  return setApplicationActiveElement(ActiveElement.OWNER.CONTENT, details);
+}
 
 export function focusURLBar(pageId, options, doc = document) {
   return {

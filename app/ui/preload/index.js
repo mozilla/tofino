@@ -11,6 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import './context-menu';
+import './active-element';
 import Readability from './readability';
 import { readerify } from './reader';
 import { parseMetadata } from './metadata-parsing';

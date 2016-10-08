@@ -11,15 +11,20 @@ specific language governing permissions and limitations under the License.
 */
 
 import { takeLatest } from 'redux-saga';
+import { put } from 'redux-saga/effects';
 
 import { ipcRenderer } from '../../../shared/electron';
 import { wrapped } from './helpers';
 import { logger } from '../../../shared/logging';
+import * as UIActions from '../actions/ui-actions';
 import * as EffectTypes from '../constants/effect-types';
 import { INTERACTION_TYPES } from '../../shared/widgets/search';
 
 export default function() {
   return [
+    function*() {
+      yield* takeLatest(...wrapped(EffectTypes.SET_ACTIVE_ELEMENT, setActiveElement));
+    },
     function*() {
       yield* takeLatest(...wrapped(EffectTypes.FOCUS_URL_BAR, focusURLBar));
     },
@@ -34,6 +39,10 @@ export default function() {
       yield* takeLatest(...wrapped(EffectTypes.CONFIRM_DEFAULT_BROWSER, confirmDefaultBrowser));
     },
   ];
+}
+
+function* setActiveElement({ owner, details }) {
+  yield put(UIActions.setActiveElement(owner, details));
 }
 
 function* focusURLBar({ urlbar, options = {} }) {

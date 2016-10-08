@@ -13,12 +13,16 @@ specific language governing permissions and limitations under the License.
 import Immutable from 'immutable';
 
 import UIState from '../model/ui';
+import ActiveElement from '../model/active-element';
 import LocationAutocompletion from '../model/location-autocompletion';
 import * as ActionTypes from '../constants/action-types';
 import * as EffectTypes from '../constants/effect-types';
 
 export default function(state = new UIState(), action) {
   switch (action.type) {
+    case ActionTypes.SET_ACTIVE_ELEMENT:
+      return setActiveElement(state, action.owner, action.details);
+
     case ActionTypes.SET_STATUS_TEXT:
       return setStatusText(state, action.statusText);
 
@@ -42,6 +46,13 @@ export default function(state = new UIState(), action) {
     default:
       return state;
   }
+}
+
+function setActiveElement(state, owner, details) {
+  if (!owner || !details) {
+    return state.set('activeElement', null);
+  }
+  return state.set('activeElement', new ActiveElement({ owner, ...details }));
 }
 
 function setStatusText(state, statusText) {
