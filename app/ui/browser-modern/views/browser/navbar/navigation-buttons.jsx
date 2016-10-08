@@ -22,6 +22,7 @@ import { NAVBAR_HEIGHT, TABBAR_HEIGHT } from '../../../constants/ui';
 import * as SharedPropTypes from '../../../model/shared-prop-types';
 import * as PagesSelectors from '../../../selectors/pages';
 import * as PageEffects from '../../../actions/page-effects';
+import * as PageActions from '../../../actions/page-actions';
 
 const NAVIGATION_BUTTONS_CONTAINER_STYLE = Style.registerStyle({
   alignItems: 'center',
@@ -60,6 +61,14 @@ class NavigationButtons extends Component {
     this.props.dispatch(PageEffects.navigatePageForward(this.props.pageId));
   }
 
+  handleMenuShow = () => {
+    this.props.dispatch(PageActions.preventInteractionForPage(this.props.pageId));
+  }
+
+  handleMenuHide = () => {
+    this.props.dispatch(PageActions.allowInteractionForPage(this.props.pageId));
+  }
+
   handleHistoryPick = ({ index }) => {
     this.props.dispatch(PageEffects.navigatePageInHistory(this.props.pageId, index));
   }
@@ -78,6 +87,8 @@ class NavigationButtons extends Component {
           imgPositionHover="-19px -18px"
           disabled={!this.props.pageCanGoBack}
           onClick={this.handleNavigateBackClick}
+          onMenuShow={this.handleMenuShow}
+          onMenuHide={this.handleMenuHide}
           onMenuItemPick={this.handleHistoryPick}
           dataSrc={this.props.pageHistory}
           childComponent={HistoryListItem}
@@ -94,6 +105,8 @@ class NavigationButtons extends Component {
           imgPositionHover="-55px -18px"
           disabled={!this.props.pageCanGoForward}
           onClick={this.handleNavigateForwardClick}
+          onMenuShow={this.handleMenuShow}
+          onMenuHide={this.handleMenuHide}
           onMenuItemPick={this.handleHistoryPick}
           dataSrc={this.props.pageHistory}
           childComponent={HistoryListItem}

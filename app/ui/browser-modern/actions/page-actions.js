@@ -110,6 +110,14 @@ export function setPageUIState(pageId, pageUIState) {
   };
 }
 
+export function preventInteractionForPage(pageId) {
+  return setPageUIState(pageId, { preventInteraction: true });
+}
+
+export function allowInteractionForPage(pageId) {
+  return setPageUIState(pageId, { preventInteraction: false });
+}
+
 export function setPagePinned(pageId) {
   return (dispatch, getState) => {
     // When there's no pinned pages, the "last pinned page index" will be -1.
