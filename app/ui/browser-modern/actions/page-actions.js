@@ -133,15 +133,11 @@ export function setPageUnpinned(pageId) {
 }
 
 export function showPageSearch(pageId) {
-  return dispatch => {
-    dispatch(setPageUIState(pageId, { searchVisible: true }));
-  };
+  return setPageUIState(pageId, { searchVisible: true });
 }
 
 export function hidePageSearch(pageId) {
-  return dispatch => {
-    dispatch(setPageUIState(pageId, { searchVisible: false }));
-  };
+  return setPageUIState(pageId, { searchVisible: false });
 }
 
 export function showCurrentPageSearch() {

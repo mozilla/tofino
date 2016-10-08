@@ -190,9 +190,7 @@ export function performCurrentPageZoomOut() {
 }
 
 export function performPageZoomReset(pageId) {
-  return dispatch => {
-    dispatch(setPageZoomLevel(pageId, PageUIState.ZOOM_LEVEL_DEFAULT));
-  };
+  return setPageZoomLevel(pageId, PageUIState.ZOOM_LEVEL_DEFAULT);
 }
 
 export function performCurrentPageZoomReset() {
