@@ -58,7 +58,8 @@ class AutocompletedSearch extends Component {
   }
 
   handleWindowClick = () => {
-    // We can't call `setState` on components which haven't rendered yet.
+    // We can't call `setState` on components which haven't rendered yet,
+    // in which case this component's inputbar element won't be available.
     if (this.state.showSelectionList && this.inputbar) {
       this.setState({ showSelectionList: false });
     }

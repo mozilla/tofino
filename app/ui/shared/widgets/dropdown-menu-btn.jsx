@@ -62,8 +62,10 @@ class DropdownMenuBtn extends Component {
   }
 
   handleWindowClick = e => {
-    // This component's button won't be available if hasn't rendered yet.
-    // We also can't call `setState` on components which haven't rendered yet.
+    // We can't call `setState` on components which haven't rendered yet,
+    // in which case this component's button element won't be available.
+    // The selection list should also not hide when finishing a long click on
+    // the button itself, since that's what opened it.
     if (this.state.showSelectionList && this.button && this.button.node !== e.target) {
       this.setState({ showSelectionList: false });
     }
