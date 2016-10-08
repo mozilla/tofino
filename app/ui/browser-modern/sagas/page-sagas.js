@@ -209,6 +209,11 @@ function* displayWebviewContextMenu({ e, webview }) {
     }));
 
     menu.append(new MenuItem({
+      label: 'Save Image As...',
+      click: () => chosen.resolve(() => webview.downloadURL(e.img)),
+    }));
+
+    menu.append(new MenuItem({
       label: 'Open Image in New Tab',
       click: () => chosen.resolve(function* () {
         yield put(PageEffects.createPageSession(e.img));
