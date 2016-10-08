@@ -123,13 +123,18 @@ function* navigatePageForward({ pageId, webview }) {
   webview.goForward();
 }
 
-function* navigatePageRefresh({ pageId, webview }) {
+function* navigatePageRefresh({ pageId, webview, ignoreCache }) {
   yield put(PageActions.resetPageData(pageId));
   yield put(PageActions.setPageState(pageId, {
     load: PageState.STATES.CONNECTING,
     navigationType: PageState.NAVIGATION_TYPES.REFRESHED,
   }));
-  webview.reload();
+
+  if (ignoreCache) {
+    webview.reloadIgnoringCache();
+  } else {
+    webview.reload();
+  }
 }
 
 function* navigatePageInHistory({ pageId, webview, historyIndex }) {

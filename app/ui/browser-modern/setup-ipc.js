@@ -64,11 +64,11 @@ export default function({ store, userAgentClient }) {
     }
   });
 
-  ipcRenderer.on('page-refresh', () => {
+  ipcRenderer.on('page-refresh', (_, options = {}) => {
     const pageId = PagesSelectors.getSelectedPageId(store.getState());
     const pageCanRefresh = PagesSelectors.getPageCanRefresh(store.getState(), pageId);
     if (pageCanRefresh && !UISelectors.getOverviewVisible(store.getState())) {
-      store.dispatch(PageEffects.navigateCurrentPageRefresh());
+      store.dispatch(PageEffects.navigateCurrentPageRefresh(options));
     }
   });
 

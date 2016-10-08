@@ -25,6 +25,7 @@ const HOTKEYS = new Map([
   ['CmdOrCtrl+Left', bw => () => bw.webContents.send('go-back')],
   ['CmdOrCtrl+Right', bw => () => bw.webContents.send('go-forward')],
   ['CmdOrCtrl+R', bw => () => bw.webContents.send('page-refresh')],
+  ['CmdOrCtrl+Shift+R', bw => () => bw.webContents.send('page-refresh', { ignoreCache: true })],
   ['CmdOrCtrl+1', bw => () => bw.webContents.send('select-tab-index', 0)],
   ['CmdOrCtrl+2', bw => () => bw.webContents.send('select-tab-index', 1)],
   ['CmdOrCtrl+3', bw => () => bw.webContents.send('select-tab-index', 2)],
