@@ -89,7 +89,7 @@ class Location extends Component {
           onAutocompletionPick={this.handleAutocompletionPick}
           dataSrc={this.props.locationAutocompletions}
           childComponent={AutocompletionListItem}
-          dropdownListClassName={DROPDOWN_LIST_STYLE} />
+          autocompletionListClassName={DROPDOWN_LIST_STYLE} />
         <LocationButtons pageId={this.props.pageId} />
       </div>
     );

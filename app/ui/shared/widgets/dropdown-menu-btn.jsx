@@ -54,6 +54,14 @@ class DropdownMenuBtn extends Component {
     }
   }
 
+  componentWillUpdate(nextProps, nextState) {
+    if (this.state.showSelectionList && !nextState.showSelectionList) {
+      nextProps.onMenuHide();
+    } else if (!this.state.showSelectionList && nextState.showSelectionList) {
+      nextProps.onMenuShow();
+    }
+  }
+
   componentWillUnmount() {
     if (typeof window === 'object') {
       window.removeEventListener('click', this.handleWindowClick);
@@ -148,6 +156,8 @@ const SelectionListProps = {
   dataSrc: ImmutablePropTypes.list,
   childComponent: PropTypes.func.isRequired,
   onMenuItemPick: PropTypes.func.isRequired,
+  onMenuShow: PropTypes.func,
+  onMenuHide: PropTypes.func,
 };
 
 DropdownMenuBtn.propTypes = {
@@ -159,6 +169,8 @@ DropdownMenuBtn.propTypes = {
 };
 
 DropdownMenuBtn.defaultProps = {
+  onMenuShow: () => {},
+  onMenuHide: () => {},
   onMouseDown: () => {},
   onMouseUp: () => {},
   onClick: () => {},
