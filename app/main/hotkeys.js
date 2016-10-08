@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import electron from 'electron';
+import { default as electron, ipcMain } from 'electron';
 import shortcut from 'electron-localshortcut';
 
 /**
@@ -22,8 +22,6 @@ const HOTKEYS = new Map([
   ['CmdOrCtrl+W', bw => () => bw.webContents.send('close-tab')],
   ['CmdOrCtrl+Shift+W', bw => () => bw.close()],
   ['CmdOrCtrl+L', bw => () => bw.webContents.send('focus-url-bar')],
-  ['CmdOrCtrl+Left', bw => () => bw.webContents.send('go-back')],
-  ['CmdOrCtrl+Right', bw => () => bw.webContents.send('go-forward')],
   ['CmdOrCtrl+R', bw => () => bw.webContents.send('page-refresh')],
   ['CmdOrCtrl+Shift+R', bw => () => bw.webContents.send('page-refresh', { ignoreCache: true })],
   ['CmdOrCtrl+1', bw => () => bw.webContents.send('select-tab-index', 0)],
@@ -45,14 +43,42 @@ const HOTKEYS = new Map([
   ['CmdOrCtrl+0', bw => () => bw.webContents.send('zoom-reset')],
 ]);
 
+const CUSTOM_HANDLED_HOTKEYS = new Map([
+  ['CmdOrCtrl+Left', bw => () => bw.webContents.send('go-back')],
+  ['CmdOrCtrl+Right', bw => () => bw.webContents.send('go-forward')],
+]);
+
+const handlerSet = new Set();
+
 export function bindBrowserWindowHotkeys(browserWindow) {
+  const handler = handleGuestActiveElementChange.bind(null, browserWindow);
+  handlerSet.add(handler);
+  ipcMain.on('guest-active-element', handler);
+
   HOTKEYS.forEach((handlerFactory, accelerator) => {
     shortcut.register(browserWindow, accelerator, handlerFactory(browserWindow));
   });
 }
 
 export function unbindBrowserWindowHotkeys(browserWindow) {
+  handlerSet.forEach(handler => ipcMain.removeListener('guest-active-element', handler));
   shortcut.unregisterAll(browserWindow);
+}
+
+// Registered shortcuts swallow the default event from happening even when they
+// don't do anything. So if CmdOrCtrl+Left/Right is bound, even if the handler
+// would do nothing, there won't be action happening in a focused input element.
+// Sadly, we need to disable/enable these shortcuts based on the active element.
+function handleGuestActiveElementChange(browserWindow, event, { details }) {
+  if (!details || details.nodeName !== 'INPUT') {
+    CUSTOM_HANDLED_HOTKEYS.forEach((handlerFactory, accelerator) => {
+      shortcut.register(browserWindow, accelerator, handlerFactory(browserWindow));
+    });
+  } else {
+    CUSTOM_HANDLED_HOTKEYS.forEach((_, accelerator) => {
+      shortcut.unregister(browserWindow, accelerator);
+    });
+  }
 }
 
 /**

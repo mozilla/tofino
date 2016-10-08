@@ -23,7 +23,7 @@ import { INTERACTION_TYPES } from '../../shared/widgets/search';
 export default function() {
   return [
     function*() {
-      yield* takeLatest(...wrapped(EffectTypes.SET_ACTIVE_ELEMENT, setActiveElement));
+      yield* takeLatest(...wrapped(EffectTypes.SET_APPLICATION_ACTIVE_ELEMENT, setActiveElement));
     },
     function*() {
       yield* takeLatest(...wrapped(EffectTypes.FOCUS_URL_BAR, focusURLBar));
@@ -33,7 +33,7 @@ export default function() {
     },
     function*() {
       yield* takeLatest(...wrapped(EffectTypes.SHOW_DOWNLOAD_NOTIFICATION,
-            showDownloadNotification));
+        showDownloadNotification));
     },
     function*() {
       yield* takeLatest(...wrapped(EffectTypes.CONFIRM_DEFAULT_BROWSER, confirmDefaultBrowser));
@@ -42,6 +42,7 @@ export default function() {
 }
 
 function* setActiveElement({ owner, details }) {
+  ipcRenderer.send('guest-active-element', { owner, details });
   yield put(UIActions.setActiveElement(owner, details));
 }
 
