@@ -47,20 +47,26 @@ class AutocompletedSearch extends Component {
 
   componentWillMount() {
     if (typeof window === 'object') {
-      window.addEventListener('click', this.handleWindowClick);
+      window.addEventListener('mousedown', this.handleWindowMousedown);
     }
   }
 
   componentWillUnmount() {
     if (typeof window === 'object') {
-      window.removeEventListener('click', this.handleWindowClick);
+      window.removeEventListener('mousedown', this.handleWindowMousedown);
     }
   }
 
-  handleWindowClick = () => {
-    // We can't call `setState` on components which haven't rendered yet.
-    if (this.state.showSelectionList && this.inputbar) {
+  // We need to use mousedown since preventing the event on click won't stop
+  // it from passing through to the webview.
+  handleWindowMousedown = (e) => {
+    // We can't call `setState` on components which haven't rendered yet,
+    // and we only want to hide / prevent if the target is outside of the
+    // select list.
+    if (this.state.showSelectionList && this.inputbar &&
+        !this.inputbar.container.contains(e.target)) {
       this.setState({ showSelectionList: false });
+      e.preventDefault();
     }
   }
 
