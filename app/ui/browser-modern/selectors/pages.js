@@ -106,6 +106,10 @@ export function getPageHistoryIndex(state, id) {
 
 // Page internal UI state getters
 
+export function getPagePreventInteraction(state, id) {
+  return getPageUIState(state, id).preventInteraction;
+}
+
 export function getPageSearchVisible(state, id) {
   return getPageUIState(state, id).searchVisible;
 }

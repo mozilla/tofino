@@ -35,6 +35,9 @@ const WEB_VIEW_STYLE = Style.registerStyle({
   display: 'flex',
   flex: 1,
   background: '#fff',
+  '&[data-prevent-interaction=true]': {
+    pointerEvents: 'none',
+  },
 });
 
 class Page extends Component {
@@ -242,6 +245,7 @@ class Page extends Component {
         <webview is="webview"
           ref={e => this.webview = e}
           class={WEB_VIEW_STYLE}
+          data-prevent-interaction={this.props.preventInteraction}
           onContextMenu={this.requestContextData}
           preload="../preload/index.js" />
       </div>
@@ -254,6 +258,13 @@ Page.displayName = 'Page';
 Page.propTypes = {
   dispatch: PropTypes.func.isRequired,
   pageId: PropTypes.string.isRequired,
+  preventInteraction: PropTypes.bool.isRequired,
 };
 
-export default connect()(Page);
+function mapStateToProps(state, ownProps) {
+  return {
+    preventInteraction: PagesSelectors.getPagePreventInteraction(state, ownProps.pageId),
+  };
+}
+
+export default connect(mapStateToProps)(Page);
