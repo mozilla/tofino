@@ -54,6 +54,14 @@ class DropdownMenuBtn extends Component {
     }
   }
 
+  componentWillUpdate(nextProps, nextState) {
+    if (this.state.showSelectionList && !nextState.showSelectionList) {
+      nextProps.onMenuHide();
+    } else if (!this.state.showSelectionList && nextState.showSelectionList) {
+      nextProps.onMenuShow();
+    }
+  }
+
   componentWillUnmount() {
     if (typeof window === 'object') {
       window.removeEventListener('click', this.handleWindowClick);
@@ -62,8 +70,10 @@ class DropdownMenuBtn extends Component {
   }
 
   handleWindowClick = e => {
-    // This component's button won't be available if hasn't rendered yet.
-    // We also can't call `setState` on components which haven't rendered yet.
+    // We can't call `setState` on components which haven't rendered yet,
+    // in which case this component's button element won't be available.
+    // The selection list should also not hide when finishing a long click on
+    // the button itself, since that's what opened it.
     if (this.state.showSelectionList && this.button && this.button.node !== e.target) {
       this.setState({ showSelectionList: false });
     }
@@ -146,6 +156,8 @@ const SelectionListProps = {
   dataSrc: ImmutablePropTypes.list,
   childComponent: PropTypes.func.isRequired,
   onMenuItemPick: PropTypes.func.isRequired,
+  onMenuShow: PropTypes.func,
+  onMenuHide: PropTypes.func,
 };
 
 DropdownMenuBtn.propTypes = {
@@ -157,6 +169,8 @@ DropdownMenuBtn.propTypes = {
 };
 
 DropdownMenuBtn.defaultProps = {
+  onMenuShow: () => {},
+  onMenuHide: () => {},
   onMouseDown: () => {},
   onMouseUp: () => {},
   onClick: () => {},

@@ -28,6 +28,7 @@ import * as UISelectors from '../../../selectors/ui';
 import * as PagesSelectors from '../../../selectors/pages';
 import * as ProfileEffects from '../../../actions/profile-effects';
 import * as PageEffects from '../../../actions/page-effects';
+import * as PageActions from '../../../actions/page-actions';
 
 const LOCATION_BAR_STYLE = Style.registerStyle({
   flex: 1,
@@ -72,6 +73,14 @@ class Location extends Component {
     }
   }
 
+  handleAutocompletionListShow = () => {
+    this.props.dispatch(PageActions.preventInteractionForPage(this.props.pageId));
+  }
+
+  handleAutocompletionListHide = () => {
+    this.props.dispatch(PageActions.allowInteractionForPage(this.props.pageId));
+  }
+
   handleAutocompletionPick = ({ data }) => {
     const location = LocationUtil.fixURL(data.url);
     this.props.dispatch(PageEffects.navigatePageTo(this.props.pageId, location));
@@ -87,9 +96,11 @@ class Location extends Component {
           onChange={this.handleInputChange}
           onKeyDown={this.handleInputKeyDown}
           onAutocompletionPick={this.handleAutocompletionPick}
+          onAutocompletionListShow={this.handleAutocompletionListShow}
+          onAutocompletionListHide={this.handleAutocompletionListHide}
           dataSrc={this.props.locationAutocompletions}
           childComponent={AutocompletionListItem}
-          dropdownListClassName={DROPDOWN_LIST_STYLE} />
+          autocompletionListClassName={DROPDOWN_LIST_STYLE} />
         <LocationButtons pageId={this.props.pageId} />
       </div>
     );

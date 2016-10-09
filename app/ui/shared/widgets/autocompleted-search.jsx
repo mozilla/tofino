@@ -51,6 +51,14 @@ class AutocompletedSearch extends Component {
     }
   }
 
+  componentWillUpdate(nextProps, nextState) {
+    if (this.state.showSelectionList && !nextState.showSelectionList) {
+      nextProps.onAutocompletionListHide();
+    } else if (!this.state.showSelectionList && nextState.showSelectionList) {
+      nextProps.onAutocompletionListShow();
+    }
+  }
+
   componentWillUnmount() {
     if (typeof window === 'object') {
       window.removeEventListener('click', this.handleWindowClick);
@@ -58,7 +66,8 @@ class AutocompletedSearch extends Component {
   }
 
   handleWindowClick = () => {
-    // We can't call `setState` on components which haven't rendered yet.
+    // We can't call `setState` on components which haven't rendered yet,
+    // in which case this component's inputbar element won't be available.
     if (this.state.showSelectionList && this.inputbar) {
       this.setState({ showSelectionList: false });
     }
@@ -155,7 +164,7 @@ class AutocompletedSearch extends Component {
         ref={e => this.inputbar = e}
         onChange={this.handleInputChange}
         onKeyDown={this.handleInputKeyDown}>
-        <SelectionList className={`${SELECTION_LIST_STYLE} ${this.props.dropdownListClassName || ''}`}
+        <SelectionList className={`${SELECTION_LIST_STYLE} ${this.props.autocompletionListClassName || ''}`}
           hidden={!this.state.showSelectionList}
           selectedIndex={this.state.selectedIndex}
           onMouseOverChildComponent={this.handleMouseOverChildComponent}
@@ -170,10 +179,12 @@ class AutocompletedSearch extends Component {
 AutocompletedSearch.displayName = 'AutocompletedSearch';
 
 const SelectionListProps = {
-  dropdownListClassName: PropTypes.string,
+  autocompletionListClassName: PropTypes.string,
   dataSrc: ImmutablePropTypes.list,
   childComponent: PropTypes.func.isRequired,
   onAutocompletionPick: PropTypes.func.isRequired,
+  onAutocompletionListShow: PropTypes.func,
+  onAutocompletionListHide: PropTypes.func,
 };
 
 AutocompletedSearch.propTypes = {
@@ -184,6 +195,8 @@ AutocompletedSearch.propTypes = {
 };
 
 AutocompletedSearch.defaultProps = {
+  onAutocompletionListShow: () => {},
+  onAutocompletionListHide: () => {},
   onChange: () => {},
   onKeyDown: () => {},
 };

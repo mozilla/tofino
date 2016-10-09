@@ -110,6 +110,14 @@ export function setPageUIState(pageId, pageUIState) {
   };
 }
 
+export function preventInteractionForPage(pageId) {
+  return setPageUIState(pageId, { preventInteraction: true });
+}
+
+export function allowInteractionForPage(pageId) {
+  return setPageUIState(pageId, { preventInteraction: false });
+}
+
 export function setPagePinned(pageId) {
   return (dispatch, getState) => {
     // When there's no pinned pages, the "last pinned page index" will be -1.
@@ -133,15 +141,11 @@ export function setPageUnpinned(pageId) {
 }
 
 export function showPageSearch(pageId) {
-  return dispatch => {
-    dispatch(setPageUIState(pageId, { searchVisible: true }));
-  };
+  return setPageUIState(pageId, { searchVisible: true });
 }
 
 export function hidePageSearch(pageId) {
-  return dispatch => {
-    dispatch(setPageUIState(pageId, { searchVisible: false }));
-  };
+  return setPageUIState(pageId, { searchVisible: false });
 }
 
 export function showCurrentPageSearch() {
