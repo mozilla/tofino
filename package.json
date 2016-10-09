@@ -43,6 +43,7 @@
     "express-validator": "2.20.10",
     "express-ws": "2.0.0",
     "fathom-web": "1.1.2",
+    "fbjs": "0.8.5",
     "fs-extra": "0.30.0",
     "immutable": "3.7.6",
     "isomorphic-fetch": "2.2.1",

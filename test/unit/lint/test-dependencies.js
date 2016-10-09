@@ -32,11 +32,6 @@ describe('dependencies', () => {
       `app/ui${all}${valid}`,
     ];
 
-    const implicit = [
-      // These aren't specified in package.json but the are installed anyway.
-      'fbjs',
-    ];
-
     const temporary = [
       // These aren't yet referenced by the main app, but we plan to reference them eventually.
       'datomish-user-agent-service', // Referenced by bin/user-agent-service script.
@@ -47,7 +42,7 @@ describe('dependencies', () => {
     const appPackages = Object.keys(appManifest.dependencies);
     const mainPackages = Object.keys(mainManifest.dependencies);
 
-    const listedPackages = [...appPackages, ...mainPackages, ...implicit];
+    const listedPackages = [...appPackages, ...mainPackages];
     const installedPackages = without(listedPackages, ...temporary).sort();
 
     const sources = await globMany(paths);
