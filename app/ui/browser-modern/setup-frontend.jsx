@@ -15,6 +15,7 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
 import App from './views/app';
+import { serializeNode } from '../shared/util/dom-serializers';
 import * as UIEffects from './actions/ui-effects';
 import * as PageEffects from './actions/page-effects';
 
@@ -37,16 +38,11 @@ export default function({ store }) {
   }, true);
 
   document.addEventListener('focus', () => {
-    const target = document.activeElement;
     // We shouldn't send the element itself, only some data about it, since
     // app state is intended to be immutable and easily serializable.
     // Furthermore, when focus is in the page content, we won't be able to send
     // the dom node itself via ipc anyway.
-    if (target) {
-      store.dispatch(UIEffects.setChromeActiveElement({ nodeName: target.nodeName }));
-    } else {
-      store.dispatch(UIEffects.setChromeActiveElement(null));
-    }
+    store.dispatch(UIEffects.setChromeActiveElement(serializeNode(document.activeElement)));
   }, true);
 
   // We start rendering before we connect to the UA service and before we receive

@@ -10,16 +10,11 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { ipcRenderer as ipc } from 'electron';
-import { serializeNode } from '../shared/util/dom-serializers';
-
-document.addEventListener('blur', () => {
-  ipc.sendToHost('focus-data', null);
-}, true);
-
-document.addEventListener('focus', () => {
-  // We shouldn't send the element itself, only some data about it, since
-  // app state is intended to be immutable and easily serializable.
-  // Furthermore, we can't send the dom node itself via ipc anyway.
-  ipc.sendToHost('focus-data', serializeNode(document.activeElement));
-}, true);
+export function serializeNode(node) {
+  if (!node) {
+    return null;
+  }
+  return {
+    nodeName: node.nodeName,
+  };
+}
