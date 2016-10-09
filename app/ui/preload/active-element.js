@@ -10,18 +10,16 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-export function getActiveElement(state) {
-  return state.ui.activeElement;
-}
+import { ipcRenderer as ipc } from 'electron';
+import { serializeNode } from '../shared/util/dom-serializers';
 
-export function getStatusText(state) {
-  return state.ui.statusText;
-}
+document.addEventListener('blur', () => {
+  ipc.sendToHost('focus-data', null);
+}, true);
 
-export function getOverviewVisible(state) {
-  return state.ui.overviewVisible;
-}
-
-export function getLocationAutocompletions(state, pageId) {
-  return state.ui.locationAutocompletions.get(pageId);
-}
+document.addEventListener('focus', () => {
+  // We shouldn't send the element itself, only some data about it, since
+  // app state is intended to be immutable and easily serializable.
+  // Furthermore, we can't send the dom node itself via ipc anyway.
+  ipc.sendToHost('focus-data', serializeNode(document.activeElement));
+}, true);

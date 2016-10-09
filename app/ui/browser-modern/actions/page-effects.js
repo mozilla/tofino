@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import uuid from 'uuid';
 
-import { getWebViewForPageId } from '../util';
+import { getWebViewForPageId } from '../util/dom-getters';
 import * as EffectTypes from '../constants/effect-types';
 import * as PagesSelectors from '../selectors/pages';
 import PageUIState from '../model/page-ui-state';

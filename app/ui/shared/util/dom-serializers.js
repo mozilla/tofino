@@ -10,18 +10,11 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-export function getActiveElement(state) {
-  return state.ui.activeElement;
-}
-
-export function getStatusText(state) {
-  return state.ui.statusText;
-}
-
-export function getOverviewVisible(state) {
-  return state.ui.overviewVisible;
-}
-
-export function getLocationAutocompletions(state, pageId) {
-  return state.ui.locationAutocompletions.get(pageId);
+export function serializeNode(node) {
+  if (!node) {
+    return null;
+  }
+  return {
+    nodeName: node.nodeName,
+  };
 }

@@ -12,6 +12,14 @@ specific language governing permissions and limitations under the License.
 
 import * as ActionTypes from '../constants/action-types';
 
+export function setActiveElement(owner, details) {
+  return {
+    type: ActionTypes.SET_ACTIVE_ELEMENT,
+    owner,
+    details,
+  };
+}
+
 export function setStatusText(statusText) {
   return {
     type: ActionTypes.SET_STATUS_TEXT,

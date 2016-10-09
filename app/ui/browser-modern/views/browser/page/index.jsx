@@ -202,6 +202,9 @@ class Page extends Component {
         case 'contextmenu-data':
           this.props.dispatch(PageEffects.displayWebviewContextMenu(this.webview, e.args[0]));
           break;
+        case 'focus-data':
+          this.props.dispatch(UIEffects.setContentActiveElement(e.args[0]));
+          break;
         default:
           logger.warn(`@TODO: Unknown ipc-message:${e.channel}`);
           break;
