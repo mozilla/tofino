@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { getURLBarForPageId } from '../util';
+import { getURLBarForPageId } from '../util/dom-getters';
 import ActiveElement from '../model/active-element';
 import * as EffectTypes from '../constants/effect-types';
 import * as PagesSelectors from '../selectors/pages';
