@@ -133,7 +133,6 @@ Tab.propTypes = {
 };
 
 function mapStateToProps(state, ownProps) {
-  const page = PagesSelectors.getPageById(state, ownProps.pageId);
   const pageIndex = PagesSelectors.getPageIndexById(state, ownProps.pageId);
   const pageIsPinned = PagesSelectors.getPagePinned(state, ownProps.pageId);
 
@@ -143,7 +142,6 @@ function mapStateToProps(state, ownProps) {
   const isOverviewVisible = UISelectors.getOverviewVisible(state);
 
   return {
-    tooltipText: page.title || page.meta.title || page.location,
     isPinned: pageIsPinned,
     isActive: !isOverviewVisible && selectedPageId === ownProps.pageId,
     isBeforeActive: !isOverviewVisible && selectedPageIndex === pageIndex + 1,
