@@ -32,9 +32,9 @@ describe('dependencies', () => {
       `app/ui${all}${valid}`,
     ];
 
-    const temporary = [
-      // These aren't yet referenced by the main app, but we plan to reference them eventually.
-      'datomish-user-agent-service', // Referenced by bin/user-agent-service script.
+    const unimported = [
+      // Not imported, but referenced by bin/user-agent-service script.
+      'datomish-user-agent-service',
     ];
 
     const appManifest = await fs.readJson(path.join('app', 'package.json'));
@@ -43,16 +43,19 @@ describe('dependencies', () => {
     const mainPackages = Object.keys(mainManifest.dependencies);
 
     const listedPackages = [...appPackages, ...mainPackages];
-    const installedPackages = without(listedPackages, ...temporary).sort();
+    const installedPackages = [...listedPackages].sort();
 
     const sources = await globMany(paths);
     const matches = await regexFiles(sources, REQUIRES_REGEX, IMPORTS_REGEX);
-    const usedPackages = without(matches, ...native).sort();
 
+    // Stripping out the native node modules and adding the custom used packages
+    // should leave only the main `package.json` plus the `app/package.json`
+    // production dependencies.
+    const usedPackages = [...without(matches, ...native), ...unimported].sort();
     expect(usedPackages).toEqual(installedPackages);
 
-    const installedTemporary = intersection(temporary, [...appPackages, ...mainPackages]);
-    expect(installedTemporary).toEqual(temporary);
+    const installedUnimported = intersection(unimported, [...appPackages, ...mainPackages]);
+    expect(installedUnimported).toEqual(unimported);
   });
 
   it('– build and test code only use main dependencies or devDependencies', async function() {
@@ -61,7 +64,7 @@ describe('dependencies', () => {
       `test${all}${valid}`,
     ];
 
-    const ignored = [
+    const unimported = [
       // Modules not imported anywhere, but used at the CLI.
       'cross-env',
 
@@ -103,16 +106,18 @@ describe('dependencies', () => {
     const mainPackages = Object.keys(mainManifest.dependencies);
     const mainDevPackages = Object.keys(mainManifest.devDependencies);
 
-    const installedPackages = without(mainDevPackages, ...ignored).sort();
+    const installedPackages = [...mainDevPackages].sort();
 
     const sources = await globMany(paths);
     const matches = await regexFiles(sources, REQUIRES_REGEX, IMPORTS_REGEX);
 
-    // Strip out the main dependencies should leave only the devDependencies.
-    const usedPackages = without(matches, ...native, ...mainPackages).sort();
+    // Stripping out the production and native node modules, and adding the
+    // custom used packages should leave only the main `package.json`
+    // development dependencies.
+    const usedPackages = [...without(matches, ...mainPackages, ...native), ...unimported].sort();
     expect(usedPackages).toEqual(installedPackages);
 
-    const installedIgnored = intersection(ignored, [...mainPackages, ...mainDevPackages]);
-    expect(installedIgnored).toEqual(ignored);
+    const installedUnimported = intersection(unimported, [...mainPackages, ...mainDevPackages]);
+    expect(installedUnimported).toEqual(unimported);
   });
 });
