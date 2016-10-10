@@ -102,7 +102,7 @@
     "glob": "7.1.1",
     "jsdom": "9.6.0",
     "json-loader": "0.5.4",
-    "mocha": "3.1.0",
+    "mocha": "3.1.1",
     "nyc": "8.3.1",
     "react-addons-test-utils": "15.3.2",
     "require-dir": "0.3.1",
