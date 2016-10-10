@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { ipcRenderer as ipc } from 'electron';
+import { ipcRenderer as ipc } from '../../shared/electron';
 import { serializeNode } from '../shared/util/dom-serializers';
 
 document.addEventListener('blur', () => {
