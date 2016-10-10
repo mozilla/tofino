@@ -9,12 +9,11 @@
  CONDITIONS OF ANY KIND, either express or implied. See the License for the
  specific language governing permissions and limitations under the License.
  */
-/* global LIBDIR */
 
 import yargs from 'yargs';
-import path from 'path';
-import AppDirectory from 'appdirectory';
 import fs from 'fs-extra';
+import AppDirectory from 'appdirectory';
+
 import manifest from '../../package.json';
 import BUILD_CONFIG from '../build-config.json';
 
@@ -36,6 +35,7 @@ export const argParser = yargs.usage('Usage: $0 [options]').option('P', {
  * call this some time later.
  */
 const parsedArgs = new Map();
+
 export function parseArgs(args = argv) {
   let parsed = parsedArgs.get(args);
   if (parsed) {
@@ -44,20 +44,15 @@ export function parseArgs(args = argv) {
 
   parsed = argParser.parse(args);
 
-  // Only create the profile directory if we're parsing the real command line
-  // arguments
+  // Only create the profile directory if we're parsing the
+  // real command line arguments.
   if (args === argv) {
     if (parsed.profile === undefined) {
-      if (!BUILD_CONFIG.development) {
-        const directories = new AppDirectory({
-          appName: manifest.name,
-          appAuthor: manifest.author.name,
-        });
-
-        parsed.profile = directories.userData();
-      } else {
-        parsed.profile = path.join(LIBDIR, '..', 'profile');
-      }
+      const directories = new AppDirectory({
+        appName: `${manifest.name}${BUILD_CONFIG.development ? '-dev' : ''}`,
+        appAuthor: manifest.author.name,
+      });
+      parsed.profile = directories.userData();
     }
 
     fs.mkdirsSync(parsed.profile);
