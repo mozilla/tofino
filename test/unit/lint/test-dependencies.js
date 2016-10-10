@@ -25,6 +25,7 @@ const native = [
 
 describe('dependencies', () => {
   let appPackages;
+  let appDevPackages;
   let mainPackages;
   let mainDevPackages;
   let prodPackages;
@@ -34,9 +35,27 @@ describe('dependencies', () => {
     const mainManifest = await fs.readJson(path.join('package.json'));
 
     appPackages = Object.keys(appManifest.dependencies).sort();
+    appDevPackages = appManifest.devDependencies;
+
     mainPackages = Object.keys(mainManifest.dependencies).sort();
     mainDevPackages = Object.keys(mainManifest.devDependencies).sort();
+
     prodPackages = [...appPackages, ...mainPackages].sort();
+  });
+
+  it('– app and main dependencies aren\'t duplicated', async function() {
+    const ignored = [
+      // See https://github.com/mozilla/tofino/issues/1377
+      'yargs',
+      'fs-promise',
+    ];
+
+    expect(intersection(appPackages, mainPackages)).toEqual([]);
+    expect(intersection(without(appPackages, ...ignored), mainDevPackages)).toEqual([]);
+    expect(appDevPackages).toEqual(undefined);
+
+    // Make sure no garbage is accumulated in the `ignored` array.
+    expect(intersection(ignored, appPackages)).toEqual(ignored);
   });
 
   it('– shared code doesn\'t directly use native modules', async function() {
@@ -54,7 +73,10 @@ describe('dependencies', () => {
     const sources = await globMany(paths);
     const matches = await regexFiles(sources, REQUIRES_REGEX, IMPORTS_REGEX);
 
-    const usedPackages = without(matches, ...ignored).sort();
+    // Strip out the development packages, since we make sure those aren't
+    // included in shared code in one of the following tests, and we don't
+    // want them logged here as errors, since that would be confusing.
+    const usedPackages = without(matches, ...ignored, ...mainDevPackages).sort();
     expect(intersection(usedPackages, prodPackages)).toEqual(usedPackages);
   });
 
@@ -66,7 +88,10 @@ describe('dependencies', () => {
     const sources = await globMany(paths);
     const matches = await regexFiles(sources, REQUIRES_REGEX, IMPORTS_REGEX);
 
-    const usedPackages = matches.sort();
+    // Strip out the development packages, since we make sure those aren't
+    // included in frontend code in one of the following tests, and we don't
+    // want them logged here as errors, since that would be confusing.
+    const usedPackages = without(matches, ...mainDevPackages).sort();
     expect(intersection(usedPackages, prodPackages)).toEqual(usedPackages);
   });
 
@@ -92,6 +117,7 @@ describe('dependencies', () => {
     const usedPackages = [...without(matches, ...native), ...unimported].sort();
     expect(usedPackages).toEqual(prodPackages);
 
+    // Make sure no garbage is accumulated in the `unimported` array.
     const installedUnimported = intersection(unimported, [...appPackages, ...mainPackages]);
     expect(installedUnimported).toEqual(unimported);
   });
@@ -149,6 +175,7 @@ describe('dependencies', () => {
     const usedPackages = [...without(matches, ...mainPackages, ...native), ...unimported].sort();
     expect(usedPackages).toEqual(mainDevPackages);
 
+    // Make sure no garbage is accumulated in the `unimported` array.
     const installedUnimported = intersection(unimported, [...mainPackages, ...mainDevPackages]);
     expect(installedUnimported).toEqual(unimported);
   });
