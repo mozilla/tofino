@@ -19,7 +19,7 @@ import FittedImage from '../../fitted-image';
 
 import * as Endpoints from '../../../../../shared/constants/endpoints';
 
-const TOFINO_LOGO = 'assets/logo-tofino.png';
+const TOFINO_LOGO = 'assets/tofino-page-icon.png';
 
 const CARD_STYLE_NORMAL = {
   boxShadow: `
