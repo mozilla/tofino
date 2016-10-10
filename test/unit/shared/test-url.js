@@ -3,7 +3,7 @@
 
 import expect from 'expect';
 
-import { prettyUrl } from '../../../app/shared/url';
+import { prettyUrl } from '../../../app/ui/shared/util/url-util';
 
 describe('prettyUrl', () => {
   it('Strips http, https protocols', () => {

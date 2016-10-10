@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 import React, { PropTypes } from 'react';
 
 import Style from '../../../shared/style';
-import { prettyUrl } from '../../../../shared/url';
+import { prettyUrl } from '../../../shared/util/url-util';
 
 const GRADIENT_MASK = `-webkit-linear-gradient(left,
                       rgba(0, 0, 0, 1) 0%,
