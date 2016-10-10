@@ -14,6 +14,7 @@ import React, { Component } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Style from '../../../../shared/style';
+import { prettyUrl } from '../../../../shared/util/url-util';
 
 import * as SharedPropTypes from '../../../model/shared-prop-types';
 
@@ -46,7 +47,7 @@ class HistoryListItem extends Component {
         <div className={LOCATION_STYLE}>
           <i className={`fa fa-check ${CHECKMARK_STYLE}`}
             hidden={!this.props.data.active} />
-          {this.props.data.url}
+          {prettyUrl(this.props.data.url)}
         </div>
       </div>
     );

@@ -14,6 +14,7 @@ import React, { Component } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Style from '../../../../shared/style';
+import { prettyUrl } from '../../../../shared/util/url-util';
 
 import * as SharedPropTypes from '../../../model/shared-prop-types';
 
@@ -64,7 +65,7 @@ class AutocompletionsListItem extends Component {
           null
         )}
         <div className={LOCATION_STYLE}>
-          {this.props.data.url}
+          {prettyUrl(this.props.data.url)}
         </div>
       </div>
     );

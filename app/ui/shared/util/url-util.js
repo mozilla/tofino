@@ -16,6 +16,7 @@ const PROTOCOLS_TO_HIDE = new Set([
   'http:',
   'https:',
 ]);
+
 const WWW_SUBDOMAIN_REGEX = /^www\./;
 
 /**
@@ -38,7 +39,9 @@ export function prettyUrl(url) {
   }
 
   // Strip subdomain if it's just 'www'
-  parsedUrl.host = parsedUrl.host.replace(WWW_SUBDOMAIN_REGEX, '');
+  if (parsedUrl.host) {
+    parsedUrl.host = parsedUrl.host.replace(WWW_SUBDOMAIN_REGEX, '');
+  }
 
   let formattedUrl = urlModule.format(parsedUrl);
 
