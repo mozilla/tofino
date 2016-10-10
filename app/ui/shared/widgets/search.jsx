@@ -21,6 +21,7 @@ export const USER_FINISHED_TYPING_DELAY = 500; // ms
 
 export const INTERACTION_TYPES = {
   IDLE: 'idle',
+  FOCUSING_BY_MOUSE: 'focusing-by-mouse',
   USER_IS_TYPING: 'user-is-typing',
 };
 
@@ -43,6 +44,7 @@ class Search extends Component {
 
     this.state = {
       interaction: INTERACTION_TYPES.IDLE,
+      focused: false,
     };
   }
 
@@ -75,7 +77,10 @@ class Search extends Component {
   }
 
   handleClick = e => {
-    this.select();
+    if (this.state.interaction === INTERACTION_TYPES.FOCUSING_BY_MOUSE) {
+      this.select();
+      this.setState({ interaction: INTERACTION_TYPES.IDLE });
+    }
     this.props.onClick(e);
   }
 
@@ -87,6 +92,20 @@ class Search extends Component {
   handleKeyUp = e => {
     this.handleKeyUpDebounced(e);
     this.props.onKeyUp(e);
+  }
+
+  handleMouseDown = () => {
+    if (!this.state.focused) {
+      this.setState({ interaction: INTERACTION_TYPES.FOCUSING_BY_MOUSE });
+    }
+  }
+
+  handleFocus = () => {
+    this.setState({ focused: true });
+  }
+
+  handleBlur = () => {
+    this.setState({ focused: false });
   }
 
   handleKeyUpDebounced = debounce(() => {
@@ -106,7 +125,10 @@ class Search extends Component {
           onChange={this.props.onChange}
           onKeyDown={this.handleKeyDown}
           onKeyUp={this.handleKeyUp}
-          onKeyPress={this.props.onKeyPress} />
+          onKeyPress={this.props.onKeyPress}
+          onMouseDown={this.handleMouseDown}
+          onFocus={this.handleFocus}
+          onBlur={this.handleBlur} />
         {this.props.children}
       </div>
     );

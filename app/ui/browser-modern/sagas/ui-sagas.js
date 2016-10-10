@@ -60,7 +60,7 @@ function* setURLBarValue({ urlbar, value, doc, options = { keepSelection: true }
   // user entered text, but allowing the intended text to be displayed when
   // cancelling input (e.g. by pressing 'Escape').
   const interaction = urlbar.dataset.interaction;
-  if (interaction === INTERACTION_TYPES.USER_IS_TYPING) {
+  if (interaction !== INTERACTION_TYPES.IDLE) {
     logger.warn(`Skipped setting \`value\` on the urlbar because: ${interaction}.`);
     urlbar.defaultValue = value;
     return;
