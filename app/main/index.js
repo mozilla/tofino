@@ -15,6 +15,7 @@ specific language governing permissions and limitations under the License.
 
 import { logger } from '../shared/logging';
 import 'source-map-support/register';
+import { addToWindowsRegistry, removeFromWindowsRegistry } from './protocols';
 
 process.on('uncaughtException', err => {
   logger.error(err.stack);
@@ -29,6 +30,8 @@ process.on('unhandledRejection', (reason, p) => {
 
 import { app } from 'electron';
 import { argParser, parseArgs } from '../shared/environment';
+
+// See https://github.com/Squirrel/Squirrel.Windows/blob/master/docs/using/custom-squirrel-events-non-cs.md#application-startup-commands
 
 const SQUIRREL_VERSION_EVENTS = [
   'squirrel-install',
@@ -69,6 +72,22 @@ switch (seenEvent) {
   case SQUIRREL_FIRSTRUN_EVENT:
   case null:
     require('./browser');
+    break;
+
+  case 'squirrel-install':
+    addToWindowsRegistry().catch(e => {
+      logger.error(e);
+    }).then(() => {
+      app.quit();
+    });
+    break;
+
+  case 'squirrel-uninstall':
+    removeFromWindowsRegistry().catch(e => {
+      logger.error(e);
+    }).then(() => {
+      app.quit();
+    });
     break;
 
   // For all other events quit the app.

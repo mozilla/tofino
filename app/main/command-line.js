@@ -12,7 +12,7 @@ import electron from 'electron';
 import { parse } from 'url';
 import * as BW from './browser-window';
 import * as protocols from './protocols';
-import { logger } from '../shared/logging';
+import { parseArgs } from '../shared/environment';
 
 const { app } = electron;
 const isDarwin = process.platform === 'darwin';
@@ -27,18 +27,12 @@ const isValidURL = url => {
   return protocols.DEFAULT_PROTOCOLS.includes(protocol.replace(/:$/, ''));
 };
 
-// Checks an array of arguments if it can find a url
-const getUrlFromCommandLine = () => {
-  logger.warn('getUrlFromCommandLine: not yet implemented, Issue #1210');
-  return undefined;
-};
-
 // For macOS, there are events like open-url instead
 if (!isDarwin) {
-  const openUrl = getUrlFromCommandLine(process.argv);
-  if (openUrl) {
-    if (isValidURL(openUrl)) {
-      BW.focusOrOpenWindow(openUrl);
+  // Checks an array of arguments if it can find a url
+  for (const arg of parseArgs()._) {
+    if (isValidURL(arg)) {
+      BW.focusOrOpenWindow(arg);
     }
   }
 }
@@ -50,7 +44,11 @@ app.on('ready', () => {
       if (isDarwin) {
         BW.focusOrOpenWindow();
       } else {
-        BW.focusOrOpenWindow(getUrlFromCommandLine(argv));
+        for (const arg of parseArgs(argv)._) {
+          if (isValidURL(arg)) {
+            BW.focusOrOpenWindow(arg);
+          }
+        }
       }
     });
     if (appAlreadyStartedShouldQuit) {

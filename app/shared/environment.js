@@ -11,7 +11,7 @@
  */
 /* global LIBDIR */
 
-import yargs from 'yargs/yargs';
+import yargs from 'yargs';
 import path from 'path';
 import AppDirectory from 'appdirectory';
 import fs from 'fs-extra';
@@ -22,14 +22,12 @@ import BUILD_CONFIG from '../build-config.json';
 // the command line arguments.
 const argv = process.argv.slice(process.defaultApp ? 2 : 1);
 
-export const argParser = yargs(argv).usage('Usage: $0 [options]').option('P', {
+export const argParser = yargs.usage('Usage: $0 [options]').option('P', {
   alias: 'profile',
   default: undefined,
   describe: 'The user profile directory.',
   type: 'string',
 });
-
-let parsedArgs;
 
 /**
  * Note that it is important to not call this before all of the necessary
@@ -37,27 +35,34 @@ let parsedArgs;
  * add options in the top level of modules that are imported at startup then
  * call this some time later.
  */
-export function parseArgs() {
-  if (parsedArgs !== undefined) {
-    return parsedArgs;
+const parsedArgs = new Map();
+export function parseArgs(args = argv) {
+  let parsed = parsedArgs.get(args);
+  if (parsed) {
+    return parsed;
   }
 
-  parsedArgs = argParser.argv;
+  parsed = argParser.parse(args);
 
-  if (parsedArgs.profile === undefined) {
-    if (!BUILD_CONFIG.development) {
-      const directories = new AppDirectory({
-        appName: manifest.name,
-        appAuthor: manifest.author.name,
-      });
+  // Only create the profile directory if we're parsing the real command line
+  // arguments
+  if (args === argv) {
+    if (parsed.profile === undefined) {
+      if (!BUILD_CONFIG.development) {
+        const directories = new AppDirectory({
+          appName: manifest.name,
+          appAuthor: manifest.author.name,
+        });
 
-      parsedArgs.profile = directories.userData();
-    } else {
-      parsedArgs.profile = path.join(LIBDIR, '..', 'profile');
+        parsed.profile = directories.userData();
+      } else {
+        parsed.profile = path.join(LIBDIR, '..', 'profile');
+      }
     }
+
+    fs.mkdirsSync(parsed.profile);
   }
 
-  fs.mkdirsSync(parsedArgs.profile);
-
-  return parsedArgs;
+  parsedArgs.set(args, parsed);
+  return parsed;
 }
