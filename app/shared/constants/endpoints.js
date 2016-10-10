@@ -26,6 +26,3 @@ export const CONTENT_SERVER_VERSION = 'v1';
 
 export const CONTENT_SERVER_ORIGIN = `http://${CONTENT_SERVER_ADDR}:${CONTENT_SERVER_PORT}`;
 export const CONTENT_SERVER_HTTP = `${CONTENT_SERVER_ORIGIN}/${CONTENT_SERVER_VERSION}`;
-
-// The Google Analytics tracking identifier to use when instrumenting.
-export const GOOGLE_ANALYTICS_TRACKING_ID = 'UA-76122102-1';
