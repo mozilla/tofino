@@ -38,6 +38,7 @@
     "colors": "1.1.2",
     "electron-ipc-mock": "0.0.2",
     "electron-localshortcut": "0.6.1",
+    "events": "1.1.1",
     "express": "4.14.0",
     "express-validator": "2.20.10",
     "express-ws": "2.0.0",

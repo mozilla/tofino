@@ -16,7 +16,6 @@ const native = [
   'assert',
   'child_process',
   'electron',
-  'events',
   'fs',
   'os',
   'path',
