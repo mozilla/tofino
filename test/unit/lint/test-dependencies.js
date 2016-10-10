@@ -24,6 +24,52 @@ const native = [
 ];
 
 describe('dependencies', () => {
+  let appPackages;
+  let mainPackages;
+  let mainDevPackages;
+  let prodPackages;
+
+  beforeEach(async function() {
+    const appManifest = await fs.readJson(path.join('app', 'package.json'));
+    const mainManifest = await fs.readJson(path.join('package.json'));
+
+    appPackages = Object.keys(appManifest.dependencies).sort();
+    mainPackages = Object.keys(mainManifest.dependencies).sort();
+    mainDevPackages = Object.keys(mainManifest.devDependencies).sort();
+    prodPackages = [...appPackages, ...mainPackages].sort();
+  });
+
+  it('– shared code doesn\'t directly use native modules', async function() {
+    const paths = [
+      `app/shared${all}${valid}`,
+    ];
+
+    const ignored = [
+      // Used for communicating with the main process.
+      'electron',
+      // Used for bunyan logging.
+      'stream',
+    ];
+
+    const sources = await globMany(paths);
+    const matches = await regexFiles(sources, REQUIRES_REGEX, IMPORTS_REGEX);
+
+    const usedPackages = without(matches, ...ignored).sort();
+    expect(intersection(usedPackages, prodPackages)).toEqual(usedPackages);
+  });
+
+  it('– frontend code doesn\'t directly use native modules', async function() {
+    const paths = [
+      `app/ui${all}${valid}`,
+    ];
+
+    const sources = await globMany(paths);
+    const matches = await regexFiles(sources, REQUIRES_REGEX, IMPORTS_REGEX);
+
+    const usedPackages = matches.sort();
+    expect(intersection(usedPackages, prodPackages)).toEqual(usedPackages);
+  });
+
   it('– processes only use app dependencies or main dependencies', async function() {
     const paths = [
       `app/main${all}${valid}`,
@@ -37,14 +83,6 @@ describe('dependencies', () => {
       'datomish-user-agent-service',
     ];
 
-    const appManifest = await fs.readJson(path.join('app', 'package.json'));
-    const mainManifest = await fs.readJson(path.join('package.json'));
-    const appPackages = Object.keys(appManifest.dependencies);
-    const mainPackages = Object.keys(mainManifest.dependencies);
-
-    const listedPackages = [...appPackages, ...mainPackages];
-    const installedPackages = [...listedPackages].sort();
-
     const sources = await globMany(paths);
     const matches = await regexFiles(sources, REQUIRES_REGEX, IMPORTS_REGEX);
 
@@ -52,7 +90,7 @@ describe('dependencies', () => {
     // should leave only the main `package.json` plus the `app/package.json`
     // production dependencies.
     const usedPackages = [...without(matches, ...native), ...unimported].sort();
-    expect(usedPackages).toEqual(installedPackages);
+    expect(usedPackages).toEqual(prodPackages);
 
     const installedUnimported = intersection(unimported, [...appPackages, ...mainPackages]);
     expect(installedUnimported).toEqual(unimported);
@@ -102,12 +140,6 @@ describe('dependencies', () => {
       'uglify-js',
     ];
 
-    const mainManifest = await fs.readJson('package.json');
-    const mainPackages = Object.keys(mainManifest.dependencies);
-    const mainDevPackages = Object.keys(mainManifest.devDependencies);
-
-    const installedPackages = [...mainDevPackages].sort();
-
     const sources = await globMany(paths);
     const matches = await regexFiles(sources, REQUIRES_REGEX, IMPORTS_REGEX);
 
@@ -115,7 +147,7 @@ describe('dependencies', () => {
     // custom used packages should leave only the main `package.json`
     // development dependencies.
     const usedPackages = [...without(matches, ...mainPackages, ...native), ...unimported].sort();
-    expect(usedPackages).toEqual(installedPackages);
+    expect(usedPackages).toEqual(mainDevPackages);
 
     const installedUnimported = intersection(unimported, [...mainPackages, ...mainDevPackages]);
     expect(installedUnimported).toEqual(unimported);
