@@ -20,7 +20,6 @@ const native = [
   'os',
   'path',
   'stream',
-  'url',
   'timers',
 ];
 
