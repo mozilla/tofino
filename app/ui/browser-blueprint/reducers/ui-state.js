@@ -10,11 +10,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import assert from 'assert';
-
 import * as types from '../constants/action-types';
 import { UIState } from '../model';
-import { isUUID } from '../../shared/util/uuid-util';
 
 const initialState = new UIState();
 
@@ -22,22 +19,18 @@ export default function uiState(state = initialState, action) {
   switch (action.type) {
     // Per-Page state modifications first.  Eventually, we'll separate another reducer here.
     case types.LOCATION_CHANGED:
-      assert(isUUID(action.pageId), 'LOCATION_CHANGED requires a page id.');
       return state.setIn(['userTypedLocation', action.pageId], action.payload.text);
 
     case types.SET_USER_TYPED_LOCATION:
-      assert(isUUID(action.pageId), 'SET_USER_TYPED_LOCATION requires a page id.');
       return state.withMutations(mut => {
         mut.setIn(['userTypedLocation', action.pageId], action.payload.text);
         mut.set('showCompletions', true);
       });
 
     case types.SET_URL_INPUT_VISIBLE:
-      assert(isUUID(action.pageId), 'SET_URL_INPUT_VISIBLE requires a page id.');
       return state.setIn(['showURLBar', action.pageId], action.payload.visible);
 
     case types.SET_URL_INPUT_FOCUSED:
-      assert(isUUID(action.pageId), 'SET_URL_INPUT_FOCUSED requires a page id.');
       return state.setIn(['focusedURLBar', action.pageId], action.payload.focused);
 
     // Global state second.  The reset action might just return the blank `initialState` once we

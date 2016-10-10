@@ -10,14 +10,11 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import assert from 'assert';
-
 import Immutable from 'immutable';
 import { logger } from '../../../shared/logging';
 import * as types from '../constants/action-types';
 import { HOME_PAGE } from '../constants/ui';
-import { Pages, Page, PageState } from '../model';
-import { isUUID } from '../../shared/util/uuid-util';
+import { Pages, Page } from '../model';
 import { getPageIndexById, getPageIndexBySessionId } from '../selectors';
 
 const initialState = new Pages({
@@ -81,8 +78,6 @@ function createTab(state, location = HOME_PAGE, id = undefined, { selected = tru
 }
 
 function attachTab(state, page) {
-  assert(isUUID(page.id), 'ATTACH_TAB requires a page with valid id.');
-
   return state.withMutations(mut => {
     const newPage = new Page(page);
     mut.set('pages', Immutable.List.of(newPage));
@@ -91,14 +86,11 @@ function attachTab(state, page) {
 }
 
 function closeTab(state, pageId) {
-  assert(isUUID(pageId), 'CLOSE_TAB requires a page id.');
   const pageIndex = getPageIndexById(state, pageId);
-  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
 
   // We never allow closing the last tab.  If the user tries to close the last tab, the action
   // creator dispatches an action to replace the last tab rather than close the last tab.
   const pageCount = state.pages.size;
-  assert(pageCount > 1, 'Cannot close last tab.');
 
   const ancestorId = state.pages.get(pageIndex).ancestorId;
   let ancestorIndex = -1;
@@ -132,22 +124,7 @@ function closeTab(state, pageId) {
 }
 
 function setPageState(state, pageId, pageState) {
-  assert(isUUID(pageId), 'SET_PAGE_STATE requires a page id.');
   const pageIndex = getPageIndexById(state, pageId);
-  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
-
-  assert(Object.values(PageState.STATES).includes(pageState.state),
-    `Page state ${pageState.state} is not a valid page state.`);
-
-  if (pageState.state === PageState.STATES.FAILED) {
-    assert(pageState.code != null);
-    assert(pageState.description != null);
-    assert(pageState.url != null);
-  } else {
-    assert(pageState.code == null);
-    assert(pageState.description == null);
-    assert(pageState.url == null);
-  }
 
   return state.withMutations(mut => {
     mut.setIn(['pages', pageIndex, 'state'], pageState);
@@ -155,9 +132,7 @@ function setPageState(state, pageId, pageState) {
 }
 
 function setPageDetails(state, pageId, payload) {
-  assert(isUUID(pageId), 'SET_PAGE_DETAILS requires a page id.');
   const pageIndex = getPageIndexById(state, pageId);
-  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
 
   return state.withMutations(mut => {
     for (const [key, value] of Object.entries(payload)) {
@@ -165,16 +140,13 @@ function setPageDetails(state, pageId, payload) {
         logger.warn('Skipping setting of `id` on page.');
         continue;
       }
-      assert(key !== 'userTyped', '`userTyped` must be set in setUserTypedLocation.');
       mut.setIn(['pages', pageIndex, key], value);
     }
   });
 }
 
 function setCurrentTab(state, pageId) {
-  assert(isUUID(pageId), 'SET_CURRENT_TAB requires a page id.');
   const pageIndex = getPageIndexById(state, pageId);
-  assert(pageIndex >= 0, `Page ${pageId} not found in current state`);
   return state.set('currentPageIndex', pageIndex);
 }
 
