@@ -153,12 +153,12 @@ export default function({ store, userAgentClient }) {
     store.dispatch(PageEffects.captureCurrentPage());
   });
 
-  ipcRenderer.on('download-completed', (_, { url, filename }) => {
-    store.dispatch(UIEffects.showDownloadNotification({ url, filename, status: 'success' }));
+  ipcRenderer.on('download-completed', (_, { url, filename, path }) => {
+    store.dispatch(UIEffects.showDownloadNotification({ url, path, filename, status: 'success' }));
   });
 
-  ipcRenderer.on('download-error', (_, { url, filename }) => {
-    store.dispatch(UIEffects.showDownloadNotification({ url, filename, status: 'error' }));
+  ipcRenderer.on('download-error', (_, { url, filename, path }) => {
+    store.dispatch(UIEffects.showDownloadNotification({ url, path, filename, status: 'error' }));
   });
 
   // Fired on the first browser window when default browser is not Tofino.

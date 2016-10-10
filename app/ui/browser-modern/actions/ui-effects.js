@@ -44,12 +44,13 @@ export function setCurrentURLBarValue(value, options) {
   };
 }
 
-export function showDownloadNotification({ url, filename, status }) {
+export function showDownloadNotification({ url, path, filename, status }) {
   return {
     type: EffectTypes.SHOW_DOWNLOAD_NOTIFICATION,
     url,
     filename,
     status,
+    path,
   };
 }
 
