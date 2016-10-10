@@ -13,12 +13,11 @@ specific language governing permissions and limitations under the License.
 import { applyMiddleware, createStore } from 'redux';
 import createLogger from 'redux-logger';
 import thunk from './middleware/thunk';
-import instrumenter from './middleware/instrumenter';
 import history from './middleware/history';
 import BUILD_CONFIG from '../../../../build-config';
 
 export default function(rootReducer, initialState, customMiddleware = []) {
-  const middleware = [instrumenter, thunk, ...customMiddleware];
+  const middleware = [thunk, ...customMiddleware];
   const historyStore = [];
 
   if (BUILD_CONFIG.development && !process.env.TEST) {

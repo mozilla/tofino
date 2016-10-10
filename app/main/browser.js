@@ -10,17 +10,11 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-/* eslint import/imports-first: "off" */
-
-// Must go before any require statements.
-const browserStartTime = Date.now();
-
 import electron from 'electron';
 
 import * as protocols from './protocols';
 import * as hotkeys from './hotkeys';
 import * as menu from './menu/index';
-import * as instrument from '../services/instrument';
 import * as spawn from './spawn';
 import * as BW from './browser-window';
 import * as certs from './certificates';
@@ -35,9 +29,6 @@ const ipc = electron.ipcMain;
 const globalShortcut = electron.globalShortcut;
 const userAgentClient = state.userAgentClient;
 
-const appStartupTime = Date.now();
-instrument.event('app', 'STARTUP');
-
 protocols.registerStandardSchemes();
 certs.setupCertificateHandlers();
 
@@ -48,9 +39,6 @@ spawn.startUserAgentService(userAgentClient);
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 app.on('ready', async function() {
-  const appReadyTime = Date.now();
-  instrument.event('app', 'READY', 'ms', appReadyTime - appStartupTime);
-
   // Force the menu to be built at least once on startup
   menu.buildAppMenu(menuData);
 
@@ -63,7 +51,6 @@ app.on('ready', async function() {
   // as initialized
   ipc.emit('main:first-window-created');
 
-  instrument.event('browser', 'READY', 'ms', Date.now() - browserStartTime);
   startUpdateChecks();
 });
 
@@ -113,11 +100,6 @@ ipc.on('open-menu', BW.onlyWhenFromBrowserWindow(bw => {
 ipc.on('synthesize-accelerator', (...args) => {
   hotkeys.handleIPCAcceleratorCommand(...args);
   menu.handleIPCAcceleratorCommand(...args);
-});
-
-ipc.on('instrument-event', (event, args) => {
-  // Until we transpile app/, we can't destructure in the argument list or inline here.
-  instrument.event(args.name, args.method, args.label, args.value);
 });
 
 ipc.on('set-default-browser', () => protocols.setDefaultBrowser());
