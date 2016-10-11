@@ -10,12 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import assert from 'assert';
 import { EventEmitter } from 'events';
-
-import { isUUID } from '../../shared/util/uuid-util';
-
-const getPageIndexById = (pages, id) => pages.findIndex(p => p.id === id);
 
 /**
  * A utility class that extends EventEmitter to receive page IDs and
@@ -25,83 +20,37 @@ const getPageIndexById = (pages, id) => pages.findIndex(p => p.id === id);
  * like `navigate-back:${pageId}`.
  */
 export default class WebViewController extends EventEmitter {
-  constructor(getPages) {
-    super();
-    this.getPages = getPages;
-  }
-
   navigateBack(pageId) {
-    const pages = this.getPages();
-    const index = getPageIndexById(pages, pageId);
-    const canGoBack = pages.get(index).historyIndex > 0;
-    assert(index >= 0, `Page ${pageId} not found in current state.`);
-    assert(isUUID(pageId), `Invalid page id: ${pageId}`);
-    assert(canGoBack, 'Page cannot go back.');
-
     this.emit('navigate-back', pageId);
     this.emit(`navigate-back:${pageId}`, pageId);
   }
 
   navigateForward(pageId) {
-    const pages = this.getPages();
-    const index = getPageIndexById(pages, pageId);
-    const canGoForward = pages.get(index).historyIndex < pages.get(index).history.size - 1;
-    assert(index >= 0, `Page ${pageId} not found in current state.`);
-    assert(isUUID(pageId), `Invalid page id: ${pageId}`);
-    assert(canGoForward, 'Page cannot go forward.');
-
     this.emit('navigate-forward', pageId);
     this.emit(`navigate-forward:${pageId}`, pageId);
   }
 
   navigateTo(pageId, location) {
-    const pages = this.getPages();
-    const index = getPageIndexById(pages, pageId);
-    assert(index >= 0, `Page ${pageId} not found in current state.`);
-    assert(isUUID(pageId), `Invalid page id: ${pageId}`);
-    assert(typeof location === 'string', '`location` must be a string.');
-
     this.emit('navigate-to', pageId, location);
     this.emit(`navigate-to:${pageId}`, pageId, location);
   }
 
   navigateInHistory(pageId, historyIndex) {
-    const pages = this.getPages();
-    const index = getPageIndexById(pages, pageId);
-    assert(index >= 0, `Page ${pageId} not found in current state.`);
-    assert(isUUID(pageId), `Invalid page id: ${pageId}`);
-    assert(typeof historyIndex === 'number', '`historyIndex` must be a number.');
-
     this.emit('navigate-in-history', pageId, historyIndex);
     this.emit(`navigate-in-history:${pageId}`, pageId, historyIndex);
   }
 
   navigateRefresh(pageId) {
-    const pages = this.getPages();
-    const index = getPageIndexById(pages, pageId);
-    assert(index >= 0, `Page ${pageId} not found in current state.`);
-    assert(isUUID(pageId), `Invalid page id: ${pageId}`);
-
     this.emit('navigate-refresh', pageId);
     this.emit(`navigate-refresh:${pageId}`, pageId);
   }
 
   capturePage(pageId) {
-    const pages = this.getPages();
-    const index = getPageIndexById(pages, pageId);
-    assert(index >= 0, `Page ${pageId} not found in current state.`);
-    assert(isUUID(pageId), `Invalid page id: ${pageId}`);
-
     this.emit('capture-page', pageId);
     this.emit(`capture-page:${pageId}`, pageId);
   }
 
   toggleDevtools(pageId) {
-    const pages = this.getPages();
-    const index = getPageIndexById(pages, pageId);
-    assert(index >= 0, `Page ${pageId} not found in current state.`);
-    assert(isUUID(pageId), `Invalid page id: ${pageId}`);
-
     this.emit('toggle-devtools', pageId);
     this.emit(`toggle-devtools:${pageId}`, pageId);
   }

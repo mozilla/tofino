@@ -19,8 +19,7 @@ import * as hotkeys from './hotkeys';
 import * as downloads from './downloads';
 import * as protocols from './protocols';
 import * as state from './state';
-
-import { fileUrl } from '../shared/paths-util';
+import { fileUrl } from './paths-util';
 import BUILD_CONFIG from '../build-config';
 
 // Switch to 'browser-blueprint' or 'browser-alt' to test different frontends.

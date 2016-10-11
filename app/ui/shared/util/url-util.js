@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import urlModule from 'url';
+import { parse, format } from 'url';
 
 const PROTOCOLS_TO_HIDE = new Set([
   'http:',
@@ -28,7 +28,7 @@ const WWW_SUBDOMAIN_REGEX = /^www\./;
  * @return {String}
  */
 export function prettyUrl(url) {
-  const parsedUrl = urlModule.parse(url);
+  const parsedUrl = parse(url);
 
   // Remove the protocol from being displayed if it's
   // a common one
@@ -43,7 +43,7 @@ export function prettyUrl(url) {
     parsedUrl.host = parsedUrl.host.replace(WWW_SUBDOMAIN_REGEX, '');
   }
 
-  let formattedUrl = urlModule.format(parsedUrl);
+  let formattedUrl = format(parsedUrl);
 
   // If we're hiding the protocol, also strip the "//"
   if (hideProtocol) {

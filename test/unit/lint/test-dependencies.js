@@ -16,16 +16,60 @@ const native = [
   'assert',
   'child_process',
   'electron',
-  'events',
   'fs',
   'os',
   'path',
   'stream',
-  'url',
   'timers',
 ];
 
 describe('dependencies', () => {
+  let appPackages;
+  let mainPackages;
+  let mainDevPackages;
+  let prodPackages;
+
+  beforeEach(async function() {
+    const appManifest = await fs.readJson(path.join('app', 'package.json'));
+    const mainManifest = await fs.readJson(path.join('package.json'));
+
+    appPackages = Object.keys(appManifest.dependencies).sort();
+    mainPackages = Object.keys(mainManifest.dependencies).sort();
+    mainDevPackages = Object.keys(mainManifest.devDependencies).sort();
+    prodPackages = [...appPackages, ...mainPackages].sort();
+  });
+
+  it('– shared code doesn\'t directly use native modules', async function() {
+    const paths = [
+      `app/shared${all}${valid}`,
+    ];
+
+    const ignored = [
+      // Used for communicating with the main process.
+      'electron',
+      // Used for bunyan logging.
+      'stream',
+    ];
+
+    const sources = await globMany(paths);
+    const matches = await regexFiles(sources, REQUIRES_REGEX, IMPORTS_REGEX);
+
+    const usedPackages = without(matches, ...ignored).sort();
+    expect(intersection(usedPackages, prodPackages)).toEqual(usedPackages);
+  });
+
+  it('– frontend code doesn\'t directly use native modules', async function() {
+    const paths = [
+      `app/ui${all}${valid}`,
+    ];
+
+    const sources = await globMany(paths);
+    const matches = await regexFiles(sources, REQUIRES_REGEX, IMPORTS_REGEX);
+
+    const usedPackages = matches.sort();
+    expect(intersection(usedPackages, prodPackages)).toEqual(usedPackages);
+  });
+
   it('– processes only use app dependencies or main dependencies', async function() {
     const paths = [
       `app/main${all}${valid}`,
@@ -34,32 +78,22 @@ describe('dependencies', () => {
       `app/ui${all}${valid}`,
     ];
 
-    const implicit = [
-      // These aren't specified in package.json but the are installed anyway.
-      'fbjs',
+    const unimported = [
+      // Not imported, but referenced by bin/user-agent-service script.
+      'datomish-user-agent-service',
     ];
-
-    const temporary = [
-      // These aren't yet referenced by the main app, but we plan to reference them eventually.
-      'datomish-user-agent-service', // Referenced by bin/user-agent-service script.
-    ];
-
-    const appManifest = await fs.readJson(path.join('app', 'package.json'));
-    const mainManifest = await fs.readJson(path.join('package.json'));
-    const appPackages = Object.keys(appManifest.dependencies);
-    const mainPackages = Object.keys(mainManifest.dependencies);
-
-    const listedPackages = [...appPackages, ...mainPackages, ...implicit];
-    const installedPackages = without(listedPackages, ...temporary).sort();
 
     const sources = await globMany(paths);
     const matches = await regexFiles(sources, REQUIRES_REGEX, IMPORTS_REGEX);
-    const usedPackages = without(matches, ...native).sort();
 
-    expect(usedPackages).toEqual(installedPackages);
+    // Stripping out the native node modules and adding the custom used packages
+    // should leave only the main `package.json` plus the `app/package.json`
+    // production dependencies.
+    const usedPackages = [...without(matches, ...native), ...unimported].sort();
+    expect(usedPackages).toEqual(prodPackages);
 
-    const installedTemporary = intersection(temporary, [...appPackages, ...mainPackages]);
-    expect(installedTemporary).toEqual(temporary);
+    const installedUnimported = intersection(unimported, [...appPackages, ...mainPackages]);
+    expect(installedUnimported).toEqual(unimported);
   });
 
   it('– build and test code only use main dependencies or devDependencies', async function() {
@@ -68,7 +102,7 @@ describe('dependencies', () => {
       `test${all}${valid}`,
     ];
 
-    const ignored = [
+    const unimported = [
       // Modules not imported anywhere, but used at the CLI.
       'cross-env',
 
@@ -106,20 +140,16 @@ describe('dependencies', () => {
       'uglify-js',
     ];
 
-    const mainManifest = await fs.readJson('package.json');
-    const mainPackages = Object.keys(mainManifest.dependencies);
-    const mainDevPackages = Object.keys(mainManifest.devDependencies);
-
-    const installedPackages = without(mainDevPackages, ...ignored).sort();
-
     const sources = await globMany(paths);
     const matches = await regexFiles(sources, REQUIRES_REGEX, IMPORTS_REGEX);
 
-    // Strip out the main dependencies should leave only the devDependencies.
-    const usedPackages = without(matches, ...native, ...mainPackages).sort();
-    expect(usedPackages).toEqual(installedPackages);
+    // Stripping out the production and native node modules, and adding the
+    // custom used packages should leave only the main `package.json`
+    // development dependencies.
+    const usedPackages = [...without(matches, ...mainPackages, ...native), ...unimported].sort();
+    expect(usedPackages).toEqual(mainDevPackages);
 
-    const installedIgnored = intersection(ignored, [...mainPackages, ...mainDevPackages]);
-    expect(installedIgnored).toEqual(ignored);
+    const installedUnimported = intersection(unimported, [...mainPackages, ...mainDevPackages]);
+    expect(installedUnimported).toEqual(unimported);
   });
 });
