@@ -25,6 +25,7 @@ const HISTORY_STYLE = Style.registerStyle({
   flex: 1,
   flexDirection: 'column',
   padding: '20px 10%',
+  backgroundColor: 'var(--theme-content-background)',
 });
 
 const LIST_STYLE = Style.registerStyle({

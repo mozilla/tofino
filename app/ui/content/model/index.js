@@ -20,6 +20,7 @@ export const VisitedPage = Immutable.Record({
   uri: null,
   title: null,
   snippet: null,
+  lastVisited: null,
 }, 'VisitedPage');
 
 /**
