@@ -50,7 +50,7 @@ const BADGE_STYLE = Style.registerStyle({
 });
 
 const BACKGROUND_STYLE = Style.registerStyle({
-  WebkitFilter: 'blur(35px) saturate(2)',
+  filter: 'blur(35px) saturate(2)',
   backgroundSize: '100% auto',
   position: 'absolute',
   top: 0,
@@ -104,8 +104,8 @@ class BaseCard extends Component {
         onClick={this.handleThumbnailClick}>
         <FittedImage className={BADGE_STYLE}
           style={backgroundImage ? {
-            top: 0,
-            left: 0,
+            top: '5px',
+            left: '5px',
           } : {
             top: '30%',
             left: '50%',

@@ -15,6 +15,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import BaseCard from './base-card';
 import SimpleSummary from '../summaries/simple-summary';
+import { prettyUrl } from '../../../util/url-util';
 
 class SimpleCard extends Component {
   constructor(props) {
@@ -25,11 +26,12 @@ class SimpleCard extends Component {
   render() {
     const meta = this.props.page.meta;
     const title = meta.title || this.props.page.title;
+    const url = prettyUrl(this.props.page.location);
 
     return (
       <BaseCard {...this.props}>
         <SimpleSummary title={title}
-          url={this.props.page.location} />
+          url={url} />
       </BaseCard>
     );
   }

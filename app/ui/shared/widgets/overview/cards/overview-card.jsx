@@ -30,7 +30,7 @@ class OverviewCard extends Component {
     const meta = this.props.page.meta;
 
     if (meta.price ||
-        meta.rating && parseFloat(meta.rating) > 0) {
+        (meta.rating && parseFloat(meta.rating) > 0)) {
       return (<ProductCard {...this.props} />);
     }
 
