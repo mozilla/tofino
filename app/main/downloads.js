@@ -19,7 +19,7 @@ export function registerDownloadHandlers(bw) {
     item.once('done', (_event, state) => {
       if (state === 'completed') {
         bw.send('download-completed', itemData);
-      } else {
+      } else if (state === 'interrupted') {
         bw.send('download-error', itemData);
       }
     });
