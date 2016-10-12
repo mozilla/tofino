@@ -163,17 +163,23 @@ class Page extends Component {
       this.props.dispatch(UIEffects.setURLBarValue(pageId, validatedURL));
     });
 
-    this.webview.addEventListener('did-finish-load', () => {
+    this.webview.addEventListener('did-finish-load', e => {
       // Event fired when the navigation is done and onload event is dispatched.
       // May be emitted multiple times for every single frame.
       // Might not always be emitted after a `did-start-loading`.
+      if (!e.isMainFrame) {
+        return;
+      }
       this.props.dispatch(PageEffects.parsePageMetaData(this.props.pageId));
     });
 
-    this.webview.addEventListener('did-frame-finish-load', () => {
+    this.webview.addEventListener('did-frame-finish-load', e => {
       // Like `did-finish-load`, but fired only when an in-page load happens.
       // Parse the page metadata everytime something stops loading, to properly
       // handle in-page content changing and in-page navigations.
+      if (!e.isMainFrame) {
+        return;
+      }
       this.props.dispatch(PageEffects.parsePageMetaData(this.props.pageId));
     });
 
