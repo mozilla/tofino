@@ -28,14 +28,13 @@ export class UserAgentHttpClient {
     this.wsUrl = `ws://${this.host}:${this.port}/${this.version}/ws`;
 
     /**
-     * A mapping from a page id to a promise that
-     * will resolve to a session id. When we initiate the session,
-     * we immediately store a promise that will resolve to the session id
-     * so that future requests using the page id can hook into the initial promise
-     * even before we have the session.
+     * A mapping from a page id to a promise that will resolve to a session id.
+     * When we initiate the session, we immediately store a promise that will
+     * resolve to the session id so that future requests using the page id can
+     * hook into the initial promise even before we have the session.
      *
-     * This remains for historical reasons, although it's strictly a front-end convenience and
-     * has nothing to do with the HTTP API exposed by the User Agent Service.
+     * This remains for historical reasons, although it's strictly a front-end
+     * convenience and has nothing to do with the HTTP API exposed by the UAS.
      */
     this.PAGE_TO_SESSION = new Map();
   }
