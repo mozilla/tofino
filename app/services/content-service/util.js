@@ -16,7 +16,7 @@ import http from 'http';
 import express from 'express';
 import expressValidator from 'express-validator';
 import morgan from 'morgan';
-import { logger } from '../shared/logging';
+import { logger } from '../../shared/logging';
 
 /**
  * Catch errors from the given async `method` and forward them to `next` for handling.
