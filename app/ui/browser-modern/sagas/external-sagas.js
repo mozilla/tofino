@@ -16,20 +16,12 @@ import { wrapped } from './helpers';
 import { remote, ipcRenderer } from '../../../shared/electron';
 import * as EffectTypes from '../constants/effect-types';
 
-export default function() {
-  return [
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.MINIMIZE_WINDOW, minimizeWindow));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.MAXIMIZE_WINDOW, maximizeWindow));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.CLOSE_WINDOW, closeWindow));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.OPEN_APP_MENU, openAppMenu));
-    },
+export default function*() {
+  yield [
+    takeLatest(...wrapped(EffectTypes.MINIMIZE_WINDOW, minimizeWindow)),
+    takeLatest(...wrapped(EffectTypes.MAXIMIZE_WINDOW, maximizeWindow)),
+    takeLatest(...wrapped(EffectTypes.CLOSE_WINDOW, closeWindow)),
+    takeLatest(...wrapped(EffectTypes.OPEN_APP_MENU, openAppMenu)),
   ];
 }
 

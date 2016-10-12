@@ -33,14 +33,10 @@ if (BUILD_CONFIG.development) {
   };
 }
 
-export default function() {
-  return [
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.PERF_RECORD_START, perfStart));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.PERF_RECORD_STOP, perfStop));
-    },
+export default function*() {
+  yield [
+    takeLatest(...wrapped(EffectTypes.PERF_RECORD_START, perfStart)),
+    takeLatest(...wrapped(EffectTypes.PERF_RECORD_STOP, perfStop)),
   ];
 }
 

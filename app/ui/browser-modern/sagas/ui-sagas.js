@@ -20,24 +20,13 @@ import * as UIActions from '../actions/ui-actions';
 import * as EffectTypes from '../constants/effect-types';
 import { INTERACTION_TYPES } from '../../shared/widgets/search';
 
-export default function() {
-  return [
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.SET_APPLICATION_ACTIVE_ELEMENT, setActiveElement));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.FOCUS_URL_BAR, focusURLBar));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.SET_URL_BAR_VALUE, setURLBarValue));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.SHOW_DOWNLOAD_NOTIFICATION,
-        showDownloadNotification));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.CONFIRM_DEFAULT_BROWSER, confirmDefaultBrowser));
-    },
+export default function*() {
+  yield [
+    takeLatest(...wrapped(EffectTypes.SET_APPLICATION_ACTIVE_ELEMENT, setActiveElement)),
+    takeLatest(...wrapped(EffectTypes.FOCUS_URL_BAR, focusURLBar)),
+    takeLatest(...wrapped(EffectTypes.SET_URL_BAR_VALUE, setURLBarValue)),
+    takeLatest(...wrapped(EffectTypes.SHOW_DOWNLOAD_NOTIFICATION, showDownloadNotification)),
+    takeLatest(...wrapped(EffectTypes.CONFIRM_DEFAULT_BROWSER, confirmDefaultBrowser)),
   ];
 }
 
