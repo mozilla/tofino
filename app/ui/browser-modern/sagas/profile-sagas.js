@@ -19,20 +19,12 @@ import * as UIActions from '../actions/ui-actions';
 import * as ProfileActions from '../actions/profile-actions';
 import * as EffectTypes from '../constants/effect-types';
 
-export default function() {
-  return [
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.FETCH_LOCATION_AUTOCOMPLETIONS, fetchCompletions));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.SET_REMOTE_BOOKMARK_STATE, setRemoteBookmarkState));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.ADD_REMOTE_HISTORY, addRemoteHistory));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.ADD_CAPTURED_PAGE, addCapturedPage));
-    },
+export default function*() {
+  yield [
+    takeLatest(...wrapped(EffectTypes.FETCH_LOCATION_AUTOCOMPLETIONS, fetchCompletions)),
+    takeLatest(...wrapped(EffectTypes.SET_REMOTE_BOOKMARK_STATE, setRemoteBookmarkState)),
+    takeLatest(...wrapped(EffectTypes.ADD_REMOTE_HISTORY, addRemoteHistory)),
+    takeLatest(...wrapped(EffectTypes.ADD_CAPTURED_PAGE, addCapturedPage)),
   ];
 }
 

@@ -28,57 +28,24 @@ import * as EffectTypes from '../constants/effect-types';
 
 const { Menu, MenuItem } = remote;
 
-export default function() {
-  return [
-    function*() {
-      yield* takeEvery(...wrapped(EffectTypes.CREATE_PAGE_SESSION, createPageSession));
-    },
-    function*() {
-      yield* takeEvery(...wrapped(EffectTypes.DESTROY_PAGE_SESSION, destroyPageSession));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.NAVIGATE_PAGE_TO, naviatePageTo));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.NAVIGATE_PAGE_BACK, navigatePageBack));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.NAVIGATE_PAGE_FORWARD, navigatePageForward));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.NAVIGATE_PAGE_REFRESH, navigatePageRefresh));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.NAVIGATE_PAGE_IN_HISTORY, navigatePageInHistory));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.TOGGLE_DEVTOOLS, toggleDevtools));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.PERFORM_PAGE_SEARCH, performPageSearch));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.SET_PAGE_ZOOM_LEVEL, setPageZoomLevel));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.CAPTURE_PAGE, capturePage));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.PARSE_PAGE_META_DATA, parsePageMetaData));
-    },
-    function*() {
-      yield* takeEvery(...wrapped(EffectTypes.GET_CERTIFICATE_ERROR, getCertificateError));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.DISPLAY_WEBVIEW_CONTEXT_MENU,
-        displayWebviewContextMenu));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.PIN_TAB, pinTab));
-    },
-    function*() {
-      yield* takeLatest(...wrapped(EffectTypes.UNPIN_TAB, unpinTab));
-    },
+export default function*() {
+  yield [
+    takeEvery(...wrapped(EffectTypes.CREATE_PAGE_SESSION, createPageSession)),
+    takeEvery(...wrapped(EffectTypes.DESTROY_PAGE_SESSION, destroyPageSession)),
+    takeLatest(...wrapped(EffectTypes.NAVIGATE_PAGE_TO, naviatePageTo)),
+    takeLatest(...wrapped(EffectTypes.NAVIGATE_PAGE_BACK, navigatePageBack)),
+    takeLatest(...wrapped(EffectTypes.NAVIGATE_PAGE_FORWARD, navigatePageForward)),
+    takeLatest(...wrapped(EffectTypes.NAVIGATE_PAGE_REFRESH, navigatePageRefresh)),
+    takeLatest(...wrapped(EffectTypes.NAVIGATE_PAGE_IN_HISTORY, navigatePageInHistory)),
+    takeLatest(...wrapped(EffectTypes.TOGGLE_DEVTOOLS, toggleDevtools)),
+    takeLatest(...wrapped(EffectTypes.PERFORM_PAGE_SEARCH, performPageSearch)),
+    takeLatest(...wrapped(EffectTypes.SET_PAGE_ZOOM_LEVEL, setPageZoomLevel)),
+    takeLatest(...wrapped(EffectTypes.CAPTURE_PAGE, capturePage)),
+    takeLatest(...wrapped(EffectTypes.PARSE_PAGE_META_DATA, parsePageMetaData)),
+    takeEvery(...wrapped(EffectTypes.GET_CERTIFICATE_ERROR, getCertificateError)),
+    takeLatest(...wrapped(EffectTypes.DISPLAY_WEBVIEW_CONTEXT_MENU, displayWebviewContextMenu)),
+    takeLatest(...wrapped(EffectTypes.PIN_TAB, pinTab)),
+    takeLatest(...wrapped(EffectTypes.UNPIN_TAB, unpinTab)),
   ];
 }
 

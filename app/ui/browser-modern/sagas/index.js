@@ -18,10 +18,10 @@ import ui from './ui-sagas';
 
 export default function*() {
   yield [
-    ...developer().map(f => f()),
-    ...external().map(f => f()),
-    ...profile().map(f => f()),
-    ...page().map(f => f()),
-    ...ui().map(f => f()),
+    developer(),
+    external(),
+    profile(),
+    page(),
+    ui(),
   ];
 }
