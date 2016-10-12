@@ -12,10 +12,9 @@
  specific language governing permissions and limitations under the License.
  */
 
+import http from 'http';
 import express from 'express';
-import expressWs from 'express-ws';
 import expressValidator from 'express-validator';
-import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import { logger } from '../shared/logging';
 
@@ -55,7 +54,6 @@ export function autoCaughtRouteError({ validator, method }) {
  */
 export function makeServer(version, port) {
   let server;
-  let wsserver;
   let app;
   let router;
 
@@ -67,12 +65,8 @@ export function makeServer(version, port) {
 
       app = express();
       router = express.Router();
-      const { getWss } = expressWs(app);
 
       app.use(morgan('dev'));
-
-      // These need to be registered before our routes.
-      app.use(bodyParser.json());
       app.use(expressValidator());
 
       await config(app, router);
@@ -87,14 +81,9 @@ export function makeServer(version, port) {
         res.status(500).json({ error, stack: error.stack });
       });
 
-      // Sadly, app.listen does not return the HTTP server just yet.
-      // Therefore, we extract it manually below.
-      app.listen(port, '127.0.0.1', resolve);
-      wsserver = getWss();
-      server = wsserver._server;
-
+      server = http.createServer(app);
+      server.listen(port, '127.0.0.1', resolve);
       server.on('error', reject);
-      wsserver.on('error', reject);
     });
   }
 
