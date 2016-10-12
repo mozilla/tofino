@@ -17,6 +17,10 @@ export function registerDownloadHandlers(bw) {
       filename: item.getFilename(),
     };
     item.once('done', (_event, state) => {
+      // Set `path` after the item is done, since it is not yet
+      // set by the time `will-download` is fired.
+      itemData.path = item.getSavePath();
+
       if (state === 'completed') {
         bw.send('download-completed', itemData);
       } else if (state === 'interrupted') {

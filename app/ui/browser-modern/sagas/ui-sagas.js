@@ -80,12 +80,12 @@ function* setURLBarValue({ urlbar, value, doc, options = { keepSelection: true }
   }
 }
 
-function* showDownloadNotification({ filename, status }) {
+function* showDownloadNotification({ path, filename, status }) {
   let message;
   const title = `Download ${status === 'success' ? 'completed' : 'failed'}`;
 
   if (status === 'success') {
-    message = `Download for ${filename} is completed.`;
+    message = `Download for ${filename} is completed. Can be located at ${path}/${filename}`;
   } else if (status === 'error') {
     message = `Download for ${filename} has failed.`;
   }
