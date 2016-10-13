@@ -17,6 +17,7 @@ import Pages from './pages';
 import UIState from './ui';
 
 export const State = Immutable.Record({
+  windowId: null,
   profile: new Profile(),
   pages: new Pages(),
   ui: new UIState(),

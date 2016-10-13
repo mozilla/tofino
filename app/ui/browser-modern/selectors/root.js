@@ -10,18 +10,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { combineReducers } from 'redux-immutable';
-
-import windowId from './window-id';
-import profile from './profile';
-import pages from './pages';
-import ui from './ui';
-
-const rootReducer = combineReducers({
-  windowId,
-  profile,
-  pages,
-  ui,
-});
-
-export default rootReducer;
+export function getWindowId(state) {
+  return state.windowId;
+}

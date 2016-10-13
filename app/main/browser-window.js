@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 /* global LIBDIR */
 
 import path from 'path';
+import uuid from 'uuid';
 import { BrowserWindow } from 'electron';
 
 import Deferred from '../shared/deferred';
@@ -71,7 +72,7 @@ export async function focusOrOpenWindow(url) {
  * Creates a new browser window for the browser chrome, and returns a promise
  * that resolves upon initialization. Takes an optional url to load in the window.
  */
-export async function createBrowserWindow() {
+export async function createBrowserWindow({ windowId } = {}) {
   // TODO: don't abuse the storage layer's session ID generation to produce scopes.
   // Await for `startSession()` here since that ensures we have a connection to
   // the UA service at this point.
@@ -95,12 +96,15 @@ export async function createBrowserWindow() {
     frame: false,
     show: false,
   });
+
   browser.scope = scope;
+  browser.windowId = windowId || uuid.v4();
 
   browser.webContents.once('did-finish-load', () => {
     // The client needs to know where the UA service is in order to connect
     // to it, and subsequently fire its 'window-ready' event.
     browser.webContents.send('user-agent-service-info', { port, host, version });
+    browser.webContents.send('window-id', browser.windowId);
   });
 
   // Only check and send the set default browser message if this is the first

@@ -14,6 +14,7 @@ import { ipcRenderer } from '../../shared/electron';
 
 import * as ContentURLs from '../../shared/constants/content-pages-locations';
 import * as ExternalEffects from './actions/external-effects';
+import * as RootActions from './actions/root-actions';
 import * as PageActions from './actions/page-actions';
 import * as PageEffects from './actions/page-effects';
 import * as PagesSelectors from './selectors/pages';
@@ -37,6 +38,10 @@ export default function({ store, userAgentClient }) {
   });
 
   // Add other various main process event listeners.
+  ipcRenderer.on('window-id', (_, windowId) => {
+    store.dispatch(RootActions.setWindowId(windowId));
+  });
+
   ipcRenderer.on('reload-window', () => {
     store.dispatch(ExternalEffects.reloadWindow());
   });

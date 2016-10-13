@@ -10,6 +10,10 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
+// Root actions
+
+export const SET_WINDOW_ID = 'SET_WINDOW_ID';
+
 // Profile actions
 
 export const SET_LOCAL_BOOKMARK_STATE = 'SET_LOCAL_BOOKMARK_STATE';

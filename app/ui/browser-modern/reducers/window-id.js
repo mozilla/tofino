@@ -10,18 +10,18 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { combineReducers } from 'redux-immutable';
+import * as ActionTypes from '../constants/action-types';
 
-import windowId from './window-id';
-import profile from './profile';
-import pages from './pages';
-import ui from './ui';
+export default function(state = null, action) {
+  switch (action.type) {
+    case ActionTypes.SET_WINDOW_ID:
+      return setWindowId(state, action.windowId);
 
-const rootReducer = combineReducers({
-  windowId,
-  profile,
-  pages,
-  ui,
-});
+    default:
+      return state;
+  }
+}
 
-export default rootReducer;
+function setWindowId(prevWindowId, nextWindowId) {
+  return nextWindowId;
+}
