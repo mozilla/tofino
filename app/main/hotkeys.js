@@ -19,7 +19,6 @@ import shortcut from 'electron-localshortcut';
  * is fired.
  */
 const HOTKEYS = new Map([
-  ['CmdOrCtrl+W', bw => () => bw.webContents.send('close-tab')],
   ['CmdOrCtrl+Shift+W', bw => () => bw.close()],
   ['CmdOrCtrl+L', bw => () => bw.webContents.send('focus-url-bar')],
   ['CmdOrCtrl+R', bw => () => bw.webContents.send('page-refresh')],
