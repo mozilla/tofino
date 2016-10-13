@@ -247,12 +247,18 @@ class Page extends Component {
   }
 
   render() {
+    // Use the renderer process' user agent string, as we can't get/set the webview's UA string
+    // until after it's mounted and after a dom-ready, and strip out the Electron version
+    // (e.g. "Electron/1.4.2") for web compatibility reasons
+    const ua = window.navigator.userAgent.replace(/Electron\/[\d\.]* /, '');
+
     return (
       <div id={`browser-page-${this.props.pageId}`}
         className={`browser-page ${PAGE_STYLE}`}>
         <ErrorPage pageId={this.props.pageId} />
         <webview is="webview"
           ref={e => this.webview = e}
+          useragent={ua}
           class={WEB_VIEW_STYLE}
           data-prevent-interaction={this.props.preventInteraction}
           onContextMenu={this.requestContextData}
