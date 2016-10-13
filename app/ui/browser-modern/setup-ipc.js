@@ -13,6 +13,7 @@ specific language governing permissions and limitations under the License.
 import { ipcRenderer } from '../../shared/electron';
 
 import * as ContentURLs from '../../shared/constants/content-pages-locations';
+import * as ExternalEffects from './actions/external-effects';
 import * as PageActions from './actions/page-actions';
 import * as PageEffects from './actions/page-effects';
 import * as PagesSelectors from './selectors/pages';
@@ -36,6 +37,10 @@ export default function({ store, userAgentClient }) {
   });
 
   // Add other various main process event listeners.
+  ipcRenderer.on('close-window', () => {
+    store.dispatch(ExternalEffects.closeWindow());
+  });
+
   ipcRenderer.on('new-tab', (_, location) => {
     store.dispatch(PageEffects.createPageSession(location));
   });
