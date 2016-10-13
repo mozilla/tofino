@@ -33,7 +33,6 @@
   "dependencies": {
     "appdirectory": "0.1.0",
     "backoff": "2.5.0",
-    "body-parser": "1.15.2",
     "bunyan": "1.8.1",
     "colors": "1.1.2",
     "electron-ipc-mock": "0.0.2",
@@ -41,7 +40,6 @@
     "events": "1.1.1",
     "express": "4.14.0",
     "express-validator": "2.20.10",
-    "express-ws": "2.0.0",
     "fathom-web": "1.1.2",
     "fbjs": "0.8.5",
     "fs-extra": "0.30.0",

@@ -17,6 +17,7 @@ const native = [
   'child_process',
   'electron',
   'fs',
+  'http',
   'os',
   'path',
   'stream',

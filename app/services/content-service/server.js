@@ -14,7 +14,7 @@
 import path from 'path';
 import express from 'express';
 import { logger } from '../../shared/logging';
-import { makeServer, autoCaughtRouteError } from '../common';
+import { makeServer, autoCaughtRouteError } from './util';
 import * as endpoints from '../../shared/constants/endpoints';
 
 const UI_DIR = path.join(LIBDIR, 'ui');

@@ -1,9 +1,3 @@
-body {
-  background-color: var(--theme-navbar-background);
-  background-image: url('../assets/chrome-background.png');
-  background-size: var(--theme-window-image-tile-size);
-}
-
 #content-container {
   width: 100%;
   height: 100%;
