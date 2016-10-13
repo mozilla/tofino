@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import { takeLatest, takeEvery } from 'redux-saga';
-import { put, call, apply } from 'redux-saga/effects';
+import { select, put, call, apply } from 'redux-saga/effects';
 
 import Deferred from '../../../shared/deferred';
 import { ipcRenderer, remote, clipboard } from '../../../shared/electron';
@@ -25,6 +25,7 @@ import * as PageEffects from '../actions/page-effects';
 import * as ProfileEffects from '../actions/profile-effects';
 import * as UIEffects from '../actions/ui-effects';
 import * as EffectTypes from '../constants/effect-types';
+import * as PageSelectors from '../selectors/pages';
 
 const { Menu, MenuItem } = remote;
 
@@ -157,9 +158,39 @@ function* getCertificateError({ pageId, url }) {
   yield put(PageActions.setPageState(pageId, { error, certificate }));
 }
 
-function* displayWebviewContextMenu({ e, webview }) {
+function* displayWebviewContextMenu({ e, pageId, webview }) {
   const menu = new Menu();
   const chosen = new Deferred();
+
+  const canPageGoBack = yield select(PageSelectors.getPageCanGoBack, pageId);
+  const canPageGoForward = yield select(PageSelectors.getPageCanGoForward, pageId);
+  const canPageRefresh = yield select(PageSelectors.getPageCanRefresh, pageId);
+
+  menu.append(new MenuItem({
+    label: 'Back',
+    click: () => chosen.resolve(function* () {
+      yield put(PageEffects.navigatePageBack(pageId));
+    }),
+    enabled: canPageGoBack,
+  }));
+
+  menu.append(new MenuItem({
+    label: 'Forward',
+    click: () => chosen.resolve(function* () {
+      yield put(PageEffects.navigatePageForward(pageId));
+    }),
+    enabled: canPageGoForward,
+  }));
+
+  menu.append(new MenuItem({
+    label: 'Reload',
+    click: () => chosen.resolve(function* () {
+      yield put(PageEffects.navigatePageRefresh(pageId));
+    }),
+    enabled: canPageRefresh,
+  }));
+
+  menu.append(new MenuItem({ type: 'separator' }));
 
   if (e.href) {
     menu.append(new MenuItem({
