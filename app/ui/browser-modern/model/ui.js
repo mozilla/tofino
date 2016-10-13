@@ -11,9 +11,12 @@ specific language governing permissions and limitations under the License.
 */
 
 import Immutable from 'immutable';
+import * as uuid from 'uuid';
+
 import ActiveElement from './active-element';
 
 export default Immutable.Record({
+  windowId: uuid.v4(),
   activeElement: new ActiveElement(),
   statusText: '',
   overviewVisible: false,

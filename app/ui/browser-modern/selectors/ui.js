@@ -10,6 +10,10 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
+export function getWindowId(state) {
+  return state.ui.windowId;
+}
+
 export function getActiveElement(state) {
   return state.ui.activeElement;
 }
