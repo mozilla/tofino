@@ -63,6 +63,8 @@
     "redux-saga": "0.12.0",
     "source-map-support": "ncalexan/node-source-map-support#fileUrls-plus",
     "tmp": "0.0.29",
+    "transit-immutable-js": "0.6.0",
+    "transit-js": "0.8.846",
     "url": "0.11.0",
     "uuid": "2.0.3",
     "why-did-you-update": "github:victorporof/why-did-you-update#immutable",

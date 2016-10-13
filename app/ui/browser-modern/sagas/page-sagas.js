@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import { takeLatest, takeEvery } from 'redux-saga';
-import { select, put, call, apply } from 'redux-saga/effects';
+import { call, apply, select, put } from 'redux-saga/effects';
 
 import Deferred from '../../../shared/deferred';
 import { ipcRenderer, remote, clipboard } from '../../../shared/electron';
