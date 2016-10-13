@@ -10,6 +10,14 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
+// Session effects
+
+export const GET_SESSION_KEY = 'GET_SESSION_KEY_EFFECT';
+export const SET_SESSION_KEY = 'SET_SESSION_KEY_EFFECT';
+export const DEL_SESSION_KEY = 'DEL_SESSION_KEY_EFFECT';
+export const NOTIFY_BROWSER_WINDOW_APP_STATE_SAVED = 'NOTIFY_BROWSER_WINDOW_APP_STATE_SAVED_EFFECT';
+export const NOTIFY_BROWSER_WINDOW_APP_STATE_DESTROYED = 'NOTIFY_BROWSER_WINDOW_APP_STATE_DESTROYED_EFFECT';
+
 // Developer effects
 
 export const PERF_RECORD_START = 'PERF_RECORD_START_EFFECT';

@@ -10,22 +10,33 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-/* eslint-disable no-console */
-
 import { put } from 'redux-saga/effects';
 import { logger } from '../../../shared/logging';
 
 export const failed = type => ({ type: `${type}_FAILED` });
 
-export const wrapped = function(type, fn) {
+export const wrapped = function(pattern, fn, name) {
+  if (typeof pattern === 'string') {
+    name = name || fn.name || pattern;
+  } else if (pattern instanceof Function) {
+    name = name || fn.name || 'PREDICATE';
+  } else if (pattern instanceof Array) {
+    name = name || fn.name || `ARRAY:[${pattern}]`;
+  } else if (pattern instanceof RegExp) {
+    return wrapped(action => action.type.match(pattern), fn);
+  } else {
+    throw new Error(`Unsupported redux-saga pattern: ${pattern}`);
+  }
+
   const generator = function*(...args) {
     try {
       yield* fn(...args);
     } catch (e) {
-      yield put(failed(type));
+      yield put(failed(name));
       logger.error(e);
     }
   };
-  Object.defineProperty(generator, 'name', { value: type });
-  return [type, generator];
+
+  Object.defineProperty(generator, 'name', { value: name });
+  return [pattern, generator];
 };

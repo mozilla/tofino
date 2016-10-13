@@ -10,20 +10,13 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import developer from './developer-sagas';
-import external from './external-sagas';
-import session from './session-sagas';
-import profile from './profile-sagas';
-import page from './page-sagas';
-import ui from './ui-sagas';
+import transit from 'transit-immutable-js';
 
-export default function*() {
-  yield [
-    developer(),
-    external(),
-    session(),
-    profile(),
-    page(),
-    ui(),
-  ];
+import { getAllRegisteredRecords } from './record-constructors';
+
+export function serializeAppState(state) {
+  // Save the entire app state for now. If for some reason we need to
+  // filter or massage the current store shape before saving, do it here.
+  const records = getAllRegisteredRecords();
+  return transit.withRecords(records).toJSON(state);
 }
