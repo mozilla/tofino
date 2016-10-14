@@ -50,18 +50,26 @@ export default function*() {
   ];
 }
 
-function* createPageSession({ id, location, options }) {
+function* createPageSession({ id, location, options, withUI }) {
   yield apply(userAgentHttpClient, userAgentHttpClient.createSession, [id, {}]);
-  yield put(PageActions.createPage(id, location, options));
+
+  if (withUI) {
+    yield put(PageActions.createPage(id, location, options));
+  }
 }
 
-function* destroyPageSession({ page, currentPageCount }) {
+function* destroyPageSession({ id, withUI }) {
+  const page = yield select(PageSelectors.getPageById, id);
   yield apply(userAgentHttpClient, userAgentHttpClient.destroySession, [page, {}]);
-  yield put(PageActions.removePage(page.id));
 
-  // If the last page was removed, dispatch an action to create another one.
-  if (currentPageCount === 1) {
-    yield put(PageEffects.createPageSession());
+  if (withUI) {
+    const currentPageCount = yield select(PageSelectors.getPageCount);
+    yield put(PageActions.removePage(page.id));
+
+    // If the last page was removed, dispatch an action to create another one.
+    if (currentPageCount === 1) {
+      yield put(PageEffects.createPageSession());
+    }
   }
 }
 

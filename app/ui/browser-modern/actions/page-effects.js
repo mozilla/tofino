@@ -17,22 +17,21 @@ import * as EffectTypes from '../constants/effect-types';
 import * as PagesSelectors from '../selectors/pages';
 import PageUIState from '../model/page-ui-state';
 
-export function createPageSession(location, options) {
+export function createPageSession(location, options, id, { withUI = true } = {}) {
   return {
     type: EffectTypes.CREATE_PAGE_SESSION,
-    id: uuid.v4(),
+    id: id || uuid.v4(),
     location,
     options,
+    withUI,
   };
 }
 
-export function destroyPageSession(pageId) {
-  return (dispatch, getState) => {
-    dispatch({
-      type: EffectTypes.DESTROY_PAGE_SESSION,
-      page: PagesSelectors.getPageById(getState(), pageId),
-      currentPageCount: PagesSelectors.getPageIdsInDisplayOrder(getState()).size,
-    });
+export function destroyPageSession(id, { withUI = true } = {}) {
+  return {
+    type: EffectTypes.DESTROY_PAGE_SESSION,
+    id,
+    withUI,
   };
 }
 
