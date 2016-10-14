@@ -160,7 +160,7 @@ export async function createBrowserWindow() {
   return readyDeferred.promise;
 }
 
-export async function closeBrowserWindow(bw) {
+export function closeBrowserWindow(bw) {
   const index = browserWindows.indexOf(bw);
   if (index < 0) {
     return;
@@ -169,6 +169,10 @@ export async function closeBrowserWindow(bw) {
   browserWindowLoaded.delete(bw);
 
   bw.close();
+}
+
+export function reloadBrowserWindow(bw) {
+  bw.webContents.reload();
 }
 
 /**

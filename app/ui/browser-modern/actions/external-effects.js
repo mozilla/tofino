@@ -30,6 +30,12 @@ export function closeWindow() {
   };
 }
 
+export function reloadWindow() {
+  return {
+    type: EffectTypes.RELOAD_WINDOW,
+  };
+}
+
 export function openAppMenu() {
   return {
     type: EffectTypes.OPEN_APP_MENU,

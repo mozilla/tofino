@@ -25,6 +25,7 @@ try {
     remote: {
       Menu() {},
       MenuItem() {},
+      getCurrentWindow() {},
     },
     clipboard: {
       writeText() {},

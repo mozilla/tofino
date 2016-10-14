@@ -91,6 +91,10 @@ ipc.on('close-browser-window', BW.onlyWhenFromBrowserWindow(async function(bw) {
   await BW.closeBrowserWindow(bw);
 }));
 
+ipc.on('reload-browser-window', BW.onlyWhenFromBrowserWindow(async function(bw) {
+  await BW.reloadBrowserWindow(bw);
+}));
+
 ipc.on('window-ready', BW.onlyWhenFromBrowserWindow((bw, ...args) => {
   // Pass through to the BrowserWindow instance.  This just makes it easier to do things per-BW.
   bw.emit('window-ready', ...args);

@@ -21,6 +21,7 @@ export default function*() {
     takeLatest(...wrapped(EffectTypes.MINIMIZE_WINDOW, minimizeWindow)),
     takeLatest(...wrapped(EffectTypes.MAXIMIZE_WINDOW, maximizeWindow)),
     takeLatest(...wrapped(EffectTypes.CLOSE_WINDOW, closeWindow)),
+    takeLatest(...wrapped(EffectTypes.RELOAD_WINDOW, reloadWindow)),
     takeLatest(...wrapped(EffectTypes.OPEN_APP_MENU, openAppMenu)),
   ];
 }
@@ -40,6 +41,10 @@ function* maximizeWindow() {
 
 function* closeWindow() {
   ipcRenderer.send('close-browser-window');
+}
+
+function* reloadWindow() {
+  ipcRenderer.send('reload-browser-window');
 }
 
 function* openAppMenu() {

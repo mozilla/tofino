@@ -37,6 +37,10 @@ export default function({ store, userAgentClient }) {
   });
 
   // Add other various main process event listeners.
+  ipcRenderer.on('reload-window', () => {
+    store.dispatch(ExternalEffects.reloadWindow());
+  });
+
   ipcRenderer.on('close-window', () => {
     store.dispatch(ExternalEffects.closeWindow());
   });

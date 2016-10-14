@@ -139,10 +139,7 @@ items.reloadApp = {
   accelerator: 'CmdOrCtrl+Alt+R',
   click(item, focusedWindow) {
     if (focusedWindow) {
-      focusedWindow.reload();
-      focusedWindow.webContents.once('did-finish-load', () => {
-        focusedWindow.webContents.send('new-tab');
-      });
+      focusedWindow.webContents.send('reload-window');
     }
   },
 };
