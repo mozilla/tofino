@@ -10,11 +10,11 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import Immutable from 'immutable';
+import * as ActionTypes from '../constants/action-types';
 
-import { register } from '../util/record-constructors';
-
-export default register(Immutable.Record({
-  url: undefined,
-  title: undefined,
-}, 'LocationAutocompletion'));
+export function overwriteAppState(state) {
+  return {
+    type: ActionTypes.OVERWRITE_APP_STATE,
+    state,
+  };
+}

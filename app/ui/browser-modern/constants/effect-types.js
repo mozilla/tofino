@@ -10,6 +10,15 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
+// Session effects
+
+export const GET_SESSION_KEY = 'GET_SESSION_KEY_EFFECT';
+export const SET_SESSION_KEY = 'SET_SESSION_KEY_EFFECT';
+export const DEL_SESSION_KEY = 'DEL_SESSION_KEY_EFFECT';
+export const RESTORE_SERIALIZED_APP_STATE = 'RESTORE_SERIALIZED_APP_STATE_EFFECT';
+export const NOTIFY_BROWSER_WINDOW_APP_STATE_SAVED = 'NOTIFY_BROWSER_WINDOW_APP_STATE_SAVED_EFFECT';
+export const NOTIFY_BROWSER_WINDOW_APP_STATE_DESTROYED = 'NOTIFY_BROWSER_WINDOW_APP_STATE_DESTROYED_EFFECT';
+
 // Developer effects
 
 export const PERF_RECORD_START = 'PERF_RECORD_START_EFFECT';
@@ -20,6 +29,7 @@ export const PERF_RECORD_STOP = 'PERF_RECORD_STOP_EFFECT';
 export const MINIMIZE_WINDOW = 'MINIMIZE_WINDOW_EFFECT';
 export const MAXIMIZE_WINDOW = 'MAXIMIZE_WINDOW_EFFECT';
 export const CLOSE_WINDOW = 'CLOSE_WINDOW_EFFECT';
+export const RELOAD_WINDOW = 'RELOAD_WINDOW_EFFECT';
 export const OPEN_APP_MENU = 'OPEN_APP_MENU_EFFECT';
 
 // Profile effects

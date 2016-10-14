@@ -14,10 +14,10 @@ import createSagaMiddleware from 'redux-saga';
 import configureStore from '../../shared/util/redux/configure-store';
 import rootReducer from '../reducers';
 import rootSaga from '../sagas';
-import * as Model from '../model/index';
+import State from '../model';
 
 export function createBrowserStore() {
-  const initialState = new Model.State(rootReducer(undefined, { type: null }));
+  const initialState = new State(rootReducer(undefined, { type: null }));
   const saga = createSagaMiddleware();
   const store = configureStore(rootReducer, initialState, [saga]);
   saga.run(rootSaga);

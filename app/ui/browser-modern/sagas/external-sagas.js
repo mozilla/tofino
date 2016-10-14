@@ -11,6 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import { takeLatest } from 'redux-saga';
+import { take } from 'redux-saga/effects';
 
 import { wrapped } from './helpers';
 import { remote, ipcRenderer } from '../../../shared/electron';
@@ -21,6 +22,7 @@ export default function*() {
     takeLatest(...wrapped(EffectTypes.MINIMIZE_WINDOW, minimizeWindow)),
     takeLatest(...wrapped(EffectTypes.MAXIMIZE_WINDOW, maximizeWindow)),
     takeLatest(...wrapped(EffectTypes.CLOSE_WINDOW, closeWindow)),
+    takeLatest(...wrapped(EffectTypes.RELOAD_WINDOW, reloadWindow)),
     takeLatest(...wrapped(EffectTypes.OPEN_APP_MENU, openAppMenu)),
   ];
 }
@@ -39,7 +41,15 @@ function* maximizeWindow() {
 }
 
 function* closeWindow() {
+  // Wait for any additional operations to finish before closing the window.
+  // Add your own here if needed.
+  yield take(EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_DESTROYED);
   ipcRenderer.send('close-browser-window');
+}
+
+function* reloadWindow() {
+  const win = remote.getCurrentWindow();
+  win.reload();
 }
 
 function* openAppMenu() {

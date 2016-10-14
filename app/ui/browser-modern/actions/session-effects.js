@@ -12,32 +12,43 @@ specific language governing permissions and limitations under the License.
 
 import * as EffectTypes from '../constants/effect-types';
 
-export function maximizeWindow() {
+export function getSessionKey(key) {
   return {
-    type: EffectTypes.MAXIMIZE_WINDOW,
+    type: EffectTypes.GET_SESSION_KEY,
+    key,
   };
 }
 
-export function minimizeWindow() {
+export function setSessionKey(key, value) {
   return {
-    type: EffectTypes.MINIMIZE_WINDOW,
+    type: EffectTypes.SET_SESSION_KEY,
+    key,
+    value,
   };
 }
 
-export function closeWindow() {
+export function delSessionKey(key) {
   return {
-    type: EffectTypes.CLOSE_WINDOW,
+    type: EffectTypes.DEL_SESSION_KEY,
+    key,
   };
 }
 
-export function reloadWindow() {
+export function restoreSerializedAppState(serialized) {
   return {
-    type: EffectTypes.RELOAD_WINDOW,
+    type: EffectTypes.RESTORE_SERIALIZED_APP_STATE,
+    serialized,
   };
 }
 
-export function openAppMenu() {
+export function notifyBrowserWindowAppStateSaved() {
   return {
-    type: EffectTypes.OPEN_APP_MENU,
+    type: EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_SAVED,
+  };
+}
+
+export function notifyBrowserWindowAppStateDestroyed() {
+  return {
+    type: EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_DESTROYED,
   };
 }

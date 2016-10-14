@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import { takeLatest, takeEvery } from 'redux-saga';
-import { put, call, apply } from 'redux-saga/effects';
+import { select, put, call, apply } from 'redux-saga/effects';
 
 import Deferred from '../../../shared/deferred';
 import { ipcRenderer, remote, clipboard } from '../../../shared/electron';
@@ -20,6 +20,7 @@ import * as Certificate from '../../shared/util/cert';
 import * as ContentScriptUtils from '../../shared/util/content-script-utils';
 import PageState from '../model/page-state';
 import userAgentHttpClient from '../../../shared/user-agent-http-client';
+import * as PagesSelectors from '../selectors/pages';
 import * as PageActions from '../actions/page-actions';
 import * as PageEffects from '../actions/page-effects';
 import * as ProfileEffects from '../actions/profile-effects';
@@ -49,18 +50,25 @@ export default function*() {
   ];
 }
 
-function* createPageSession({ id, location, options }) {
+function* createPageSession({ id, location, options, withUI = true }) {
   yield apply(userAgentHttpClient, userAgentHttpClient.createSession, [id, {}]);
-  yield put(PageActions.createPage(id, location, options));
+
+  if (withUI) {
+    yield put(PageActions.createPage(id, location, options));
+  }
 }
 
-function* destroyPageSession({ page, currentPageCount }) {
+function* destroyPageSession({ page, withUI = true }) {
   yield apply(userAgentHttpClient, userAgentHttpClient.destroySession, [page, {}]);
-  yield put(PageActions.removePage(page.id));
 
-  // If the last page was removed, dispatch an action to create another one.
-  if (currentPageCount === 1) {
-    yield put(PageEffects.createPageSession());
+  if (withUI) {
+    const currentPageCount = yield select(PagesSelectors.getPageCount);
+    yield put(PageActions.removePage(page.id));
+
+    // If the last page was removed, dispatch an action to create another one.
+    if (currentPageCount === 1) {
+      yield put(PageEffects.createPageSession());
+    }
   }
 }
 

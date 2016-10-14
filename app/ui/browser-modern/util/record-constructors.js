@@ -10,11 +10,13 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import Immutable from 'immutable';
+const RECORDS = new Set();
 
-import { register } from '../util/record-constructors';
+export function register(record) {
+  RECORDS.add(record);
+  return record;
+}
 
-export default register(Immutable.Record({
-  url: undefined,
-  title: undefined,
-}, 'LocationAutocompletion'));
+export function getAllRegisteredRecords() {
+  return RECORDS;
+}

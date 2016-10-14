@@ -12,7 +12,9 @@ specific language governing permissions and limitations under the License.
 
 import Immutable from 'immutable';
 
-export default Immutable.Record({
+import { register } from '../util/record-constructors';
+
+export default register(Immutable.Record({
   // Page data.
   url: undefined,
   title: undefined,
@@ -33,4 +35,4 @@ export default Immutable.Record({
   review_count: undefined,
   price: undefined,
   currency: undefined,
-}, 'PageMeta');
+}, 'PageMeta'));
