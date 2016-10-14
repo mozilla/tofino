@@ -14,6 +14,8 @@ import Immutable from 'immutable';
 
 import { register } from '../util/record-constructors';
 
+const VERSION = 1;
+
 export default register(Immutable.Record({
   // We're using separate immutables data stores instead of a single OrderedMap,
   // because passing in only ids to certain components will guarantee an
@@ -36,4 +38,4 @@ export default register(Immutable.Record({
   ids: Immutable.OrderedSet(),
   displayOrder: Immutable.List(),
   selectedId: '',
-}, 'Pages'));
+}, `Pages_v${VERSION}`));

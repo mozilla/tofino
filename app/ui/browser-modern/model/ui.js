@@ -15,9 +15,11 @@ import Immutable from 'immutable';
 import { register } from '../util/record-constructors';
 import ActiveElement from './active-element';
 
+const VERSION = 1;
+
 export default register(Immutable.Record({
   activeElement: new ActiveElement(),
   statusText: '',
   overviewVisible: false,
   locationAutocompletions: Immutable.Map(),
-}, 'UIState'));
+}, `UIState_v${VERSION}`));

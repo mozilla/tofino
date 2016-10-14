@@ -14,6 +14,8 @@ import Immutable from 'immutable';
 
 import { register } from '../util/record-constructors';
 
+const VERSION = 1;
+
 export default register(Immutable.Record({
   bookmarks: Immutable.Set(),
-}, 'Profile'));
+}, `Profile_v${VERSION}`));

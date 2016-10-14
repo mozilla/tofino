@@ -17,9 +17,11 @@ import Profile from './profile';
 import Pages from './pages';
 import UIState from './ui';
 
+const VERSION = 1;
+
 export default register(Immutable.Record({
   windowId: null,
   profile: new Profile(),
   pages: new Pages(),
   ui: new UIState(),
-}, 'State'));
+}, `State_v${VERSION}`));

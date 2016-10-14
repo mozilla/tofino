@@ -13,6 +13,7 @@ specific language governing permissions and limitations under the License.
 import transit from 'transit-immutable-js';
 
 import { getAllRegisteredRecords } from './record-constructors';
+import { migrateObsoleteOrDeprecatedRecord } from './session-migrate';
 
 export function serializeAppState(state) {
   // Save the entire app state for now. If for some reason we need to
@@ -23,5 +24,5 @@ export function serializeAppState(state) {
 
 export function deserializeAppState(string) {
   const records = getAllRegisteredRecords();
-  return transit.withRecords(records).fromJSON(string);
+  return transit.withRecords(records, migrateObsoleteOrDeprecatedRecord).fromJSON(string);
 }

@@ -14,10 +14,12 @@ import Immutable from 'immutable';
 
 import { register } from '../util/record-constructors';
 
+const VERSION = 1;
+
 const ActiveElement = register(Immutable.Record({
   owner: '',
   nodeName: null,
-}, 'ActiveElement'));
+}, `ActiveElement_v${VERSION}`));
 
 
 ActiveElement.OWNER = {

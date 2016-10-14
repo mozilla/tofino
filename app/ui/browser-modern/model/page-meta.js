@@ -14,6 +14,8 @@ import Immutable from 'immutable';
 
 import { register } from '../util/record-constructors';
 
+const VERSION = 1;
+
 export default register(Immutable.Record({
   // Page data.
   url: undefined,
@@ -35,4 +37,4 @@ export default register(Immutable.Record({
   review_count: undefined,
   price: undefined,
   currency: undefined,
-}, 'PageMeta'));
+}, `PageMeta_v${VERSION}`));

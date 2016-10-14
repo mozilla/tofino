@@ -14,6 +14,8 @@ import Immutable from 'immutable';
 
 import { register } from '../util/record-constructors';
 
+const VERSION = 1;
+
 export default register(Immutable.Record({
   data: undefined,
   issuerName: undefined,
@@ -22,4 +24,4 @@ export default register(Immutable.Record({
   validStart: undefined,
   validExpiry: undefined,
   fingerprint: undefined,
-}, 'SSLCertificate'));
+}, `SSLCertificate_v${VERSION}`));

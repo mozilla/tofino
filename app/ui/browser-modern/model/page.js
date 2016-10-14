@@ -19,6 +19,8 @@ import PageMeta from './page-meta';
 import PageState from './page-state';
 import PageUIState from './page-ui-state';
 
+const VERSION = 1;
+
 export default class Page extends register(Immutable.Record({
   id: undefined,
   location: '',
@@ -29,7 +31,7 @@ export default class Page extends register(Immutable.Record({
   uiState: new PageUIState(),
   history: Immutable.List(),
   historyIndex: -1,
-}, 'Page')) {
+}, `Page_v${VERSION}`)) {
   constructor(data) {
     if (!data || !data.id) {
       logger.warn('Required property `id` missing from page constructor.');

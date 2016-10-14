@@ -15,6 +15,8 @@ import Immutable from 'immutable';
 import { register } from '../util/record-constructors';
 import SSLCertificate from './ssl-certificate';
 
+const VERSION = 1;
+
 const PageState = register(Immutable.Record({
   load: undefined,
   navigationType: undefined,
@@ -22,7 +24,7 @@ const PageState = register(Immutable.Record({
   description: undefined,
   certificate: new SSLCertificate(),
   error: undefined,
-}, 'PageState'));
+}, `PageState_v${VERSION}`));
 
 PageState.STATES = {
   CONNECTING: 'connecting',
