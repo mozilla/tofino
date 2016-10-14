@@ -11,11 +11,13 @@ specific language governing permissions and limitations under the License.
 */
 
 import Immutable from 'immutable';
+
+import { register } from '../util/record-constructors';
 import ActiveElement from './active-element';
 
-export default Immutable.Record({
+export default register(Immutable.Record({
   activeElement: new ActiveElement(),
   statusText: '',
   overviewVisible: false,
   locationAutocompletions: Immutable.Map(),
-}, 'UIState');
+}, 'UIState'));

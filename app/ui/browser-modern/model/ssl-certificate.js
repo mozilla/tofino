@@ -12,7 +12,9 @@ specific language governing permissions and limitations under the License.
 
 import Immutable from 'immutable';
 
-const SSLCertificate = Immutable.Record({
+import { register } from '../util/record-constructors';
+
+export default register(Immutable.Record({
   data: undefined,
   issuerName: undefined,
   subjectName: undefined,
@@ -20,6 +22,4 @@ const SSLCertificate = Immutable.Record({
   validStart: undefined,
   validExpiry: undefined,
   fingerprint: undefined,
-}, 'SSLCertificate');
-
-export default SSLCertificate;
+}, 'SSLCertificate'));
