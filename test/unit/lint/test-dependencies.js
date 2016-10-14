@@ -107,6 +107,9 @@ describe('dependencies', () => {
     const unimported = [
       // Not imported, but referenced by bin/user-agent-service script.
       'datomish-user-agent-service',
+
+      // Not imported, but a required peer dependency for transit-immutable-js.
+      'transit-js',
     ];
 
     const sources = await globMany(paths);
