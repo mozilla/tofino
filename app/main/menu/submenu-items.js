@@ -140,6 +140,9 @@ items.reloadApp = {
   click(item, focusedWindow) {
     if (focusedWindow) {
       focusedWindow.reload();
+      focusedWindow.webContents.once('did-finish-load', () => {
+        focusedWindow.webContents.send('new-tab');
+      });
     }
   },
 };

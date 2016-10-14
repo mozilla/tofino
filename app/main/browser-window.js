@@ -59,18 +59,19 @@ export async function focusOrOpenWindow(url) {
   }
 
   if (!bw) {
-    await createBrowserWindow(url);
+    bw = await createBrowserWindow();
   } else if (url) {
     await browserWindowLoaded.get(bw);
-    bw.webContents.send('new-tab', url);
   }
+
+  bw.webContents.send('new-tab', url);
 }
 
 /**
  * Creates a new browser window for the browser chrome, and returns a promise
  * that resolves upon initialization. Takes an optional url to load in the window.
  */
-export async function createBrowserWindow(url) {
+export async function createBrowserWindow() {
   // TODO: don't abuse the storage layer's session ID generation to produce scopes.
   // Await for `startSession()` here since that ensures we have a connection to
   // the UA service at this point.
@@ -129,10 +130,6 @@ export async function createBrowserWindow(url) {
     // If Tofino is not the default browser
     if (shouldAskToSetDefaultBrowser) {
       browser.webContents.send('should-set-default-browser');
-    }
-
-    if (url) {
-      browser.webContents.send('new-tab', url);
     }
 
     readyDeferred.resolve(browser);
