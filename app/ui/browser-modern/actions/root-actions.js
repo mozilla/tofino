@@ -18,3 +18,10 @@ export function setWindowId(windowId) {
     windowId,
   };
 }
+
+export function overwriteAppState(state) {
+  return {
+    type: ActionTypes.OVERWRITE_APP_STATE,
+    state,
+  };
+}

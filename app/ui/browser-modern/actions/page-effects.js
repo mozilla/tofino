@@ -41,6 +41,22 @@ export function destroyCurrentPageSession() {
   };
 }
 
+export function bulkCreateStandalonePageSessions(ids, channel /* optional */) {
+  return {
+    type: EffectTypes.BULK_CREATE_STANDALONE_PAGE_SESSIONS,
+    ids,
+    channel,
+  };
+}
+
+export function bulkDestroyStandalonePageSessions(ids, channel /* optional */) {
+  return {
+    type: EffectTypes.BULK_DESTROY_STANDALONE_PAGE_SESSIONS,
+    ids,
+    channel,
+  };
+}
+
 export function navigatePageTo(pageId, location, doc = document) {
   return {
     type: EffectTypes.NAVIGATE_PAGE_TO,

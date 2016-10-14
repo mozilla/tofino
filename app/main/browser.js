@@ -20,6 +20,7 @@ import * as BW from './browser-window';
 import * as certs from './certificates';
 import * as ProfileDiffTypes from '../shared/constants/profile-diff-types';
 import { startUpdateChecks } from './updater';
+import { performApplicationSessionRestore } from './session-restore';
 import * as state from './state';
 import './command-line';
 import './pinned-tabs';
@@ -45,8 +46,7 @@ app.on('ready', async function() {
   // Register http content protocols, e.g. for displaying `tofino://` pages.
   protocols.registerHttpProtocols();
 
-  const bw = await BW.createBrowserWindow();
-  bw.webContents.send('new-tab');
+  performApplicationSessionRestore();
 
   // Emit an event to the main process so we can mark the app
   // as initialized

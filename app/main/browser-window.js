@@ -20,7 +20,9 @@ import * as hotkeys from './hotkeys';
 import * as downloads from './downloads';
 import * as protocols from './protocols';
 import * as state from './state';
+import { logger } from '../shared/logging';
 import { fileUrl } from './paths-util';
+import { getSessionKey } from './session-io';
 import BUILD_CONFIG from '../build-config';
 
 // Switch to 'browser-blueprint' or 'browser-alt' to test different frontends.
@@ -72,7 +74,7 @@ export async function focusOrOpenWindow(url) {
  * Creates a new browser window for the browser chrome, and returns a promise
  * that resolves upon initialization. Takes an optional url to load in the window.
  */
-export async function createBrowserWindow({ windowId } = {}) {
+export async function createBrowserWindow({ windowId, appState } = {}) {
   // TODO: don't abuse the storage layer's session ID generation to produce scopes.
   // Await for `startSession()` here since that ensures we have a connection to
   // the UA service at this point.
@@ -136,6 +138,12 @@ export async function createBrowserWindow({ windowId } = {}) {
       browser.webContents.send('should-set-default-browser');
     }
 
+    if (appState) {
+      browser.webContents.send('session-restore-available', appState);
+    } else {
+      browser.webContents.send('session-restore-unavailable');
+    }
+
     readyDeferred.resolve(browser);
   });
 
@@ -176,6 +184,16 @@ export function closeBrowserWindow(bw) {
 }
 
 export function reloadBrowserWindow(bw) {
+  const appState = getSessionKey(['browserWindows', bw.windowId], { default: null });
+
+  if (!appState) {
+    logger.warn(`No app state found for browser window ${bw.windowId}`);
+  } else {
+    bw.webContents.once('did-finish-load', () => {
+      bw.webContents.send('session-restore-available', appState);
+    });
+  }
+
   bw.webContents.reload();
 }
 

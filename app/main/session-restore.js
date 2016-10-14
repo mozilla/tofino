@@ -10,18 +10,19 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import transit from 'transit-immutable-js';
+import * as BW from './browser-window';
+import { getSessionKey } from './session-io';
 
-import { getAllRegisteredRecords } from './record-constructors';
+export async function performApplicationSessionRestore() {
+  const browserWindows = Object.entries(getSessionKey('browserWindows', { default: {} }));
 
-export function serializeAppState(state) {
-  // Save the entire app state for now. If for some reason we need to
-  // filter or massage the current store shape before saving, do it here.
-  const records = getAllRegisteredRecords();
-  return transit.withRecords(records).toJSON(state);
-}
+  if (!browserWindows.length) {
+    const browserWindow = await BW.createBrowserWindow();
+    browserWindow.webContents.send('new-tab');
+    return;
+  }
 
-export function deserializeAppState(string) {
-  const records = getAllRegisteredRecords();
-  return transit.withRecords(records).fromJSON(string);
+  for (const [windowId, appState] of browserWindows) {
+    await BW.createBrowserWindow({ windowId, appState });
+  }
 }

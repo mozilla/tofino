@@ -10,18 +10,18 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import transit from 'transit-immutable-js';
+import * as ActionTypes from '../constants/action-types';
 
-import { getAllRegisteredRecords } from './record-constructors';
+export default function(state, action) {
+  switch (action.type) {
+    case ActionTypes.OVERWRITE_APP_STATE:
+      return overwriteAppState(state, action.state);
 
-export function serializeAppState(state) {
-  // Save the entire app state for now. If for some reason we need to
-  // filter or massage the current store shape before saving, do it here.
-  const records = getAllRegisteredRecords();
-  return transit.withRecords(records).toJSON(state);
+    default:
+      return state;
+  }
 }
 
-export function deserializeAppState(string) {
-  const records = getAllRegisteredRecords();
-  return transit.withRecords(records).fromJSON(string);
+function overwriteAppState(prevState, nextState) {
+  return nextState;
 }

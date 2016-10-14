@@ -33,6 +33,10 @@ export default function*() {
   yield [
     takeEvery(...wrapped(EffectTypes.CREATE_PAGE_SESSION, createPageSession)),
     takeEvery(...wrapped(EffectTypes.DESTROY_PAGE_SESSION, destroyPageSession)),
+    takeEvery(...wrapped(EffectTypes.BULK_CREATE_STANDALONE_PAGE_SESSIONS,
+      bulkCreateStandalonePageSessions)),
+    takeEvery(...wrapped(EffectTypes.BULK_DESTROY_STANDALONE_PAGE_SESSIONS,
+      bulkDestroyStandalonePageSessions)),
     takeLatest(...wrapped(EffectTypes.NAVIGATE_PAGE_TO, naviatePageTo)),
     takeLatest(...wrapped(EffectTypes.NAVIGATE_PAGE_BACK, navigatePageBack)),
     takeLatest(...wrapped(EffectTypes.NAVIGATE_PAGE_FORWARD, navigatePageForward)),
@@ -70,6 +74,25 @@ function* destroyPageSession({ id, withUI }) {
     if (currentPageCount === 1) {
       yield put(PageEffects.createPageSession());
     }
+  }
+}
+
+function* bulkCreateStandalonePageSessions({ ids, channel }) {
+  for (const id of ids) {
+    yield apply(userAgentHttpClient, userAgentHttpClient.createSession, [id, {}]);
+  }
+  if (channel) {
+    yield put(channel, 'DONE');
+  }
+}
+
+function* bulkDestroyStandalonePageSessions({ ids, channel }) {
+  for (const id of ids) {
+    const page = yield select(PageSelectors.getPageById, id);
+    yield apply(userAgentHttpClient, userAgentHttpClient.destroySession, [page, {}]);
+  }
+  if (channel) {
+    yield put(channel, 'DONE');
   }
 }
 

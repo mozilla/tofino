@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import { takeLatest } from 'redux-saga';
-import { take } from 'redux-saga/effects';
+import { race, take } from 'redux-saga/effects';
 
 import { wrapped } from './helpers';
 import { remote, ipcRenderer } from '../../../shared/electron';
@@ -43,14 +43,20 @@ function* maximizeWindow() {
 function* closeWindow() {
   // Wait for any additional operations to finish before closing the window.
   // Add your own here if needed.
-  yield take(EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_DESTROYED);
+  yield race([
+    take(EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_DESTROYED),
+    take(EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_NOT_WATCHED),
+  ]);
   ipcRenderer.send('close-browser-window');
 }
 
 function* reloadWindow() {
   // Wait for any additional operations to finish before reloading the window.
   // Add your own here if needed.
-  yield take(EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_SAVED);
+  yield race([
+    take(EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_SAVED),
+    take(EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_NOT_WATCHED),
+  ]);
   ipcRenderer.send('reload-browser-window');
 }
 

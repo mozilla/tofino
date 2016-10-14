@@ -10,15 +10,17 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { takeLatest } from 'redux-saga';
+import { takeLatest, channel as createCommunicationChannel } from 'redux-saga';
 import { call, select, race, take, put } from 'redux-saga/effects';
 
 import { ipcRenderer } from '../../../shared/electron';
 import { wrapped, Watcher } from './helpers';
-import { serializeAppState } from '../util/session-util';
+import { serializeAppState, deserializeAppState } from '../util/session-util';
 import * as ActionTypes from '../constants/action-types';
 import * as EffectTypes from '../constants/effect-types';
 import * as RootSelectors from '../selectors/root';
+import * as RootActions from '../actions/root-actions';
+import * as PageEffects from '../actions/page-effects';
 import * as SessionEffects from '../actions/session-effects';
 
 // Sending the browser window app state to the main process to save it to the
@@ -30,6 +32,7 @@ export default function*() {
     call(manageAppStateWatching),
     takeLatest(...wrapped(EffectTypes.SET_SESSION_KEY, setSessionKey)),
     takeLatest(...wrapped(EffectTypes.DELETE_SESSION_KEY, deleteSessionKey)),
+    takeLatest(...wrapped(EffectTypes.SESSION_RESTORE_BROWSER_WINDOW_APP_STATE, restoreAppState)),
   ];
 }
 
@@ -50,15 +53,17 @@ function* manageAppStateWatching() {
   // app state.
   const pattern = Object.values(ActionTypes);
   const appStateWatcher = new Watcher(pattern, saveAppStateToSession, SAVE_APP_STATE_THROTTLE);
-  yield* appStateWatcher.startIfNotRunning();
 
+  while (true) {
     const result = yield race({
       willReloadWindow: take(EffectTypes.RELOAD_WINDOW),
       willCloseWindow: take(EffectTypes.CLOSE_WINDOW),
+      shouldStartSaving: take(EffectTypes.START_SAVING_BROWSER_WINDOW_APP_STATE),
+      shouldStopSaving: take(EffectTypes.STOP_SAVING_BROWSER_WINDOW_APP_STATE),
     });
 
     // When closing a browser window, remove it from the session.
-    if (result.willCloseWindow) {
+    if (result.willCloseWindow && appStateWatcher.isRunning()) {
       yield* deleteAppStateFromSession();
     }
 
@@ -66,15 +71,59 @@ function* manageAppStateWatching() {
     // so that everything is guaranteed to be up to date. Otherwise, if the
     // state changes just before throttling finishes, the very latest changes
     // won't persist.
-    if (result.willReloadWindow) {
+    if (result.willReloadWindow && appStateWatcher.isRunning()) {
       yield* saveAppStateToSession();
     }
 
+    // Whenever requested, start or cancel the `AppStateWatcher` task
+    // which causes the `saveAppStateToSession` task to run whenever changes
+    // are made to the app state, throttled.
+    if (result.shouldStartSaving) {
+      yield* appStateWatcher.startIfNotRunning();
+      yield put(SessionEffects.notifyBrowserWindowAppStateWatched());
+    }
+
     // Make sure we're cancelling the `AppStateWatcher` task when either
-    // reloading or closing the browser window, so that everything is aborted:
-    // recent changes to the app state shouldn't cause the
-    // `saveAppStateToSession` task to start running due to throttling.
-    yield* appStateWatcher.cancelIfRunning();
+    // specifically requested or reloading/closing the browser window, so that
+    // everything is aborted: recent changes to the app state shouldn't cause
+    // the `saveAppStateToSession` task to start running due to throttling.
+    if (result.shouldStopSaving || result.willReloadWindow || result.willCloseWindow) {
+      yield* appStateWatcher.cancelIfRunning();
+      yield put(SessionEffects.notifyBrowserWindowAppStateNotWatched());
+    }
+  }
+}
+
+function* restoreAppState({ serialized }) {
+  let deserialized;
+
+  try {
+    deserialized = deserializeAppState(serialized);
+  } catch (e) {
+    // If deserializing the app state fails due to a bad migration (probably
+    // because the migration procedures weren't implemented yet) immediately
+    // cancel the `AppStateWatcher` task if it was already running.
+    // This way we avoid saving completely botched up app state as a result.
+    yield put(SessionEffects.stopSavingBrowserWindowAppState());
+    throw e;
+  }
+
+  // Overwriting the app state is a pure operation which won't have any
+  // side effects, so we need to handle any additional preliminary setup
+  // that has nothing to do with the app state as well, *before* overwriting.
+
+  // Create page sessions. Since this operation is asynchronous, and simply
+  // dispatching an action via `put` won't block this saga until the subsequent
+  // sagas (spun up when `taking` the action) terminate, use a channnel
+  // for inter-saga communication.
+  const channel = yield call(createCommunicationChannel);
+  yield put(PageEffects.bulkCreateStandalonePageSessions(deserialized.pages.ids, channel));
+  while ((yield take(channel)) !== 'DONE');
+
+  // It's now safe to overwrite the app state and start watching it for changes,
+  // since any other orchestrated initialization has been finished at this point.
+  yield put(RootActions.overwriteAppState(deserialized));
+  yield put(SessionEffects.startSavingBrowserWindowAppState());
 }
 
 function* saveAppStateToSession() {

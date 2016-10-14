@@ -27,6 +27,37 @@ export function deleteSessionKey(key) {
   };
 }
 
+export function sessionRestoreBrowserWindowAppState(serialized) {
+  return {
+    type: EffectTypes.SESSION_RESTORE_BROWSER_WINDOW_APP_STATE,
+    serialized,
+  };
+}
+
+export function startSavingBrowserWindowAppState() {
+  return {
+    type: EffectTypes.START_SAVING_BROWSER_WINDOW_APP_STATE,
+  };
+}
+
+export function stopSavingBrowserWindowAppState() {
+  return {
+    type: EffectTypes.STOP_SAVING_BROWSER_WINDOW_APP_STATE,
+  };
+}
+
+export function notifyBrowserWindowAppStateWatched() {
+  return {
+    type: EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_WATCHED,
+  };
+}
+
+export function notifyBrowserWindowAppStateNotWatched() {
+  return {
+    type: EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_NOT_WATCHED,
+  };
+}
+
 export function notifyBrowserWindowAppStateSaved() {
   return {
     type: EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_SAVED,
