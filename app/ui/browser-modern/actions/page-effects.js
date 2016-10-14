@@ -249,10 +249,11 @@ export function getCertificateError(pageId, url) {
   };
 }
 
-export function displayWebviewContextMenu(webview, e) {
+export function displayWebviewContextMenu(pageId, e, doc = document) {
   return {
     type: EffectTypes.DISPLAY_WEBVIEW_CONTEXT_MENU,
-    webview,
+    webview: getWebViewForPageId(doc, pageId),
+    pageId,
     e,
   };
 }
