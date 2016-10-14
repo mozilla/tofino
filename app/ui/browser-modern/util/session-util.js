@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import transit from 'transit-immutable-js';
 
+import { logger } from '../../../shared/logging';
 import { getAllRegisteredRecords } from './record-constructors';
 
 export function serializeAppState(state) {
@@ -19,4 +20,13 @@ export function serializeAppState(state) {
   // filter or massage the current store shape before saving, do it here.
   const records = getAllRegisteredRecords();
   return transit.withRecords(records).toJSON(state);
+}
+
+export function deserializeAppState(string) {
+  const records = getAllRegisteredRecords();
+  return transit.withRecords(records, (name, value) => {
+    logger.warn(`Missing \`${name}\` record when serializing app state.`);
+    logger.warn('Ignoring field:', value);
+    return undefined;
+  }).fromJSON(string);
 }

@@ -11,15 +11,20 @@ specific language governing permissions and limitations under the License.
 */
 
 import { combineReducers } from 'redux-immutable';
+import reduceReducers from 'reduce-reducers';
 
+import all from './all';
 import profile from './profile';
 import pages from './pages';
 import ui from './ui';
 
-const rootReducer = combineReducers({
-  profile,
-  pages,
-  ui,
-});
+const rootReducer = reduceReducers(
+  all,
+  combineReducers({
+    profile,
+    pages,
+    ui,
+  }),
+);
 
 export default rootReducer;

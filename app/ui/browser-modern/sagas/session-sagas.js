@@ -16,9 +16,11 @@ import { race, call, take, put, select } from 'redux-saga/effects';
 import { ipcRenderer } from '../../../shared/electron';
 import { wrapped } from './helpers';
 import { getWindowId } from '../selectors/ui';
-import { serializeAppState } from '../util/session-util';
+import { serializeAppState, deserializeAppState } from '../util/session-util';
 import * as ActionTypes from '../constants/action-types';
 import * as EffectTypes from '../constants/effect-types';
+import * as RootAction from '../actions/root-actions';
+import * as PageEffects from '../actions/page-effects';
 import * as SessionEffects from '../actions/session-effects';
 
 const THROTTLE_DURATION = 1000; // ms
@@ -28,6 +30,7 @@ export default function*() {
     takeLatest(...wrapped(EffectTypes.GET_SESSION_KEY, getSessionKey)),
     takeLatest(...wrapped(EffectTypes.SET_SESSION_KEY, setSessionKey)),
     takeLatest(...wrapped(EffectTypes.DEL_SESSION_KEY, delSessionKey)),
+    takeLatest(...wrapped(EffectTypes.RESTORE_SERIALIZED_APP_STATE, restoreSerializedAppState)),
   ];
 
   // Make sure we're cancelling the `watchAppStateChanges` task when closing
@@ -58,6 +61,21 @@ function* watchAppStateChanges(fn) {
   // app state.
   const pattern = Object.values(ActionTypes);
   yield throttle(THROTTLE_DURATION, ...wrapped(pattern, fn));
+}
+
+function* restoreSerializedAppState({ serialized }) {
+  const deserialized = deserializeAppState(serialized);
+
+  // Overwriting the app state is a pure operation which won't have any
+  // side effects, so we need to handle any additional preliminary setup
+  // that has nothing to do with the app state.
+
+  // Create page sessions for communicating with the user agent service.
+  for (const id of deserialized.pages.ids) {
+    yield put(PageEffects.createPageSession(null, null, id, { withUI: false }));
+  }
+
+  yield put(RootAction.overwriteAppState(deserialized));
 }
 
 function* saveAppStateToSession() {

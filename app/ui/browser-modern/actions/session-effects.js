@@ -34,6 +34,13 @@ export function delSessionKey(key) {
   };
 }
 
+export function restoreSerializedAppState(serialized) {
+  return {
+    type: EffectTypes.RESTORE_SERIALIZED_APP_STATE,
+    serialized,
+  };
+}
+
 export function notifyBrowserWindowAppStateSaved() {
   return {
     type: EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_SAVED,

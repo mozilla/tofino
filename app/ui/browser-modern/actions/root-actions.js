@@ -10,16 +10,11 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import createSagaMiddleware from 'redux-saga';
-import configureStore from '../../shared/util/redux/configure-store';
-import rootReducer from '../reducers';
-import rootSaga from '../sagas';
-import State from '../model';
+import * as ActionTypes from '../constants/action-types';
 
-export function createBrowserStore() {
-  const initialState = new State(rootReducer(undefined, { type: null }));
-  const saga = createSagaMiddleware();
-  const store = configureStore(rootReducer, initialState, [saga]);
-  saga.run(rootSaga);
-  return store;
+export function overwriteAppState(state) {
+  return {
+    type: ActionTypes.OVERWRITE_APP_STATE,
+    state,
+  };
 }

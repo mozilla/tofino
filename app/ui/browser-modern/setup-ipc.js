@@ -13,6 +13,7 @@ specific language governing permissions and limitations under the License.
 import { ipcRenderer } from '../../shared/electron';
 
 import * as ContentURLs from '../../shared/constants/content-pages-locations';
+import * as SessionEffects from './actions/session-effects';
 import * as ExternalEffects from './actions/external-effects';
 import * as PageActions from './actions/page-actions';
 import * as PageEffects from './actions/page-effects';
@@ -37,6 +38,10 @@ export default function({ store, userAgentClient }) {
   });
 
   // Add other various main process event listeners.
+  ipcRenderer.on('overwrite-app-state', (_, serialized) => {
+    store.dispatch(SessionEffects.restoreSerializedAppState(serialized));
+  });
+
   ipcRenderer.on('reload-window', () => {
     store.dispatch(ExternalEffects.reloadWindow());
   });
