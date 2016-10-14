@@ -45,7 +45,8 @@ app.on('ready', async function() {
   // Register http content protocols, e.g. for displaying `tofino://` pages.
   protocols.registerHttpProtocols();
 
-  await BW.createBrowserWindow();
+  const bw = await BW.createBrowserWindow();
+  bw.webContents.send('new-tab');
 
   // Emit an event to the main process so we can mark the app
   // as initialized
@@ -74,13 +75,15 @@ app.on('activate', async function() {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (electron.BrowserWindow.getAllWindows().length === 0) {
-    await BW.createBrowserWindow();
+    const bw = await BW.createBrowserWindow();
+    bw.webContents.send('new-tab');
     menu.buildAppMenu(menuData);
   }
 });
 
 ipc.on('new-browser-window', async function() {
-  await BW.createBrowserWindow();
+  const bw = await BW.createBrowserWindow();
+  bw.webContents.send('new-tab');
   menu.buildAppMenu(menuData);
 });
 

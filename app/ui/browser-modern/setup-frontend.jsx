@@ -17,20 +17,9 @@ import { Provider } from 'react-redux';
 import App from './views/app';
 import { serializeNode } from '../shared/util/dom-serializers';
 import * as UIEffects from './actions/ui-effects';
-import * as PageEffects from './actions/page-effects';
 
 export default function({ store }) {
   const container = document.getElementById('browser-container');
-
-  // Before rendering, add a fresh page. This is leading toward a session restore
-  // model where the main process can instantiate a mostly-formed browser window.
-  // The reason to dispatch actions is that some actions start asynchronous processes,
-  // and we can't necessarily produce the resulting state (which is supposed to be
-  // the initial state presented to the user). Dispatching actions also uses the
-  // same codepaths the rest of the application uses.
-
-  // We can dispatch our fresh page before connecting to the UA service.
-  store.dispatch(PageEffects.createPageSession());
 
   // Track details about the currently focused elements in the app state.
   document.addEventListener('blur', () => {
