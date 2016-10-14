@@ -12,12 +12,13 @@ specific language governing permissions and limitations under the License.
 
 import Immutable from 'immutable';
 
+import { register } from '../util/record-constructors';
 import Profile from './profile';
 import Pages from './pages';
 import UIState from './ui';
 
-export const State = Immutable.Record({
+export default register(Immutable.Record({
   profile: new Profile(),
   pages: new Pages(),
   ui: new UIState(),
-}, 'State');
+}, 'State'));

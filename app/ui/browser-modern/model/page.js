@@ -13,12 +13,13 @@ specific language governing permissions and limitations under the License.
 import Immutable from 'immutable';
 import uuid from 'uuid';
 
+import { register } from '../util/record-constructors';
 import { logger } from '../../../shared/logging';
 import PageMeta from './page-meta';
 import PageState from './page-state';
 import PageUIState from './page-ui-state';
 
-export default class Page extends Immutable.Record({
+export default class Page extends register(Immutable.Record({
   id: undefined,
   location: '',
   title: '',
@@ -28,7 +29,7 @@ export default class Page extends Immutable.Record({
   uiState: new PageUIState(),
   history: Immutable.List(),
   historyIndex: -1,
-}, 'Page') {
+}, 'Page')) {
   constructor(data) {
     if (!data || !data.id) {
       logger.warn('Required property `id` missing from page constructor.');

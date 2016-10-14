@@ -12,6 +12,8 @@ specific language governing permissions and limitations under the License.
 
 import Immutable from 'immutable';
 
-export default Immutable.Record({
+import { register } from '../util/record-constructors';
+
+export default register(Immutable.Record({
   bookmarks: Immutable.Set(),
-}, 'Profile');
+}, 'Profile'));
