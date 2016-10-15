@@ -10,7 +10,36 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
+import { throttle } from 'redux-saga';
+import { cancel } from 'redux-saga/effects';
+
 import { logger } from '../../../shared/logging';
+
+export class Watcher {
+  constructor(pattern, cb, interval = 0) {
+    this.pattern = pattern;
+    this.cb = cb;
+    this.interval = interval;
+    this._task = null;
+  }
+
+  isRunning() {
+    return this._task && this._task.isRunning();
+  }
+
+  * startIfNotRunning() {
+    if (!this.isRunning()) {
+      this._task = yield throttle(this.interval, ...wrapped(this.pattern, this.cb));
+    }
+  }
+
+  * cancelIfRunning() {
+    if (this.isRunning()) {
+      yield cancel(this._task);
+      this._task = null;
+    }
+  }
+}
 
 export const wrapped = function(pattern, fn, name) {
   if (typeof pattern === 'string') {
