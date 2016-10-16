@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import { takeLatest, takeEvery } from 'redux-saga';
-import { select, put, call, apply } from 'redux-saga/effects';
+import { call, apply, select, put } from 'redux-saga/effects';
 
 import Deferred from '../../../shared/deferred';
 import { ipcRenderer, remote, clipboard } from '../../../shared/electron';
@@ -33,6 +33,10 @@ export default function*() {
   yield [
     takeEvery(...wrapped(EffectTypes.CREATE_PAGE_SESSION, createPageSession)),
     takeEvery(...wrapped(EffectTypes.DESTROY_PAGE_SESSION, destroyPageSession)),
+    takeEvery(...wrapped(EffectTypes.BULK_CREATE_STANDALONE_PAGE_SESSIONS,
+      bulkCreateStandalonePageSessions)),
+    takeEvery(...wrapped(EffectTypes.BULK_DESTROY_STANDALONE_PAGE_SESSIONS,
+      bulkDestroyStandalonePageSessions)),
     takeLatest(...wrapped(EffectTypes.NAVIGATE_PAGE_TO, naviatePageTo)),
     takeLatest(...wrapped(EffectTypes.NAVIGATE_PAGE_BACK, navigatePageBack)),
     takeLatest(...wrapped(EffectTypes.NAVIGATE_PAGE_FORWARD, navigatePageForward)),
@@ -50,18 +54,45 @@ export default function*() {
   ];
 }
 
-function* createPageSession({ id, location, options }) {
+function* createPageSession({ id, location, options, withUI }) {
   yield apply(userAgentHttpClient, userAgentHttpClient.createSession, [id, {}]);
-  yield put(PageActions.createPage(id, location, options));
+
+  if (withUI) {
+    yield put(PageActions.createPage(id, location, options));
+  }
 }
 
-function* destroyPageSession({ page, currentPageCount }) {
+function* destroyPageSession({ id, withUI }) {
+  const page = yield select(PageSelectors.getPageById, id);
   yield apply(userAgentHttpClient, userAgentHttpClient.destroySession, [page, {}]);
-  yield put(PageActions.removePage(page.id));
 
-  // If the last page was removed, dispatch an action to create another one.
-  if (currentPageCount === 1) {
-    yield put(PageEffects.createPageSession());
+  if (withUI) {
+    const currentPageCount = yield select(PageSelectors.getPageCount);
+    yield put(PageActions.removePage(page.id));
+
+    // If the last page was removed, dispatch an action to create another one.
+    if (currentPageCount === 1) {
+      yield put(PageEffects.createPageSession());
+    }
+  }
+}
+
+function* bulkCreateStandalonePageSessions({ ids, channel }) {
+  for (const id of ids) {
+    yield apply(userAgentHttpClient, userAgentHttpClient.createSession, [id, {}]);
+  }
+  if (channel) {
+    yield put(channel, 'DONE');
+  }
+}
+
+function* bulkDestroyStandalonePageSessions({ ids, channel }) {
+  for (const id of ids) {
+    const page = yield select(PageSelectors.getPageById, id);
+    yield apply(userAgentHttpClient, userAgentHttpClient.destroySession, [page, {}]);
+  }
+  if (channel) {
+    yield put(channel, 'DONE');
   }
 }
 

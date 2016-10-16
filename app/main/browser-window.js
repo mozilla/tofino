@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 /* global LIBDIR */
 
 import path from 'path';
+import uuid from 'uuid';
 import { BrowserWindow } from 'electron';
 
 import Deferred from '../shared/deferred';
@@ -19,7 +20,9 @@ import * as hotkeys from './hotkeys';
 import * as downloads from './downloads';
 import * as protocols from './protocols';
 import * as state from './state';
+import { logger } from '../shared/logging';
 import { fileUrl } from './paths-util';
+import { getSessionKey } from './session-io';
 import BUILD_CONFIG from '../build-config';
 
 // Switch to 'browser-blueprint' or 'browser-alt' to test different frontends.
@@ -59,18 +62,19 @@ export async function focusOrOpenWindow(url) {
   }
 
   if (!bw) {
-    await createBrowserWindow(url);
+    bw = await createBrowserWindow();
   } else if (url) {
     await browserWindowLoaded.get(bw);
-    bw.webContents.send('new-tab', url);
   }
+
+  bw.webContents.send('new-tab', url);
 }
 
 /**
  * Creates a new browser window for the browser chrome, and returns a promise
  * that resolves upon initialization. Takes an optional url to load in the window.
  */
-export async function createBrowserWindow(url) {
+export async function createBrowserWindow({ windowId, appState } = {}) {
   // TODO: don't abuse the storage layer's session ID generation to produce scopes.
   // Await for `startSession()` here since that ensures we have a connection to
   // the UA service at this point.
@@ -94,12 +98,15 @@ export async function createBrowserWindow(url) {
     frame: false,
     show: false,
   });
+
   browser.scope = scope;
+  browser.windowId = windowId || uuid.v4();
 
   browser.webContents.once('did-finish-load', () => {
     // The client needs to know where the UA service is in order to connect
     // to it, and subsequently fire its 'window-ready' event.
     browser.webContents.send('user-agent-service-info', { port, host, version });
+    browser.webContents.send('window-id', browser.windowId);
   });
 
   // Only check and send the set default browser message if this is the first
@@ -131,8 +138,10 @@ export async function createBrowserWindow(url) {
       browser.webContents.send('should-set-default-browser');
     }
 
-    if (url) {
-      browser.webContents.send('new-tab', url);
+    if (appState) {
+      browser.webContents.send('session-restore-available', appState);
+    } else {
+      browser.webContents.send('session-restore-unavailable');
     }
 
     readyDeferred.resolve(browser);
@@ -163,7 +172,7 @@ export async function createBrowserWindow(url) {
   return readyDeferred.promise;
 }
 
-export async function closeBrowserWindow(bw) {
+export function closeBrowserWindow(bw) {
   const index = browserWindows.indexOf(bw);
   if (index < 0) {
     return;
@@ -172,6 +181,20 @@ export async function closeBrowserWindow(bw) {
   browserWindowLoaded.delete(bw);
 
   bw.close();
+}
+
+export function reloadBrowserWindow(bw) {
+  const appState = getSessionKey(['browserWindows', bw.windowId], { default: null });
+
+  if (!appState) {
+    logger.warn(`No app state found for browser window ${bw.windowId}`);
+  } else {
+    bw.webContents.once('did-finish-load', () => {
+      bw.webContents.send('session-restore-available', appState);
+    });
+  }
+
+  bw.webContents.reload();
 }
 
 /**

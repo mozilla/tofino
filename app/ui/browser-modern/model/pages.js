@@ -12,7 +12,11 @@ specific language governing permissions and limitations under the License.
 
 import Immutable from 'immutable';
 
-export default Immutable.Record({
+import { register } from '../util/record-constructors';
+
+const VERSION = 1;
+
+export default register(Immutable.Record({
   // We're using separate immutables data stores instead of a single OrderedMap,
   // because passing in only ids to certain components will guarantee an
   // easy way of avoiding re-renders. A single sorted data structure containing
@@ -34,4 +38,4 @@ export default Immutable.Record({
   ids: Immutable.OrderedSet(),
   displayOrder: Immutable.List(),
   selectedId: '',
-}, 'Pages');
+}, `Pages_v${VERSION}`));

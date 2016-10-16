@@ -10,29 +10,18 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-/* eslint global-require: 0 */
+import * as ActionTypes from '../constants/action-types';
 
-// Stub out ipcRenderer when electron cannot be found (unit tests)
-let electron;
-try {
-  electron = require('electron');
-} catch (e) {
-  const { ipcMain, ipcRenderer } = require('electron-ipc-mock')();
+export default function(state, action) {
+  switch (action.type) {
+    case ActionTypes.OVERWRITE_APP_STATE:
+      return overwriteAppState(state, action.state);
 
-  electron = {
-    ipcMain,
-    ipcRenderer,
-    remote: {
-      Menu() {},
-      MenuItem() {},
-      getCurrentWindow() {},
-    },
-    clipboard: {
-      writeText() {},
-      readText() {},
-    },
-  };
+    default:
+      return state;
+  }
 }
 
-const { ipcMain, ipcRenderer, remote, clipboard } = electron;
-export { ipcMain, ipcRenderer, remote, clipboard };
+function overwriteAppState(prevState, nextState) {
+  return nextState;
+}

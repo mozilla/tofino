@@ -12,12 +12,16 @@ specific language governing permissions and limitations under the License.
 
 import Immutable from 'immutable';
 
-const PageUIState = Immutable.Record({
+import { register } from '../util/record-constructors';
+
+const VERSION = 1;
+
+const PageUIState = register(Immutable.Record({
   preventInteraction: false,
   zoomLevel: 0,
   searchVisible: false,
   pinned: false,
-}, 'PageUIState');
+}, `PageUIState_v${VERSION}`));
 
 // See http://electron.atom.io/docs/api/web-view-tag/#webviewsetzoomlevellevel
 PageUIState.ZOOM_LEVEL_DEFAULT = 0;

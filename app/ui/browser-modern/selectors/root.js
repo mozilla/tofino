@@ -10,18 +10,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import Immutable from 'immutable';
-
-import { register } from '../util/record-constructors';
-import Profile from './profile';
-import Pages from './pages';
-import UIState from './ui';
-
-const VERSION = 1;
-
-export default register(Immutable.Record({
-  windowId: null,
-  profile: new Profile(),
-  pages: new Pages(),
-  ui: new UIState(),
-}, `State_v${VERSION}`));
+export function getWindowId(state) {
+  return state.windowId;
+}

@@ -10,18 +10,19 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import Immutable from 'immutable';
+import * as BW from './browser-window';
+import { getSessionKey } from './session-io';
 
-import { register } from '../util/record-constructors';
-import Profile from './profile';
-import Pages from './pages';
-import UIState from './ui';
+export async function performApplicationSessionRestore() {
+  const browserWindows = Object.entries(getSessionKey('browserWindows', { default: {} }));
 
-const VERSION = 1;
+  if (!browserWindows.length) {
+    const browserWindow = await BW.createBrowserWindow();
+    browserWindow.webContents.send('new-tab');
+    return;
+  }
 
-export default register(Immutable.Record({
-  windowId: null,
-  profile: new Profile(),
-  pages: new Pages(),
-  ui: new UIState(),
-}, `State_v${VERSION}`));
+  for (const [windowId, appState] of browserWindows) {
+    await BW.createBrowserWindow({ windowId, appState });
+  }
+}

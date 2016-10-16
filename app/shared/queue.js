@@ -10,18 +10,19 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import Immutable from 'immutable';
+import queue from 'queue';
 
-import { register } from '../util/record-constructors';
-import Profile from './profile';
-import Pages from './pages';
-import UIState from './ui';
+export default class Queue {
+  constructor(options) {
+    this._q = queue(options);
+  }
 
-const VERSION = 1;
+  push(fn) {
+    this._q.push(fn);
 
-export default register(Immutable.Record({
-  windowId: null,
-  profile: new Profile(),
-  pages: new Pages(),
-  ui: new UIState(),
-}, `State_v${VERSION}`));
+    // Always start draining the queue if previously empty. This is an
+    // oddity with the underlying queue implementation itself: when empty,
+    // need to manually restart after pushing.
+    this._q.start();
+  }
+}

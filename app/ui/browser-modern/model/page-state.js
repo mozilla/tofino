@@ -12,16 +12,19 @@ specific language governing permissions and limitations under the License.
 
 import Immutable from 'immutable';
 
+import { register } from '../util/record-constructors';
 import SSLCertificate from './ssl-certificate';
 
-const PageState = Immutable.Record({
+const VERSION = 1;
+
+const PageState = register(Immutable.Record({
   load: undefined,
   navigationType: undefined,
   code: undefined,
   description: undefined,
   certificate: new SSLCertificate(),
   error: undefined,
-}, 'PageState');
+}, `PageState_v${VERSION}`));
 
 PageState.STATES = {
   CONNECTING: 'connecting',

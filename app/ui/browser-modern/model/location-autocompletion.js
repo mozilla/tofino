@@ -12,7 +12,11 @@ specific language governing permissions and limitations under the License.
 
 import Immutable from 'immutable';
 
-export default Immutable.Record({
+import { register } from '../util/record-constructors';
+
+const VERSION = 1;
+
+export default register(Immutable.Record({
   url: undefined,
   title: undefined,
-}, 'LocationAutocompletion');
+}, `LocationAutocompletion_v${VERSION}`));

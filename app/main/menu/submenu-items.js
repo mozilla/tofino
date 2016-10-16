@@ -139,7 +139,7 @@ items.reloadApp = {
   accelerator: 'CmdOrCtrl+Alt+R',
   click(item, focusedWindow) {
     if (focusedWindow) {
-      focusedWindow.reload();
+      focusedWindow.webContents.send('reload-window');
     }
   },
 };

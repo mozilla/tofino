@@ -20,6 +20,7 @@ import * as BW from './browser-window';
 import * as certs from './certificates';
 import * as ProfileDiffTypes from '../shared/constants/profile-diff-types';
 import { startUpdateChecks } from './updater';
+import { performApplicationSessionRestore } from './session-restore';
 import * as state from './state';
 import './command-line';
 import './pinned-tabs';
@@ -45,7 +46,7 @@ app.on('ready', async function() {
   // Register http content protocols, e.g. for displaying `tofino://` pages.
   protocols.registerHttpProtocols();
 
-  await BW.createBrowserWindow();
+  performApplicationSessionRestore();
 
   // Emit an event to the main process so we can mark the app
   // as initialized
@@ -74,18 +75,24 @@ app.on('activate', async function() {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (electron.BrowserWindow.getAllWindows().length === 0) {
-    await BW.createBrowserWindow();
+    const bw = await BW.createBrowserWindow();
+    bw.webContents.send('new-tab');
     menu.buildAppMenu(menuData);
   }
 });
 
 ipc.on('new-browser-window', async function() {
-  await BW.createBrowserWindow();
+  const bw = await BW.createBrowserWindow();
+  bw.webContents.send('new-tab');
   menu.buildAppMenu(menuData);
 });
 
 ipc.on('close-browser-window', BW.onlyWhenFromBrowserWindow(async function(bw) {
   await BW.closeBrowserWindow(bw);
+}));
+
+ipc.on('reload-browser-window', BW.onlyWhenFromBrowserWindow(async function(bw) {
+  await BW.reloadBrowserWindow(bw);
 }));
 
 ipc.on('window-ready', BW.onlyWhenFromBrowserWindow((bw, ...args) => {

@@ -12,7 +12,11 @@ specific language governing permissions and limitations under the License.
 
 import Immutable from 'immutable';
 
-export default Immutable.Record({
+import { register } from '../util/record-constructors';
+
+const VERSION = 1;
+
+export default register(Immutable.Record({
   url: undefined,
   active: undefined,
-}, 'LocalHistoryItem');
+}, `LocalHistoryItem_v${VERSION}`));

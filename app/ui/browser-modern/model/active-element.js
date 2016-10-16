@@ -12,10 +12,14 @@ specific language governing permissions and limitations under the License.
 
 import Immutable from 'immutable';
 
-const ActiveElement = Immutable.Record({
+import { register } from '../util/record-constructors';
+
+const VERSION = 1;
+
+const ActiveElement = register(Immutable.Record({
   owner: '',
   nodeName: null,
-}, 'ActiveElement');
+}, `ActiveElement_v${VERSION}`));
 
 
 ActiveElement.OWNER = {
