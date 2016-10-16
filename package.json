@@ -47,7 +47,7 @@
     "isomorphic-fetch": "2.2.1",
     "lodash": "4.16.4",
     "morgan": "1.7.0",
-    "page-metadata-parser": "0.3.0",
+    "page-metadata-parser": "0.4.2",
     "react": "15.3.2",
     "react-addons-perf": "15.3.2",
     "react-addons-pure-render-mixin": "15.3.2",
