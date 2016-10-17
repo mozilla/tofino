@@ -148,18 +148,6 @@ export default function({ store, userAgentClient }) {
     store.dispatch(PageEffects.performCurrentPageZoomReset());
   });
 
-  ipcRenderer.on('zoom-in', () => {
-    store.dispatch(PageEffects.performCurrentPageZoomIn());
-  });
-
-  ipcRenderer.on('zoom-out', () => {
-    store.dispatch(PageEffects.performCurrentPageZoomOut());
-  });
-
-  ipcRenderer.on('zoom-reset', () => {
-    store.dispatch(PageEffects.performCurrentPageZoomReset());
-  });
-
   ipcRenderer.on('show-stars', () => {
     store.dispatch(PageEffects.createPageSession(ContentURLs.STARS_PAGE));
   });
