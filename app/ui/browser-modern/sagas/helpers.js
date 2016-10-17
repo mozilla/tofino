@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { throttle } from 'redux-saga';
+import { takeLatest, takeEvery, throttle } from 'redux-saga';
 import { cancel } from 'redux-saga/effects';
 
 import { logger } from '../../../shared/logging';
@@ -40,6 +40,14 @@ export class Watcher {
     }
   }
 }
+
+export const takeLatestMultiple = function(...patterns) {
+  return patterns.map(([pattern, fn, ...args]) => takeLatest(...wrapped(pattern, fn), ...args));
+};
+
+export const takeEveryMultiple = function(...patterns) {
+  return patterns.map(([pattern, fn, ...args]) => takeEvery(...wrapped(pattern, fn), ...args));
+};
 
 export const wrapped = function(pattern, fn, name) {
   if (typeof pattern === 'string') {
