@@ -11,6 +11,7 @@
  */
 
 import React from 'react';
+import moment from 'moment';
 
 import Style from '../../../shared/style';
 
@@ -38,12 +39,21 @@ const HISTORY_ANCHOR_STYLE = Style.registerStyle({
   display: 'block',
 });
 
+const HISTORY_TIME_STYLE = Style.registerStyle({
+  color: 'rgba(0,0,0,0.7)',
+  paddingRight: '5px',
+  display: 'inline-block',
+  fontSize: '85%',
+  width: '10%',
+});
+
 function HistoryItem(props) {
   return (
     <ListItem className={HISTORY_ITEM_STYLE}>
       <a className={HISTORY_ANCHOR_STYLE}
         href={props.page.uri}
         title={props.page.title || props.page.uri}>
+        <span className={HISTORY_TIME_STYLE}>{moment(props.page.lastVisited).calendar()}</span>
         {props.page.title || props.page.uri}
       </a>
       {props.page.snippet
