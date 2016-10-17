@@ -11,7 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import developer from './developer-sagas';
-import external from './external-sagas';
+import window from './window-sagas';
 import session from './session-sagas';
 import profile from './profile-sagas';
 import page from './page-sagas';
@@ -20,7 +20,7 @@ import ui from './ui-sagas';
 export default function*() {
   yield [
     developer(),
-    external(),
+    window(),
     session(),
     profile(),
     page(),
