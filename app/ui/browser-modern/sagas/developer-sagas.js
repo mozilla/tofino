@@ -10,9 +10,9 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { takeLatest } from 'redux-saga';
+import { call } from 'redux-saga/effects';
 
-import { wrapped } from './helpers';
+import { takeLatestMultiple } from './helpers';
 import * as EffectTypes from '../constants/effect-types';
 import BUILD_CONFIG from '../../../build-config';
 
@@ -34,17 +34,17 @@ if (BUILD_CONFIG.development) {
 }
 
 export default function*() {
-  yield [
-    takeLatest(...wrapped(EffectTypes.PERF_RECORD_START, perfStart)),
-    takeLatest(...wrapped(EffectTypes.PERF_RECORD_STOP, perfStop)),
-  ];
+  yield takeLatestMultiple(
+    [EffectTypes.PERF_RECORD_START, perfStart],
+    [EffectTypes.PERF_RECORD_STOP, perfStop],
+  );
 }
 
-function* perfStart() {
-  Perf.start();
+export function* perfStart() {
+  yield call(Perf.start);
 }
 
-function* perfStop() {
-  Perf.stop();
-  Perf.printWasted(Perf.getLastMeasurements());
+export function* perfStop() {
+  yield call(Perf.stop);
+  yield call(Perf.printWasted, yield call(Perf.getLastMeasurements));
 }
