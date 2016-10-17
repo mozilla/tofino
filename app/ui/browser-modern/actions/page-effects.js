@@ -161,6 +161,21 @@ export function toggleCurrentPageDevtools() {
   };
 }
 
+export function performDevtoolsInspectElement(pageId, { x, y }, doc = document) {
+  return {
+    type: EffectTypes.PERFORM_DEVTOOLS_INSPECT_ELEMENT,
+    webview: getWebViewForPageId(doc, pageId),
+    x,
+    y,
+  };
+}
+
+export function performCurrentPageDevtoolsInspectElement({ x, y }) {
+  return (dispatch, getState) => {
+    dispatch(performDevtoolsInspectElement(PagesSelectors.getSelectedPageId(getState()), { x, y }));
+  };
+}
+
 export function setPageZoomLevel(pageId, zoomLevel, doc = document) {
   return {
     type: EffectTypes.SET_PAGE_ZOOM_LEVEL,
@@ -211,6 +226,20 @@ export function performPageZoomReset(pageId) {
 export function performCurrentPageZoomReset() {
   return (dispatch, getState) => {
     dispatch(performPageZoomReset(PagesSelectors.getSelectedPageId(getState())));
+  };
+}
+
+export function performPageDownload(pageId, url, doc = document) {
+  return {
+    type: EffectTypes.PERFORM_PAGE_DOWNLOAD,
+    webview: getWebViewForPageId(doc, pageId),
+    url,
+  };
+}
+
+export function performCurrentPageDownload(url) {
+  return (dispatch, getState) => {
+    dispatch(performPageDownload(PagesSelectors.getSelectedPageId(getState()), url));
   };
 }
 
