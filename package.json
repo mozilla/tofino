@@ -54,7 +54,7 @@
     "react-addons-perf": "15.3.2",
     "react-addons-pure-render-mixin": "15.3.2",
     "react-dom": "15.3.1",
-    "react-free-style": "2.2.3",
+    "react-free-style": "3.0.2",
     "react-immutable-proptypes": "2.1.0",
     "react-redux": "4.4.5",
     "reduce-reducers": "0.1.2",
