@@ -46,12 +46,14 @@ export function focusCurrentURLBar(options) {
 }
 
 export function setURLBarValue(pageId, value, options, doc = document) {
+  const urlbar = getURLBarForPageId(doc, pageId);
+  const details = { isActiveElement: doc.activeElement === urlbar };
   return {
     type: EffectTypes.SET_URL_BAR_VALUE,
-    urlbar: getURLBarForPageId(doc, pageId),
+    urlbar,
     value,
     options,
-    doc,
+    details,
   };
 }
 

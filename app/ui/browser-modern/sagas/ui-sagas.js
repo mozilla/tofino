@@ -10,40 +10,39 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { takeLatest } from 'redux-saga';
-import { put } from 'redux-saga/effects';
+import { call, apply, put } from 'redux-saga/effects';
 
+import { takeLatestMultiple } from './helpers';
 import { ipcRenderer } from '../../../shared/electron';
-import { wrapped } from './helpers';
 import { logger } from '../../../shared/logging';
 import * as UIActions from '../actions/ui-actions';
 import * as EffectTypes from '../constants/effect-types';
 import { INTERACTION_TYPES } from '../../shared/widgets/search';
 
 export default function*() {
-  yield [
-    takeLatest(...wrapped(EffectTypes.SET_APPLICATION_ACTIVE_ELEMENT, setActiveElement)),
-    takeLatest(...wrapped(EffectTypes.FOCUS_URL_BAR, focusURLBar)),
-    takeLatest(...wrapped(EffectTypes.SET_URL_BAR_VALUE, setURLBarValue)),
-    takeLatest(...wrapped(EffectTypes.SHOW_DOWNLOAD_NOTIFICATION, showDownloadNotification)),
-    takeLatest(...wrapped(EffectTypes.CONFIRM_DEFAULT_BROWSER, confirmDefaultBrowser)),
-  ];
+  yield takeLatestMultiple(
+    [EffectTypes.SET_APPLICATION_ACTIVE_ELEMENT, setActiveElement],
+    [EffectTypes.FOCUS_URL_BAR, focusURLBar],
+    [EffectTypes.SET_URL_BAR_VALUE, setURLBarValue],
+    [EffectTypes.SHOW_DOWNLOAD_NOTIFICATION, showDownloadNotification],
+    [EffectTypes.CONFIRM_DEFAULT_BROWSER, confirmDefaultBrowser],
+  );
 }
 
-function* setActiveElement({ owner, details }) {
-  ipcRenderer.send('guest-active-element', { owner, details });
+export function* setActiveElement({ owner, details }) {
+  yield call(ipcRenderer.send, 'guest-active-element', { owner, details });
   yield put(UIActions.setActiveElement(owner, details));
 }
 
-function* focusURLBar({ urlbar, options = {} }) {
-  urlbar.focus();
+export function* focusURLBar({ urlbar, options = {} }) {
+  yield apply(urlbar, urlbar.focus);
 
   if (options.select) {
-    urlbar.select();
+    yield apply(urlbar, urlbar.select);
   }
 }
 
-function* setURLBarValue({ urlbar, value, doc, options = { keepSelection: true } }) {
+export function* setURLBarValue({ urlbar, value, info = {}, options = { keepSelection: true } }) {
   // When the user is interacting with the url bar, don't just change all the
   // displayed text directly, only the default value, to prevent replacing
   // user entered text, but allowing the intended text to be displayed when
@@ -56,20 +55,19 @@ function* setURLBarValue({ urlbar, value, doc, options = { keepSelection: true }
   }
 
   const { selectionStart, selectionEnd } = urlbar;
-  const allTextSelected = selectionStart === 0 && selectionEnd === urlbar.value.length;
-  const isActiveElement = doc.activeElement === urlbar;
+  const isAllTextSelected = selectionStart === 0 && selectionEnd === urlbar.value.length;
 
   urlbar.value = value;
   urlbar.defaultValue = value;
 
   // Changing the displayed text would clear selection, which we may not want
   // if the entire contents of the input element were previously selected.
-  if (options.keepSelection && isActiveElement && allTextSelected) {
-    urlbar.select();
+  if (options.keepSelection && info.isActiveElement && isAllTextSelected) {
+    yield apply(urlbar, urlbar.select);
   }
 }
 
-function* showDownloadNotification({ path, filename, status }) {
+export function* showDownloadNotification({ path, filename, status }) {
   let message;
   const title = `Download ${status === 'success' ? 'completed' : 'failed'}`;
 
@@ -84,10 +82,9 @@ function* showDownloadNotification({ path, filename, status }) {
   new Notification(title, { body: message }); //eslint-disable-line
 }
 
-function* confirmDefaultBrowser() {
-  /* eslint-disable no-alert */
-  if (confirm('Would you like to be Tofino your default browser?')) {
-    ipcRenderer.send('set-default-browser');
+export function* confirmDefaultBrowser() {
+  const message = 'Would you like to be Tofino your default browser?';
+  if (yield call(confirm, message)) {
+    yield call(ipcRenderer.send, 'set-default-browser');
   }
-  /* eslint-enable no-alert */
 }
