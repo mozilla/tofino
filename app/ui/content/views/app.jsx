@@ -12,7 +12,7 @@
 
 import React from 'react';
 
-import Style from '../../shared/style';
+import Style, { StyleElement, StyleUtil } from '../../shared/style';
 import Routes from './routes';
 
 const APP_STYLE = Style.registerStyle({
@@ -21,15 +21,14 @@ const APP_STYLE = Style.registerStyle({
 });
 
 const App = function() {
-  const Element = Style.Element;
   return (
     <div className={APP_STYLE}>
       <Routes />
-      <Element />
+      <StyleElement />
     </div>
   );
 };
 
 App.displayName = 'App';
 
-export default Style.component(App);
+export default StyleUtil.wrap(App);

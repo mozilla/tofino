@@ -81,19 +81,24 @@ class Btn extends Component {
   }
 
   componentWillMount() {
-    this.style = Style.registerStyle(Btn.createCssRules(this.props));
+    // Test environments likely won't go through the trouble of specifying
+    // a context for this component before rendering.
+    if (!process.env.TEST) {
+      this.inlineClassName = this.context.freeStyle.registerStyle(Btn.createCssRules(this.props));
+    }
   }
 
   componentWillUpdate(nextProps) {
-    Style.remove(this.style);
-    this.style = Style.registerStyle(Btn.createCssRules(nextProps));
+    if (!process.env.TEST) {
+      this.inlineClassName = this.context.freeStyle.registerStyle(Btn.createCssRules(nextProps));
+    }
   }
 
   render() {
     return (
       <button {...omit(this.props, Object.keys(OmittedContainerProps))}
         ref={e => this.node = e}
-        className={`widget-btn ${BUTTON_STYLE} ${this.style} ${this.props.className || ''}`}
+        className={`widget-btn ${BUTTON_STYLE} ${this.inlineClassName} ${this.props.className || ''}`}
         onClick={this.props.disabled ? null : this.props.onClick}>
         {this.props.children}
       </button>
@@ -123,10 +128,14 @@ Btn.propTypes = {
   title: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
   className: PropTypes.string,
-  children: React.PropTypes.oneOfType([
-    React.PropTypes.arrayOf(React.PropTypes.node),
-    React.PropTypes.node,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
   ]),
+};
+
+Btn.contextTypes = {
+  freeStyle: PropTypes.object.isRequired,
 };
 
 export default Btn;
