@@ -19,7 +19,7 @@ import HistoryItem from './history-item';
 import List from '../../../shared/widgets/list';
 import Search from '../../../shared/widgets/search';
 import * as ContentPropTypes from '../../model/content-prop-types';
-import * as Actions from '../../actions/main-actions';
+import * as MainEffects from '../../actions/main-effects';
 import * as Selectors from '../../selectors';
 
 const HISTORY_STYLE = Style.registerStyle({
@@ -55,13 +55,13 @@ class History extends Component {
   }
 
   componentDidMount() {
-    this.props.dispatch(Actions.showHistory({ limit: 200 }));
+    this.props.dispatch(MainEffects.fetchHistory({ limit: 200 }));
   }
 
   handleSearch = e => {
     const query = e.target.value;
     const limit = query ? 20 : 200;
-    this.props.dispatch(Actions.showHistory({ query, limit }));
+    this.props.dispatch(MainEffects.fetchHistory({ query, limit }));
   }
 
   render() {

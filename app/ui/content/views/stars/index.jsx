@@ -18,7 +18,7 @@ import Style from '../../../shared/style';
 import StarItem from './star-item';
 import List from '../../../shared/widgets/list';
 import * as ContentPropTypes from '../../model/content-prop-types';
-import * as Actions from '../../actions/main-actions';
+import * as MainEffects from '../../actions/main-effects';
 import * as Selectors from '../../selectors';
 
 const STARS_STYLE = Style.registerStyle({
@@ -34,7 +34,7 @@ class Stars extends Component {
   }
 
   componentDidMount() {
-    this.props.dispatch(Actions.showStars({ limit: 1000 }));
+    this.props.dispatch(MainEffects.fetchStars({ limit: 1000 }));
   }
 
   render() {

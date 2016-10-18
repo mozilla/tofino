@@ -10,18 +10,19 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import * as ActionTypes from '../constants/action-types';
+import * as EffectTypes from '../constants/effect-types';
 
-export function showHistory(visitedPages) {
+export function fetchHistory({ query, limit }) {
   return {
-    type: ActionTypes.SHOW_HISTORY,
-    visitedPages,
+    type: EffectTypes.FETCH_HISTORY,
+    query,
+    limit,
   };
 }
 
-export function showStars(starredItems) {
+export function fetchStars({ limit }) {
   return {
-    type: ActionTypes.SHOW_STARS,
-    starredItems,
+    type: EffectTypes.FETCH_STARS,
+    limit,
   };
 }
