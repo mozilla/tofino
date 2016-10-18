@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import React from 'react';
 
-import Style from '../../shared/style';
+import Style, { StyleElement, StyleUtil } from '../../shared/style';
 import BrowserWindow from './window';
 
 const APP_STYLE = Style.registerStyle({
@@ -21,15 +21,14 @@ const APP_STYLE = Style.registerStyle({
 });
 
 const App = function() {
-  const Element = Style.Element;
   return (
     <div className={APP_STYLE}>
       <BrowserWindow />
-      <Element />
+      <StyleElement />
     </div>
   );
 };
 
 App.displayName = 'App';
 
-export default Style.component(App);
+export default StyleUtil.wrap(App);

@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 import React, { Component } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-import Style from '../../shared/style';
+import Style, { StyleElement, StyleUtil } from '../../shared/style';
 import BrowserWindow from './browser/window';
 
 const APP_STYLE = Style.registerStyle({
@@ -28,14 +28,13 @@ class App extends Component {
   }
 
   render() {
-    const Element = Style.Element;
     return (
       <div className={APP_STYLE}>
         <BrowserWindow />
         {/* Set a random prop on the Style.Element component, since we do
             want this to rerender when styles change even though there aren't
             any props passed in, to silence why-did-you-update warnings. */}
-        <Element rand={Math.random()} />
+        <StyleElement rand={Math.random()} />
       </div>
     );
   }
@@ -43,4 +42,4 @@ class App extends Component {
 
 App.displayName = 'App';
 
-export default Style.component(App);
+export default StyleUtil.wrap(App);
