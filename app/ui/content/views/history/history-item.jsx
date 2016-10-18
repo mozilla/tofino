@@ -20,23 +20,21 @@ import ListItem from '../../../shared/widgets/list-item';
 
 const HISTORY_ITEM_STYLE = Style.registerStyle({
   '&:nth-child(odd)': {
-    backgroundColor: 'rgba(255,255,255,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.05)',
   },
   '&:nth-child(even)': {
-    backgroundColor: 'rgba(255,255,255,0.6)',
+    backgroundColor: 'rgba(0,0,0,0.1)',
   },
   '&:hover': {
-    backgroundColor: 'rgba(255,255,255,0.7)',
-  },
-  '& > a': {
-    textDecoration: 'none',
-    color: 'rgba(0,0,0,0.9)',
+    backgroundColor: 'rgba(0,0,0,0.15)',
   },
 });
 
 const HISTORY_ANCHOR_STYLE = Style.registerStyle({
-  padding: '6px 8px',
   display: 'block',
+  padding: '6px 8px',
+  textDecoration: 'none',
+  color: 'rgba(0,0,0,0.9)',
 });
 
 class HistoryItem extends Component {
