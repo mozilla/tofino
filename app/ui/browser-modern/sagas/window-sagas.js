@@ -10,33 +10,33 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { takeLatest } from 'redux-saga';
-import { race, take } from 'redux-saga/effects';
+import { call, race, take } from 'redux-saga/effects';
 
-import { wrapped } from './helpers';
+import { takeLatestMultiple } from './helpers';
 import { remote, ipcRenderer } from '../../../shared/electron';
 import * as EffectTypes from '../constants/effect-types';
 
 export default function*() {
-  yield [
-    takeLatest(...wrapped(EffectTypes.MINIMIZE_WINDOW, minimizeWindow)),
-    takeLatest(...wrapped(EffectTypes.MAXIMIZE_WINDOW, maximizeWindow)),
-    takeLatest(...wrapped(EffectTypes.CLOSE_WINDOW, closeWindow)),
-    takeLatest(...wrapped(EffectTypes.RELOAD_WINDOW, reloadWindow)),
-    takeLatest(...wrapped(EffectTypes.OPEN_APP_MENU, openAppMenu)),
-  ];
+  yield takeLatestMultiple(
+    [EffectTypes.MINIMIZE_WINDOW, minimizeWindow],
+    [EffectTypes.MAXIMIZE_WINDOW, maximizeWindow],
+    [EffectTypes.CLOSE_WINDOW, closeWindow],
+    [EffectTypes.RELOAD_WINDOW, reloadWindow],
+    [EffectTypes.OPEN_APP_MENU, openAppMenu],
+  );
 }
 
 function* minimizeWindow() {
-  remote.getCurrentWindow().minimize();
+  const win = yield call(remote.getCurrentWindow);
+  yield call(win.minimize);
 }
 
 function* maximizeWindow() {
-  const win = remote.getCurrentWindow();
-  if (win.isMaximized()) {
-    win.unmaximize();
+  const win = yield call(remote.getCurrentWindow);
+  if (yield call(win.isMaximized)) {
+    yield call(win.unmaximize);
   } else {
-    win.maximize();
+    yield call(win.maximize);
   }
 }
 
@@ -47,7 +47,7 @@ function* closeWindow() {
     take(EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_DESTROYED),
     take(EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_NOT_WATCHED),
   ]);
-  ipcRenderer.send('close-browser-window');
+  yield call(ipcRenderer.send, 'close-browser-window');
 }
 
 function* reloadWindow() {
@@ -57,9 +57,9 @@ function* reloadWindow() {
     take(EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_SAVED),
     take(EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_NOT_WATCHED),
   ]);
-  ipcRenderer.send('reload-browser-window');
+  yield call(ipcRenderer.send, 'reload-browser-window');
 }
 
 function* openAppMenu() {
-  ipcRenderer.send('open-menu');
+  yield call(ipcRenderer.send, 'open-menu');
 }

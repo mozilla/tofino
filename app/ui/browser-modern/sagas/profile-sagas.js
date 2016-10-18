@@ -10,25 +10,24 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { takeLatest } from 'redux-saga';
 import { put, apply } from 'redux-saga/effects';
 
-import { wrapped } from './helpers';
+import { takeLatestMultiple } from './helpers';
 import userAgentHttpClient from '../../../shared/user-agent-http-client';
 import * as UIActions from '../actions/ui-actions';
 import * as ProfileActions from '../actions/profile-actions';
 import * as EffectTypes from '../constants/effect-types';
 
 export default function*() {
-  yield [
-    takeLatest(...wrapped(EffectTypes.FETCH_LOCATION_AUTOCOMPLETIONS, fetchCompletions)),
-    takeLatest(...wrapped(EffectTypes.SET_REMOTE_BOOKMARK_STATE, setRemoteBookmarkState)),
-    takeLatest(...wrapped(EffectTypes.ADD_REMOTE_HISTORY, addRemoteHistory)),
-    takeLatest(...wrapped(EffectTypes.ADD_CAPTURED_PAGE, addCapturedPage)),
-  ];
+  yield takeLatestMultiple(
+    [EffectTypes.FETCH_LOCATION_AUTOCOMPLETIONS, fetchCompletions],
+    [EffectTypes.SET_REMOTE_BOOKMARK_STATE, setRemoteBookmarkState],
+    [EffectTypes.ADD_REMOTE_HISTORY, addRemoteHistory],
+    [EffectTypes.ADD_CAPTURED_PAGE, addCapturedPage],
+  );
 }
 
-function* fetchCompletions({ pageId, text }) {
+export function* fetchCompletions({ pageId, text }) {
   const autocompletions = [{ url: text }];
   if (text) {
     const { results } = yield apply(userAgentHttpClient, userAgentHttpClient.query, [{ text }]);
@@ -37,7 +36,7 @@ function* fetchCompletions({ pageId, text }) {
   yield put(UIActions.setLocationAutocompletions(pageId, autocompletions));
 }
 
-function* setRemoteBookmarkState({ page, bookmarked }) {
+export function* setRemoteBookmarkState({ page, bookmarked }) {
   const { location: url, title } = page;
 
   // Optimistically update the bookmark state on the local profile model to
@@ -53,12 +52,12 @@ function* setRemoteBookmarkState({ page, bookmarked }) {
   }
 }
 
-function* addRemoteHistory({ page }) {
+export function* addRemoteHistory({ page }) {
   const { location: url, title } = page;
   yield apply(userAgentHttpClient, userAgentHttpClient.createHistory, [page, { url, title }]);
 }
 
-function* addCapturedPage({ page, readerResult }) {
+export function* addCapturedPage({ page, readerResult }) {
   const { location: url } = page;
   yield apply(userAgentHttpClient, userAgentHttpClient.createPage, [page, { url, readerResult }]);
 }

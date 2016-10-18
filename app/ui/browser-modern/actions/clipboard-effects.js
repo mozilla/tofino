@@ -10,20 +10,11 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import developer from './developer-sagas';
-import window from './window-sagas';
-import session from './session-sagas';
-import profile from './profile-sagas';
-import page from './page-sagas';
-import ui from './ui-sagas';
+import * as EffectTypes from '../constants/effect-types';
 
-export default function*() {
-  yield [
-    developer(),
-    window(),
-    session(),
-    profile(),
-    page(),
-    ui(),
-  ];
+export function copyTextToClipboard(text) {
+  return {
+    type: EffectTypes.COPY_TEXT_TO_CLIPBOARD,
+    text,
+  };
 }

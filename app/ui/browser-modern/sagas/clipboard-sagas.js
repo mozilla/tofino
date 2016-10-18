@@ -13,38 +13,15 @@ specific language governing permissions and limitations under the License.
 import { call } from 'redux-saga/effects';
 
 import { takeLatestMultiple } from './helpers';
+import { clipboard } from '../../../shared/electron';
 import * as EffectTypes from '../constants/effect-types';
-import BUILD_CONFIG from '../../../build-config';
-
-/**
- * This file contains actions used only in development mode -- handling
- * measuring react performance, for example. These are stubbed out in
- * non-development mode.
- */
-let Perf;
-if (BUILD_CONFIG.development) {
-  Perf = require('react-addons-perf'); // eslint-disable-line
-} else {
-  Perf = {
-    start() {},
-    stop() {},
-    printWasted() {},
-    getLastMeasurements() {},
-  };
-}
 
 export default function*() {
   yield takeLatestMultiple(
-    [EffectTypes.PERF_RECORD_START, perfStart],
-    [EffectTypes.PERF_RECORD_STOP, perfStop],
+    [EffectTypes.COPY_TEXT_TO_CLIPBOARD, copyTextToClipboard],
   );
 }
 
-export function* perfStart() {
-  yield call(Perf.start);
-}
-
-export function* perfStop() {
-  yield call(Perf.stop);
-  yield call(Perf.printWasted, yield call(Perf.getLastMeasurements));
+function* copyTextToClipboard({ text }) {
+  yield call(clipboard.writeText, text);
 }
