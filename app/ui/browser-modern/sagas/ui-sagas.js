@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import { call, apply, put } from 'redux-saga/effects';
 
-import { takeLatestMultiple } from './helpers';
+import { takeLatestMultiple } from '../../shared/util/saga-util';
 import { ipcRenderer } from '../../../shared/electron';
 import { logger } from '../../../shared/logging';
 import * as UIActions from '../actions/ui-actions';

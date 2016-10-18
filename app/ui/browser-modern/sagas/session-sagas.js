@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 import { call, select, put } from 'redux-saga/effects';
 
 import { ipcRenderer } from '../../../shared/electron';
-import { takeLatestMultiple, Watcher } from './helpers';
+import { takeLatestMultiple, Watcher } from '../../shared/util/saga-util';
 import { serializeAppState, deserializeAppState } from '../util/session-util';
 import * as ActionTypes from '../constants/action-types';
 import * as EffectTypes from '../constants/effect-types';
