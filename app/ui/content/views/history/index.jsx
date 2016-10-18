@@ -11,6 +11,7 @@
  */
 
 import React, { Component, PropTypes } from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
 
 import Style from '../../../shared/style';
@@ -18,8 +19,8 @@ import HistoryItem from './history-item';
 import List from '../../../shared/widgets/list';
 import Search from '../../../shared/widgets/search';
 import * as ContentPropTypes from '../../model/content-prop-types';
-import * as actions from '../../actions/main-actions';
-import * as selectors from '../../selectors';
+import * as Actions from '../../actions/main-actions';
+import * as Selectors from '../../selectors';
 
 const HISTORY_STYLE = Style.registerStyle({
   flex: 1,
@@ -38,14 +39,19 @@ const SEARCH_STYLE = Style.registerStyle({
 });
 
 class History extends Component {
+  constructor(props) {
+    super(props);
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+  }
+
   componentDidMount() {
-    this.props.dispatch(actions.showHistory({ limit: 200 }));
+    this.props.dispatch(Actions.showHistory({ limit: 200 }));
   }
 
   handleSearch = e => {
     const query = e.target.value;
     const limit = query ? 20 : 200;
-    this.props.dispatch(actions.showHistory({ query, limit }));
+    this.props.dispatch(Actions.showHistory({ query, limit }));
   }
 
   render() {
@@ -74,7 +80,7 @@ History.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    pages: selectors.getVisitedPages(state),
+    pages: Selectors.getVisitedPages(state),
   };
 }
 

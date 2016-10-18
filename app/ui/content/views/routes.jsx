@@ -10,7 +10,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React from 'react';
+import React, { Component } from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import History from './history';
 import Stars from './stars';
@@ -21,17 +22,24 @@ const VALID_COMPONENTS = {
   stars: Stars,
 };
 
-const Routes = () => {
-  // TODO: We'd like to use `react-router` here, but can't yet because of
-  // custom schemes, which aren't yet supported by the `history` library.
-  // See https://github.com/ReactJSTraining/history/issues/311
-  const page = document.location.hostname;
-  if (page in VALID_COMPONENTS) {
-    const Component = VALID_COMPONENTS[page];
-    return <Component />;
+class Routes extends Component {
+  constructor(props) {
+    super(props);
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
-  return <NoMatch />;
-};
+
+  render() {
+    // TODO: We'd like to use `react-router` here, but can't yet because of
+    // custom schemes, which aren't yet supported by the `history` library.
+    // See https://github.com/ReactJSTraining/history/issues/311
+    const page = document.location.hostname;
+    if (page in VALID_COMPONENTS) {
+      const Subpage = VALID_COMPONENTS[page];
+      return <Subpage />;
+    }
+    return <NoMatch />;
+  }
+}
 
 Routes.displayName = 'Routes';
 

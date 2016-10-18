@@ -10,7 +10,8 @@
  specific language governing permissions and limitations under the License.
  */
 
-import React from 'react';
+import React, { Component } from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Style from '../../../shared/style';
 
@@ -35,15 +36,22 @@ const STAR_ITEM_STYLE = Style.registerStyle({
   },
 });
 
-function StarItem(props) {
-  return (
-    <ListItem className={STAR_ITEM_STYLE}>
-      <a href={props.star.location || ''}
-        title={props.star.title || props.star.location}>
-        {props.star.title || props.star.location}
-      </a>
-    </ListItem>
-  );
+class StarItem extends Component {
+  constructor(props) {
+    super(props);
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+  }
+
+  render() {
+    return (
+      <ListItem className={STAR_ITEM_STYLE}>
+        <a href={this.props.star.location || ''}
+          title={this.props.star.title || this.props.star.location}>
+          {this.props.star.title || this.props.star.location}
+        </a>
+      </ListItem>
+    );
+  }
 }
 
 StarItem.displayName = 'StarItem';

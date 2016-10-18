@@ -10,7 +10,8 @@
  specific language governing permissions and limitations under the License.
  */
 
-import React from 'react';
+import React, { Component } from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Style from '../../../shared/style';
 
@@ -22,12 +23,19 @@ const NO_MATCH_STYLE = Style.registerStyle({
   fontSize: '500%',
 });
 
-function NoMatch() {
-  return (
-    <div className={NO_MATCH_STYLE}>
-      404
-    </div>
-  );
+class NoMatch extends Component {
+  constructor(props) {
+    super(props);
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+  }
+
+  render() {
+    return (
+      <div className={NO_MATCH_STYLE}>
+        404
+      </div>
+    );
+  }
 }
 
 NoMatch.displayName = 'NoMatch';
