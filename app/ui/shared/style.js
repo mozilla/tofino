@@ -10,13 +10,12 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import * as FreeStyle from 'react-free-style';
+import * as ReactFreeStyle from 'react-free-style';
 
-const Style = FreeStyle.create();
+const Style = ReactFreeStyle.create();
 
 export default Style;
-export const StyleElement = FreeStyle.StyleElement;
 
 export const StyleUtil = {
-  wrap: component => FreeStyle.wrap(component, Style),
+  wrap: component => ReactFreeStyle.wrap(component, Style),
 };

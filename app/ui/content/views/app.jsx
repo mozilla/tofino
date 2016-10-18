@@ -12,21 +12,11 @@
 
 import React from 'react';
 
-import Style, { StyleElement, StyleUtil } from '../../shared/style';
+import { StyleUtil } from '../../shared/style';
 import Routes from './routes';
 
-const APP_STYLE = Style.registerStyle({
-  width: '100%',
-  height: '100%',
-});
-
 const App = function() {
-  return (
-    <div className={APP_STYLE}>
-      <Routes />
-      <StyleElement />
-    </div>
-  );
+  return <Routes />;
 };
 
 App.displayName = 'App';
