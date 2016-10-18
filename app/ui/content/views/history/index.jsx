@@ -38,6 +38,16 @@ const SEARCH_STYLE = Style.registerStyle({
   width: '300px',
 });
 
+const SEARCH_INPUT_STYLE = Style.registerStyle({
+  border: '1px solid var(--theme-content-border-color)',
+  color: 'var(--theme-content-color)',
+  backgroundColor: 'var(--theme-content-background)',
+  padding: '4px',
+  '&:focus': {
+    borderColor: 'var(--theme-content-selected-border-color)',
+  },
+});
+
 class History extends Component {
   constructor(props) {
     super(props);
@@ -59,6 +69,7 @@ class History extends Component {
       <div className={HISTORY_STYLE}>
         <Search placeholder="Search history..."
           className={SEARCH_STYLE}
+          inputClassName={SEARCH_INPUT_STYLE}
           onKeyUp={this.handleSearch} />
         <List className={LIST_STYLE}>
           {this.props.pages.map(page => (
