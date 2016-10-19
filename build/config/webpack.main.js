@@ -33,6 +33,11 @@ export default {
       LIBDIR: 'require("path").join(__dirname, "..")',
     }),
   ],
+  resolve: {
+    alias: {
+      'app/shared/environment': path.join(Const.SRC_DIR, 'shared', 'environment.js'),
+    },
+  },
   externals: [
     ...defaultConfig.externals,
     nodeExternals,
