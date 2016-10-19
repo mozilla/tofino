@@ -122,7 +122,7 @@ const Tasks = {
     // XXX: All builds (including packaged) currently start their own
     // Content service. In the future, we should consider hosting
     // these somewhere else other than the user's own machine.
-    await this.build();
+    await this.build({ packaged: true });
     await Lazy.clean();
     await Lazy.package();
   },

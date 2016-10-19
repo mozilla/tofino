@@ -14,4 +14,8 @@ export default {
   // The `development` option indicates whether or not the build is
   // using unoptimized, unminified content and other things like that.
   development: false,
+
+  // The `packaged` flag indicates whether or not the build
+  // is a distributed, standalone exexcutable or not.
+  packaged: false,
 };
