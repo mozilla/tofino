@@ -9,10 +9,24 @@
  CONDITIONS OF ANY KIND, either express or implied. See the License for the
  specific language governing permissions and limitations under the License.
  */
+
 /* global PROCESS_TYPE */
+/* eslint global-require: 0 */
+/* eslint import/no-unresolved: "off" */
 
 import bunyan from 'bunyan';
 import stream from 'stream';
+
+// Optionally include build config, as this won't exist when the
+// build system is using the logger, as it exists outside of the concept
+// of a build configuration.
+// TODO Consider not using this module in a build environment
+let BUILD_CONFIG;
+try {
+  BUILD_CONFIG = require('../build-config');
+} catch (e) {
+  BUILD_CONFIG = {};
+}
 
 const LEVELS = [
   'FATAL', 'ERROR', 'WARN', 'INFO', 'DEBUG', 'TRACE',
@@ -32,7 +46,7 @@ function getLevelName(level) {
  */
 export function pipeToStream(target, level = undefined) {
   if (level === undefined) {
-    level = process.env.NODE_ENV !== 'production' ? 'debug' : 'warn';
+    level = BUILD_CONFIG.packaged ? 'warn' : 'debug';
   }
 
   const serializer = new stream.Transform({
@@ -77,6 +91,24 @@ export function pipeToConsole() {
   };
 }
 
+export function setupRotatingLog() {
+  // Use this special require to app/shared/environment so it
+  // gets stubbed out when not in the main process to prevent native
+  // module leakage in the renderer process
+  const { parseArgs } = require('app/shared/environment');
+  const { join } = require('path');
+
+  const PROFILE = parseArgs().profile;
+  const logFilePath = join(PROFILE, 'tofino.log');
+
+  return {
+    type: 'rotating-file',
+    path: logFilePath,
+    period: '1d',
+    count: 3,
+  };
+}
+
 let name = null;
 try {
   name = PROCESS_TYPE;
@@ -90,7 +122,17 @@ switch (name) {
   case 'main':
   case 'ua-service':
   case 'content-service': {
-    streams.push(pipeToStream(process.stdout));
+    // In main process in packaged environment, write to a log
+    // file for debugging.
+    if (BUILD_CONFIG.packaged) {
+      const logConfig = setupRotatingLog();
+
+      if (logConfig) {
+        streams.push(logConfig);
+      }
+    } else {
+      streams.push(pipeToStream(process.stdout));
+    }
     break;
   }
   case 'content':

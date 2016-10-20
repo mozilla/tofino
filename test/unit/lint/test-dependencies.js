@@ -69,6 +69,9 @@ describe('dependencies', () => {
       'electron',
       // Used for bunyan logging.
       'stream',
+      'path',
+      // Aliased via app/shared/environment
+      'app',
     ];
 
     const sources = await globMany(paths);
@@ -112,13 +115,18 @@ describe('dependencies', () => {
       'transit-js',
     ];
 
+    const ignored = [
+      // Aliased via webpack, a full path to a module i.e. `app/shared/environment`
+      'app',
+    ];
+
     const sources = await globMany(paths);
     const matches = await regexFiles(sources, REQUIRES_REGEX, IMPORTS_REGEX);
 
     // Stripping out the native node modules and adding the custom used packages
     // should leave only the main `package.json` plus the `app/package.json`
     // production dependencies.
-    const usedPackages = [...without(matches, ...native), ...unimported].sort();
+    const usedPackages = [...without(matches, ...native, ...ignored), ...unimported].sort();
     expect(usedPackages).toEqual(prodPackages);
 
     // Make sure no garbage is accumulated in the `unimported` array.
