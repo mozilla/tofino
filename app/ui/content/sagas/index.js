@@ -12,15 +12,15 @@ specific language governing permissions and limitations under the License.
 
 import { put, apply } from 'redux-saga/effects';
 
-import { takeLatestMultiple } from '../../shared/util/saga-util';
+import { takeLatestMultiple, infallible } from '../../shared/util/saga-util';
 import userAgentHttpClient from '../../../shared/user-agent-http-client';
 import * as EffectTypes from '../constants/effect-types';
 import * as MainActions from '../actions/main-actions';
 
 export default function*() {
   yield takeLatestMultiple(
-    [EffectTypes.FETCH_HISTORY, fetchHistory],
-    [EffectTypes.FETCH_STARS, fetchStars],
+    [EffectTypes.FETCH_HISTORY, infallible(fetchHistory, console)],
+    [EffectTypes.FETCH_STARS, infallible(fetchStars, console)],
   );
 }
 

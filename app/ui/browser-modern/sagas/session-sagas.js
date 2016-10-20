@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import { call, select, put } from 'redux-saga/effects';
 
+import { logger } from '../../../shared/logging';
 import { ipcRenderer } from '../../../shared/electron';
 import { takeLatestMultiple, Watcher } from '../../shared/util/saga-util';
 import { serializeAppState, deserializeAppState } from '../util/session-util';
@@ -92,12 +93,13 @@ export function* restoreBrowserWindowAppState({ serialized }) {
   try {
     deserialized = deserializeAppState(serialized);
   } catch (e) {
+    logger.error(e);
     // If deserializing the app state fails due to a bad migration (probably
     // because the migration procedures weren't implemented yet) immediately
     // cancel the `AppStateWatcher` task if it was already running.
     // This way we avoid saving completely botched up app state as a result.
     yield put(SessionEffects.stopSavingBrowserWindowAppState());
-    throw e;
+    return;
   }
 
   // Overwriting the app state is a pure operation which won't have any

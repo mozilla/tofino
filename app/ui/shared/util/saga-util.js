@@ -13,8 +13,6 @@ specific language governing permissions and limitations under the License.
 import { takeLatest, takeEvery, throttle } from 'redux-saga';
 import { cancel } from 'redux-saga/effects';
 
-import { logger } from '../../../shared/logging';
-
 export class Watcher {
   constructor(pattern, cb, interval = 0) {
     this.pattern = pattern;
@@ -29,7 +27,7 @@ export class Watcher {
 
   * startIfNotRunning() {
     if (!this.isRunning()) {
-      this._task = yield throttle(this.interval, ...wrapped(this.pattern, this.cb));
+      this._task = yield throttle(this.interval, this.pattern, this.cb);
     }
   }
 
@@ -42,34 +40,32 @@ export class Watcher {
 }
 
 export const takeLatestMultiple = function(...patterns) {
-  return patterns.map(([pattern, fn, ...args]) => takeLatest(...wrapped(pattern, fn), ...args));
+  return patterns.map(([pattern, fn, ...args]) => takeLatest(pattern, fn, ...args));
 };
 
 export const takeEveryMultiple = function(...patterns) {
-  return patterns.map(([pattern, fn, ...args]) => takeEvery(...wrapped(pattern, fn), ...args));
+  return patterns.map(([pattern, fn, ...args]) => takeEvery(pattern, fn, ...args));
 };
 
-export const wrapped = function(pattern, fn, name) {
-  if (typeof pattern === 'string') {
-    name = name || fn.name || pattern;
-  } else if (pattern instanceof Function) {
-    name = name || fn.name || 'PREDICATE';
-  } else if (pattern instanceof Array) {
-    name = name || fn.name || `ARRAY:[${pattern}]`;
-  } else if (pattern instanceof RegExp) {
-    return wrapped(action => action.type.match(pattern), fn);
-  } else {
-    throw new Error(`Unsupported redux-saga pattern: ${pattern}`);
+export const infallible = function(fn, logger) {
+  if (!logger || !('error' in logger)) {
+    throw new Error('A logger with an `error` method is required.');
   }
 
   const generator = function*(...args) {
     try {
       yield* fn(...args);
     } catch (e) {
-      logger.error(e);
+      if (e instanceof Error) {
+        logger.error(e);
+      } else if (e instanceof Response) {
+        logger.error('Errored while performing a `fetch`.');
+      } else {
+        logger.error('Something quite terrible has happened.');
+      }
     }
   };
 
-  Object.defineProperty(generator, 'name', { value: name });
-  return [pattern, generator];
+  Object.defineProperty(generator, 'name', { value: `infallible(${fn.name})` });
+  return generator;
 };
