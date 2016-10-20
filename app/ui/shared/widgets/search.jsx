@@ -117,7 +117,7 @@ class Search extends Component {
       <div {...omit(this.props, Object.keys(OmittedContainerProps))}
         className={`widget-search ${this.props.className || ''}`}>
         <input ref={e => this.input = e}
-          className={INPUT_STYLE}
+          className={`${this.props.inputClassName || ''} ${INPUT_STYLE}`}
           type="text"
           data-interaction={this.state.interaction}
           placeholder={this.props.placeholder}
@@ -138,6 +138,7 @@ class Search extends Component {
 Search.displayName = 'Search';
 
 const OmittedContainerProps = {
+  inputClassName: PropTypes.string,
   onClick: PropTypes.func,
   onChange: PropTypes.func,
   onKeyDown: PropTypes.func,

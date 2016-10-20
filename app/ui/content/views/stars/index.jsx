@@ -11,14 +11,15 @@
  */
 
 import React, { Component, PropTypes } from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
 
 import Style from '../../../shared/style';
 import StarItem from './star-item';
 import List from '../../../shared/widgets/list';
 import * as ContentPropTypes from '../../model/content-prop-types';
-import * as actions from '../../actions/main-actions';
-import * as selectors from '../../selectors';
+import * as MainEffects from '../../actions/main-effects';
+import * as Selectors from '../../selectors';
 
 const STARS_STYLE = Style.registerStyle({
   flex: 1,
@@ -27,8 +28,13 @@ const STARS_STYLE = Style.registerStyle({
 });
 
 class Stars extends Component {
+  constructor(props) {
+    super(props);
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+  }
+
   componentDidMount() {
-    this.props.dispatch(actions.showStars({ limit: 1000 }));
+    this.props.dispatch(MainEffects.fetchStars({ limit: 1000 }));
   }
 
   render() {
@@ -52,7 +58,7 @@ Stars.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    items: selectors.getStarredItems(state),
+    items: Selectors.getStarredItems(state),
   };
 }
 

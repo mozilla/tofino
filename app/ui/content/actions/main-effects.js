@@ -10,23 +10,19 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { Component } from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+import * as EffectTypes from '../constants/effect-types';
 
-import { StyleUtil } from '../../shared/style';
-import Routes from './routes';
-
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-  }
-
-  render() {
-    return <Routes />;
-  }
+export function fetchHistory({ query, limit }) {
+  return {
+    type: EffectTypes.FETCH_HISTORY,
+    query,
+    limit,
+  };
 }
 
-App.displayName = 'App';
-
-export default StyleUtil.wrap(App);
+export function fetchStars({ limit }) {
+  return {
+    type: EffectTypes.FETCH_STARS,
+    limit,
+  };
+}

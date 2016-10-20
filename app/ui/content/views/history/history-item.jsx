@@ -10,7 +10,8 @@
  specific language governing permissions and limitations under the License.
  */
 
-import React from 'react';
+import React, { Component } from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Style from '../../../shared/style';
 
@@ -19,41 +20,46 @@ import ListItem from '../../../shared/widgets/list-item';
 
 const HISTORY_ITEM_STYLE = Style.registerStyle({
   '&:nth-child(odd)': {
-    backgroundColor: 'rgba(255,255,255,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.05)',
   },
   '&:nth-child(even)': {
-    backgroundColor: 'rgba(255,255,255,0.6)',
+    backgroundColor: 'rgba(0,0,0,0.1)',
   },
   '&:hover': {
-    backgroundColor: 'rgba(255,255,255,0.7)',
-  },
-  '& > a': {
-    textDecoration: 'none',
-    color: 'rgba(0,0,0,0.9)',
+    backgroundColor: 'rgba(0,0,0,0.15)',
   },
 });
 
 const HISTORY_ANCHOR_STYLE = Style.registerStyle({
-  padding: '6px 8px',
   display: 'block',
+  padding: '6px 8px',
+  textDecoration: 'none',
+  color: 'rgba(0,0,0,0.9)',
 });
 
-function HistoryItem(props) {
-  return (
-    <ListItem className={HISTORY_ITEM_STYLE}>
-      <a className={HISTORY_ANCHOR_STYLE}
-        href={props.page.uri}
-        title={props.page.title || props.page.uri}>
-        {props.page.title || props.page.uri}
-      </a>
-      {props.page.snippet
-      ? (
-        <p>{props.page.snippet}</p>
-      ) : (
-        null
-      )}
-    </ListItem>
-  );
+class HistoryItem extends Component {
+  constructor(props) {
+    super(props);
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+  }
+
+  render() {
+    return (
+      <ListItem className={HISTORY_ITEM_STYLE}>
+        <a className={HISTORY_ANCHOR_STYLE}
+          href={this.props.page.uri}
+          title={this.props.page.title || this.props.page.uri}>
+          {this.props.page.title || this.props.page.uri}
+        </a>
+        {this.props.page.snippet
+        ? (
+          <p>{this.props.page.snippet}</p>
+        ) : (
+          null
+        )}
+      </ListItem>
+    );
+  }
 }
 
 HistoryItem.displayName = 'HistoryItem';

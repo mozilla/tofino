@@ -11,6 +11,7 @@
  */
 
 import React, { Component, PropTypes } from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
 
 import Style from '../../../shared/style';
@@ -18,8 +19,8 @@ import HistoryItem from './history-item';
 import List from '../../../shared/widgets/list';
 import Search from '../../../shared/widgets/search';
 import * as ContentPropTypes from '../../model/content-prop-types';
-import * as actions from '../../actions/main-actions';
-import * as selectors from '../../selectors';
+import * as MainEffects from '../../actions/main-effects';
+import * as Selectors from '../../selectors';
 
 const HISTORY_STYLE = Style.registerStyle({
   flex: 1,
@@ -37,15 +38,30 @@ const SEARCH_STYLE = Style.registerStyle({
   width: '300px',
 });
 
+const SEARCH_INPUT_STYLE = Style.registerStyle({
+  border: '1px solid var(--theme-content-border-color)',
+  color: 'var(--theme-content-color)',
+  backgroundColor: 'var(--theme-content-background)',
+  padding: '4px',
+  '&:focus': {
+    borderColor: 'var(--theme-content-selected-border-color)',
+  },
+});
+
 class History extends Component {
+  constructor(props) {
+    super(props);
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+  }
+
   componentDidMount() {
-    this.props.dispatch(actions.showHistory({ limit: 200 }));
+    this.props.dispatch(MainEffects.fetchHistory({ limit: 200 }));
   }
 
   handleSearch = e => {
     const query = e.target.value;
     const limit = query ? 20 : 200;
-    this.props.dispatch(actions.showHistory({ query, limit }));
+    this.props.dispatch(MainEffects.fetchHistory({ query, limit }));
   }
 
   render() {
@@ -53,6 +69,7 @@ class History extends Component {
       <div className={HISTORY_STYLE}>
         <Search placeholder="Search history..."
           className={SEARCH_STYLE}
+          inputClassName={SEARCH_INPUT_STYLE}
           onKeyUp={this.handleSearch} />
         <List className={LIST_STYLE}>
           {this.props.pages.map(page => (
@@ -74,7 +91,7 @@ History.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    pages: selectors.getVisitedPages(state),
+    pages: Selectors.getVisitedPages(state),
   };
 }
 

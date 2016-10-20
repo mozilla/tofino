@@ -10,21 +10,18 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import userAgentHttpClient from '../../../shared/user-agent-http-client';
-import * as types from '../constants/action-types';
+import * as ActionTypes from '../constants/action-types';
 
-export function showHistory({ query, limit }) {
-  return async function(dispatch) {
-    const visitedPages = query
-      ? (await userAgentHttpClient.query({ text: query, limit, snippetSize: 'large' })).results
-      : (await userAgentHttpClient.visited({ limit })).results;
-    dispatch({ type: types.SHOW_HISTORY, visitedPages });
+export function showHistory(visitedPages) {
+  return {
+    type: ActionTypes.SHOW_HISTORY,
+    visitedPages,
   };
 }
 
-export function showStars({ limit }) {
-  return async function(dispatch) {
-    const starredItems = (await userAgentHttpClient.stars({ limit })).results;
-    dispatch({ type: types.SHOW_STARS, starredItems });
+export function showStars(starredItems) {
+  return {
+    type: ActionTypes.SHOW_STARS,
+    starredItems,
   };
 }

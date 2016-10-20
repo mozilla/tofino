@@ -10,7 +10,8 @@
  specific language governing permissions and limitations under the License.
  */
 
-import React from 'react';
+import React, { Component } from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Style from '../../../shared/style';
 
@@ -18,32 +19,41 @@ import * as ContentPropTypes from '../../model/content-prop-types';
 import ListItem from '../../../shared/widgets/list-item';
 
 const STAR_ITEM_STYLE = Style.registerStyle({
-  padding: '6px 8px',
-
   '&:nth-child(odd)': {
-    backgroundColor: 'rgba(255,255,255,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.05)',
   },
   '&:nth-child(even)': {
-    backgroundColor: 'rgba(255,255,255,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.1)',
   },
   '&:hover': {
-    backgroundColor: 'rgba(255,255,255,0.6)',
-  },
-  '& > a': {
-    textDecoration: 'none',
-    color: 'rgba(0,0,0,0.9)',
+    backgroundColor: 'rgba(0,0,0,0.15)',
   },
 });
 
-function StarItem(props) {
-  return (
-    <ListItem className={STAR_ITEM_STYLE}>
-      <a href={props.star.location || ''}
-        title={props.star.title || props.star.location}>
-        {props.star.title || props.star.location}
-      </a>
-    </ListItem>
-  );
+const STAR_ANCHOR_STYLE = Style.registerStyle({
+  display: 'block',
+  padding: '6px 8px',
+  textDecoration: 'none',
+  color: 'rgba(0,0,0,0.9)',
+});
+
+class StarItem extends Component {
+  constructor(props) {
+    super(props);
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+  }
+
+  render() {
+    return (
+      <ListItem className={STAR_ITEM_STYLE}>
+        <a className={STAR_ANCHOR_STYLE}
+          href={this.props.star.location || ''}
+          title={this.props.star.title || this.props.star.location}>
+          {this.props.star.title || this.props.star.location}
+        </a>
+      </ListItem>
+    );
+  }
 }
 
 StarItem.displayName = 'StarItem';

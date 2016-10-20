@@ -10,23 +10,5 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import React, { Component } from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
-
-import { StyleUtil } from '../../shared/style';
-import Routes from './routes';
-
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-  }
-
-  render() {
-    return <Routes />;
-  }
-}
-
-App.displayName = 'App';
-
-export default StyleUtil.wrap(App);
+export const FETCH_HISTORY = 'FETCH_HISTORY';
+export const FETCH_STARS = 'FETCH_STARS';

@@ -12,7 +12,8 @@ specific language governing permissions and limitations under the License.
 
 import { put, apply } from 'redux-saga/effects';
 
-import { takeLatestMultiple } from './helpers';
+import { logger } from '../../../shared/logging';
+import { takeLatestMultiple, infallible } from '../../shared/util/saga-util';
 import userAgentHttpClient from '../../../shared/user-agent-http-client';
 import * as UIActions from '../actions/ui-actions';
 import * as ProfileActions from '../actions/profile-actions';
@@ -20,10 +21,10 @@ import * as EffectTypes from '../constants/effect-types';
 
 export default function*() {
   yield takeLatestMultiple(
-    [EffectTypes.FETCH_LOCATION_AUTOCOMPLETIONS, fetchCompletions],
-    [EffectTypes.SET_REMOTE_BOOKMARK_STATE, setRemoteBookmarkState],
-    [EffectTypes.ADD_REMOTE_HISTORY, addRemoteHistory],
-    [EffectTypes.ADD_CAPTURED_PAGE, addCapturedPage],
+    [EffectTypes.FETCH_LOCATION_AUTOCOMPLETIONS, infallible(fetchCompletions, logger)],
+    [EffectTypes.SET_REMOTE_BOOKMARK_STATE, infallible(setRemoteBookmarkState, logger)],
+    [EffectTypes.ADD_REMOTE_HISTORY, infallible(addRemoteHistory, logger)],
+    [EffectTypes.ADD_CAPTURED_PAGE, infallible(addCapturedPage, logger)],
   );
 }
 
