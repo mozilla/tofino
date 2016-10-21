@@ -87,7 +87,10 @@ export default class PageContextMenu {
 
     menu.append(new MenuItem({
       label: 'Inspect Element',
-      click: () => choice.resolve(PageEffects.performDevtoolsInspectElement(this._data.event)),
+      click: () => choice.resolve(PageEffects.performDevtoolsInspectElement(this._pageId, {
+        x: this._data.event.x,
+        y: this._data.event.y,
+      })),
     }));
 
     menu.popup(win);
