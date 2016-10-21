@@ -120,7 +120,7 @@
     "thenify-all": "1.6.0",
     "uglify-js": "github:mishoo/UglifyJS2#harmony",
     "webpack": "1.13.2",
-    "yargs": "6.2.0",
+    "yargs": "6.3.0",
     "zip-dir": "1.0.2"
   },
   "engines": {
