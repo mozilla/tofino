@@ -32,8 +32,8 @@ export default {
     root,
     extensions: ['', '.js', '.jsx', '.json'],
     alias: {
-      'dtrace-provider': path.join(Const.BUILD_SYSTEM_DIR, 'utils', 'empty_module.js'),
-      'app/shared/environment': path.join(Const.BUILD_SYSTEM_DIR, 'utils', 'empty_module.js'),
+      'dtrace-provider': path.join(Const.BUILD_UTILS_PATH, 'empty_module.js'),
+      'app/shared/environment': path.join(Const.BUILD_UTILS_PATH, 'empty_module.js'),
     },
   },
   plugins: [

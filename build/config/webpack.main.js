@@ -31,8 +31,9 @@ export default {
     }),
   ],
   resolve: {
+    ...defaultConfig.resolve,
     alias: {
-      'dtrace-provider': path.join(Const.BUILD_SYSTEM_DIR, 'utils', 'empty_module.js'),
+      ...defaultConfig.resolve.alias,
       'app/shared/environment': path.join(Const.SRC_DIR, 'shared', 'environment.js'),
     },
   },
