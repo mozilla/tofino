@@ -25,7 +25,7 @@ import { fileUrl } from './paths-util';
 import { getSessionKey } from './session-io';
 import BUILD_CONFIG from '../build-config';
 
-// Switch to 'browser-blueprint' or 'browser-alt' to test different frontends.
+// Switch to 'browser-modern' or 'browser-alt' to test different frontends.
 // We should have a flag to the application to switch frontends
 const UI_DIR = path.join(LIBDIR, 'ui');
 const BROWSER_CHROME_URL = fileUrl(path.join(UI_DIR, 'browser-modern', 'browser.html'));
