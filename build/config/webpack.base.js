@@ -10,7 +10,8 @@ import * as Const from '../utils/const';
 const root = Const.ROOT;
 
 export default {
-  output: {},
+  output: {
+  },
   module: {
     loaders: [{
       test: /\.jsx?$/,
@@ -37,6 +38,9 @@ export default {
   },
   plugins: [
     new webpack.NoErrorsPlugin(),
+    new webpack.DefinePlugin({
+      'process.env.TEST': process.env.TEST,
+    }),
   ],
   externals: [
   ],

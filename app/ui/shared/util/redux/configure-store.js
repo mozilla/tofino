@@ -16,11 +16,17 @@ import thunk from './middleware/thunk';
 import history from './middleware/history';
 import BUILD_CONFIG from '../../../../build-config';
 
+// In webpacked environments, a `process.env.TEST` global will be created,
+// with the value set to the current `TEST` flag on the environment variables.
+/* eslint-disable no-undef */
+const TEST = process.env.TEST;
+/* eslint-enable no-undef */
+
 export default function(rootReducer, initialState, customMiddleware = []) {
   const middleware = [thunk, ...customMiddleware];
   const historyStore = [];
 
-  if (BUILD_CONFIG.development && !process.env.TEST) {
+  if (BUILD_CONFIG.development && !TEST) {
     middleware.unshift(createLogger({
       duration: true,
       collapsed: true,
@@ -29,14 +35,14 @@ export default function(rootReducer, initialState, customMiddleware = []) {
     }));
   }
 
-  if (process.env.TEST) {
+  if (TEST) {
     middleware.unshift(history(historyStore));
   }
 
   const store = createStore(rootReducer, initialState, applyMiddleware(...middleware));
 
   // Store action history on the exposed store for tests.
-  if (process.env.TEST) {
+  if (TEST) {
     store.history = historyStore;
   }
 

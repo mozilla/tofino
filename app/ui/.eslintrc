@@ -1,6 +1,6 @@
 {
   "env": {
     "browser": true,
-    "node": true
+    "node": false,
   }
 }
