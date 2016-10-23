@@ -24,9 +24,6 @@ export default {
   plugins: [
     ...defaultConfig.plugins,
     new webpack.DefinePlugin({
-      __dirname: '__dirname',
-    }),
-    new webpack.DefinePlugin({
       PROCESS_TYPE: '"main"',
     }),
     new webpack.DefinePlugin({

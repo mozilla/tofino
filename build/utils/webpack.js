@@ -5,6 +5,8 @@
 
 import path from 'path';
 import childProcess from 'child_process';
+
+import * as Const from '../utils/const';
 import { dependencies } from '../../app/package.json';
 
 export const nodeExternals = (context, request, cb) => {
@@ -24,7 +26,7 @@ export const nodeExternals = (context, request, cb) => {
 };
 
 export const webpackBuild = (configPath, options) => new Promise((resolve, reject) => {
-  const child = childProcess.fork(path.join(__dirname, 'webpack-process'));
+  const child = childProcess.fork(path.join(Const.BUILD_UTILS_PATH, 'webpack-process'));
 
   const once = expected => new Promise(resolve => {
     child.on('message', e => {
