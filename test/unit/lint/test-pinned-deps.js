@@ -4,7 +4,7 @@
 import expect from 'expect';
 import fs from 'fs-promise';
 
-describe('dependecies', () => {
+describe('dependencies', () => {
   it('should be pinned', async function() {
     const manifest = await fs.readJson('package.json');
     const modules = [
