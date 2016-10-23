@@ -52,7 +52,4 @@ export default {
     }]),
   ],
   target: 'electron-renderer',
-  externals: [
-    'dtrace-provider',
-  ],
 };
