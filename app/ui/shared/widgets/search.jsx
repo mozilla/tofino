@@ -105,7 +105,10 @@ class Search extends Component {
   }
 
   handleBlur = () => {
-    this.setState({ focused: false });
+    this.setState({
+      focused: false,
+      interaction: INTERACTION_TYPES.IDLE,
+    });
   }
 
   handleKeyUpDebounced = debounce(() => {
