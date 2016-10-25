@@ -33,7 +33,7 @@
   "dependencies": {
     "appdirectory": "0.1.0",
     "backoff": "2.5.0",
-    "bunyan": "1.8.2",
+    "bunyan": "1.8.4",
     "colors": "1.1.2",
     "electron-ipc-mock": "0.0.2",
     "electron-localshortcut": "0.6.1",
