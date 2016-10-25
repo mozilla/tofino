@@ -203,7 +203,7 @@ export function* displayWebviewContextMenu({ e, pageId }) {
     canPageRefresh: yield select(PageSelectors.getPageCanRefresh, pageId),
   });
 
-  const win = yield call(remote.getCurrentWindow);
+  const win = yield apply(remote, remote.getCurrentWindow);
   const action = yield apply(menu, menu.popup, [win]);
   yield put(action);
 }

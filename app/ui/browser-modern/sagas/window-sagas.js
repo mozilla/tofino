@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { call, race, take } from 'redux-saga/effects';
+import { call, apply, race, take } from 'redux-saga/effects';
 
 import { takeLatestMultiple } from '../../shared/util/saga-util';
 import { remote, ipcRenderer } from '../../../shared/electron';
@@ -26,40 +26,49 @@ export default function*() {
   );
 }
 
-function* minimizeWindow() {
-  const win = yield call(remote.getCurrentWindow);
-  yield call(win.minimize);
+// The `minimize`, `maximize`, `unmaximize` etc. methods on a remote window
+// instance are, in fact, proxies which don't play nice with saga effects
+// sent to the middleware via `call` or `apply`. For ease of testing,
+// write simple wrappers around those methods.
+export const minimze = win => win.minimize();
+export const maximize = win => win.maximize();
+export const unmaximize = win => win.unmaximize();
+export const isMaximized = win => win.isMaximized();
+
+export function* minimizeWindow() {
+  const win = yield apply(remote, remote.getCurrentWindow);
+  yield call(minimze, win);
 }
 
-function* maximizeWindow() {
-  const win = yield call(remote.getCurrentWindow);
-  if (yield call(win.isMaximized)) {
-    yield call(win.unmaximize);
+export function* maximizeWindow() {
+  const win = yield apply(remote, remote.getCurrentWindow);
+  if (yield call(isMaximized, win)) {
+    yield call(unmaximize, win);
   } else {
-    yield call(win.maximize);
+    yield call(maximize, win);
   }
 }
 
-function* closeWindow() {
+export function* closeWindow() {
   // Wait for any additional operations to finish before closing the window.
   // Add your own here if needed.
   yield race([
     take(EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_DESTROYED),
     take(EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_NOT_WATCHED),
   ]);
-  yield call(ipcRenderer.send, 'close-browser-window');
+  yield apply(ipcRenderer, ipcRenderer.send, ['close-browser-window']);
 }
 
-function* reloadWindow() {
+export function* reloadWindow() {
   // Wait for any additional operations to finish before reloading the window.
   // Add your own here if needed.
   yield race([
     take(EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_SAVED),
     take(EffectTypes.NOTIFY_BROWSER_WINDOW_APP_STATE_NOT_WATCHED),
   ]);
-  yield call(ipcRenderer.send, 'reload-browser-window');
+  yield apply(ipcRenderer, ipcRenderer.send, ['reload-browser-window']);
 }
 
-function* openAppMenu() {
-  yield call(ipcRenderer.send, 'open-menu');
+export function* openAppMenu() {
+  yield apply(ipcRenderer, ipcRenderer.send, ['open-menu']);
 }

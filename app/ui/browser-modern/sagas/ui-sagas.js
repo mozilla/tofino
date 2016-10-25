@@ -30,7 +30,7 @@ export default function*() {
 }
 
 export function* setActiveElement({ owner, details }) {
-  yield call(ipcRenderer.send, 'guest-active-element', { owner, details });
+  yield apply(ipcRenderer, ipcRenderer.send, ['guest-active-element', { owner, details }]);
   yield put(UIActions.setActiveElement(owner, details));
 }
 
@@ -85,6 +85,6 @@ export function* showDownloadNotification({ path, filename, status }) {
 export function* confirmDefaultBrowser() {
   const message = 'Would you like to be Tofino your default browser?';
   if (yield call(confirm, message)) {
-    yield call(ipcRenderer.send, 'set-default-browser');
+    yield apply(ipcRenderer, ipcRenderer.send, ['set-default-browser']);
   }
 }
