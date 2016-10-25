@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 
 import { call, apply, select, put } from 'redux-saga/effects';
 
+import { logger } from '../../../shared/logging';
 import { ipcRenderer, remote } from '../../../shared/electron';
 import { takeLatestMultiple, takeEveryMultiple } from '../../shared/util/saga-util';
 import PageState from '../model/page-state';
@@ -165,11 +166,15 @@ export function* performPageDownload({ webview, url }) {
   yield apply(webview, webview.downloadURL, [url]);
 }
 
-export function* performPageSearch({ webview, text }) {
-  if (!text) {
-    yield apply(webview, webview.stopFindInPage, ['clearSelection']);
-  } else {
-    yield apply(webview, webview.findInPage, [text]);
+export function* performPageSearch({ webview, text, options }) {
+  try {
+    if (!text) {
+      yield apply(webview, webview.stopFindInPage, ['clearSelection']);
+    } else {
+      yield apply(webview, webview.findInPage, [text, options]);
+    }
+  } catch (e) {
+    logger.warn(e);
   }
 }
 

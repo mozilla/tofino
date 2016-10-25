@@ -20,6 +20,7 @@ const PageUIState = register(Immutable.Record({
   preventInteraction: false,
   zoomLevel: 0,
   searchVisible: false,
+  searchFocused: false,
   pinned: false,
 }, `PageUIState_v${VERSION}`));
 

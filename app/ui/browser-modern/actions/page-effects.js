@@ -243,17 +243,18 @@ export function performCurrentPageDownload(url) {
   };
 }
 
-export function performPageSearch(pageId, text, doc = document) {
+export function performPageSearch(pageId, text, options, doc = document) {
   return {
     type: EffectTypes.PERFORM_PAGE_SEARCH,
     webview: getWebViewForPageId(doc, pageId),
     text,
+    options,
   };
 }
 
-export function performCurrentPageSearch(text) {
+export function performCurrentPageSearch(text, options) {
   return (dispatch, getState) => {
-    dispatch(performPageSearch(PagesSelectors.getSelectedPageId(getState()), text));
+    dispatch(performPageSearch(PagesSelectors.getSelectedPageId(getState()), text, options));
   };
 }
 

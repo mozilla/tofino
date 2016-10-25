@@ -114,6 +114,10 @@ export function getPageSearchVisible(state, id) {
   return getPageUIState(state, id).searchVisible;
 }
 
+export function getPageSearchFocused(state, id) {
+  return getPageUIState(state, id).searchFocused;
+}
+
 export function getPageZoomLevel(state, id) {
   return getPageUIState(state, id).zoomLevel;
 }
