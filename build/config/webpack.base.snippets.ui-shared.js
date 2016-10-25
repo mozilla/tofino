@@ -16,8 +16,9 @@ export const uiFiles = (srcDir, dstDir) => ([
     flatten: true,
   }]),
   new CopyWebpackPlugin([{
-    from: path.join(srcDir, 'favicon.ico'),
-    to: path.join(dstDir, 'favicon.ico'),
+    from: path.join(srcDir, '*.ico'),
+    to: path.join(dstDir),
+    flatten: true,
   }]),
 ]);
 
