@@ -53,21 +53,36 @@ class SearchBar extends Component {
   }
 
   componentDidMount() {
-    if (this.props.isTargetPageSelected && this.props.isVisible) {
+    if (this.props.isTargetPageSelected && this.props.isVisible && this.props.isFocused) {
       this.searchbar.focus();
     }
   }
 
-  componentDidUpdate() {
-    if (this.props.isTargetPageSelected) {
-      if (this.props.isVisible) {
-        this.props.dispatch(PageEffects.performPageSearch(this.props.pageId, this.searchbar.value));
-        this.searchbar.focus();
-      } else {
-        this.props.dispatch(PageEffects.performPageSearch(this.props.pageId, null));
-        this.searchbar.blur();
-      }
+  componentWillUpdate(nextProps) {
+    if (!this.props.isVisible && nextProps.isVisible) {
+      const query = this.searchbar.value;
+      const options = { findNext: false };
+      this.props.dispatch(PageEffects.performPageSearch(this.props.pageId, query, options));
     }
+    if (this.props.isVisible && !nextProps.isVisible) {
+      this.props.dispatch(PageEffects.performPageSearch(this.props.pageId, null));
+    }
+  }
+
+  componentDidUpdate() {
+    if (this.props.isTargetPageSelected && this.props.isVisible && this.props.isFocused) {
+      this.searchbar.focus();
+    } else {
+      this.searchbar.blur();
+    }
+  }
+
+  handleInputFocus = () => {
+    this.props.dispatch(PageActions.setPageUIState(this.props.pageId, { searchFocused: true }));
+  }
+
+  handleInputBlur = () => {
+    this.props.dispatch(PageActions.setPageUIState(this.props.pageId, { searchFocused: false }));
   }
 
   handleInputChange = () => {
@@ -103,6 +118,8 @@ class SearchBar extends Component {
           onClick={this.handleClose} />
         <Search ref={e => this.searchbar = e}
           className={`browser-page-searchbar ${SEARCH_INPUT_STYLE}`}
+          onFocus={this.handleInputFocus}
+          onBlur={this.handleInputBlur}
           onChange={this.handleInputChange}
           onKeyDown={this.handleInputKeyDown}
           placeholder={'Search...'} />
@@ -117,12 +134,14 @@ SearchBar.propTypes = {
   dispatch: PropTypes.func.isRequired,
   pageId: PropTypes.string.isRequired,
   isVisible: PropTypes.bool,
+  isFocused: PropTypes.bool,
   isTargetPageSelected: PropTypes.bool,
 };
 
 function mapStateToProps(state, ownProps) {
   return {
     isVisible: PagesSelectors.getPageSearchVisible(state, ownProps.pageId),
+    isFocused: PagesSelectors.getPageSearchFocused(state, ownProps.pageId),
     isTargetPageSelected: PagesSelectors.getSelectedPageId(state) === ownProps.pageId,
   };
 }
