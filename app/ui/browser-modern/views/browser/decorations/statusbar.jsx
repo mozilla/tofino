@@ -18,6 +18,7 @@ import Style from '../../../../shared/style';
 
 import * as UIConstants from '../../../constants/ui';
 import * as UISelectors from '../../../selectors/ui';
+import * as PagesSelectors from '../../../selectors/pages';
 
 const STATUS_STYLE = Style.registerStyle({
   display: 'block',
@@ -47,6 +48,7 @@ class StatusBar extends Component {
   render() {
     return (
       <div className={`browser-statusbar ${STATUS_STYLE}`}
+        style={{ bottom: this.props.searchVisible ? UIConstants.SEARCH_BAR_HEIGHT : 0 }}
         hidden={!this.props.statusText}>
         {this.props.statusText}
       </div>
@@ -58,10 +60,16 @@ StatusBar.displayName = 'StatusBar';
 
 StatusBar.propTypes = {
   statusText: PropTypes.string,
+  searchVisible: PropTypes.bool.isRequired,
 };
 
 function mapStateToProps(state) {
+  const selectedPageId = PagesSelectors.getSelectedPageId(state);
+  const searchVisible = !!(selectedPageId &&
+    PagesSelectors.getPageSearchVisible(state, selectedPageId));
+
   return {
+    searchVisible,
     statusText: UISelectors.getStatusText(state),
   };
 }

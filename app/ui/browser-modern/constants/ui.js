@@ -27,6 +27,9 @@ export const NEW_TAB_BUTTON_WIDTH = 66; // px
 // Navbar dimensions.
 export const NAVBAR_HEIGHT = 40; // px
 
+// Search bar dimensions.
+export const SEARCH_BAR_HEIGHT = 25; // px
+
 // Content z-indices.
 export const BROWSER_CONTENT_BASE_ZINDEX = 0;
 

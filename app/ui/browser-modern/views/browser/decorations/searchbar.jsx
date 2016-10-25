@@ -28,7 +28,7 @@ const SEARCH_BAR_STYLE = Style.registerStyle({
   bottom: 0,
   left: 0,
   right: 0,
-  height: '25px',
+  height: `${UIConstants.SEARCH_BAR_HEIGHT}px`,
   padding: '0 4px',
   zIndex: UIConstants.SEARCH_BAR_INDEX,
   border: '1px solid var(--theme-content-border-color)',
