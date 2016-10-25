@@ -30,17 +30,17 @@ export default function*() {
 // instance are, in fact, proxies which don't play nice with saga effects
 // sent to the middleware via `call` or `apply`. For ease of testing,
 // write simple wrappers around those methods.
-const minimze = win => win.minimize();
-const maximize = win => win.maximize();
-const unmaximize = win => win.unmaximize();
-const isMaximized = win => win.isMaximized();
+export const minimze = win => win.minimize();
+export const maximize = win => win.maximize();
+export const unmaximize = win => win.unmaximize();
+export const isMaximized = win => win.isMaximized();
 
-function* minimizeWindow() {
+export function* minimizeWindow() {
   const win = yield apply(remote, remote.getCurrentWindow);
   yield call(minimze, win);
 }
 
-function* maximizeWindow() {
+export function* maximizeWindow() {
   const win = yield apply(remote, remote.getCurrentWindow);
   if (yield call(isMaximized, win)) {
     yield call(unmaximize, win);
@@ -49,7 +49,7 @@ function* maximizeWindow() {
   }
 }
 
-function* closeWindow() {
+export function* closeWindow() {
   // Wait for any additional operations to finish before closing the window.
   // Add your own here if needed.
   yield race([
@@ -59,7 +59,7 @@ function* closeWindow() {
   yield apply(ipcRenderer, ipcRenderer.send, ['close-browser-window']);
 }
 
-function* reloadWindow() {
+export function* reloadWindow() {
   // Wait for any additional operations to finish before reloading the window.
   // Add your own here if needed.
   yield race([
@@ -69,6 +69,6 @@ function* reloadWindow() {
   yield apply(ipcRenderer, ipcRenderer.send, ['reload-browser-window']);
 }
 
-function* openAppMenu() {
+export function* openAppMenu() {
   yield apply(ipcRenderer, ipcRenderer.send, ['open-menu']);
 }
