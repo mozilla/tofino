@@ -85,7 +85,7 @@
     "babel-polyfill": "6.16.0",
     "babel-preset-react": "6.16.0",
     "babel-preset-react-optimize": "1.0.1",
-    "babel-register": "6.16.3",
+    "babel-register": "6.18.0",
     "babel-runtime": "6.18.0",
     "check-dependencies": "1.0.1",
     "copy-webpack-plugin": "4.0.0",
