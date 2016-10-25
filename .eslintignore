@@ -1,8 +1,5 @@
+node_modules/**
 app/node_modules/**
 lib/**
-pkg/**
 dist/**
-node_modules/**
 app/ui/preload/readability.js
-build/task-package.js
-profile/**

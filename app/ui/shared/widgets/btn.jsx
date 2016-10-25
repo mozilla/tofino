@@ -16,6 +16,12 @@ import * as ComponentUtil from '../util/component-util';
 
 import Style from '../style';
 
+// In webpacked environments, a `process.env.TEST` global will be created,
+// with the value set to the current `TEST` flag on the environment variables.
+/* eslint-disable no-undef */
+const TEST = process.env.TEST;
+/* eslint-enable no-undef */
+
 export const ENABLED_OPACITY = 1;
 export const DISABLED_OPACITY = 0.5;
 export const BKG_REPEAT_DEFAULT = 'no-repeat';
@@ -83,13 +89,13 @@ class Btn extends Component {
   componentWillMount() {
     // Test environments likely won't go through the trouble of specifying
     // a context for this component before rendering.
-    if (!process.env.TEST) {
+    if (!TEST) {
       this.inlineClassName = this.context.freeStyle.registerStyle(Btn.createCssRules(this.props));
     }
   }
 
   componentWillUpdate(nextProps) {
-    if (!process.env.TEST) {
+    if (!TEST) {
       this.inlineClassName = this.context.freeStyle.registerStyle(Btn.createCssRules(nextProps));
     }
   }

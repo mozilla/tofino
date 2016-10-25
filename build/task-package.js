@@ -51,7 +51,7 @@ const fileChanges = {
       [path.join(Const.PACKAGED_DIST_DIR, 'mac', `${EXENAME}-${VERSION}-mac.zip`),
        path.join(Const.PACKAGED_DIST_DIR, `${PACKAGENAME}.zip`)],
 
-      [path.join(Const.PACKAGED_DIST_DIR, 'mac',  `${EXENAME}-${VERSION}.dmg`),
+      [path.join(Const.PACKAGED_DIST_DIR, 'mac', `${EXENAME}-${VERSION}.dmg`),
        path.join(Const.PACKAGED_DIST_DIR, `${PACKAGENAME}.dmg`)],
     ],
   },

@@ -3,8 +3,8 @@
 
 import path from 'path';
 import webpack from 'webpack';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
 import defaultConfig from './webpack.base';
+import { uiFiles, sharedFiles } from './webpack.base.snippets.ui-shared';
 import * as Const from '../utils/const';
 
 export const SHARED_DIR = path.join(Const.SRC_DIR, 'ui', 'shared');
@@ -22,37 +22,11 @@ export default {
   },
   plugins: [
     ...defaultConfig.plugins,
+    ...uiFiles(SRC_DIR, DST_DIR),
+    ...sharedFiles(SHARED_DIR, DST_DIR),
     new webpack.DefinePlugin({
       PROCESS_TYPE: '"ui"',
     }),
-    new CopyWebpackPlugin([{
-      from: path.join(SRC_DIR, '*.html'),
-      to: DST_DIR,
-      flatten: true,
-    }]),
-    new CopyWebpackPlugin([{
-      from: path.join(SRC_DIR, 'css', '*.css'),
-      to: path.join(DST_DIR, 'css'),
-      flatten: true,
-    }]),
-    new CopyWebpackPlugin([{
-      from: path.join(SHARED_DIR, 'css', '*.css'),
-      to: path.join(DST_DIR, 'css'),
-      flatten: true,
-    }]),
-    new CopyWebpackPlugin([{
-      from: path.join(SHARED_DIR, 'assets'),
-      to: path.join(DST_DIR, 'assets'),
-      flatten: true,
-    }]),
-    new CopyWebpackPlugin([{
-      from: path.join(SHARED_DIR, 'fonts'),
-      to: path.join(DST_DIR, 'fonts'),
-      flatten: true,
-    }]),
   ],
   target: 'electron-renderer',
-  externals: [
-    'dtrace-provider',
-  ],
 };

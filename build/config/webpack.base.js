@@ -10,7 +10,8 @@ import * as Const from '../utils/const';
 const root = Const.ROOT;
 
 export default {
-  output: {},
+  output: {
+  },
   module: {
     loaders: [{
       test: /\.jsx?$/,
@@ -31,12 +32,15 @@ export default {
     root,
     extensions: ['', '.js', '.jsx', '.json'],
     alias: {
-      'dtrace-provider': path.join(Const.BUILD_SYSTEM_DIR, 'utils', 'empty_module.js'),
-      'app/shared/environment': path.join(Const.BUILD_SYSTEM_DIR, 'utils', 'empty_module.js'),
+      'dtrace-provider': path.join(Const.BUILD_UTILS_PATH, 'empty_module.js'),
+      'app/shared/environment': path.join(Const.BUILD_UTILS_PATH, 'empty_module.js'),
     },
   },
   plugins: [
     new webpack.NoErrorsPlugin(),
+    new webpack.DefinePlugin({
+      'process.env.TEST': process.env.TEST,
+    }),
   ],
   externals: [
   ],
