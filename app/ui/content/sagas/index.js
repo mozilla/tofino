@@ -39,7 +39,7 @@ export function* fetchHistory({ query, limit }) {
 }
 
 export function* fetchStars({ limit }) {
-  const starredItems = yield apply(userAgentHttpClient, userAgentHttpClient.starredItems, [{
+  const starredItems = yield apply(userAgentHttpClient, userAgentHttpClient.stars, [{
     limit,
   }]);
 
