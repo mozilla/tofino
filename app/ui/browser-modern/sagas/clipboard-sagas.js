@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { call } from 'redux-saga/effects';
+import { apply } from 'redux-saga/effects';
 
 import { takeLatestMultiple } from '../../shared/util/saga-util';
 import { clipboard } from '../../../shared/electron';
@@ -23,5 +23,5 @@ export default function*() {
 }
 
 function* copyTextToClipboard({ text }) {
-  yield call(clipboard.writeText, text);
+  yield apply(clipboard, clipboard.writeText, [text]);
 }
