@@ -73,7 +73,7 @@
   },
   "devDependencies": {
     "babel-core": "6.18.0",
-    "babel-eslint": "6.1.2",
+    "babel-eslint": "7.1.0",
     "babel-loader": "6.2.6",
     "babel-plugin-transform-async-to-generator": "6.16.0",
     "babel-plugin-transform-class-properties": "6.18.0",
