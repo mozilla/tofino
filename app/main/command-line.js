@@ -13,6 +13,7 @@ import { parse } from 'url';
 import * as BW from './browser-window';
 import * as protocols from './protocols';
 import { parseArgs } from '../shared/environment';
+import BUILD_CONFIG from '../build-config';
 
 const { app } = electron;
 const isDarwin = process.platform === 'darwin';
@@ -38,7 +39,7 @@ if (!isDarwin) {
 }
 
 app.on('ready', () => {
-  if (process.env.NODE_ENV !== 'development' && process.env.NODE_ENV !== 'test') {
+  if (!BUILD_CONFIG.development && !process.env.TEST) {
     const appAlreadyStartedShouldQuit = app.makeSingleInstance(argv => {
       // Someone tried to run a second instance, we should focus our window.
       if (isDarwin) {
