@@ -17,6 +17,6 @@ import { register } from '../util/record-constructors';
 const VERSION = 1;
 
 export default register(Immutable.Record({
-  url: undefined,
-  title: undefined,
+  url: '',
+  title: '',
 }, `LocationAutocompletion_v${VERSION}`));

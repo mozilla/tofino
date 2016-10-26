@@ -22,10 +22,10 @@ import PageUIState from './page-ui-state';
 const VERSION = 1;
 
 export default class Page extends register(Immutable.Record({
-  id: undefined,
+  id: '',
   location: '',
   title: '',
-  faviconUrl: undefined,
+  faviconUrl: '',
   meta: new PageMeta(),
   state: new PageState(),
   uiState: new PageUIState(),

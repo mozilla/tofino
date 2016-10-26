@@ -17,11 +17,12 @@ import { register } from '../util/record-constructors';
 const VERSION = 1;
 
 export default register(Immutable.Record({
-  data: undefined,
-  issuerName: undefined,
-  subjectName: undefined,
-  serialNumber: undefined,
-  validStart: undefined,
-  validExpiry: undefined,
-  fingerprint: undefined,
+  // https://github.com/electron/electron/blob/master/docs/api/structures/certificate.md
+  data: '',
+  issuerName: '',
+  subjectName: '',
+  serialNumber: '',
+  validStart: -1,
+  validExpiry: -1,
+  fingerprint: '',
 }, `SSLCertificate_v${VERSION}`));

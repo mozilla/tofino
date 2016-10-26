@@ -17,8 +17,8 @@ import { register } from '../util/record-constructors';
 const VERSION = 1;
 
 const ActiveElement = register(Immutable.Record({
-  owner: '',
-  nodeName: null,
+  owner: '', // ActiveElement.OWNER
+  nodeName: '',
 }, `ActiveElement_v${VERSION}`));
 
 
