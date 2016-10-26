@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 import { put, apply } from 'redux-saga/effects';
 
 import { logger } from '../../../shared/logging';
-import { takeLatestMultiple, infallible } from '../../shared/util/saga-util';
+import { infallible, takeLatestMultiple } from '../../shared/util/saga-util';
 import userAgentHttpClient from '../../../shared/user-agent-http-client';
 import * as UIActions from '../actions/ui-actions';
 import * as ProfileActions from '../actions/profile-actions';

@@ -14,7 +14,7 @@ import { call, select, put } from 'redux-saga/effects';
 
 import { logger } from '../../../shared/logging';
 import { ipcRenderer } from '../../../shared/electron';
-import { takeLatestMultiple, Watcher } from '../../shared/util/saga-util';
+import { infallible, Watcher, takeLatestMultiple } from '../../shared/util/saga-util';
 import { serializeAppState, deserializeAppState } from '../util/session-util';
 import * as ActionTypes from '../constants/action-types';
 import * as EffectTypes from '../constants/effect-types';
@@ -38,13 +38,16 @@ export default function*() {
   const watcher = new Watcher(pattern, saveAppStateToSession, SAVE_APP_STATE_THROTTLE);
 
   yield takeLatestMultiple(
-    [EffectTypes.SET_SESSION_KEY, setSessionKey],
-    [EffectTypes.DELETE_SESSION_KEY, deleteSessionKey],
-    [EffectTypes.RELOAD_WINDOW, handleWillReloadWindowAction, watcher],
-    [EffectTypes.CLOSE_WINDOW, handleWillCloseWindowAction, watcher],
-    [EffectTypes.START_SAVING_BROWSER_WINDOW_APP_STATE, startSavingBrowserWindowAppState, watcher],
-    [EffectTypes.STOP_SAVING_BROWSER_WINDOW_APP_STATE, stopSavingBrowserWindowAppState, watcher],
-    [EffectTypes.SESSION_RESTORE_BROWSER_WINDOW_APP_STATE, restoreBrowserWindowAppState],
+    [EffectTypes.SET_SESSION_KEY, infallible(setSessionKey, logger)],
+    [EffectTypes.DELETE_SESSION_KEY, infallible(deleteSessionKey, logger)],
+    [EffectTypes.RELOAD_WINDOW, infallible(handleWillReloadWindowAction, logger), watcher],
+    [EffectTypes.CLOSE_WINDOW, infallible(handleWillCloseWindowAction, logger), watcher],
+    [EffectTypes.START_SAVING_BROWSER_WINDOW_APP_STATE,
+      infallible(startSavingBrowserWindowAppState, logger), watcher],
+    [EffectTypes.STOP_SAVING_BROWSER_WINDOW_APP_STATE,
+      infallible(stopSavingBrowserWindowAppState, logger), watcher],
+    [EffectTypes.SESSION_RESTORE_BROWSER_WINDOW_APP_STATE,
+      infallible(restoreBrowserWindowAppState, logger)],
   );
 }
 

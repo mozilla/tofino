@@ -12,7 +12,8 @@ specific language governing permissions and limitations under the License.
 
 import { call } from 'redux-saga/effects';
 
-import { takeLatestMultiple } from '../../shared/util/saga-util';
+import { logger } from '../../../shared/logging';
+import { infallible, takeLatestMultiple } from '../../shared/util/saga-util';
 import * as EffectTypes from '../constants/effect-types';
 import BUILD_CONFIG from '../../../build-config';
 
@@ -35,8 +36,8 @@ if (BUILD_CONFIG.development) {
 
 export default function*() {
   yield takeLatestMultiple(
-    [EffectTypes.PERF_RECORD_START, perfStart],
-    [EffectTypes.PERF_RECORD_STOP, perfStop],
+    [EffectTypes.PERF_RECORD_START, infallible(perfStart, logger)],
+    [EffectTypes.PERF_RECORD_STOP, infallible(perfStop, logger)],
   );
 }
 

@@ -12,13 +12,14 @@ specific language governing permissions and limitations under the License.
 
 import { apply } from 'redux-saga/effects';
 
-import { takeLatestMultiple } from '../../shared/util/saga-util';
+import { logger } from '../../../shared/logging';
+import { infallible, takeLatestMultiple } from '../../shared/util/saga-util';
 import { clipboard } from '../../../shared/electron';
 import * as EffectTypes from '../constants/effect-types';
 
 export default function*() {
   yield takeLatestMultiple(
-    [EffectTypes.COPY_TEXT_TO_CLIPBOARD, copyTextToClipboard],
+    [EffectTypes.COPY_TEXT_TO_CLIPBOARD, infallible(copyTextToClipboard, logger)],
   );
 }
 
