@@ -64,9 +64,10 @@ class WindowControls extends Component {
           height="12px"
           image="osx-controls.png"
           imgWidth="36px"
-          imgHeight="24px"
+          imgHeight="36px"
           imgPosition="0px 0px"
           imgPositionHover="0px -12px"
+          imgPositionActive="0px -24px"
           onClick={this.handleCloseWindow} />
         <Btn id="browser-minimize-button"
           className={WINDOW_CONTROL_BUTTONS_STYLE}
@@ -75,9 +76,10 @@ class WindowControls extends Component {
           height="12px"
           image="osx-controls.png"
           imgWidth="36px"
-          imgHeight="24px"
+          imgHeight="36px"
           imgPosition="-12px 0px"
           imgPositionHover="-12px -12px"
+          imgPositionActive="-12px -24px"
           onClick={this.handleMinimizeWindow} />
         <Btn id="browser-maximize-button"
           className={WINDOW_CONTROL_BUTTONS_STYLE}
@@ -86,9 +88,10 @@ class WindowControls extends Component {
           height="12px"
           image="osx-controls.png"
           imgWidth="36px"
-          imgHeight="24px"
+          imgHeight="36px"
           imgPosition="-24px 0px"
           imgPositionHover="-24px -12px"
+          imgPositionActive="-24px -24px"
           onClick={this.handleMaximizeWindow} />
       </div>
     ) : (
