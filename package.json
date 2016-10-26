@@ -115,7 +115,7 @@
     "spectron": "3.3.0",
     "thenify-all": "1.6.0",
     "uglify-js": "github:mishoo/UglifyJS2#harmony",
-    "webpack": "1.13.2",
+    "webpack": "1.13.3",
     "yargs": "6.3.0",
     "zip-dir": "1.0.2"
   },
