@@ -69,11 +69,11 @@ class Btn extends Component {
       rules.backgroundRepeat = imgRepeat || BKG_REPEAT_DEFAULT;
       rules.backgroundPosition = imgPosition || BKG_POSIITON_DEFAULT;
       rules['&:hover'] = {
-        backgroundImage: imageHover ? `url(assets/${imageHover})` : 'auto',
+        backgroundImage: imageHover ? `url(assets/${imageHover})` : rules.backgroundImage,
         backgroundPosition: imgPositionHover || imgPosition || BKG_POSIITON_DEFAULT,
       };
       rules['&:active'] = {
-        backgroundImage: imageActive ? `url(assets/${imageActive})` : 'auto',
+        backgroundImage: imageActive ? `url(assets/${imageActive})` : rules.backgroundImage,
         backgroundPosition: imgPositionActive || imgPosition || BKG_POSIITON_DEFAULT,
       };
     }
