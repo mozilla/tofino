@@ -67,7 +67,7 @@ TabPointerArea.propTypes = {
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
   return {
-    tooltipText: page.title || page.meta.title || page.location,
+    tooltipText: page.title || page.meta.title || page.location || 'Loading',
   };
 }
 

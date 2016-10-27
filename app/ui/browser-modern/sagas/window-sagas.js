@@ -12,17 +12,18 @@ specific language governing permissions and limitations under the License.
 
 import { call, apply, race, take } from 'redux-saga/effects';
 
-import { takeLatestMultiple } from '../../shared/util/saga-util';
+import { logger } from '../../../shared/logging';
+import { infallible, takeLatestMultiple } from '../../shared/util/saga-util';
 import { remote, ipcRenderer } from '../../../shared/electron';
 import * as EffectTypes from '../constants/effect-types';
 
 export default function*() {
   yield takeLatestMultiple(
-    [EffectTypes.MINIMIZE_WINDOW, minimizeWindow],
-    [EffectTypes.MAXIMIZE_WINDOW, maximizeWindow],
-    [EffectTypes.CLOSE_WINDOW, closeWindow],
-    [EffectTypes.RELOAD_WINDOW, reloadWindow],
-    [EffectTypes.OPEN_APP_MENU, openAppMenu],
+    [EffectTypes.MINIMIZE_WINDOW, infallible(minimizeWindow, logger)],
+    [EffectTypes.MAXIMIZE_WINDOW, infallible(maximizeWindow, logger)],
+    [EffectTypes.CLOSE_WINDOW, infallible(closeWindow, logger)],
+    [EffectTypes.RELOAD_WINDOW, infallible(reloadWindow, logger)],
+    [EffectTypes.OPEN_APP_MENU, infallible(openAppMenu, logger)],
   );
 }
 

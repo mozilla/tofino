@@ -18,12 +18,15 @@ import SSLCertificate from './ssl-certificate';
 const VERSION = 1;
 
 const PageState = register(Immutable.Record({
-  load: undefined,
-  navigationType: undefined,
-  code: undefined,
-  description: undefined,
+  load: '', // PageState.STATES
+  navigationType: '', // PageState.NAVIGATION_TYPES
+  code: -1, // HTTP code
+  description: '', // HTTP description
+
+  // https://github.com/electron/electron/blob/master/docs/api/app.md#event-certificate-error
+  error: '',
   certificate: new SSLCertificate(),
-  error: undefined,
+
 }, `PageState_v${VERSION}`));
 
 PageState.STATES = {

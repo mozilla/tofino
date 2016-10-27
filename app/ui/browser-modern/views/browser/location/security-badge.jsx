@@ -53,20 +53,20 @@ function mapStateToProps(state, ownProps) {
   const pageErrorState = PagesSelectors.getPageState(state, ownProps.pageId).error;
 
   let image = 'ssl-insecure.svg';
-  if (pageLocation.startsWith(TOFINO_PROTOCOL)) {
-    image = 'tofino-page-icon.png';
-  } else if (!pageLocation ||
-  // If the URL is empty (occurs during some page loads when navigating back/forward in our state),
-  // or if the page is still loading (many sites use http -> https redirects,
-  // we shouldn't penalize them for a quick interstitial), ust use the 'globe' icon.
+  if (!pageLocation ||
       pageLoadState === PageStateModel.STATES.CONNECTING ||
       pageLoadState === PageStateModel.STATES.LOADING) {
+    // If the URL is empty (occurs during page loads when navigating back/forward),
+    // or if the page is still loading (many sites use http -> https redirects,
+    // we shouldn't penalize them for a quick interstitial), ust use the 'globe' icon.
     image = 'ssl-unknown.svg';
-  } else if (/^https:/.test(pageLocation) && !pageErrorState) {
-  // Since we have unconfigurable security settings, if we access an HTTPS page and it loads,
-  // it is considered secure. Otherwise, all HTTP pages are insecure. Also, since
-  // we block all mixed content, this is even easier.
+  } else if (pageLocation.startsWith('https') && !pageErrorState) {
+    // Since we have unconfigurable security settings, if we access an HTTPS page and it loads,
+    // it is considered secure. Otherwise, all HTTP pages are insecure. Also, since
+    // we block all mixed content, this is even easier.
     image = 'ssl-secure.svg';
+  } else if (pageLocation.startsWith(TOFINO_PROTOCOL)) {
+    image = 'tofino-page-icon.png';
   }
 
   return {

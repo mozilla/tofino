@@ -12,20 +12,20 @@ specific language governing permissions and limitations under the License.
 
 import { call, apply, put } from 'redux-saga/effects';
 
-import { takeLatestMultiple } from '../../shared/util/saga-util';
-import { ipcRenderer } from '../../../shared/electron';
 import { logger } from '../../../shared/logging';
+import { infallible, takeLatestMultiple } from '../../shared/util/saga-util';
+import { ipcRenderer } from '../../../shared/electron';
 import * as UIActions from '../actions/ui-actions';
 import * as EffectTypes from '../constants/effect-types';
 import { INTERACTION_TYPES } from '../../shared/widgets/search';
 
 export default function*() {
   yield takeLatestMultiple(
-    [EffectTypes.SET_APPLICATION_ACTIVE_ELEMENT, setActiveElement],
-    [EffectTypes.FOCUS_URL_BAR, focusURLBar],
-    [EffectTypes.SET_URL_BAR_VALUE, setURLBarValue],
-    [EffectTypes.SHOW_DOWNLOAD_NOTIFICATION, showDownloadNotification],
-    [EffectTypes.CONFIRM_DEFAULT_BROWSER, confirmDefaultBrowser],
+    [EffectTypes.SET_APPLICATION_ACTIVE_ELEMENT, infallible(setActiveElement, logger)],
+    [EffectTypes.FOCUS_URL_BAR, infallible(focusURLBar, logger)],
+    [EffectTypes.SET_URL_BAR_VALUE, infallible(setURLBarValue, logger)],
+    [EffectTypes.SHOW_DOWNLOAD_NOTIFICATION, infallible(showDownloadNotification, logger)],
+    [EffectTypes.CONFIRM_DEFAULT_BROWSER, infallible(confirmDefaultBrowser, logger)],
   );
 }
 
