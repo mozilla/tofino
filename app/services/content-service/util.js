@@ -58,7 +58,7 @@ export function makeServer(version, port) {
   let router;
 
   function setup(config) {
-    return new Promise(async function(resolve, reject) {
+    return new Promise(async (resolve, reject) => {
       if (server) {
         reject(new Error('The server was already started.'));
       }

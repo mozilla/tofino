@@ -21,7 +21,7 @@ xdescribe('User Agent Service', () => {
   beforeEach(done => {
     stop = null;
     tempDir = tmp.dirSync({}).name;
-    (async function () {
+    (async function() {
       try {
         port += 1; // Advance first, so that we don't stick on a blocked port.
         const userAgentClient = new UserAgentClient();
@@ -48,7 +48,7 @@ xdescribe('User Agent Service', () => {
   });
 
   afterEach(done => {
-    (async function () {
+    (async function() {
       try {
         if (stop) {
           try {
@@ -85,7 +85,7 @@ xdescribe('User Agent Service', () => {
   });
 
   it('handles sessions', done => {
-    (async function () {
+    (async function() {
       try {
         // TODO: add a /sessions endpoint to allow to truly verify these API calls.
         expect(await userAgentHttpClient.createSession(11, { scope: 0 }))
@@ -103,7 +103,7 @@ xdescribe('User Agent Service', () => {
   });
 
   it('handles history visits', done => {
-    (async function () {
+    (async function() {
       try {
         expect(await userAgentHttpClient.createSession(11, { scope: 0 }))
           .toEqual({ session: 65552 });
@@ -158,7 +158,7 @@ xdescribe('User Agent Service', () => {
   });
 
   it('handles stars', done => {
-    (async function () {
+    (async function() {
       try {
         expect(await userAgentHttpClient.createSession(11, { scope: 0 }))
           .toEqual({ session: 65552 });
@@ -229,7 +229,7 @@ xdescribe('User Agent Service', () => {
   });
 
   it('handles page details', done => {
-    (async function () {
+    (async function() {
       try {
         expect(await userAgentHttpClient.createSession(11, { scope: 0 }))
           .toEqual({ session: 65552 });

@@ -39,7 +39,7 @@ spawn.startUserAgentService(userAgentClient);
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-app.on('ready', async function() {
+app.on('ready', () => {
   // Force the menu to be built at least once on startup
   menu.buildAppMenu(menuData);
 
@@ -71,7 +71,7 @@ app.on('window-all-closed', () => {
   menu.buildAppMenu(menuData);
 });
 
-app.on('activate', async function() {
+app.on('activate', async () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (electron.BrowserWindow.getAllWindows().length === 0) {
@@ -81,17 +81,17 @@ app.on('activate', async function() {
   }
 });
 
-ipc.on('new-browser-window', async function() {
+ipc.on('new-browser-window', async () => {
   const bw = await BW.createBrowserWindow();
   bw.webContents.send('new-tab');
   menu.buildAppMenu(menuData);
 });
 
-ipc.on('close-browser-window', BW.onlyWhenFromBrowserWindow(async function(bw) {
+ipc.on('close-browser-window', BW.onlyWhenFromBrowserWindow(async bw => {
   await BW.closeBrowserWindow(bw);
 }));
 
-ipc.on('reload-browser-window', BW.onlyWhenFromBrowserWindow(async function(bw) {
+ipc.on('reload-browser-window', BW.onlyWhenFromBrowserWindow(async bw => {
   await BW.reloadBrowserWindow(bw);
 }));
 
