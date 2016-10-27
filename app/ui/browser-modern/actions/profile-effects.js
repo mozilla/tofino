@@ -40,10 +40,10 @@ export function addRemoteHistory(pageId) {
   };
 }
 
-export function addCapturedPage(pageId, readerResult) {
+export function addRemoteCapturedPage(pageId, readerResult) {
   return (dispatch, getState) => {
     dispatch({
-      type: EffectTypes.ADD_CAPTURED_PAGE,
+      type: EffectTypes.ADD_REMOTE_CAPTURED_PAGE,
       page: PagesSelectors.getPageById(getState(), pageId),
       readerResult,
     });

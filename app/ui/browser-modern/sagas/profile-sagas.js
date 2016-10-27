@@ -24,7 +24,7 @@ export default function*() {
     [EffectTypes.FETCH_LOCATION_AUTOCOMPLETIONS, fetchCompletions],
     [EffectTypes.SET_REMOTE_BOOKMARK_STATE, setRemoteBookmarkState],
     [EffectTypes.ADD_REMOTE_HISTORY, addRemoteHistory],
-    [EffectTypes.ADD_CAPTURED_PAGE, addCapturedPage],
+    [EffectTypes.ADD_REMOTE_CAPTURED_PAGE, addRemoteCapturedPage],
   );
 }
 
@@ -58,7 +58,7 @@ export function* addRemoteHistory({ page }) {
   yield apply(userAgentHttpClient, userAgentHttpClient.createHistory, [page, { url, title }]);
 }
 
-export function* addCapturedPage({ page, readerResult }) {
+export function* addRemoteCapturedPage({ page, readerResult }) {
   const { location: url } = page;
   yield apply(userAgentHttpClient, userAgentHttpClient.createPage, [page, { url, readerResult }]);
 }

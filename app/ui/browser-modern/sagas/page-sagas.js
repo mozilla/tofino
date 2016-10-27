@@ -186,7 +186,7 @@ export function* setPageZoomLevel({ pageId, webview, zoomLevel }) {
 export function* capturePage({ pageId, webview }) {
   const script = 'window._readerify(window.document)';
   const readerResult = yield call(ContentScriptUtils.executeJS, webview, script);
-  yield put(ProfileEffects.addCapturedPage(pageId, readerResult));
+  yield put(ProfileEffects.addRemoteCapturedPage(pageId, readerResult));
 }
 
 export function* parsePageMetaData({ pageId, webview }) {
