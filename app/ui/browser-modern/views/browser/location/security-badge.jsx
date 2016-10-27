@@ -14,11 +14,16 @@ import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
 
+import Style from '../../../../shared/style';
 import PageStateModel from '../../../model/page-state';
 import Btn from '../../../../shared/widgets/btn';
 
 import { TOFINO_PROTOCOL } from '../../../../../shared/constants/endpoints';
 import * as PagesSelectors from '../../../selectors/pages';
+
+const CONNECTION_BUTTON_STYLE = Style.registerStyle({
+  padding: '1px',
+});
 
 class SecurityBadge extends Component {
   constructor(props) {
@@ -29,10 +34,10 @@ class SecurityBadge extends Component {
   render() {
     return (
       <Btn title="Connection"
-        className={this.props.className}
+        className={`${CONNECTION_BUTTON_STYLE} ${this.props.className || ''}`}
         image={this.props.image}
-        imgWidth="16px"
-        imgHeight="16px"
+        imgWidth="14px"
+        imgHeight="14px"
         onClick={this.props.onClick} />
     );
   }

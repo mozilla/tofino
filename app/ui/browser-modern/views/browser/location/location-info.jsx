@@ -22,7 +22,7 @@ const LOCATION_BAR_INFO_STYLE = Style.registerStyle({
 });
 
 const LOCATION_BAR_SECURITY_BADGE_STYLE = Style.registerStyle({
-  paddingLeft: '2px',
+  marginLeft: '2px',
 });
 
 class LocationInfo extends Component {
