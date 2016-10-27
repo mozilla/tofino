@@ -36,7 +36,7 @@
     "bunyan": "1.8.4",
     "colors": "1.1.2",
     "electron-ipc-mock": "0.0.2",
-    "electron-localshortcut": "0.6.1",
+    "electron-localshortcut": "1.0.0",
     "events": "1.1.1",
     "express": "4.14.0",
     "express-validator": "2.21.0",
