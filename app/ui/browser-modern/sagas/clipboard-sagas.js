@@ -18,8 +18,8 @@ import { clipboard } from '../../../shared/electron';
 import * as EffectTypes from '../constants/effect-types';
 
 export default function*() {
-  yield takeLatestMultiple(
-    [EffectTypes.COPY_TEXT_TO_CLIPBOARD, infallible(copyTextToClipboard, logger)],
+  yield takeLatestMultiple({ infallible, logger },
+    [EffectTypes.COPY_TEXT_TO_CLIPBOARD, copyTextToClipboard],
   );
 }
 

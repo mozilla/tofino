@@ -35,9 +35,9 @@ if (BUILD_CONFIG.development) {
 }
 
 export default function*() {
-  yield takeLatestMultiple(
-    [EffectTypes.PERF_RECORD_START, infallible(perfStart, logger)],
-    [EffectTypes.PERF_RECORD_STOP, infallible(perfStop, logger)],
+  yield takeLatestMultiple({ infallible, logger },
+    [EffectTypes.PERF_RECORD_START, perfStart, logger],
+    [EffectTypes.PERF_RECORD_STOP, perfStop, logger],
   );
 }
 

@@ -20,11 +20,11 @@ import * as ProfileActions from '../actions/profile-actions';
 import * as EffectTypes from '../constants/effect-types';
 
 export default function*() {
-  yield takeLatestMultiple(
-    [EffectTypes.FETCH_LOCATION_AUTOCOMPLETIONS, infallible(fetchCompletions, logger)],
-    [EffectTypes.SET_REMOTE_BOOKMARK_STATE, infallible(setRemoteBookmarkState, logger)],
-    [EffectTypes.ADD_REMOTE_HISTORY, infallible(addRemoteHistory, logger)],
-    [EffectTypes.ADD_CAPTURED_PAGE, infallible(addCapturedPage, logger)],
+  yield takeLatestMultiple({ infallible, logger },
+    [EffectTypes.FETCH_LOCATION_AUTOCOMPLETIONS, fetchCompletions],
+    [EffectTypes.SET_REMOTE_BOOKMARK_STATE, setRemoteBookmarkState],
+    [EffectTypes.ADD_REMOTE_HISTORY, addRemoteHistory],
+    [EffectTypes.ADD_CAPTURED_PAGE, addCapturedPage],
   );
 }
 

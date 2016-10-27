@@ -20,12 +20,12 @@ import * as EffectTypes from '../constants/effect-types';
 import { INTERACTION_TYPES } from '../../shared/widgets/search';
 
 export default function*() {
-  yield takeLatestMultiple(
-    [EffectTypes.SET_APPLICATION_ACTIVE_ELEMENT, infallible(setActiveElement, logger)],
-    [EffectTypes.FOCUS_URL_BAR, infallible(focusURLBar, logger)],
-    [EffectTypes.SET_URL_BAR_VALUE, infallible(setURLBarValue, logger)],
-    [EffectTypes.SHOW_DOWNLOAD_NOTIFICATION, infallible(showDownloadNotification, logger)],
-    [EffectTypes.CONFIRM_DEFAULT_BROWSER, infallible(confirmDefaultBrowser, logger)],
+  yield takeLatestMultiple({ infallible, logger },
+    [EffectTypes.SET_APPLICATION_ACTIVE_ELEMENT, setActiveElement],
+    [EffectTypes.FOCUS_URL_BAR, focusURLBar],
+    [EffectTypes.SET_URL_BAR_VALUE, setURLBarValue],
+    [EffectTypes.SHOW_DOWNLOAD_NOTIFICATION, showDownloadNotification],
+    [EffectTypes.CONFIRM_DEFAULT_BROWSER, confirmDefaultBrowser],
   );
 }
 

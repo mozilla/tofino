@@ -28,31 +28,29 @@ import * as EffectTypes from '../constants/effect-types';
 import * as PageSelectors from '../selectors/pages';
 
 export default function*() {
-  yield takeEveryMultiple(
-    [EffectTypes.CREATE_PAGE_SESSION, infallible(createPageSession, logger)],
-    [EffectTypes.DESTROY_PAGE_SESSION, infallible(destroyPageSession, logger)],
-    [EffectTypes.BULK_CREATE_STANDALONE_PAGE_SESSIONS,
-      infallible(bulkCreateStandalonePageSessions, logger)],
-    [EffectTypes.BULK_DESTROY_STANDALONE_PAGE_SESSIONS,
-      infallible(bulkDestroyStandalonePageSessions, logger)],
-    [EffectTypes.GET_CERTIFICATE_ERROR, infallible(getCertificateError, logger)],
+  yield takeEveryMultiple({ infallible, logger },
+    [EffectTypes.CREATE_PAGE_SESSION, createPageSession],
+    [EffectTypes.DESTROY_PAGE_SESSION, destroyPageSession],
+    [EffectTypes.BULK_CREATE_STANDALONE_PAGE_SESSIONS, bulkCreateStandalonePageSessions],
+    [EffectTypes.BULK_DESTROY_STANDALONE_PAGE_SESSIONS, bulkDestroyStandalonePageSessions],
+    [EffectTypes.GET_CERTIFICATE_ERROR, getCertificateError],
   );
-  yield takeLatestMultiple(
-    [EffectTypes.NAVIGATE_PAGE_TO, infallible(naviatePageTo, logger)],
-    [EffectTypes.NAVIGATE_PAGE_BACK, infallible(navigatePageBack, logger)],
-    [EffectTypes.NAVIGATE_PAGE_FORWARD, infallible(navigatePageForward, logger)],
-    [EffectTypes.NAVIGATE_PAGE_REFRESH, infallible(navigatePageRefresh, logger)],
-    [EffectTypes.NAVIGATE_PAGE_IN_HISTORY, infallible(navigatePageInHistory, logger)],
-    [EffectTypes.TOGGLE_DEVTOOLS, infallible(toggleDevtools, logger)],
-    [EffectTypes.PERFORM_DEVTOOLS_INSPECT_ELEMENT, infallible(performInspectElement, logger)],
-    [EffectTypes.PERFORM_PAGE_DOWNLOAD, infallible(performPageDownload, logger)],
-    [EffectTypes.PERFORM_PAGE_SEARCH, infallible(performPageSearch, logger)],
-    [EffectTypes.SET_PAGE_ZOOM_LEVEL, infallible(setPageZoomLevel, logger)],
-    [EffectTypes.CAPTURE_PAGE, infallible(capturePage, logger)],
-    [EffectTypes.PARSE_PAGE_META_DATA, infallible(parsePageMetaData, logger)],
-    [EffectTypes.DISPLAY_WEBVIEW_CONTEXT_MENU, infallible(displayWebviewContextMenu, logger)],
-    [EffectTypes.PIN_TAB, infallible(pinTab, logger)],
-    [EffectTypes.UNPIN_TAB, infallible(unpinTab, logger)],
+  yield takeLatestMultiple({ infallible, logger },
+    [EffectTypes.NAVIGATE_PAGE_TO, naviatePageTo],
+    [EffectTypes.NAVIGATE_PAGE_BACK, navigatePageBack],
+    [EffectTypes.NAVIGATE_PAGE_FORWARD, navigatePageForward],
+    [EffectTypes.NAVIGATE_PAGE_REFRESH, navigatePageRefresh],
+    [EffectTypes.NAVIGATE_PAGE_IN_HISTORY, navigatePageInHistory],
+    [EffectTypes.TOGGLE_DEVTOOLS, toggleDevtools],
+    [EffectTypes.PERFORM_DEVTOOLS_INSPECT_ELEMENT, performDevtoolsInspectElement],
+    [EffectTypes.PERFORM_PAGE_DOWNLOAD, performPageDownload],
+    [EffectTypes.PERFORM_PAGE_SEARCH, performPageSearch],
+    [EffectTypes.SET_PAGE_ZOOM_LEVEL, setPageZoomLevel],
+    [EffectTypes.CAPTURE_PAGE, capturePage],
+    [EffectTypes.PARSE_PAGE_META_DATA, parsePageMetaData],
+    [EffectTypes.DISPLAY_WEBVIEW_CONTEXT_MENU, displayWebviewContextMenu],
+    [EffectTypes.PIN_TAB, pinTab],
+    [EffectTypes.UNPIN_TAB, unpinTab],
   );
 }
 
@@ -160,7 +158,7 @@ export function* toggleDevtools({ webview }) {
   }
 }
 
-export function* performInspectElement({ webview, x, y }) {
+export function* performDevtoolsInspectElement({ webview, x, y }) {
   yield apply(webview, webview.inspectElement, [x, y]);
 }
 

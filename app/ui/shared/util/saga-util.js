@@ -39,12 +39,12 @@ export class Watcher {
   }
 }
 
-export const takeLatestMultiple = function(...patterns) {
-  return patterns.map(([pattern, fn, ...args]) => takeLatest(pattern, fn, ...args));
+export const takeLatestMultiple = function({ infallible, logger }, ...patterns) {
+  return patterns.map(([p, fn, ...args]) => takeLatest(p, infallible(fn, logger), ...args));
 };
 
-export const takeEveryMultiple = function(...patterns) {
-  return patterns.map(([pattern, fn, ...args]) => takeEvery(pattern, fn, ...args));
+export const takeEveryMultiple = function({ infallible, logger }, ...patterns) {
+  return patterns.map(([p, fn, ...args]) => takeEvery(p, infallible(fn, logger), ...args));
 };
 
 export const infallible = function(fn, logger) {
