@@ -60,7 +60,7 @@
     "reduce-reducers": "0.1.2",
     "redux": "3.6.0",
     "redux-immutable": "3.0.8",
-    "redux-logger": "2.7.0",
+    "redux-logger": "2.7.1",
     "redux-saga": "0.12.0",
     "source-map-support": "ncalexan/node-source-map-support#fileUrls-plus",
     "tmp": "0.0.29",
