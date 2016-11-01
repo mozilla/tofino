@@ -108,12 +108,14 @@ class Page extends Component {
       // Emitted regardless of whether or not a failure occurs.
       const title = this.webview.getTitle();
       const location = this.webview.getURL();
+      const isTofino = location.startsWith(Endpoints.TOFINO_PROTOCOL);
 
       // The `page-title-set` event is not called on error pages, nor is
       // the `did-navigate` event called, so we must set these properties to
       // properly render our error pages
       this.props.dispatch(PageActions.setPageDetails(this.props.pageId, { title, location }));
       this.props.dispatch(UIEffects.setURLBarValue(this.props.pageId, location));
+      this.props.dispatch(UIEffects.focusURLBar(this.props.pageId, { select: isTofino }));
 
       // If the page state is still LOADING, and we haven't hit a failure state,
       // mark this page as LOADED. The logic for setting the proper load state

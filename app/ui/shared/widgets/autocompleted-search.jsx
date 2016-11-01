@@ -92,6 +92,7 @@ class AutocompletedSearch extends Component {
           const data = this.props.dataSrc.get(index);
           this.props.onAutocompletionPick({ index, data });
           this.setState({ showSelectionList: false });
+          this.inputbar.blur();
           // Don't call any `onKeyDown` event handler on a parent component.
           // If this were the DOM, act as if a `stopPropagation` was invoked.
           return;
