@@ -20,6 +20,7 @@ import StatusBar from './decorations/statusbar';
 import DeveloperBar from './decorations/developerbar';
 import TabBar from './tabbar';
 import SearchBar from './decorations/searchbar';
+import NotificationBar from './decorations/notificationbar';
 
 import * as SharedPropTypes from '../../model/shared-prop-types';
 import * as UIConstants from '../../constants/ui';
@@ -43,6 +44,7 @@ class ChromeArea extends Component {
         className={CHROME_AREA_STYLE}>
         <WindowControls />
         <TabBar />
+        <NotificationBar />
         <DeveloperBar />
         <StatusBar />
         {this.props.pageIds.map(pageId => (

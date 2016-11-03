@@ -71,4 +71,8 @@
   --theme-error-page-background-color: #FBFBFB;
   --theme-error-page-color: rgb(66, 78, 90);
   --theme-error-page-cert-background-color: #ddd;
+
+  /* Notification Bar */
+  --theme-notification-bar-border: 1px solid #bf8a01;
+  --theme-notification-bar-background: linear-gradient(#ffe13e, #ffc703);
 }
