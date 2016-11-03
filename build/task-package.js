@@ -4,7 +4,7 @@
 import fs from 'fs-promise';
 import path from 'path';
 import os from 'os';
-import builder from 'electron-builder';
+import * as builder from 'electron-builder';
 import zipdir from 'zip-dir';
 import { thenify } from 'thenify-all';
 import { getAppManifest } from './utils';
