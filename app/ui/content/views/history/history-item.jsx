@@ -35,6 +35,9 @@ const HISTORY_ANCHOR_STYLE = Style.registerStyle({
   padding: '6px 8px',
   textDecoration: 'none',
   color: 'rgba(0,0,0,0.9)',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
 });
 
 class HistoryItem extends Component {

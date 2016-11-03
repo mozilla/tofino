@@ -26,11 +26,11 @@ const HISTORY_STYLE = Style.registerStyle({
   flex: 1,
   flexDirection: 'column',
   padding: '20px 10%',
+  width: '80%',
 });
 
 const LIST_STYLE = Style.registerStyle({
   flex: 1,
-  overflow: 'auto',
 });
 
 const SEARCH_STYLE = Style.registerStyle({
