@@ -14,6 +14,8 @@ import BUILD_CONFIG from '../../build-config';
 
 export const TOFINO_PROTOCOL = 'tofino';
 
+export const HISTORY_RESTORE_ADDR = `${TOFINO_PROTOCOL}://historyrestore`;
+
 export const UA_SERVICE_ADDR = 'localhost';
 export const UA_SERVICE_PORT = BUILD_CONFIG.packaged ? 9091 : 9090;
 export const UA_SERVICE_VERSION = 'v1';

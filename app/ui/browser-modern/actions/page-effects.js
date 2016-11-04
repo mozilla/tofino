@@ -35,6 +35,21 @@ export function destroyPageSession(id, { withUI = true } = {}) {
   };
 }
 
+export function forkPageBack(pageId) {
+  return {
+    type: EffectTypes.FORK_PAGE_BACK,
+    pageId,
+  };
+}
+
+export function forkPageForward(pageId) {
+  return {
+    type: EffectTypes.FORK_PAGE_FORWARD,
+    pageId,
+  };
+}
+
+
 export function destroyCurrentPageSession() {
   return (dispatch, getState) => {
     dispatch(destroyPageSession(PagesSelectors.getSelectedPageId(getState())));

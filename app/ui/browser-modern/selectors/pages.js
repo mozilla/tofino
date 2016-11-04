@@ -104,6 +104,10 @@ export function getPageHistoryIndex(state, id) {
   return getPageById(state, id).historyIndex;
 }
 
+export function getPageHistoryURLs(state, id) {
+  return getPageById(state, id).history.toJS().map(history => history.url);
+}
+
 // Page internal UI state getters
 
 export function getPagePreventInteraction(state, id) {
