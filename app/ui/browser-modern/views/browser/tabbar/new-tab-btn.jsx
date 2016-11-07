@@ -46,7 +46,7 @@ class NewTabBtn extends Component {
   }
 
   handleNewTabClick = () => {
-    this.props.dispatch(PageEffects.createPageSession());
+    this.props.dispatch(PageEffects.createPageSession(undefined, { selected: true }));
   }
 
   render() {

@@ -58,11 +58,14 @@ export default function*() {
   );
 }
 
-export function* createPageSession({ id, location, options, withUI }) {
+export function* createPageSession({ id, location, options = {}, withUI }) {
   yield apply(userAgentHttpClient, userAgentHttpClient.createSession, [id, {}]);
 
   if (withUI) {
     yield put(PageActions.createPage(id, location, options));
+    if (options.selected) {
+      yield put(UIEffects.focusURLBar(id, { select: true }));
+    }
   }
 }
 
@@ -76,7 +79,7 @@ export function* destroyPageSession({ id, withUI }) {
 
     // If the last page was removed, dispatch an action to create another one.
     if (currentPageCount === 1) {
-      yield put(PageEffects.createPageSession());
+      yield put(PageEffects.createPageSession(undefined, { selected: true }));
     }
   }
 }

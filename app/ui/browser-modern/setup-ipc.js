@@ -60,7 +60,7 @@ export default function({ store, userAgentClient }) {
   });
 
   ipcRenderer.on('new-tab', (_, location) => {
-    store.dispatch(PageEffects.createPageSession(location));
+    store.dispatch(PageEffects.createPageSession(location, { selected: true }));
   });
 
   ipcRenderer.on('close-tab', () => {

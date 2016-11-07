@@ -116,10 +116,13 @@ class Search extends Component {
   }, USER_FINISHED_TYPING_DELAY)
 
   render() {
+    const focusedAttr = this.state.focused ? { 'data-focused': true } : {};
+
     return (
       <div {...omit(this.props, Object.keys(OmittedContainerProps))}
         className={`widget-search ${this.props.className || ''}`}>
         <input ref={e => this.input = e}
+          {...focusedAttr}
           className={`${this.props.inputClassName || ''} ${INPUT_STYLE}`}
           type="text"
           data-interaction={this.state.interaction}
