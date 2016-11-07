@@ -34,9 +34,25 @@ function configure(app, router) {
     app.use(`/${route}`, router);
   }
 
+  // Routes all files served from `tofino://[anything]/scripts/file.js`
+  // to `content/scripts/` -- this is so simple HTML files can
+  // serve files from the scripts directory and still easily serve its html
+  // page from the tofino origin. Must be the first route for this reason.
+  router.get('/:subpage/scripts/:file', autoCaughtRouteError({
+    async method(req, res) {
+      res.sendFile(path.join(UI_DIR, 'content', 'scripts', req.params.file));
+    },
+  }));
+
   router.get('/credits', autoCaughtRouteError({
     async method(req, res) {
       res.sendFile(path.join(UI_DIR, 'content', 'credits.html'));
+    },
+  }));
+
+  router.get('/historyrestore', autoCaughtRouteError({
+    async method(req, res) {
+      res.sendFile(path.join(UI_DIR, 'content', 'historyrestore.html'));
     },
   }));
 

@@ -53,12 +53,20 @@ class NavigationButtons extends Component {
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
 
-  handleNavigateBackClick = () => {
-    this.props.dispatch(PageEffects.navigatePageBack(this.props.pageId));
+  handleNavigateBackClick = e => {
+    if (e.metaKey || e.ctrlKey) {
+      this.props.dispatch(PageEffects.forkPageBack(this.props.pageId));
+    } else {
+      this.props.dispatch(PageEffects.navigatePageBack(this.props.pageId));
+    }
   }
 
-  handleNavigateForwardClick = () => {
-    this.props.dispatch(PageEffects.navigatePageForward(this.props.pageId));
+  handleNavigateForwardClick = e => {
+    if (e.metaKey || e.ctrlKey) {
+      this.props.dispatch(PageEffects.forkPageForward(this.props.pageId));
+    } else {
+      this.props.dispatch(PageEffects.navigatePageForward(this.props.pageId));
+    }
   }
 
   handleMenuShow = () => {

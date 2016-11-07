@@ -10,15 +10,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import './context-menu';
-import './active-element';
-import Readability from './readability';
-import { readerify } from './reader';
-import { parseMetadata } from './metadata-parsing';
-import { reload } from './reload';
+import { ipcRenderer as ipc } from '../../shared/electron';
 
-window._readerify = readerify.bind(null, Readability);
-window._parseMetadata = parseMetadata;
-// Expose _TOFINO_RELOAD for the tofino://sessionrestore URLs that need
-// the webview to reload itself
-window._TOFINO_RELOAD = reload;
+export function reload() {
+  ipc.sendToHost('reload');
+}

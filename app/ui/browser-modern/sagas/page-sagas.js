@@ -10,9 +10,11 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
+import assert from 'assert';
 import { call, apply, select, put } from 'redux-saga/effects';
 
 import { logger } from '../../../shared/logging';
+import { HISTORY_RESTORE_ADDR } from '../../../shared/constants/endpoints';
 import { ipcRenderer, remote } from '../../../shared/electron';
 import { infallible, takeLatestMultiple, takeEveryMultiple } from '../../shared/util/saga-util';
 import PageState from '../model/page-state';
@@ -31,6 +33,8 @@ export default function*() {
   yield takeEveryMultiple({ infallible, logger },
     [EffectTypes.CREATE_PAGE_SESSION, createPageSession],
     [EffectTypes.DESTROY_PAGE_SESSION, destroyPageSession],
+    [EffectTypes.FORK_PAGE_BACK, forkPageBack],
+    [EffectTypes.FORK_PAGE_FORWARD, forkPageForward],
     [EffectTypes.BULK_CREATE_STANDALONE_PAGE_SESSIONS, bulkCreateStandalonePageSessions],
     [EffectTypes.BULK_DESTROY_STANDALONE_PAGE_SESSIONS, bulkDestroyStandalonePageSessions],
     [EffectTypes.GET_CERTIFICATE_ERROR, getCertificateError],
@@ -75,6 +79,34 @@ export function* destroyPageSession({ id, withUI }) {
       yield put(PageEffects.createPageSession());
     }
   }
+}
+
+function* forkPageByOffset(pageId, offset) {
+  if (offset > 0) {
+    assert((yield select(PageSelectors.getPageCanGoForward, pageId)));
+  } else if (offset < 0) {
+    assert((yield select(PageSelectors.getPageCanGoBack, pageId)));
+  }
+
+  const historyIndex = yield select(PageSelectors.getPageHistoryIndex, pageId);
+  const newHistoryIndex = historyIndex + offset;
+  const currentPageIndex = yield select(PageSelectors.getPageIndexById, pageId);
+  const historyURLs = yield select(PageSelectors.getPageHistoryURLs, pageId);
+  const historyList = escape(JSON.stringify(historyURLs));
+  const url = `${HISTORY_RESTORE_ADDR}/?history=${historyList}&historyIndex=${newHistoryIndex}`;
+  const action = PageEffects.createPageSession(url, { selected: true });
+  const { id } = action;
+
+  yield call(createPageSession, action);
+  yield put(PageActions.setPageIndex(id, currentPageIndex + 1));
+}
+
+export function* forkPageBack({ pageId }) {
+  yield forkPageByOffset(pageId, -1);
+}
+
+export function* forkPageForward({ pageId }) {
+  yield forkPageByOffset(pageId, 1);
 }
 
 export function* bulkCreateStandalonePageSessions({ ids, channel }) {

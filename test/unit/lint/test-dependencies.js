@@ -92,10 +92,16 @@ describe('dependencies', () => {
     const sources = await globMany(paths);
     const matches = await regexFiles(sources, REQUIRES_REGEX, IMPORTS_REGEX);
 
+    // These native modules are 'browserify-able', and can just include the pure
+    // non-special JS module in a browser.
+    const ignored = [
+      'assert',
+    ];
+
     // Strip out the development packages, since we make sure those aren't
     // included in frontend code in one of the following tests, and we don't
     // want them logged here as errors, since that would be confusing.
-    const usedPackages = without(matches, ...mainDevPackages).sort();
+    const usedPackages = without(matches, ...ignored, ...mainDevPackages).sort();
     expect(intersection(usedPackages, prodPackages)).toEqual(usedPackages);
   });
 

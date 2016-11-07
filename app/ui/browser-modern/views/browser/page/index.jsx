@@ -214,6 +214,9 @@ class Page extends Component {
         case 'focus-data':
           this.props.dispatch(UIEffects.setContentActiveElement(e.args[0]));
           break;
+        case 'reload':
+          this.props.dispatch(PageEffects.navigatePageRefresh(this.props.pageId));
+          break;
         default:
           logger.warn(`@TODO: Unknown ipc-message:${e.channel}`);
           break;
