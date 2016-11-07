@@ -11,17 +11,31 @@ specific language governing permissions and limitations under the License.
 */
 
 import * as ActionTypes from '../constants/action-types';
+import * as PagesSelectors from '../selectors/pages';
+import { createHistoryRestoreUrl } from '../../shared/util/url-util';
 
 export default function(state, action) {
   switch (action.type) {
     case ActionTypes.OVERWRITE_APP_STATE:
-      return overwriteAppState(state, action.state);
+      return overwriteAppState(state, action.state, action.options);
 
     default:
       return state;
   }
 }
 
-function overwriteAppState(prevState, nextState) {
-  return nextState;
+function overwriteAppState(prevState, nextState, options = {}) {
+  if (!options.restoreHistory) {
+    return nextState;
+  }
+
+  return nextState.withMutations(mut => {
+    const ids = mut.getIn(['pages', 'ids']);
+    for (const pageId of ids) {
+      const history = PagesSelectors.getPageHistoryURLs(mut, pageId);
+      const historyIndex = PagesSelectors.getPageHistoryIndex(mut, pageId);
+      const restoreURL = createHistoryRestoreUrl(history, historyIndex);
+      mut.setIn(['pages', 'map', pageId, 'location'], restoreURL);
+    }
+  });
 }

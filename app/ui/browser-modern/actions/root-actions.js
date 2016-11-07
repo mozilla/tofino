@@ -19,9 +19,10 @@ export function setWindowId(windowId) {
   };
 }
 
-export function overwriteAppState(state) {
+export function overwriteAppState(state, options = {}) {
   return {
     type: ActionTypes.OVERWRITE_APP_STATE,
+    options,
     state,
   };
 }
