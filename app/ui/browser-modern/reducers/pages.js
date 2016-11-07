@@ -78,8 +78,12 @@ function createPage(state, id, location = UIConstants.HOME_PAGE, options = {
 
 function removePage(state, pageId) {
   return state.withMutations(mut => {
-    const pageCount = state.displayOrder.size;
     const pageIndex = state.displayOrder.findIndex(id => id === pageId);
+    if (pageIndex === -1) {
+      throw new Error(`Removing page ${pageId} that's not present in displayOrder.`);
+    }
+
+    const pageCount = state.displayOrder.size;
     const selectedId = state.get('selectedId');
 
     // Remove page first.
@@ -130,6 +134,10 @@ function resetPageData(state, pageId) {
 function setPageIndex(state, pageId, pageIndex) {
   return state.withMutations(mut => {
     const oldIndex = state.displayOrder.findIndex(id => id === pageId);
+    if (oldIndex === -1) {
+      // No item found: the caller made a mistake.
+      throw new Error(`Page ${pageId} not found in displayOrder. Not setting index to ${pageIndex}.`);
+    }
     mut.update('displayOrder', l => l.delete(oldIndex));
     mut.update('displayOrder', l => l.insert(pageIndex, pageId));
   });
