@@ -5,13 +5,14 @@ import expect from 'expect';
 import jsdom from 'jsdom';
 
 import { takeEvery, takeLatest } from 'redux-saga';
-import { apply, select, put } from 'redux-saga/effects';
+import { apply, select, put, call } from 'redux-saga/effects';
 import main, * as PageSagas from '../../../../app/ui/browser-modern/sagas/page-sagas';
 import * as EffectTypes from '../../../../app/ui/browser-modern/constants/effect-types';
 import * as PageActions from '../../../../app/ui/browser-modern/actions/page-actions';
 import * as PageEffects from '../../../../app/ui/browser-modern/actions/page-effects';
 import * as PageSelectors from '../../../../app/ui/browser-modern/selectors/pages';
 import * as UIEffects from '../../../../app/ui/browser-modern/actions/ui-effects';
+import * as URLUtil from '../../../../app/ui/shared/util/url-util';
 import userAgentHttpClient from '../../../../app/shared/user-agent-http-client';
 
 describe('page sagas', () => {
@@ -175,6 +176,40 @@ describe('page sagas', () => {
         selected: true,
       })));
 
+    expect(gen.next().done).toEqual(true);
+  });
+
+  it('should be able to fork a page by an offset', () => {
+    const id = 'foo';
+    const history = [
+      'http://a.com',
+      'http://b.com',
+      'http://c.com',
+    ];
+
+    const gen = PageSagas.forkPageByOffset(id, -1);
+    gen.next();
+    gen.next(true); // getPageCanGoBack
+    gen.next(1); // getPageHistoryIndex
+    gen.next(5); // getPageIndexById
+
+    const createPageSessionCall = gen.next(history).value;
+    const forkedId = createPageSessionCall.CALL.args[0].id;
+    const forkedLocation = URLUtil.createHistoryRestoreUrl(history, 0);
+
+    expect(createPageSessionCall).toEqual(
+      call(PageSagas.createPageSession, PageEffects.createPageSession({
+        location: forkedLocation,
+        id: forkedId,
+      }))
+    );
+
+    expect(gen.next().value).toEqual(
+      put(PageActions.setPageIndex(forkedId, 6))
+    );
+    expect(gen.next().value).toEqual(
+      put(PageActions.setSelectedPage(forkedId))
+    );
     expect(gen.next().done).toEqual(true);
   });
 });
