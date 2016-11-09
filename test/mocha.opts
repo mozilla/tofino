@@ -7,5 +7,4 @@
 --timeout 5000
 --compilers js:babel-core/register
 --require babel-polyfill
---require test/unit/head.js
 --require isomorphic-fetch
