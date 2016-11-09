@@ -79,7 +79,10 @@ export function* destroyPageSession({ id, options = {} }) {
 
     // If the last page was removed, dispatch an action to create another one.
     if (currentPageCount === 1) {
-      yield put(PageEffects.createPageSession({ selected: true }));
+      yield put(PageEffects.createPageSession({
+        id: options.sessionIdUsedWhenCreatingNewPage,
+        selected: true,
+      }));
     }
   }
 }

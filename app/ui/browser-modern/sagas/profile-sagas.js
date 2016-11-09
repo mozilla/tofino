@@ -29,10 +29,10 @@ export default function*() {
 }
 
 export function* fetchCompletions({ pageId, text }) {
-  const autocompletions = [{ url: text }];
+  const autocompletions = [];
   if (text) {
     const { results } = yield apply(userAgentHttpClient, userAgentHttpClient.query, [{ text }]);
-    autocompletions.push(...results);
+    autocompletions.push({ url: text }, ...results);
   }
   yield put(UIActions.setLocationAutocompletions(pageId, autocompletions));
 }

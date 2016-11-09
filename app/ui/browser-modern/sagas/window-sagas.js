@@ -31,14 +31,14 @@ export default function*() {
 // instance are, in fact, proxies which don't play nice with saga effects
 // sent to the middleware via `call` or `apply`. For ease of testing,
 // write simple wrappers around those methods.
-export const minimze = win => win.minimize();
+export const minimize = win => win.minimize();
 export const maximize = win => win.maximize();
 export const unmaximize = win => win.unmaximize();
 export const isMaximized = win => win.isMaximized();
 
 export function* minimizeWindow() {
   const win = yield apply(remote, remote.getCurrentWindow);
-  yield call(minimze, win);
+  yield call(minimize, win);
 }
 
 export function* maximizeWindow() {

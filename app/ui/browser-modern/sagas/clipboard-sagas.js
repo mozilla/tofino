@@ -23,6 +23,6 @@ export default function*() {
   );
 }
 
-function* copyTextToClipboard({ text }) {
+export function* copyTextToClipboard({ text }) {
   yield apply(clipboard, clipboard.writeText, [text]);
 }

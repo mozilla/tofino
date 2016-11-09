@@ -10,7 +10,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { call, select, put } from 'redux-saga/effects';
+import { call, apply, select, put } from 'redux-saga/effects';
 
 import { logger } from '../../../shared/logging';
 import { ipcRenderer } from '../../../shared/electron';
@@ -49,11 +49,11 @@ export default function*() {
 }
 
 export function* setSessionKey({ key, value }) {
-  ipcRenderer.send('session-set-key', key, value);
+  yield apply(ipcRenderer, ipcRenderer.send, ['session-set-key', key, value]);
 }
 
 export function* deleteSessionKey({ key }) {
-  ipcRenderer.send('session-delete-key', key);
+  yield apply(ipcRenderer, ipcRenderer.send, ['session-delete-key', key]);
 }
 
 export function* handleWillCloseWindowAction(appStateWatcher) {
