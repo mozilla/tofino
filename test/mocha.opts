@@ -2,10 +2,9 @@
 --reporter spec
 --recursive
 --check-leaks
---globals i
+--globals window,document
 --full-trace
 --timeout 5000
 --compilers js:babel-core/register
 --require babel-polyfill
---require test/unit/head.js
 --require isomorphic-fetch

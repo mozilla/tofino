@@ -10,19 +10,21 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-import { apply } from 'redux-saga/effects';
+/* eslint global-require: 0 */
+/* eslint import/no-mutable-exports: 0 */
 
-import { logger } from '../../../shared/logging';
-import { infallible, takeLatestMultiple } from '../../shared/util/saga-util';
-import { clipboard } from '../../../shared/electron';
-import * as EffectTypes from '../constants/effect-types';
+import BUILD_CONFIG from '../build-config';
 
-export default function*() {
-  yield takeLatestMultiple({ infallible, logger },
-    [EffectTypes.COPY_TEXT_TO_CLIPBOARD, copyTextToClipboard],
-  );
+let perf;
+if (BUILD_CONFIG.development) {
+  perf = require('react-addons-perf'); // eslint-disable-line
+} else {
+  perf = {
+    start() {},
+    stop() {},
+    printWasted() {},
+    getLastMeasurements() {},
+  };
 }
 
-export function* copyTextToClipboard({ text }) {
-  yield apply(clipboard, clipboard.writeText, [text]);
-}
+export default perf;

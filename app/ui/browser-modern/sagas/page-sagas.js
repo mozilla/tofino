@@ -58,10 +58,10 @@ export default function*() {
   );
 }
 
-export function* createPageSession({ id, location, options = {}, withUI }) {
-  yield apply(userAgentHttpClient, userAgentHttpClient.createSession, [id, {}]);
+export function* createPageSession({ id, location, options = {} }) {
+  yield apply(userAgentHttpClient, userAgentHttpClient.createSession, [id]);
 
-  if (withUI) {
+  if (!options.withoutUI) {
     yield put(PageActions.createPage(id, location, options));
     if (options.selected) {
       yield put(UIEffects.focusURLBar(id, { select: true }));
@@ -69,17 +69,20 @@ export function* createPageSession({ id, location, options = {}, withUI }) {
   }
 }
 
-export function* destroyPageSession({ id, withUI }) {
+export function* destroyPageSession({ id, options = {} }) {
   const page = yield select(PageSelectors.getPageById, id);
-  yield apply(userAgentHttpClient, userAgentHttpClient.destroySession, [page, {}]);
+  yield apply(userAgentHttpClient, userAgentHttpClient.destroySession, [page]);
 
-  if (withUI) {
+  if (!options.withoutUI) {
     const currentPageCount = yield select(PageSelectors.getPageCount);
     yield put(PageActions.removePage(page.id));
 
     // If the last page was removed, dispatch an action to create another one.
     if (currentPageCount === 1) {
-      yield put(PageEffects.createPageSession(undefined, { selected: true }));
+      yield put(PageEffects.createPageSession({
+        id: options.sessionIdUsedWhenCreatingNewPage,
+        selected: true,
+      }));
     }
   }
 }
@@ -97,7 +100,7 @@ function* forkPageByOffset(pageId, offset) {
   const historyURLs = yield select(PageSelectors.getPageHistoryURLs, pageId);
   const historyList = escape(JSON.stringify(historyURLs));
   const url = `${HISTORY_RESTORE_ADDR}/?history=${historyList}&historyIndex=${newHistoryIndex}`;
-  const action = PageEffects.createPageSession(url, { selected: true });
+  const action = PageEffects.createPageSession({ location: url, selected: true });
   const { id } = action;
 
   yield call(createPageSession, action);
@@ -114,7 +117,7 @@ export function* forkPageForward({ pageId }) {
 
 export function* bulkCreateStandalonePageSessions({ ids, channel }) {
   for (const id of ids) {
-    yield apply(userAgentHttpClient, userAgentHttpClient.createSession, [id, {}]);
+    yield apply(userAgentHttpClient, userAgentHttpClient.createSession, [id]);
   }
   if (channel) {
     yield put(channel, 'DONE');
@@ -124,7 +127,7 @@ export function* bulkCreateStandalonePageSessions({ ids, channel }) {
 export function* bulkDestroyStandalonePageSessions({ ids, channel }) {
   for (const id of ids) {
     const page = yield select(PageSelectors.getPageById, id);
-    yield apply(userAgentHttpClient, userAgentHttpClient.destroySession, [page, {}]);
+    yield apply(userAgentHttpClient, userAgentHttpClient.destroySession, [page]);
   }
   if (channel) {
     yield put(channel, 'DONE');

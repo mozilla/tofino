@@ -40,11 +40,21 @@ export class Watcher {
 }
 
 export const takeLatestMultiple = function({ infallible, logger }, ...patterns) {
-  return patterns.map(([p, fn, ...args]) => takeLatest(p, infallible(fn, logger), ...args));
+  const ret = patterns.map(([p, fn, ...args]) => takeLatest(p, infallible(fn, logger), ...args));
+  ret.meta = {
+    type: takeLatest,
+    patterns: patterns.map(([p, fn]) => [p, fn]),
+  };
+  return ret;
 };
 
 export const takeEveryMultiple = function({ infallible, logger }, ...patterns) {
-  return patterns.map(([p, fn, ...args]) => takeEvery(p, infallible(fn, logger), ...args));
+  const ret = patterns.map(([p, fn, ...args]) => takeEvery(p, infallible(fn, logger), ...args));
+  ret.meta = {
+    type: takeEvery,
+    patterns: patterns.map(([p, fn]) => [p, fn]),
+  };
+  return ret;
 };
 
 export const infallible = function(fn, logger) {

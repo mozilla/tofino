@@ -17,21 +17,26 @@ import * as EffectTypes from '../constants/effect-types';
 import * as PagesSelectors from '../selectors/pages';
 import PageUIState from '../model/page-ui-state';
 
-export function createPageSession(location, options, id, { withUI = true } = {}) {
+export function createPageSession({ id, location, ...options } = {}) {
   return {
     type: EffectTypes.CREATE_PAGE_SESSION,
     id: id || uuid.v4(),
     location,
     options,
-    withUI,
   };
 }
 
-export function destroyPageSession(id, { withUI = true } = {}) {
+export function destroyPageSession({ id, ...options } = {}) {
   return {
     type: EffectTypes.DESTROY_PAGE_SESSION,
     id,
-    withUI,
+    options,
+  };
+}
+
+export function destroyCurrentPageSession() {
+  return (dispatch, getState) => {
+    dispatch(destroyPageSession({ id: PagesSelectors.getSelectedPageId(getState()) }));
   };
 }
 
@@ -46,13 +51,6 @@ export function forkPageForward(pageId) {
   return {
     type: EffectTypes.FORK_PAGE_FORWARD,
     pageId,
-  };
-}
-
-
-export function destroyCurrentPageSession() {
-  return (dispatch, getState) => {
-    dispatch(destroyPageSession(PagesSelectors.getSelectedPageId(getState())));
   };
 }
 

@@ -50,7 +50,7 @@ class NotificationBar extends Component {
   }
 
   onLinkClick = () => {
-    this.props.dispatch(PageEffects.createPageSession(this.props.link));
+    this.props.dispatch(PageEffects.createPageSession({ location: this.props.link }));
   }
 
   render() {

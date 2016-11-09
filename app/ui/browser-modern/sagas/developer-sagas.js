@@ -15,29 +15,12 @@ import { call } from 'redux-saga/effects';
 import { logger } from '../../../shared/logging';
 import { infallible, takeLatestMultiple } from '../../shared/util/saga-util';
 import * as EffectTypes from '../constants/effect-types';
-import BUILD_CONFIG from '../../../build-config';
-
-/**
- * This file contains actions used only in development mode -- handling
- * measuring react performance, for example. These are stubbed out in
- * non-development mode.
- */
-let Perf;
-if (BUILD_CONFIG.development) {
-  Perf = require('react-addons-perf'); // eslint-disable-line
-} else {
-  Perf = {
-    start() {},
-    stop() {},
-    printWasted() {},
-    getLastMeasurements() {},
-  };
-}
+import Perf from '../../../shared/perf';
 
 export default function*() {
   yield takeLatestMultiple({ infallible, logger },
-    [EffectTypes.PERF_RECORD_START, perfStart, logger],
-    [EffectTypes.PERF_RECORD_STOP, perfStop, logger],
+    [EffectTypes.PERF_RECORD_START, perfStart],
+    [EffectTypes.PERF_RECORD_STOP, perfStop],
   );
 }
 

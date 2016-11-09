@@ -42,7 +42,7 @@ class Cards extends Component {
 
   handleCardClick = ({ page, event }) => {
     if (event.metaKey || event.ctrlKey) {
-      this.props.dispatch(PageEffects.createPageSession(page.location));
+      this.props.dispatch(PageEffects.createPageSession({ location: page.location }));
     } else {
       this.props.dispatch(PageActions.setSelectedPage(page.id));
     }
