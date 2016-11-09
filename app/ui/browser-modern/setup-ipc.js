@@ -60,7 +60,7 @@ export default function({ store, userAgentClient }) {
   });
 
   ipcRenderer.on('new-tab', (_, location) => {
-    store.dispatch(PageEffects.createPageSession(location, { selected: true }));
+    store.dispatch(PageEffects.createPageSession({ location, selected: true }));
   });
 
   ipcRenderer.on('close-tab', () => {
@@ -149,15 +149,15 @@ export default function({ store, userAgentClient }) {
   });
 
   ipcRenderer.on('show-stars', () => {
-    store.dispatch(PageEffects.createPageSession(ContentURLs.STARS_PAGE));
+    store.dispatch(PageEffects.createPageSession({ location: ContentURLs.STARS_PAGE }));
   });
 
   ipcRenderer.on('show-history', () => {
-    store.dispatch(PageEffects.createPageSession(ContentURLs.HISTORY_PAGE));
+    store.dispatch(PageEffects.createPageSession({ location: ContentURLs.HISTORY_PAGE }));
   });
 
   ipcRenderer.on('show-credits', () => {
-    store.dispatch(PageEffects.createPageSession(ContentURLs.CREDITS_PAGE));
+    store.dispatch(PageEffects.createPageSession({ location: ContentURLs.CREDITS_PAGE }));
   });
 
   ipcRenderer.on('capture-page', () => {

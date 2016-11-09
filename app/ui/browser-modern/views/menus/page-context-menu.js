@@ -55,7 +55,9 @@ export default class PageContextMenu {
     if (this._data.event.href) {
       menu.append(new MenuItem({
         label: 'Open Link in New Tab',
-        click: () => choice.resolve(PageEffects.createPageSession(this._data.event.href)),
+        click: () => choice.resolve(PageEffects.createPageSession({
+          location: this._data.event.href,
+        })),
       }));
 
       menu.append(new MenuItem({
@@ -77,7 +79,9 @@ export default class PageContextMenu {
 
       menu.append(new MenuItem({
         label: 'Open Image in New Tab',
-        click: () => choice.resolve(PageEffects.createPageSession(this._data.event.img)),
+        click: () => choice.resolve(PageEffects.createPageSession({
+          location: this._data.event.img,
+        })),
       }));
     }
 

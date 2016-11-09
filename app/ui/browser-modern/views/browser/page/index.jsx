@@ -58,8 +58,8 @@ class Page extends Component {
       this.props.dispatch((dispatch, getState) => {
         // Increment the index for the new page to be adjacent to this one.
         const selected = e.disposition && e.disposition === 'foreground-tab';
-        const pageIndex = PagesSelectors.getPageIndexById(getState(), this.props.pageId) + 1;
-        dispatch(PageEffects.createPageSession(e.url, { selected, index: pageIndex }));
+        const index = PagesSelectors.getPageIndexById(getState(), this.props.pageId) + 1;
+        dispatch(PageEffects.createPageSession({ location: e.url, selected, index }));
       });
     });
 

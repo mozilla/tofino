@@ -80,7 +80,7 @@ export class UserAgentHttpClient {
     throw new Error(`No session mapping for page ${page.id}.`);
   }
 
-  createSession(pageId, { scope = 0, ancestor, reason }) {
+  createSession(pageId, { scope = 0, ancestor, reason } = {}) {
     const requestPromise = this.uaRequest('/sessions/start', {
       method: 'POST',
       json: {
@@ -99,7 +99,7 @@ export class UserAgentHttpClient {
     return requestPromise;
   }
 
-  async destroySession(page, { reason }) {
+  async destroySession(page, { reason } = {}) {
     const session = await this.waitForSession(page);
     return this.uaRequest('/sessions/end', {
       method: 'POST',

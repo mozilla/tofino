@@ -88,7 +88,7 @@ class Tab extends Component {
 
   handleTabPick = e => {
     if (e.button === 1) {
-      this.props.dispatch(PageEffects.destroyPageSession(this.props.pageId));
+      this.props.dispatch(PageEffects.destroyPageSession({ id: this.props.pageId }));
     } else {
       this.props.dispatch(PageActions.setSelectedPage(this.props.pageId));
     }

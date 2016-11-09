@@ -54,7 +54,7 @@ class TabContents extends Component {
   }
 
   handleTabClose = e => {
-    this.props.dispatch(PageEffects.destroyPageSession(this.props.pageId));
+    this.props.dispatch(PageEffects.destroyPageSession({ id: this.props.pageId }));
     e.stopPropagation();
   }
 
