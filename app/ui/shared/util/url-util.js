@@ -26,6 +26,26 @@ export function createHistoryRestoreUrl(historyURLs, historyIndex) {
 }
 
 /**
+ * Takes a URL string and if it's a history restore URL
+ * with a url query param, return the parsed form of the URL.
+ * So if we have a history restore URL, like
+ * `tofino://historyrestore?url=http:\/\/mozilla.org`,
+ * just return `url` param to not display the internals of how
+ * restoration works.
+ *
+ * @param {String} url
+ * @return {String}
+ */
+export function resolveHistoryRestoreUrl(url = '') {
+  if (url.startsWith(HISTORY_RESTORE_ADDR)) {
+    // Pass in `true` as second parameter to indicate we want to parse
+    // the querystring as an object.
+    return parse(url, true).query.url || url;
+  }
+  return url;
+}
+
+/**
  * Takes a URL string and strips information to make it more
  * suitable for viewing, like stripping out common protocols
  * and subdomains.
@@ -33,7 +53,12 @@ export function createHistoryRestoreUrl(historyURLs, historyIndex) {
  * @param {String} url
  * @return {String}
  */
-export function prettyUrl(url) {
+export function prettyUrl(url = '') {
+  // Display the resolved URL if it's the history restore page.
+  if (url.startsWith(HISTORY_RESTORE_ADDR)) {
+    url = resolveHistoryRestoreUrl(url);
+  }
+
   const parsedUrl = parse(url);
 
   // Remove the protocol from being displayed if it's

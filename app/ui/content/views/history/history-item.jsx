@@ -14,6 +14,7 @@ import React, { Component } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Style from '../../../shared/style';
+import { prettyUrl, resolveHistoryRestoreUrl } from '../../../shared/util/url-util';
 
 import * as ContentPropTypes from '../../model/content-prop-types';
 import ListItem from '../../../shared/widgets/list-item';
@@ -47,16 +48,17 @@ class HistoryItem extends Component {
   }
 
   render() {
+    const { title, uri, snippet } = this.props.page;
     return (
       <ListItem className={HISTORY_ITEM_STYLE}>
         <a className={HISTORY_ANCHOR_STYLE}
-          href={this.props.page.uri}
-          title={this.props.page.title || this.props.page.uri}>
-          {this.props.page.title || this.props.page.uri}
+          href={resolveHistoryRestoreUrl(uri)}
+          title={title || prettyUrl(uri)}>
+          {title || prettyUrl(uri)}
         </a>
-        {this.props.page.snippet
+        {snippet
         ? (
-          <p>{this.props.page.snippet}</p>
+          <p>{snippet}</p>
         ) : (
           null
         )}
