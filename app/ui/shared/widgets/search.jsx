@@ -48,6 +48,13 @@ class Search extends Component {
     };
   }
 
+  componentWillUnmount() {
+    // Cancel any lingering debounced calls after the component
+    // is unmounted
+    // https://lodash.com/docs/4.16.6#debounce
+    this.handleKeyUpDebounced.cancel();
+  }
+
   set value(textContent) {
     this.input.value = textContent;
   }
