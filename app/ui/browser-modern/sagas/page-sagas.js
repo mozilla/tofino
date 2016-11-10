@@ -14,12 +14,12 @@ import assert from 'assert';
 import { call, apply, select, put } from 'redux-saga/effects';
 
 import { logger } from '../../../shared/logging';
-import { HISTORY_RESTORE_ADDR } from '../../../shared/constants/endpoints';
 import { ipcRenderer, remote } from '../../../shared/electron';
 import { infallible, takeLatestMultiple, takeEveryMultiple } from '../../shared/util/saga-util';
 import PageState from '../model/page-state';
 import PageContextMenu from '../views/menus/page-context-menu';
 import userAgentHttpClient from '../../../shared/user-agent-http-client';
+import { createHistoryRestoreUrl } from '../../shared/util/url-util';
 import * as Certificate from '../../shared/util/cert';
 import * as ContentScriptUtils from '../../shared/util/content-script-utils';
 import * as PageActions from '../actions/page-actions';
@@ -98,8 +98,7 @@ function* forkPageByOffset(pageId, offset) {
   const newHistoryIndex = historyIndex + offset;
   const currentPageIndex = yield select(PageSelectors.getPageIndexById, pageId);
   const historyURLs = yield select(PageSelectors.getPageHistoryURLs, pageId);
-  const historyList = escape(JSON.stringify(historyURLs));
-  const url = `${HISTORY_RESTORE_ADDR}/?history=${historyList}&historyIndex=${newHistoryIndex}`;
+  const url = createHistoryRestoreUrl(historyURLs, newHistoryIndex);
   const action = PageEffects.createPageSession({ location: url, selected: true });
   const { id } = action;
 

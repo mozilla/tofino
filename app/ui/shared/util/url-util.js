@@ -11,6 +11,7 @@ specific language governing permissions and limitations under the License.
 */
 
 import { parse, format } from 'url';
+import { HISTORY_RESTORE_ADDR } from '../../../shared/constants/endpoints';
 
 const PROTOCOLS_TO_HIDE = new Set([
   'http:',
@@ -18,6 +19,11 @@ const PROTOCOLS_TO_HIDE = new Set([
 ]);
 
 const WWW_SUBDOMAIN_REGEX = /^www\./;
+
+export function createHistoryRestoreUrl(historyURLs, historyIndex) {
+  const serializedHistory = escape(JSON.stringify(historyURLs));
+  return `${HISTORY_RESTORE_ADDR}/?history=${serializedHistory}&historyIndex=${historyIndex}`;
+}
 
 /**
  * Takes a URL string and strips information to make it more

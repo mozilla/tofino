@@ -113,7 +113,7 @@ export function* restoreBrowserWindowAppState({ serialized }) {
 
   // It's now safe to overwrite the app state and start watching it for changes,
   // since any other orchestrated initialization has been finished at this point.
-  yield put(RootActions.overwriteAppState(deserialized));
+  yield put(RootActions.overwriteAppState(deserialized, { restoreHistory: true }));
   yield put(SessionEffects.startSavingBrowserWindowAppState());
 }
 

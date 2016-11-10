@@ -3,7 +3,7 @@
 
 import expect from 'expect';
 
-import { prettyUrl } from '../../../app/ui/shared/util/url-util';
+import { createHistoryRestoreUrl, prettyUrl } from '../../../app/ui/shared/util/url-util';
 
 describe('prettyUrl', () => {
   it('Strips http, https protocols', () => {
@@ -15,5 +15,18 @@ describe('prettyUrl', () => {
   it('Strips only www subdomains', () => {
     expect(prettyUrl('http://www.mozilla.org/')).toBe('mozilla.org/');
     expect(prettyUrl('https://firefox.mozilla.org/')).toBe('firefox.mozilla.org/');
+  });
+});
+
+describe('createHistoryRestoreUrl', () => {
+  it('Creates a serialized form of history with a history index', () => {
+    const history = [
+      'http://a.com',
+      'http://b.com',
+      'http://c.com',
+    ];
+    expect(createHistoryRestoreUrl(history, 1)).toBe(
+      `tofino://historyrestore/?history=${escape(JSON.stringify(history))}&historyIndex=1`
+    );
   });
 });
