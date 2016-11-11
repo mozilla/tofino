@@ -19,7 +19,7 @@ import Style from '../../../../shared/style';
 import ErrorPage from './error-page';
 
 import PageState from '../../../model/page-state';
-import * as Endpoints from '../../../../../shared/constants/endpoints';
+import * as UIConstants from '../../../constants/ui';
 import * as UIActions from '../../../actions/ui-actions';
 import * as UIEffects from '../../../actions/ui-effects';
 import * as ProfileEffects from '../../../actions/profile-effects';
@@ -75,14 +75,16 @@ class Page extends Component {
       // Event fired when a page loads, after `did-start-loading`.
       // Only emitted once.
       const pageId = this.props.pageId;
-      const isTofino = e.url.startsWith(Endpoints.TOFINO_PROTOCOL);
+      const isHomePage = e.url === UIConstants.HOME_PAGE;
       const webContents = this.webview.getWebContents();
       const history = webContents.history;
       const historyIndex = webContents.getActiveIndex();
       this.props.dispatch(PageActions.setPageDetails(pageId, { location: e.url }));
       this.props.dispatch(PageActions.setLocalPageHistory(pageId, history, historyIndex));
       this.props.dispatch(UIEffects.setURLBarValue(pageId, e.url));
-      this.props.dispatch(UIEffects.focusURLBar(pageId, { select: isTofino }));
+      if (isHomePage) {
+        this.props.dispatch(UIEffects.focusURLBar(pageId, { select: true }));
+      }
     });
 
     this.webview.addEventListener('did-navigate-in-page', e => {
@@ -108,14 +110,16 @@ class Page extends Component {
       // Emitted regardless of whether or not a failure occurs.
       const title = this.webview.getTitle();
       const location = this.webview.getURL();
-      const isTofino = location.startsWith(Endpoints.TOFINO_PROTOCOL);
+      const isHomePage = location === UIConstants.HOME_PAGE;
 
       // The `page-title-set` event is not called on error pages, nor is
       // the `did-navigate` event called, so we must set these properties to
       // properly render our error pages
       this.props.dispatch(PageActions.setPageDetails(this.props.pageId, { title, location }));
       this.props.dispatch(UIEffects.setURLBarValue(this.props.pageId, location));
-      this.props.dispatch(UIEffects.focusURLBar(this.props.pageId, { select: isTofino }));
+      if (isHomePage) {
+        this.props.dispatch(UIEffects.focusURLBar(this.props.pageId, { select: true }));
+      }
 
       // If the page state is still LOADING, and we haven't hit a failure state,
       // mark this page as LOADED. The logic for setting the proper load state

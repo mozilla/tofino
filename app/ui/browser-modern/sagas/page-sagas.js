@@ -87,7 +87,7 @@ export function* destroyPageSession({ id, options = {} }) {
   }
 }
 
-function* forkPageByOffset(pageId, offset) {
+export function* forkPageByOffset(pageId, offset) {
   if (offset > 0) {
     assert((yield select(PageSelectors.getPageCanGoForward, pageId)));
   } else if (offset < 0) {
@@ -99,11 +99,12 @@ function* forkPageByOffset(pageId, offset) {
   const currentPageIndex = yield select(PageSelectors.getPageIndexById, pageId);
   const historyURLs = yield select(PageSelectors.getPageHistoryURLs, pageId);
   const url = createHistoryRestoreUrl(historyURLs, newHistoryIndex);
-  const action = PageEffects.createPageSession({ location: url, selected: true });
+  const action = PageEffects.createPageSession({ location: url });
   const { id } = action;
 
   yield call(createPageSession, action);
   yield put(PageActions.setPageIndex(id, currentPageIndex + 1));
+  yield put(PageActions.setSelectedPage(id));
 }
 
 export function* forkPageBack({ pageId }) {
