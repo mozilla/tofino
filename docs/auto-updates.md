@@ -13,3 +13,11 @@ in the background and on next startup the new version is used.
 3. Push the commit and tags to github
 4. CI will build the release assets and upload them to a release on Github
 5. Once all the assets are there publish the release on Github
+
+## Artifact Locations
+
+The latest tagged builds will be hosted in the github release that's automatically created (at https://github.com/mozilla/tofino/releases/), as well as at:
+
+* https://tofino-update-server.herokuapp.com/download/windows 
+* https://tofino-update-server.herokuapp.com/download/osx 
+* https://tofino-update-server.herokuapp.com/download/linux_64
