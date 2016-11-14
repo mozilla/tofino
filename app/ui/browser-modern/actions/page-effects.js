@@ -70,6 +70,13 @@ export function bulkDestroyStandalonePageSessions(ids, channel /* optional */) {
   };
 }
 
+export function focusWebView(pageId, doc = document) {
+  return {
+    type: EffectTypes.FOCUS_WEBVIEW,
+    webview: getWebViewForPageId(doc, pageId),
+  };
+}
+
 export function navigatePageTo(pageId, location, doc = document) {
   return {
     type: EffectTypes.NAVIGATE_PAGE_TO,
