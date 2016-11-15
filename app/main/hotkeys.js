@@ -42,6 +42,7 @@ const HOTKEYS = new Map([
   ['CmdOrCtrl+=', bw => () => bw.webContents.send('zoom-in')],
   ['CmdOrCtrl+-', bw => () => bw.webContents.send('zoom-out')],
   ['CmdOrCtrl+0', bw => () => bw.webContents.send('zoom-reset')],
+  ['CmdOrCtrl+Shift+T', bw => () => bw.webContents.send('restore-closed-tab')],
 ]);
 
 const CUSTOM_HANDLED_HOTKEYS = new Map([

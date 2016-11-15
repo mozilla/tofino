@@ -18,8 +18,10 @@ import Pages from '../model/pages';
 import PageState from '../model/page-state';
 import SSLCertificateModel from '../model/ssl-certificate';
 import PageLocalHistoryItem from '../model/page-local-history-item';
+import RestorablePage from '../model/restorable-page';
 import * as UIConstants from '../constants/ui';
 import * as ActionTypes from '../constants/action-types';
+import { createHistoryRestoreUrl } from '../../shared/util/url-util';
 
 export default function(state = new Pages(), action) {
   switch (action.type) {
@@ -53,6 +55,9 @@ export default function(state = new Pages(), action) {
     case ActionTypes.SET_LOCAL_PAGE_HISTORY:
       return setLocalPageHistory(state, action.pageId, action.history, action.historyIndex);
 
+    case ActionTypes.POP_RECENTLY_CLOSED_PAGE:
+      return popRecentlyClosedPage(state);
+
     default:
       return state;
   }
@@ -85,6 +90,20 @@ function removePage(state, pageId) {
 
     const pageCount = state.displayOrder.size;
     const selectedId = state.get('selectedId');
+
+    // Add this page to `recentlyClosed` so we can restore it via
+    // page index and history restore URL
+    const historyURLs = state.map.get(pageId).history.toJS().map(h => h.url);
+    const historyIndex = state.map.get(pageId).historyIndex;
+    const restoreURL = createHistoryRestoreUrl(historyURLs, historyIndex);
+    mut.update('recentlyClosed', l => l.push(new RestorablePage({
+      restoreURL,
+      pageIndex,
+      id: pageId,
+    })));
+    while (mut.get('recentlyClosed').size > UIConstants.CLOSED_TAB_HISTORY_COUNT) {
+      mut.update('recentlyClosed', l => l.shift());
+    }
 
     // Remove page first.
     mut.update('displayOrder', l => l.delete(pageIndex));
@@ -132,6 +151,10 @@ function resetPageData(state, pageId) {
 }
 
 function setPageIndex(state, pageId, pageIndex) {
+  if (state.ids.size < pageIndex) {
+    return state;
+  }
+
   return state.withMutations(mut => {
     const oldIndex = state.displayOrder.findIndex(id => id === pageId);
     if (oldIndex === -1) {
@@ -207,4 +230,8 @@ function setLocalPageHistory(state, pageId, history, historyIndex) {
     mut.setIn(['map', pageId, 'history'], Immutable.List(records));
     mut.setIn(['map', pageId, 'historyIndex'], historyIndex);
   });
+}
+
+function popRecentlyClosedPage(state) {
+  return state.set('recentlyClosed', state.get('recentlyClosed').pop());
 }

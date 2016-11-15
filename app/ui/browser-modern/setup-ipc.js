@@ -63,6 +63,10 @@ export default function({ store, userAgentClient }) {
     store.dispatch(PageEffects.createPageSession({ location, selected: true }));
   });
 
+  ipcRenderer.on('restore-closed-tab', () => {
+    store.dispatch(PageEffects.restoreClosedPage());
+  });
+
   ipcRenderer.on('close-tab', () => {
     const pageId = PagesSelectors.getSelectedPageId(store.getState());
     const pageIsPinned = PagesSelectors.getPagePinned(store.getState(), pageId);

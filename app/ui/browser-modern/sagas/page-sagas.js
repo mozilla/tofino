@@ -56,6 +56,7 @@ export default function*() {
     [EffectTypes.DISPLAY_WEBVIEW_CONTEXT_MENU, displayWebviewContextMenu],
     [EffectTypes.PIN_TAB, pinTab],
     [EffectTypes.UNPIN_TAB, unpinTab],
+    [EffectTypes.RESTORE_CLOSED_PAGE, restoreClosedPage],
   );
 }
 
@@ -264,4 +265,28 @@ export function* pinTab({ pageId, webContentsId }) {
 export function* unpinTab({ pageId, webContentsId }) {
   yield put(PageActions.setPageUnpinned(pageId));
   yield apply(ipcRenderer, ipcRenderer.send, ['guest-pinned-state', webContentsId, false]);
+}
+
+export function* restoreClosedPage() {
+  const closedPages = yield select(PageSelectors.getRecentlyClosedPages);
+  const lastPage = closedPages.last();
+  if (!lastPage) {
+    return;
+  }
+
+  const ancestor = lastPage.id;
+  const location = lastPage.restoreURL;
+  const pageIndex = lastPage.pageIndex;
+
+  const action = PageEffects.createPageSession({
+    location,
+    // TODO actually wire createPageSession to use ancestor
+    // Issue #1555
+    ancestor,
+  });
+
+  yield call(createPageSession, action);
+  yield put(PageActions.popRecentlyClosedPage());
+  yield put(PageActions.setPageIndex(action.id, pageIndex));
+  yield put(PageActions.setSelectedPage(action.id));
 }

@@ -51,6 +51,7 @@ describe('page sagas', () => {
         [EffectTypes.DISPLAY_WEBVIEW_CONTEXT_MENU, PageSagas.displayWebviewContextMenu],
         [EffectTypes.PIN_TAB, PageSagas.pinTab],
         [EffectTypes.UNPIN_TAB, PageSagas.unpinTab],
+        [EffectTypes.RESTORE_CLOSED_PAGE, PageSagas.restoreClosedPage],
       ],
     });
     expect(gen.next().done).toEqual(true);
