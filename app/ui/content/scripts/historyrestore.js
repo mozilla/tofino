@@ -28,6 +28,12 @@ const HISTORY_RESTORE_PAGE = 'tofino://historyrestore';
     const historyList = JSON.parse(unescape(params.history));
     const historyIndex = params.historyIndex ? Number(params.historyIndex) : historyList.length - 1;
 
+    // If we got here without any history at all, something probably went wrong,
+    // so just go to the history page so we're not in an infinite loading loop
+    if (!historyList.length || historyIndex === -1) {
+      window.location = 'tofino://history';
+    }
+
     // Push pages into `window.history`
     for (let i = 0; i < historyList.length; i++) {
       const url = getRestoreURL(historyList[i]);
