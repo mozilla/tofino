@@ -61,7 +61,9 @@ export default function*() {
 }
 
 export function* createPageSession({ id, location, options = {} }) {
-  yield apply(userAgentHttpClient, userAgentHttpClient.createSession, [id]);
+  yield apply(userAgentHttpClient, userAgentHttpClient.createSession, [id, {
+    ancestor: options.ancestor,
+  }]);
 
   if (!options.withoutUI) {
     yield put(PageActions.createPage(id, location, options));
@@ -77,6 +79,9 @@ export function* destroyPageSession({ id, options = {} }) {
 
   if (!options.withoutUI) {
     const currentPageCount = yield select(PageSelectors.getPageCount);
+    const sessionId = yield apply(userAgentHttpClient, userAgentHttpClient.waitForSession, [page]);
+
+    yield put(PageActions.saveRestorablePage(page.id, sessionId));
     yield put(PageActions.removePage(page.id));
 
     // If the last page was removed, dispatch an action to create another one.
@@ -96,12 +101,16 @@ export function* forkPageByOffset(pageId, offset) {
     assert((yield select(PageSelectors.getPageCanGoBack, pageId)));
   }
 
+  const sessionId = yield apply(userAgentHttpClient, userAgentHttpClient.waitForSession, [pageId]);
   const historyIndex = yield select(PageSelectors.getPageHistoryIndex, pageId);
   const newHistoryIndex = historyIndex + offset;
   const currentPageIndex = yield select(PageSelectors.getPageIndexById, pageId);
   const historyURLs = yield select(PageSelectors.getPageHistoryURLs, pageId);
   const url = createHistoryRestoreUrl(historyURLs, newHistoryIndex);
-  const action = PageEffects.createPageSession({ location: url });
+  const action = PageEffects.createPageSession({
+    location: url,
+    ancestor: sessionId,
+  });
   const { id } = action;
 
   yield call(createPageSession, action);
@@ -280,8 +289,6 @@ export function* restoreClosedPage() {
 
   const action = PageEffects.createPageSession({
     location,
-    // TODO actually wire createPageSession to use ancestor
-    // Issue #1555
     ancestor,
   });
 

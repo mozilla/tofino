@@ -180,3 +180,11 @@ export function popRecentlyClosedPage() {
     type: ActionTypes.POP_RECENTLY_CLOSED_PAGE,
   };
 }
+
+export function saveRestorablePage(pageId, sessionId) {
+  return {
+    type: ActionTypes.SAVE_RESTORABLE_PAGE,
+    pageId,
+    sessionId,
+  };
+}

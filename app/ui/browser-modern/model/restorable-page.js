@@ -19,7 +19,7 @@ const VERSION = 1;
 const RestorablePage = register(Immutable.Record({
   restoreURL: '',
   pageIndex: -1,
-  id: '',
+  id: -1, // Session ID
 }, `RestorablePage_v${VERSION}`));
 
 export default RestorablePage;
