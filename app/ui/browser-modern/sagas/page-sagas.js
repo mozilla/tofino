@@ -40,7 +40,8 @@ export default function*() {
     [EffectTypes.GET_CERTIFICATE_ERROR, getCertificateError],
   );
   yield takeLatestMultiple({ infallible, logger },
-    [EffectTypes.NAVIGATE_PAGE_TO, naviatePageTo],
+    [EffectTypes.FOCUS_WEBVIEW, focusWebView],
+    [EffectTypes.NAVIGATE_PAGE_TO, navigatePageTo],
     [EffectTypes.NAVIGATE_PAGE_BACK, navigatePageBack],
     [EffectTypes.NAVIGATE_PAGE_FORWARD, navigatePageForward],
     [EffectTypes.NAVIGATE_PAGE_REFRESH, navigatePageRefresh],
@@ -134,7 +135,11 @@ export function* bulkDestroyStandalonePageSessions({ ids, channel }) {
   }
 }
 
-export function* naviatePageTo({ pageId, webview, location }) {
+export function* focusWebView({ webview }) {
+  yield apply(webview, webview.focus);
+}
+
+export function* navigatePageTo({ pageId, webview, location }) {
   yield put(PageActions.resetPageData(pageId));
   yield put(PageActions.setPageState(pageId, {
     load: PageState.STATES.CONNECTING,

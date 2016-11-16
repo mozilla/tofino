@@ -84,6 +84,7 @@ class Location extends Component {
   handleAutocompletionPick = ({ data }) => {
     const location = LocationUtil.fixURL(data.url);
     this.props.dispatch(PageEffects.navigatePageTo(this.props.pageId, location));
+    this.props.dispatch(PageEffects.focusWebView(this.props.pageId));
   }
 
   render() {

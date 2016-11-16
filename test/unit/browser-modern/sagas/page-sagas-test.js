@@ -35,7 +35,8 @@ describe('page sagas', () => {
     expect(gen.next().value.meta).toEqual({
       type: takeLatest,
       patterns: [
-        [EffectTypes.NAVIGATE_PAGE_TO, PageSagas.naviatePageTo],
+        [EffectTypes.FOCUS_WEBVIEW, PageSagas.focusWebView],
+        [EffectTypes.NAVIGATE_PAGE_TO, PageSagas.navigatePageTo],
         [EffectTypes.NAVIGATE_PAGE_BACK, PageSagas.navigatePageBack],
         [EffectTypes.NAVIGATE_PAGE_FORWARD, PageSagas.navigatePageForward],
         [EffectTypes.NAVIGATE_PAGE_REFRESH, PageSagas.navigatePageRefresh],
@@ -210,6 +211,22 @@ describe('page sagas', () => {
     expect(gen.next().value).toEqual(
       put(PageActions.setSelectedPage(forkedId))
     );
+    expect(gen.next().done).toEqual(true);
+  });
+
+  it('should focus a webview', () => {
+    const window = jsdom.jsdom(`
+      <div id="browser-page-foo">
+        <div>
+          <webview>
+        </div>
+      </div>
+    `).defaultView;
+
+    const webview = window.document.querySelector('webview');
+    const gen = PageSagas.focusWebView({ webview });
+
+    expect(gen.next().value).toEqual(apply(webview, webview.focus));
     expect(gen.next().done).toEqual(true);
   });
 });
