@@ -38,4 +38,5 @@ export default register(Immutable.Record({
   ids: Immutable.OrderedSet(),
   displayOrder: Immutable.List(),
   selectedId: '',
+  recentlyClosed: Immutable.List(),
 }, `Pages_v${VERSION}`));

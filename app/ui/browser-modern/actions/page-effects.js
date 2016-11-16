@@ -338,3 +338,9 @@ export function setPageUnpinned(pageId, doc = document) {
     pageId,
   };
 }
+
+export function restoreClosedPage() {
+  return {
+    type: EffectTypes.RESTORE_CLOSED_PAGE,
+  };
+}

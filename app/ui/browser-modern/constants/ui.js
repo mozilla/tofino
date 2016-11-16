@@ -15,6 +15,9 @@ import * as ContentURLs from '../../../shared/constants/content-pages-locations'
 // Default location settings.
 export const HOME_PAGE = ContentURLs.HISTORY_PAGE;
 
+// Closed Tab History
+export const CLOSED_TAB_HISTORY_COUNT = 5;
+
 // Tabbar dimensions.
 export const TABBAR_HEIGHT = 39; // px
 export const TAB_DEFAULT_WIDTH = 240; // px

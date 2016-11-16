@@ -73,6 +73,7 @@ export const PIN_TAB = 'PIN_TAB_EFFECT';
 export const UNPIN_TAB = 'UNPIN_TAB_EFFECT';
 export const FORK_PAGE_BACK = 'FORK_PAGE_BACK_EFFECT';
 export const FORK_PAGE_FORWARD = 'FORK_PAGE_FORWARD_EFFECT';
+export const RESTORE_CLOSED_PAGE = 'RESTORE_CLOSED_PAGE_EFFECT';
 
 // UI effects
 

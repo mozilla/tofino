@@ -174,3 +174,9 @@ export function setLocalPageHistory(pageId, history, historyIndex) {
     historyIndex,
   };
 }
+
+export function popRecentlyClosedPage() {
+  return {
+    type: ActionTypes.POP_RECENTLY_CLOSED_PAGE,
+  };
+}

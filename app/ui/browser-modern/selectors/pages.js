@@ -28,6 +28,10 @@ export function getPageCount(state) {
   return getPageIdsInDisplayOrder(state).size;
 }
 
+export function getRecentlyClosedPages(state) {
+  return state.pages.recentlyClosed;
+}
+
 // You might just want to use `getPageIdsInDisplayOrder` instead, unless you need
 // access to the entire page models themselves (not just a handful of props).
 export function getPages(state) {
