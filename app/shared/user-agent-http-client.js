@@ -13,6 +13,7 @@
 /* global fetch */
 import 'isomorphic-fetch';
 import * as endpoints from './constants/endpoints';
+import * as UUIDUtil from './uuid-util';
 
 export class UserAgentHttpClient {
   constructor({ version, host, port }) {
@@ -73,6 +74,9 @@ export class UserAgentHttpClient {
       // does not have its own sessionId, we probably hit a race condition,
       // so wait until the page has its sessionId by listening for this promise.
       return this.PAGE_TO_SESSION.get(page.id);
+    } else if (UUIDUtil.isUUID(page) && this.PAGE_TO_SESSION.has(page)) {
+      // Also allow passing in the pageId itself
+      return this.PAGE_TO_SESSION.get(page);
     }
 
     // If we have neither promise nor sessionId, then something

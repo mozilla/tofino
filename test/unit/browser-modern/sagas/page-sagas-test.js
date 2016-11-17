@@ -66,7 +66,9 @@ describe('page sagas', () => {
     };
     const gen = PageSagas.createPageSession(payload);
     expect(gen.next().value).toEqual(
-      apply(userAgentHttpClient, userAgentHttpClient.createSession, [payload.id]));
+      apply(userAgentHttpClient, userAgentHttpClient.createSession, [payload.id, {
+        ancestor: undefined,
+      }]));
 
     expect(gen.next().done).toEqual(true);
   });
@@ -80,7 +82,9 @@ describe('page sagas', () => {
     };
     const gen = PageSagas.createPageSession(payload);
     expect(gen.next().value).toEqual(
-      apply(userAgentHttpClient, userAgentHttpClient.createSession, [payload.id]));
+      apply(userAgentHttpClient, userAgentHttpClient.createSession, [payload.id, {
+        ancestor: undefined,
+      }]));
     expect(gen.next().value).toEqual(
       put(PageActions.createPage(payload.id, payload.location, payload.options)));
 
@@ -100,7 +104,9 @@ describe('page sagas', () => {
     };
     const gen = PageSagas.createPageSession(payload);
     expect(gen.next().value).toEqual(
-      apply(userAgentHttpClient, userAgentHttpClient.createSession, [payload.id]));
+      apply(userAgentHttpClient, userAgentHttpClient.createSession, [payload.id, {
+        ancestor: undefined,
+      }]));
     expect(gen.next().value).toEqual(
       put(PageActions.createPage(payload.id, payload.location, payload.options)));
     expect(gen.next().value).toEqual(
@@ -130,6 +136,7 @@ describe('page sagas', () => {
   });
 
   it('should be able to destroy a page session with UI', () => {
+    const sessionId = 100;
     const payload = {
       id: 'foo',
       options: {
@@ -147,12 +154,17 @@ describe('page sagas', () => {
     expect(gen.next().value).toEqual(
       select(PageSelectors.getPageCount));
     expect(gen.next(currentPageCount).value).toEqual(
+      apply(userAgentHttpClient, userAgentHttpClient.waitForSession, [page]));
+    expect(gen.next(sessionId).value).toEqual(
+      put(PageActions.saveRestorablePage(page.id, sessionId)));
+    expect(gen.next().value).toEqual(
       put(PageActions.removePage(page.id)));
 
     expect(gen.next().done).toEqual(true);
   });
 
   it('should be able to destroy a page session with UI and create a new one when there\'s no pages remaining', () => {
+    const sessionId = 100;
     const payload = {
       id: 'foo',
       options: {
@@ -171,6 +183,10 @@ describe('page sagas', () => {
     expect(gen.next().value).toEqual(
       select(PageSelectors.getPageCount));
     expect(gen.next(currentPageCount).value).toEqual(
+      apply(userAgentHttpClient, userAgentHttpClient.waitForSession, [page]));
+    expect(gen.next(sessionId).value).toEqual(
+      put(PageActions.saveRestorablePage(page.id, sessionId)));
+    expect(gen.next().value).toEqual(
       put(PageActions.removePage(page.id)));
     expect(gen.next(currentPageCount).value).toEqual(
       put(PageEffects.createPageSession({
@@ -182,6 +198,7 @@ describe('page sagas', () => {
   });
 
   it('should be able to fork a page by an offset', () => {
+    const sessionId = 100;
     const id = 'foo';
     const history = [
       'http://a.com',
@@ -192,6 +209,7 @@ describe('page sagas', () => {
     const gen = PageSagas.forkPageByOffset(id, -1);
     gen.next();
     gen.next(true); // getPageCanGoBack
+    gen.next(sessionId); // userAgentHttpClient.waitForSession
     gen.next(1); // getPageHistoryIndex
     gen.next(5); // getPageIndexById
 
@@ -203,6 +221,7 @@ describe('page sagas', () => {
       call(PageSagas.createPageSession, PageEffects.createPageSession({
         location: forkedLocation,
         id: forkedId,
+        ancestor: sessionId,
       }))
     );
 

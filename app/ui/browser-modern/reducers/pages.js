@@ -58,6 +58,9 @@ export default function(state = new Pages(), action) {
     case ActionTypes.POP_RECENTLY_CLOSED_PAGE:
       return popRecentlyClosedPage(state);
 
+    case ActionTypes.SAVE_RESTORABLE_PAGE:
+      return saveRestorablePage(state, action.pageId, action.sessionId);
+
     default:
       return state;
   }
@@ -90,20 +93,6 @@ function removePage(state, pageId) {
 
     const pageCount = state.displayOrder.size;
     const selectedId = state.get('selectedId');
-
-    // Add this page to `recentlyClosed` so we can restore it via
-    // page index and history restore URL
-    const historyURLs = state.map.get(pageId).history.toJS().map(h => h.url);
-    const historyIndex = state.map.get(pageId).historyIndex;
-    const restoreURL = createHistoryRestoreUrl(historyURLs, historyIndex);
-    mut.update('recentlyClosed', l => l.push(new RestorablePage({
-      restoreURL,
-      pageIndex,
-      id: pageId,
-    })));
-    while (mut.get('recentlyClosed').size > UIConstants.CLOSED_TAB_HISTORY_COUNT) {
-      mut.update('recentlyClosed', l => l.shift());
-    }
 
     // Remove page first.
     mut.update('displayOrder', l => l.delete(pageIndex));
@@ -234,4 +223,27 @@ function setLocalPageHistory(state, pageId, history, historyIndex) {
 
 function popRecentlyClosedPage(state) {
   return state.set('recentlyClosed', state.get('recentlyClosed').pop());
+}
+
+function saveRestorablePage(state, pageId, sessionId) {
+  const pageIndex = state.displayOrder.findIndex(id => id === pageId);
+  if (pageIndex === -1) {
+    throw new Error(`Saving restorable page ${pageId} that's not present in displayOrder.`);
+  }
+
+  return state.withMutations(mut => {
+    // Add this page to `recentlyClosed` so we can restore it via
+    // page index and history restore URL
+    const historyURLs = state.map.get(pageId).history.toJS().map(h => h.url);
+    const historyIndex = state.map.get(pageId).historyIndex;
+    const restoreURL = createHistoryRestoreUrl(historyURLs, historyIndex);
+    mut.update('recentlyClosed', l => l.push(new RestorablePage({
+      restoreURL,
+      pageIndex,
+      id: sessionId,
+    })));
+    while (mut.get('recentlyClosed').size > UIConstants.CLOSED_TAB_HISTORY_COUNT) {
+      mut.update('recentlyClosed', l => l.shift());
+    }
+  });
 }
