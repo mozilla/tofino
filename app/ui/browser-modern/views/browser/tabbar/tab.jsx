@@ -13,6 +13,7 @@ specific language governing permissions and limitations under the License.
 import React, { Component, PropTypes } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
+import { DragSource, DropTarget } from 'react-dnd';
 
 import Style from '../../../../shared/style';
 import TabPointerArea from './tab-pointer-area';
@@ -24,6 +25,8 @@ import * as UISelectors from '../../../selectors/ui';
 import * as PagesSelectors from '../../../selectors/pages';
 import * as PageActions from '../../../actions/page-actions';
 import * as PageEffects from '../../../actions/page-effects';
+
+const DRAG_DROP_TYPE = 'TAB';
 
 const TAB_STYLE = Style.registerStyle({
   // Due to its visual elements, this component's bounds are much larger than
@@ -103,7 +106,11 @@ class Tab extends Component {
   }
 
   render() {
-    return (
+    const {
+      connectDropTarget = _ => _,
+      connectDragSource = _ => _,
+    } = this.props;
+    return connectDropTarget(connectDragSource(
       <div className={`browser-tab ${TAB_STYLE}`}
         ref={e => this.root = e}
         data-mounted={this.state.mounted}
@@ -117,7 +124,7 @@ class Tab extends Component {
           onDoubleClick={this.handleTabDoubleClick} />
         <TabVisuals />
       </div>
-    );
+    ));
   }
 }
 
@@ -130,6 +137,45 @@ Tab.propTypes = {
   isActive: PropTypes.bool.isRequired,
   isBeforeActive: PropTypes.bool.isRequired,
   isAfterActive: PropTypes.bool.isRequired,
+  connectDropTarget: PropTypes.func,
+  connectDragSource: PropTypes.func,
+};
+
+// react-dnd integration:
+// Don't handle 'drop' events, we simply change tab ordering when a drag
+// enters another tab (the `hover` callback).
+// We can set the page index of the tab being dragged, and the reducer
+// will handle resetting all of the other page indices appropriately.
+function dropProperties(connector) {
+  return {
+    connectDropTarget: connector.dropTarget(),
+  };
+}
+
+function dragProperties(connector) {
+  return {
+    connectDragSource: connector.dragSource(),
+  };
+}
+
+const dropTarget = {
+  hover: (props, monitor) => {
+    const draggedPageId = monitor.getItem().pageId;
+    const targetPageId = props.pageId;
+    const targetPageIndex = props.pageIndex;
+    if (targetPageId !== draggedPageId) {
+      props.dispatch(PageActions.setPageIndex(draggedPageId, targetPageIndex));
+    }
+  },
+};
+
+const dragSource = {
+  beginDrag(props) {
+    return {
+      pageId: props.pageId,
+      pageIndex: props.pageIndex,
+    };
+  },
 };
 
 function mapStateToProps(state, ownProps) {
@@ -142,6 +188,7 @@ function mapStateToProps(state, ownProps) {
   const isOverviewVisible = UISelectors.getOverviewVisible(state);
 
   return {
+    pageIndex,
     isPinned: pageIsPinned,
     isActive: !isOverviewVisible && selectedPageId === ownProps.pageId,
     isBeforeActive: !isOverviewVisible && selectedPageIndex === pageIndex + 1,
@@ -149,4 +196,11 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps)(Tab);
+/* eslint-disable new-cap */
+export default connect(mapStateToProps)(
+  DropTarget(DRAG_DROP_TYPE, dropTarget, dropProperties)(
+    DragSource(DRAG_DROP_TYPE, dragSource, dragProperties)(
+      Tab
+    )
+  )
+);
