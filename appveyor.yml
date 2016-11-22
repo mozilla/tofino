@@ -27,6 +27,9 @@ install:
   - npm prune
   - npm install --progress false --depth 0
   - npm install --progress false --depth 0
+  - cd app
+  - npm dedupe
+  - cd ..
 
 build: off
 
