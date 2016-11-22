@@ -15,6 +15,9 @@ export default {
   // using unoptimized, unminified content and other things like that.
   development: false,
 
+  // Whether to offer to set Tofino as the default browser.
+  offerDefault: false,
+
   // The `packaged` flag indicates whether or not the build
   // is a distributed, standalone exexcutable or not.
   packaged: false,

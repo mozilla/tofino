@@ -101,20 +101,20 @@ const Tasks = {
   async test(args = []) {
     // When testing locally, just use whatever build already existed,
     // regardless of whether it's production or development.
-    const { development } = safeGetBuildConfig();
+    const { development, offerDefault } = safeGetBuildConfig();
     logger.info(`Attempting to use existing ${development ? 'dev' : 'production'} build...`);
-    await this.build({ development });
+    await this.build({ development, offerDefault });
     await Lazy.test(args);
   },
 
   async testCI(args = []) {
     // These tests run on the CI server.
     logger.info('Making a development build...');
-    await this.build({ development: true });
+    await this.build({ development: true, offerDefault: false });
     await Lazy.test(args);
 
     logger.info('Making a production build...');
-    await this.build();
+    await this.build({ offerDefault: false });
     await Lazy.test(args);
   },
 
@@ -122,7 +122,7 @@ const Tasks = {
     // XXX: All builds (including packaged) currently start their own
     // Content service. In the future, we should consider hosting
     // these somewhere else other than the user's own machine.
-    await this.build({ packaged: true });
+    await this.build({ packaged: true, offerDefault: true });
     await Lazy.clean();
     await Lazy.package();
   },
