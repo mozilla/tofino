@@ -67,7 +67,7 @@ const Tasks = {
 
   async serve() {
     // Make sure we'll run in development mode to enable logging.
-    await Lazy.config({ development: true });
+    await Lazy.config({ development: true, offerDefault: false });
 
     // Check if the `lib` directory exists. If it doesn't, need to rebuild.
     if (!(await buildDirectoryExists())) {
@@ -93,7 +93,7 @@ const Tasks = {
   },
 
   async runDev(args = []) {
-    const builders = await this.build({ development: true }, { watch: true });
+    const builders = await this.build({ development: true, offerDefault: false }, { watch: true });
     await Lazy.run(args);
     await Promise.all(builders.map(w => w.close()));
   },
@@ -110,11 +110,11 @@ const Tasks = {
   async testCI(args = []) {
     // These tests run on the CI server.
     logger.info('Making a development build...');
-    await this.build({ development: true });
+    await this.build({ development: true, offerDefault: false });
     await Lazy.test(args);
 
     logger.info('Making a production build...');
-    await this.build();
+    await this.build({ offerDefault: false });
     await Lazy.test(args);
   },
 

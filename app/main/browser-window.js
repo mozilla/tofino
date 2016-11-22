@@ -110,10 +110,10 @@ export async function createBrowserWindow({ windowId, appState } = {}) {
   });
 
   // Only check and send the set default browser message if this is the first
-  // window opened, we're in a packaged build, on OSX (for now), and this isn't
-  // already the default browser.
+  // window opened, we're in a build that offers (~= non-development), running
+  // on OSX (for now), and this isn't already the default browser.
   const shouldAskToSetDefaultBrowser = browserWindows.length === 0 &&
-                                       !BUILD_CONFIG.development &&
+                                       BUILD_CONFIG.offerDefault &&
                                        BUILD_CONFIG.platform === 'darwin' &&
                                        !protocols.isDefaultBrowser();
 
@@ -133,7 +133,7 @@ export async function createBrowserWindow({ windowId, appState } = {}) {
       browser.openDevTools({ detach: true });
     }
 
-    // If Tofino is not the default browser
+    // If Tofino is not the default browser, offer.
     if (shouldAskToSetDefaultBrowser) {
       browser.webContents.send('should-set-default-browser');
     }
