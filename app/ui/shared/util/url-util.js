@@ -25,6 +25,10 @@ export function createHistoryRestoreUrl(historyURLs, historyIndex) {
   return `${HISTORY_RESTORE_ADDR}/?history=${serializedHistory}&historyIndex=${historyIndex}`;
 }
 
+export function isHistoryRestoreUrl(url = '') {
+  return url.startsWith(HISTORY_RESTORE_ADDR);
+}
+
 /**
  * Takes a URL string and if it's a history restore URL
  * with a url query param, return the parsed form of the URL.
@@ -37,7 +41,7 @@ export function createHistoryRestoreUrl(historyURLs, historyIndex) {
  * @return {String}
  */
 export function resolveHistoryRestoreUrl(url = '') {
-  if (url.startsWith(HISTORY_RESTORE_ADDR)) {
+  if (isHistoryRestoreUrl(url)) {
     // Pass in `true` as second parameter to indicate we want to parse
     // the querystring as an object.
     return parse(url, true).query.url || url;
@@ -55,7 +59,7 @@ export function resolveHistoryRestoreUrl(url = '') {
  */
 export function prettyUrl(url = '') {
   // Display the resolved URL if it's the history restore page.
-  if (url.startsWith(HISTORY_RESTORE_ADDR)) {
+  if (isHistoryRestoreUrl(url)) {
     url = resolveHistoryRestoreUrl(url);
   }
 

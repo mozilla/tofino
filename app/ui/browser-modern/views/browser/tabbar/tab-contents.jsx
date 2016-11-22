@@ -127,8 +127,9 @@ TabContents.propTypes = {
 function mapStateToProps(state, ownProps) {
   const page = PagesSelectors.getPageById(state, ownProps.pageId);
   const pageIsPinned = PagesSelectors.getPagePinned(state, ownProps.pageId);
+
   return {
-    tabTitle: page.title || page.meta.title || page.location || 'Loading...',
+    tabTitle: page.getTabTitle(),
     isPinned: pageIsPinned,
     pageLocation: page.location,
     pageFavicon: page.faviconUrl,
