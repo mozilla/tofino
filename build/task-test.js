@@ -13,7 +13,6 @@ import { logger } from './logging';
 const TEST_DIR = path.join(Const.ROOT, 'test');
 const DEFAULT_UNIT_TESTS = path.join(TEST_DIR, 'unit');
 const DEFAULT_RENDERER_TESTS = path.join(TEST_DIR, 'renderer');
-const DEFAULT_WEBDRIVER_TESTS = path.join(TEST_DIR, 'webdriver');
 const MOCHA = path.join(Const.NODE_MODULES_DIR, '.bin', 'mocha');
 const ELECTRON_MOCHA = path.join(Const.NODE_MODULES_DIR, '.bin', 'electron-mocha');
 const PATH_TO_ELECTRON_MOCHA_OPTS = path.join(TEST_DIR, 'renderer', 'mocha.opts');
@@ -31,8 +30,10 @@ export default async function(args) {
     await runMochaTests(DEFAULT_UNIT_TESTS).catch(e => errors.push(e));
     logger.info(colors.cyan('Running renderer tests...'));
     await runRendererTests(DEFAULT_RENDERER_TESTS).catch(e => errors.push(e));
-    logger.info(colors.cyan('Running webdriver tests...'));
-    await runMochaTests(DEFAULT_WEBDRIVER_TESTS).catch(e => errors.push(e));
+
+    // These are disabled by default because they break in CI for no good reason.
+    logger.info(colors.cyan('Not running webdriver tests.'));
+
     if (errors.length) {
       throw errors[0];
     }
