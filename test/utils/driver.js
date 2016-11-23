@@ -23,12 +23,12 @@ const WEBDRIVER_TIMEOUT_IN_MS = 10000;
 // This is the timeout for webdriver to start up. Default is 5000.
 // Sometimes this is not long enough, and not sure what we can even
 // do to make this go faster.
-const WEBDRIVER_START_TIMEOUT_IN_MS = 10000;
+const WEBDRIVER_START_TIMEOUT_IN_MS = 40000;
 
 const Driver = {
 
   // Timeout used by test suites: `this.timeout(Driver.TEST_TIMEOUT_IN_MS)`
-  TEST_TIMEOUT_IN_MS: 60000,
+  TEST_TIMEOUT_IN_MS: 180000,
 
   app: null,
   fixturesURL: null,
