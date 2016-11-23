@@ -38,6 +38,7 @@ const Driver = {
     expect(this.app).toBe(null, 'Attempting to start an already activated Electron instance');
 
     const server = startFixtureServer();
+    expect(server).toNotEqual(null);
 
     this.app = new Application({
       path: getElectronPath(),
