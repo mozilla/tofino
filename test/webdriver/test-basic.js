@@ -9,9 +9,11 @@ import BUILD_CONFIG from '../../app/build-config';
 // import { HOME_PAGE } from '../../app/ui/browser-modern/constants/ui';
 
 describe('application launch', function() {
-  if (BUILD_CONFIG.development) {
+  if (BUILD_CONFIG.development || BUILD_CONFIG.offerDefault) {
     // Skip test on development builds, since app.client returns the devtools
     // window instead of the browser window, so all our checks are bogus.
+    // Also skip if we're going to show the default browser prompt: it
+    // causes us to fail to detect the creation of the window.
     return;
   }
 
