@@ -67,7 +67,7 @@ const Tasks = {
 
   async serve() {
     // Make sure we'll run in development mode to enable logging.
-    await Lazy.config({ development: true, offerDefault: false });
+    await Lazy.config({ development: true });
 
     // Check if the `lib` directory exists. If it doesn't, need to rebuild.
     if (!(await buildDirectoryExists())) {
@@ -93,7 +93,7 @@ const Tasks = {
   },
 
   async runDev(args = []) {
-    const builders = await this.build({ development: true, offerDefault: false }, { watch: true });
+    const builders = await this.build({ development: true }, { watch: true });
     await Lazy.run(args);
     await Promise.all(builders.map(w => w.close()));
   },
@@ -101,9 +101,9 @@ const Tasks = {
   async test(args = []) {
     // When testing locally, just use whatever build already existed,
     // regardless of whether it's production or development.
-    const { development } = safeGetBuildConfig();
+    const { development, offerDefault } = safeGetBuildConfig();
     logger.info(`Attempting to use existing ${development ? 'dev' : 'production'} build...`);
-    await this.build({ development });
+    await this.build({ development, offerDefault });
     await Lazy.test(args);
   },
 
@@ -122,7 +122,7 @@ const Tasks = {
     // XXX: All builds (including packaged) currently start their own
     // Content service. In the future, we should consider hosting
     // these somewhere else other than the user's own machine.
-    await this.build({ packaged: true });
+    await this.build({ packaged: true, offerDefault: true });
     await Lazy.clean();
     await Lazy.package();
   },
