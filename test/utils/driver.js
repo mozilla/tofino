@@ -46,6 +46,7 @@ const Driver = {
       env: process.env,
       startTimeout: WEBDRIVER_START_TIMEOUT_IN_MS,
       waitTimeout: WEBDRIVER_TIMEOUT_IN_MS,
+      chromeDriverLogPath: '/tmp/chromeDriver' + Date.now() + '.log',
     });
 
     // app.start() can take up to 30s on Appveyor Windows builds
