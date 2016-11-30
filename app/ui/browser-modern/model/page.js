@@ -18,8 +18,10 @@ import { logger } from '../../../shared/logging';
 import PageMeta from './page-meta';
 import PageState from './page-state';
 import PageUIState from './page-ui-state';
+import { isHistoryRestoreUrl } from '../../shared/util/url-util';
 
 const VERSION = 1;
+const LOADING_TITLE = 'Loading…';
 
 export default class Page extends register(Immutable.Record({
   id: '',
@@ -31,6 +33,12 @@ export default class Page extends register(Immutable.Record({
   uiState: new PageUIState(),
   history: Immutable.List(),
   historyIndex: -1,
+  getTabTitle() {
+    if (isHistoryRestoreUrl(this.location)) {
+      return LOADING_TITLE;
+    }
+    return this.title || this.meta.title || this.location || LOADING_TITLE;
+  },
 }, `Page_v${VERSION}`)) {
   constructor(data) {
     if (!data || !data.id) {
