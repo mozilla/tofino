@@ -75,10 +75,10 @@ And if someone takes issue with something you said or did, resist the urge to
 be defensive. Just stop doing what it was they complained about and apologize.
 Even if you feel you were misinterpreted or unfairly accused, chances are good
 there was something you could've communicated better — remember that it's your
-responsibility to make your fellow Project Tofino community members comfortable.
-Everyone wants to get along and we are all here first and foremost because we
-want to talk about cool technology. You will find that people will be eager to
-assume good intent and forgive as long as you earn their trust.
+responsibility to make your fellow Project Tofino community members
+comfortable. Everyone wants to get along and we are all here first and foremost
+because we want to talk about cool technology. You will find that people will
+be eager to assume good intent and forgive as long as you earn their trust.
 
 The enforcement policies listed above apply to all official Project Tofino
 venues. For other projects adopting the Project Tofino Code of Conduct, please

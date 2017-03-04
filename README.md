@@ -7,27 +7,27 @@
 
 Project Tofino is a browser interaction experiment.
 
-The kinds of things we use browsers for on PCs and mobile devices are
-different than they were when the current "tabs across the top" browsers were
-designed.  We believe we can do a lot better by focusing on the tasks and
-activities users engage browsers for. Project Tofino is one of our
-explorations.
+The kinds of things we use browsers for on PCs and mobile devices are different
+than they were when the current "tabs across the top" browsers were designed.
+We believe we can do a lot better by focusing on the tasks and activities users
+engage browsers for. Project Tofino is one of our explorations.
 
-This project is extremely immature.  It's currently at the "OK, lets throw
-some stuff together to see what happens" stage. Please adjust your
-expectations accordingly.  The tools we're using are not a statement on
-the set of technologies we'll use to build a final product if these ideas
-pan out.  We're looking for the quickest way to build the experiments we
-want, not a long-term technical strategy.
+This project is extremely immature. It's currently at the "OK, lets throw some
+stuff together to see what happens" stage. Please adjust your expectations
+accordingly. The tools we're using are not a statement on the set of
+technologies we'll use to build a final product if these ideas pan out. We're
+looking for the quickest way to build the experiments we want, not a long-term
+technical strategy.
 
-If you like a wild ride and you've got another browser for real work, we'd
-love to have your comments on what works and what doesn't.  But right now
-the "what works" list is a lot shorter than the "what doesn't" list, so maybe
-check back in a few weeks when there's more to look at.
+If you like a wild ride and you've got another browser for real work, we'd love
+to have your comments on what works and what doesn't. But right now the "what
+works" list is a lot shorter than the "what doesn't" list, so maybe check back
+in a few weeks when there's more to look at.
 
 We blog here: https://medium.com/project-tofino
 
-We hang out on Slack here: https://project-tofino.slack.com (you can get an invite at http://tofino-slack-invite.mozilla.io)
+We hang out on Slack here: https://project-tofino.slack.com (you can get an
+invite at http://tofino-slack-invite.mozilla.io)
 
 ## Downloads
 
@@ -39,20 +39,24 @@ We hang out on Slack here: https://project-tofino.slack.com (you can get an invi
 
 ## Build
 
-Documentation for building can be found in [docs/building.md](/docs/building.md).
+Documentation for building is found in [docs/building.md](/docs/building.md).
 
 ## Developing
 
-* `npm start` - Runs the build in `production` mode. Should be similar to a packaged build.
-* `npm run dev` - Runs the build in `development` mode with hot module reloading.
+* `npm start` - Runs the build in `production` mode. Should be similar to a
+packaged build.
+* `npm run dev` - Runs the build in `development` mode with hot module
+reloading.
 * `npm run package` - Creates a distributable package.
-* `npm run clobber` - Destroys a handful of temporary files (electron build, node modules, configurations) to clean up invalid states. If running into strange issues, try this command, followed by an `npm install`.
+* `npm run clobber` - Destroys a handful of temporary files (electron build,
+node modules, configurations) to clean up invalid states. If running into
+strange issues, try this command, followed by an `npm install`.
 
 Even though the user agent and content services are reused between multiple
 browser instances, they don't outlive their parent process by default when it
-exits, to ease development. To have them kept alive even when there are no
-more clients left, `npm run serve` will start these services standalone for
-finer lifetime control.
+exits, to ease development. To have them kept alive even when there are no more
+clients left, `npm run serve` will start these services standalone for finer
+lifetime control.
 
 ## Testing
 

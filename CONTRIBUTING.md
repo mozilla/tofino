@@ -57,7 +57,8 @@ git commit --signoff --message “Some commit message”
 
 * Rebase your work during development and before submitting a pull request,
 avoiding merge commits, such that your commits are a logical sequence to
-read rather than a record of your fevered typing/ Make sure you're on the correct branch and are pulling from the correct upstream:
+read rather than a record of your fevered typing/ Make sure you're on the
+correct branch and are pulling from the correct upstream:
 ```
 git checkout some-new-branch
 git pull upstream master --rebase
@@ -69,23 +70,23 @@ Or using `git reset --soft` (as described in [a tale of three trees](http://www.
 git push origin some-new-branch
 ```
 
-* Submit a pull request. It would be helpful if you also flagged somebody
-for review, by typing their @username in the comments section.
+* Submit a pull request. It would be helpful if you also flagged somebody for
+review, by typing their @username in the comments section.
 
 ### Addressing review comments
 
 #### Adding more commits
 After submitting a pull request, certain review comments might need to be
-addressed. All you have to do is commit your new work, and simply update
-your fork with the local changes on your branch again. The pull request
-will automatically update with your new changes.
+addressed. All you have to do is commit your new work, and simply update your
+fork with the local changes on your branch again. The pull request will
+automatically update with your new changes.
 
 #### Signoff earlier commits
-If you forgot to signoff some earlier commits, do an incremental rebase
-on the branch you're working on. Find the earliest commit hash you want to
-change, e.g. "1234567" (via `git log`), then use it in the rebase command
-to start an interactive rebase. Type `edit` instead of `pick` for the
-commits you want to edit.
+If you forgot to signoff some earlier commits, do an incremental rebase on the
+branch you're working on. Find the earliest commit hash you want to change,
+e.g. "1234567" (via `git log`), then use it in the rebase command to start an
+interactive rebase. Type `edit` instead of `pick` for the commits you want to
+edit.
 ```
 git rebase --interactive '1234567^'
 git commit --amend --signoff --no-edit
@@ -93,20 +94,19 @@ git rebase --continue
 ```
 
 #### Squashing earlier commits
-While you're working, committing often is a good idea. However, it might
-not make sense to have commits that are too granular or don't make sense
-on their own before closing a pull request and merging back to upstream master.
-Find the earliest commit hash you want to change, e.g. "1234567"
-(via `git log`), then use it in the rebase command to start an interactive
-rebase. Type `squash` instead of `pick` for the commits you want to squash
-into their parents.
+While you're working, committing often is a good idea. However, it might not
+make sense to have commits that are too granular or don't make sense on their
+own before closing a pull request and merging back to upstream master. Find the
+earliest commit hash you want to change, e.g. "1234567" (via `git log`), then
+use it in the rebase command to start an interactive rebase. Type `squash`
+instead of `pick` for the commits you want to squash into their parents.
 ```
 git rebase --interactive '1234567^'
 ```
 
 #### Properly set name and email
-Update your `.gitconfig` with the proper information. You might need to
-update the earlier commits and sign them off as well, see above.
+Update your `.gitconfig` with the proper information. You might need to update
+the earlier commits and sign them off as well, see above.
 ```
 git config --global user.name “Foo Bar“
 git config --global user.email john@doe.com
@@ -117,22 +117,23 @@ git commit --amend --reset-author --no-edit
 
 Our JavaScript code follows the [airbnb style](https://github.com/airbnb/javascript)
 with a [few exceptions](../../blob/master/.eslintrc). The precise rules are
-likely to change a little as we get started so for now let eslint be your guide.
+likely to change a little as we get started so for now let eslint be your
+guide.
 
 ## Importing modules
 
 Always use the ES6 module syntax for
 [importing modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import)
-and [exporting from modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/export).
+and
+[exporting from modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/export).
 While Node and Electron don't support this natively at the moment we expect
 them to in the future. Babel will transpile this down to the commonjs syntax
 for now.
 
 ## Asynchronous code
 
-Prefer promise style APIs and functions when writing or using asynchronous code.
-Also prefer to use
-[ES7 async functions](http://www.sitepoint.com/simplifying-asynchronous-coding-es7-async-functions/)
+Prefer promise style APIs and functions when writing or using asynchronous
+code. Also prefer to use [ES7 async functions](http://www.sitepoint.com/simplifying-asynchronous-coding-es7-async-functions/)
 which protect you from various mistakes that lead to not calling resolve/reject
 on your promise.
 
@@ -141,8 +142,8 @@ on your promise.
 We won't add new NPM dependencies to the runtime lightly. There must be a
 proven need that cannot easily be met without the module and its code quality,
 API style and size will be taken into account when judging that. The same
-applies though to a lesser extent to modules that are only needed for develop
-/ build / package activities.
+applies though to a lesser extent to modules that are only needed for develop /
+build / package activities.
 
 # How to sign-off your commits
 
@@ -158,27 +159,25 @@ patch. The rules are pretty simple: if you can certify the below:
 
     By making a contribution to this project, I certify that:
 
-    (a) The contribution was created in whole or in part by me and I
-        have the right to submit it under the open source license
-        indicated in the file; or
+    (a) The contribution was created in whole or in part by me and I have the
+        right to submit it under the open source license indicated in the file;
+        or
 
-    (b) The contribution is based upon previous work that, to the best
-        of my knowledge, is covered under an appropriate open source
-        license and I have the right under that license to submit that
-        work with modifications, whether created in whole or in part
-        by me, under the same open source license (unless I am
-        permitted to submit under a different license), as indicated
-        in the file; or
+    (b) The contribution is based upon previous work that, to the best of my
+        knowledge, is covered under an appropriate open source license and I
+        have the right under that license to submit that work with
+        modifications, whether created in whole or in part by me, under the
+        same open source license (unless I am permitted to submit under a
+        different license), as indicated in the file; or
 
-    (c) The contribution was provided directly to me by some other
-        person who certified (a), (b) or (c) and I have not modified
-        it.
+    (c) The contribution was provided directly to me by some other person who
+        certified (a), (b) or (c) and I have not modified it.
 
-    (d) I understand and agree that this project and the contribution
-        are public and that a record of the contribution (including all
-        personal information I submit with it, including my sign-off) is
-        maintained indefinitely and may be redistributed consistent with
-        this project or the open source license(s) involved.
+    (d) I understand and agree that this project and the contribution are
+        public and that a record of the contribution (including all personal
+        information I submit with it, including my sign-off) is maintained
+        indefinitely and may be redistributed consistent with this project or
+        the open source license(s) involved.
 
 then you just add a line saying
 
@@ -196,20 +195,21 @@ If you need to slightly modify patches you receive in order to merge them,
 because the code is not exactly the same in your tree and the submitters'.
 If you stick strictly to rule (c), you should ask the submitter to submit, but
 this is a totally counter-productive waste of time and energy.
+
 Rule (b) allows you to adjust the code, but then it is very impolite to change
-one submitter's code and make them endorse your bugs. To solve this problem,
-it is recommended that you add a line between the last Signed-off-by header and
+one submitter's code and make them endorse your bugs. To solve this problem, it
+is recommended that you add a line between the last Signed-off-by header and
 yours, indicating the nature of your changes. While there is nothing mandatory
-about this, it seems like prepending the description with your mail and/or name,
-all enclosed in square brackets, is noticeable enough to make it obvious that
-you are responsible for last-minute changes. Example :
+about this, it seems like prepending the description with your mail and/or
+name, all enclosed in square brackets, is noticeable enough to make it obvious
+that you are responsible for last-minute changes. Example:
 
     Signed-off-by: Random J Developer <random@developer.example.org>
     [lucky@maintainer.example.org: struct foo moved from foo.c to foo.h]
     Signed-off-by: Lucky K Maintainer <lucky@maintainer.example.org>
 
-This practice is particularly helpful if you maintain a stable branch and
-want at the same time to credit the author, track changes, merge the fix,
-and protect the submitter from complaints. Note that under no circumstances
-can you change the author's identity (the From header), as it is the one
-which appears in the change-log.
+This practice is particularly helpful if you maintain a stable branch and want
+at the same time to credit the author, track changes, merge the fix, and
+protect the submitter from complaints. Note that under no circumstances can you
+change the author's identity (the From header), as it is the one which appears
+in the change-log.
