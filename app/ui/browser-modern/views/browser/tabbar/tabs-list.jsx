@@ -13,6 +13,9 @@ specific language governing permissions and limitations under the License.
 import React, { Component } from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
+import HTML5Backend from 'react-dnd-html5-backend';
+import { DragDropContext } from 'react-dnd';
+
 
 import Style from '../../../../shared/style';
 import Tab from './tab';
@@ -59,4 +62,5 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(TabsList);
+/* eslint-disable new-cap */
+export default connect(mapStateToProps)(DragDropContext(HTML5Backend)(TabsList));
