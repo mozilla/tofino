@@ -23,12 +23,12 @@ const WEBDRIVER_TIMEOUT_IN_MS = 10000;
 // This is the timeout for webdriver to start up. Default is 5000.
 // Sometimes this is not long enough, and not sure what we can even
 // do to make this go faster.
-const WEBDRIVER_START_TIMEOUT_IN_MS = 10000;
+const WEBDRIVER_START_TIMEOUT_IN_MS = 40000;
 
 const Driver = {
 
   // Timeout used by test suites: `this.timeout(Driver.TEST_TIMEOUT_IN_MS)`
-  TEST_TIMEOUT_IN_MS: 60000,
+  TEST_TIMEOUT_IN_MS: 180000,
 
   app: null,
   fixturesURL: null,
@@ -38,6 +38,7 @@ const Driver = {
     expect(this.app).toBe(null, 'Attempting to start an already activated Electron instance');
 
     const server = startFixtureServer();
+    expect(server).toNotEqual(null);
 
     this.app = new Application({
       path: getElectronPath(),
@@ -45,6 +46,7 @@ const Driver = {
       env: process.env,
       startTimeout: WEBDRIVER_START_TIMEOUT_IN_MS,
       waitTimeout: WEBDRIVER_TIMEOUT_IN_MS,
+      chromeDriverLogPath: `/tmp/chromeDriver${Date.now()}.log`,
     });
 
     // app.start() can take up to 30s on Appveyor Windows builds
