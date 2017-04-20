@@ -61,7 +61,7 @@ export function startUserAgentService(userAgentClient, options = {}) {
   // Careful passing in options.attached as true, as this stops the service from
   // outliving the its original parent, which we want to allow in the UAS case.
   const detached = !options.attached; // Detach by default
-  const stdio = detached ? ['ignore'] : ['ignore', process.stdout, process.stderr];
+  const stdio = ['ignore', process.stdout, process.stderr];
   const lib = options.libdir || LIBDIR;
   const profile = options.profiledir || parseArgs().profile;
 
@@ -71,11 +71,15 @@ export function startUserAgentService(userAgentClient, options = {}) {
                                    'datomish-user-agent-service',
                                    'bin', 'user-agent-service');
 
-  const child = spawnProcess('UA Service', NODE, [UA_SERVICE_BIN,
+  const child = spawnProcess('ua-service', NODE, [UA_SERVICE_BIN,
     '--port', port,
     '--profile', profile,
     '--version', version,
     '--content-service-origin', contentServiceOrigin,
+
+    // Don't spam stdout in any circumstance; do provide debug file logging for devs.
+    '--stdout-log-level', 'error',
+    '--file-log-level', (process.env.NODE_ENV === 'production') ? 'warn' : 'debug',
   ], {
     detached,
     stdio,
