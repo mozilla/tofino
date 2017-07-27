@@ -29,14 +29,6 @@ We blog here: https://medium.com/project-tofino
 We hang out on Slack here: https://project-tofino.slack.com (you can get an
 invite at http://tofino-slack-invite.mozilla.io)
 
-## Downloads
-
-### 0.2.0 Release
-
-* [Windows](https://tofino-update-server.herokuapp.com/download/windows)
-* [OS X](https://tofino-update-server.herokuapp.com/download/osx)
-* [Linux x64](https://tofino-update-server.herokuapp.com/download/linux_64)
-
 ## Build
 
 Documentation for building is found in [docs/building.md](/docs/building.md).
